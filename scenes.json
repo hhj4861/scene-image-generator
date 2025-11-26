@@ -1,0 +1,49 @@
+{
+  "script_text": "朝、目が覚めた瞬間から始まる小さな挑戦。今日は絶対に負けたくない自分との戦いだ。眠い目をこすりながらも、心の中で『やれる』って何度も唱える。失敗した昨日を悔やむより、今この瞬間を全力で生きる。その積み重ねが、未来を変えるって信じてるんだ。誰にも見えない涙も、心の奥で燃える情熱も、全部自分だけの宝物。だからこそ、今日も諦めずに一歩踏み出す。君の努力は、必ず明日へと繋がっていく——そう信じて。",
+  "scenes": [
+    {
+      "start": 0,
+      "end": 5,
+      "image_prompt": "cinematic sunrise filtering through a bedroom window, soft warm light illuminating a determined young Japanese person sitting up in bed, hopeful morning atmosphere"
+    },
+    {
+      "start": 5,
+      "end": 10,
+      "image_prompt": "close-up of tired eyes being rubbed, sunlight casting gentle shadows, subtle expression of resolve and determination"
+    },
+    {
+      "start": 10,
+      "end": 15,
+      "image_prompt": "dynamic shot of a young person standing in front of a mirror, whispering words of encouragement to themselves, glowing morning ambiance"
+    },
+    {
+      "start": 15,
+      "end": 20,
+      "image_prompt": "flashback-style scene of the same person looking disappointed at a desk, crumpled papers, dramatic lighting hinting at past failure"
+    },
+    {
+      "start": 20,
+      "end": 25,
+      "image_prompt": "close-up on clenched fist and determined face, fiery emotion in the eyes, cinematic shallow depth of field"
+    },
+    {
+      "start": 25,
+      "end": 30,
+      "image_prompt": "abstract visualization of invisible tears and an inner fire burning within the chest, emotional and ethereal lighting"
+    },
+    {
+      "start": 30,
+      "end": 37,
+      "image_prompt": "heroic low-angle shot as the protagonist steps outside into bright daylight, cityscape in background, sense of hope and new beginnings"
+    },
+    {
+      "start": 37,
+      "end": 40,
+      "image_prompt": "cinematic close-up on the protagonist's confident smile, sun flare in the background, uplifting mood"
+    }
+  ],
+  "design_directive": {
+    "font_family": "Noto Sans JP",
+    "text_color": "#222222"
+  }
+}

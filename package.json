@@ -1,0 +1,29 @@
+{
+  "name": "scene-image-generator",
+  "version": "1.0.0",
+  "description": "Generate SDXL background images based on scene prompts using Stability AI API",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "generate": "node index.js"
+  },
+  "dependencies": {
+    "@google-cloud/storage": "^7.17.3",
+    "archiver": "^7.0.1",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "googleapis": "^166.0.0",
+    "open": "^11.0.0",
+    "openai": "^6.9.1",
+    "uuid": "^13.0.0"
+  },
+  "keywords": [
+    "stability-ai",
+    "sdxl",
+    "image-generation",
+    "scene-generator"
+  ],
+  "author": "",
+  "license": "MIT"
+}
