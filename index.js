@@ -144,8 +144,8 @@ async function generateImage(prompt, sceneIndex) {
       data: {
         text_prompts: [{ text: prompt, weight: 1 }],
         cfg_scale: 7,
-        height: 1536,
-        width: 640,
+        height: 1344,
+        width: 768,  // Runway 호환: 768x1344 (비율 0.571)
         samples: 1,
         steps: 30
       }

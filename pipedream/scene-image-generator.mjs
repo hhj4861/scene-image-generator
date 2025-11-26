@@ -2,6 +2,7 @@ import { axios } from "@pipedream/platform";
 import { v4 as uuid } from "uuid";
 import { google } from "googleapis";
 import OpenAI from "openai";
+import { Readable } from "stream";
 
 export default defineComponent({
   name: "Scene Image Generator",
@@ -44,12 +45,27 @@ export default defineComponent({
     image_width: {
       type: "integer",
       label: "Image Width",
-      default: 640,
+      default: 768,  // Runway 호환: 768x1344 (비율 0.571)
     },
     image_height: {
       type: "integer",
       label: "Image Height",
-      default: 1536,
+      default: 1344,  // Runway 호환: 768x1344 (비율 0.571)
+    },
+    image_style: {
+      type: "string",
+      label: "Image Style",
+      description: "Visual style for generated images",
+      options: [
+        { label: "Anime (アニメ)", value: "anime" },
+        { label: "Photorealistic (실사)", value: "photorealistic" },
+        { label: "Digital Art (디지털 아트)", value: "digital_art" },
+        { label: "Watercolor (수채화)", value: "watercolor" },
+        { label: "3D Render (3D 렌더링)", value: "3d_render" },
+        { label: "Oil Painting (유화)", value: "oil_painting" },
+        { label: "Cinematic (시네마틱)", value: "cinematic" },
+      ],
+      default: "anime",
     },
   },
 
@@ -62,49 +78,93 @@ export default defineComponent({
     // =====================
     $.export("status", "Analyzing script with AI...");
 
+    // 스타일 매핑
+    const styleMap = {
+      anime: {
+        name: "anime japanese animation",
+        prefix: "anime style, japanese animation, high quality anime art, detailed anime illustration",
+        suffix: "anime aesthetic, vibrant colors, clean lines, studio ghibli inspired",
+      },
+      photorealistic: {
+        name: "photorealistic cinematic",
+        prefix: "photorealistic, ultra realistic, 8k uhd, high detail photograph, cinematic lighting",
+        suffix: "professional photography, realistic skin texture, natural lighting, DSLR quality",
+      },
+      digital_art: {
+        name: "digital illustration",
+        prefix: "digital art, digital illustration, artstation trending, concept art",
+        suffix: "highly detailed, vibrant digital painting, professional digital artwork",
+      },
+      watercolor: {
+        name: "watercolor soft painting",
+        prefix: "watercolor painting, soft watercolor art, delicate brush strokes",
+        suffix: "watercolor texture, soft edges, pastel colors, traditional art style",
+      },
+      "3d_render": {
+        name: "3D rendered pixar style",
+        prefix: "3D render, pixar style, octane render, high quality 3D art",
+        suffix: "smooth 3D animation style, disney pixar aesthetic, CGI quality",
+      },
+      oil_painting: {
+        name: "oil painting classical",
+        prefix: "oil painting, classical art style, renaissance inspired, masterpiece painting",
+        suffix: "rich oil colors, brush texture, museum quality art, fine art painting",
+      },
+      cinematic: {
+        name: "cinematic film still",
+        prefix: "cinematic shot, movie still, film photography, dramatic lighting",
+        suffix: "anamorphic lens, cinematic color grading, blockbuster movie quality, 35mm film",
+      },
+    };
+
+    const selectedStyle = styleMap[this.image_style] || styleMap.anime;
+    $.export("selected_style", this.image_style);
+
     const openai = new OpenAI({
       apiKey: this.openai.$auth.api_key,
     });
 
-    const analysisPrompt = `You are an expert visual director and art director. Analyze the following script and scene descriptions to determine the best visual style and consistent character design.
+    const analysisPrompt = `You are an expert visual director and art director. Analyze the following script and scene descriptions to create consistent character design and enhanced prompts.
 
 ## SCRIPT (Full Text):
 ${scriptText}
 
 ## SCENE PROMPTS:
-${scenes.map((s, i) => `Scene ${i + 1} (${s.start}s-${s.end}s): ${s.image_prompt}`).join('\n')}
+${scenes.map((s, i) => `Scene ${i + 1} (${s.start}s-${s.end}s): ${s.image_prompt || s.prompt}`).join('\n')}
+
+## REQUIRED ART STYLE (DO NOT CHANGE):
+"${selectedStyle.name}"
 
 ## YOUR TASK:
-Based on the script's tone, emotion, target audience, and narrative, provide:
+You MUST use the required art style above. Create:
 
-1. **art_style**: Choose ONE consistent art style:
-   - "photorealistic cinematic"
-   - "anime japanese animation"
-   - "digital illustration"
-   - "watercolor soft"
-   - "3d rendered pixar style"
+1. **art_style**: MUST be "${selectedStyle.name}" (do not change this)
 
-2. **character_description**: Detailed, CONSISTENT character description for ALL scenes
+2. **character_description**: Detailed, CONSISTENT character description for ALL scenes (matching the required style)
 
 3. **mood_keywords**: 3-5 keywords for overall mood
 
-4. **color_palette**: Color tone description
+4. **color_palette**: Color tone description appropriate for ${selectedStyle.name}
 
 5. **title**: Short title (2-4 words, English, underscore for spaces)
 
-6. **enhanced_prompts**: For EACH scene, enhanced prompt with character and style
+6. **style_prefix**: Use this exactly: "${selectedStyle.prefix}"
+
+7. **style_suffix**: Use this exactly: "${selectedStyle.suffix}"
+
+8. **enhanced_prompts**: For EACH scene, create enhanced prompt incorporating the ${selectedStyle.name} style
 
 Respond in JSON format only:
 {
-  "art_style": "chosen style",
-  "character_description": "detailed description",
+  "art_style": "${selectedStyle.name}",
+  "character_description": "detailed description matching ${selectedStyle.name} style",
   "mood_keywords": ["keyword1", "keyword2"],
   "color_palette": "color description",
   "title": "short_title",
-  "style_prefix": "prefix for all prompts",
-  "style_suffix": "suffix for all prompts",
+  "style_prefix": "${selectedStyle.prefix}",
+  "style_suffix": "${selectedStyle.suffix}",
   "enhanced_prompts": [
-    {"scene_index": 0, "original": "...", "enhanced": "..."}
+    {"scene_index": 0, "original": "...", "enhanced": "scene prompt in ${selectedStyle.name} style"}
   ]
 }`;
 
@@ -212,12 +272,17 @@ Respond in JSON format only:
       const objectName = `${folderName}/${image.filename}`;
       const imageBuffer = Buffer.from(image.base64, 'base64');
 
+      // Buffer를 Readable Stream으로 변환
+      const bufferStream = new Readable();
+      bufferStream.push(imageBuffer);
+      bufferStream.push(null);
+
       await storage.objects.insert({
         bucket: this.gcs_bucket_name,
         name: objectName,
         media: {
           mimeType: 'image/png',
-          body: imageBuffer,
+          body: bufferStream,
         },
         requestBody: {
           name: objectName,
@@ -245,6 +310,7 @@ Respond in JSON format only:
     const metadata = {
       generated_at: new Date().toISOString(),
       folder: folderName,
+      script_text: scriptText,  // TTS용 전체 스크립트 포함
       style_guide: {
         art_style: styleGuide.art_style,
         title: styleGuide.title,
@@ -257,12 +323,18 @@ Respond in JSON format only:
     };
 
     const metadataObjectName = `${folderName}/metadata.json`;
+
+    // metadata JSON을 Stream으로 변환
+    const metadataStream = new Readable();
+    metadataStream.push(JSON.stringify(metadata, null, 2));
+    metadataStream.push(null);
+
     await storage.objects.insert({
       bucket: this.gcs_bucket_name,
       name: metadataObjectName,
       media: {
         mimeType: 'application/json',
-        body: JSON.stringify(metadata, null, 2),
+        body: metadataStream,
       },
       requestBody: {
         name: metadataObjectName,
