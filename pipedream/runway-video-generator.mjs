@@ -278,7 +278,7 @@ export default defineComponent({
       }
 
       // Veo API 엔드포인트 (predictLongRunning)
-      const veoEndpoint = `${VEO_BASE_URL}/models/${modelId}:predictLongRunning?key=${this.gemini_api_key}`;
+      const veoEndpoint = `${VEO_BASE_URL}/models/${modelId}:predictLongRunning`;
 
       $.export(`veo_model`, modelId);
 
@@ -318,6 +318,7 @@ export default defineComponent({
           url: veoEndpoint,
           headers: {
             "Content-Type": "application/json",
+            "X-goog-api-key": this.gemini_api_key,
           },
           data: requestData,
         });
@@ -340,7 +341,10 @@ export default defineComponent({
 
           const statusResponse = await axios($, {
             method: "GET",
-            url: `${VEO_BASE_URL}/${operationName}?key=${this.gemini_api_key}`,
+            url: `${VEO_BASE_URL}/${operationName}`,
+            headers: {
+              "X-goog-api-key": this.gemini_api_key,
+            },
           });
 
           if (statusResponse.done) {
@@ -397,6 +401,14 @@ export default defineComponent({
         const errorMsg = error.message || String(error);
         const status = error.response?.status;
         const responseData = error.response?.data;
+
+        // 403 에러: API 활성화 필요
+        if (status === 403 || errorMsg.includes("SERVICE_DISABLED") || errorMsg.includes("has not been used in project")) {
+          const apiEnableMsg = "Veo 403: Generative Language API가 활성화되지 않았습니다. " +
+            "Google AI Studio에서 새 API 키를 생성하세요: https://aistudio.google.com/apikey";
+          $.export(`veo_error`, apiEnableMsg);
+          throw new Error(apiEnableMsg);
+        }
 
         $.export(`veo_error`, `Veo failed (${status}): ${errorMsg.substring(0, 150)}`);
 
@@ -611,9 +623,14 @@ export default defineComponent({
         $.export(`video_${i}_api`, `Generated with ${usedApi.toUpperCase()}`);
 
         // 영상 다운로드
+        // Veo URL은 API 키가 필요함 (generativelanguage.googleapis.com)
+        const isVeoUrl = videoUrl.includes("generativelanguage.googleapis.com");
+        const downloadHeaders = isVeoUrl ? { "X-goog-api-key": this.gemini_api_key } : {};
+
         const videoResponse = await axios($, {
           method: "GET",
           url: videoUrl,
+          headers: downloadHeaders,
           responseType: "arraybuffer",
         });
 
