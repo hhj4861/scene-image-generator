@@ -185,7 +185,12 @@ export default defineComponent({
 
     // 사용 가능한 API가 없으면 에러
     if (availableApis.length === 0) {
-      throw new Error("No video generation API configured. Please provide Runway API Key, Kling API Key, or Veo Project ID.");
+      throw new Error("No video generation API configured. Please provide Runway API Key or Gemini API Key.");
+    }
+
+    // preferred_api가 veo인데 gemini_api_key가 없으면 경고
+    if (this.preferred_api === "veo" && !veoAvailable) {
+      $.export("warning", "Veo selected but gemini_api_key not provided. Falling back to Runway.");
     }
 
     $.export("api_selection", {
