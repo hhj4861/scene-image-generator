@@ -41,7 +41,14 @@
       "WebFetch(domain:docs.cloud.google.com)",
       "WebFetch(domain:ai.google.dev)",
       "Bash(node test-veo-genai.js:*)",
-      "Bash(node test-veo-full.js:*)"
+      "Bash(node test-veo-full.js:*)",
+      "Bash(source:*)",
+      "Bash(echo:*)",
+      "Bash(GEMINI_API_KEY=REDACTED_API_KEY node:*)",
+      "Bash(node test-gemini-image-generator.js:*)",
+      "Bash(node --check:*)",
+      "Bash(node:*)",
+      "WebFetch(domain:platform.stability.ai)"
     ],
     "deny": [],
     "ask": []

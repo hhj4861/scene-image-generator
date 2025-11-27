@@ -27,6 +27,7 @@ export default defineComponent({
       type: "string",
       label: "Original Title",
       description: "Original title from script generator (JSON with japanese/korean/english)",
+      optional: true,
     },
     script_text: {
       type: "string",
@@ -82,9 +83,32 @@ export default defineComponent({
       label: "Made for Kids",
       default: false,
     },
+    skip_ai_optimization: {
+      type: "boolean",
+      label: "Skip AI Optimization",
+      description: "Skip OpenAI SEO optimization and use Script Generator's title/hashtags directly",
+      default: false,
+    },
   },
 
   async run({ steps, $ }) {
+    // =====================
+    // 0. 입력값 검증
+    // =====================
+
+    // video_url 검증
+    let videoUrl = this.video_url;
+    if (!videoUrl || videoUrl === 'undefined' || videoUrl === 'null') {
+      throw new Error(`video_url is required. Received: ${videoUrl}. Connect Creatomate Render's url output: {{steps.Creatomate_Render.$return_value.url}}`);
+    }
+
+    // URL 형식 검증
+    if (!videoUrl.startsWith('http://') && !videoUrl.startsWith('https://')) {
+      throw new Error(`Invalid video_url format: ${videoUrl}. Must be a valid HTTP(S) URL.`);
+    }
+
+    $.export("input_video_url", videoUrl);
+
     // =====================
     // 1. AI로 메타데이터 최적화
     // =====================
@@ -112,29 +136,88 @@ export default defineComponent({
     };
 
     const lang = languageConfig[this.target_language];
+
+    // original_title 검증 및 파싱
     let originalTitleObj = {};
-    try {
-      originalTitleObj = typeof this.original_title === 'string'
-        ? JSON.parse(this.original_title)
-        : this.original_title;
-    } catch (e) {
-      originalTitleObj = { title: this.original_title };
+    const rawTitle = this.original_title;
+
+    if (!rawTitle || rawTitle === 'undefined' || rawTitle === 'null') {
+      // title이 없으면 script에서 추출 시도
+      const scriptPreview = (this.script_text || '').substring(0, 50);
+      originalTitleObj = {
+        japanese: scriptPreview || "Video",
+        korean: scriptPreview || "Video",
+        english: scriptPreview || "Video",
+      };
+      $.export("title_source", "Generated from script (original_title was empty)");
+    } else {
+      try {
+        originalTitleObj = typeof rawTitle === 'string'
+          ? JSON.parse(rawTitle)
+          : rawTitle;
+        $.export("title_source", "Parsed from original_title");
+      } catch (e) {
+        // JSON 파싱 실패 시 문자열 그대로 사용
+        originalTitleObj = {
+          japanese: rawTitle,
+          korean: rawTitle,
+          english: rawTitle,
+          title: rawTitle,
+        };
+        $.export("title_source", "Used original_title as string (JSON parse failed)");
+      }
     }
 
+    $.export("parsed_title", JSON.stringify(originalTitleObj).substring(0, 200));
+
+    // hashtags 검증 및 파싱
     let hashtagsObj = {};
-    try {
-      hashtagsObj = this.hashtags
-        ? (typeof this.hashtags === 'string' ? JSON.parse(this.hashtags) : this.hashtags)
-        : {};
-    } catch (e) {
-      hashtagsObj = {};
+    const rawHashtags = this.hashtags;
+
+    if (rawHashtags && rawHashtags !== 'undefined' && rawHashtags !== 'null') {
+      try {
+        hashtagsObj = typeof rawHashtags === 'string' ? JSON.parse(rawHashtags) : rawHashtags;
+      } catch (e) {
+        // 파싱 실패 시 빈 객체
+        hashtagsObj = {};
+      }
     }
 
-    const optimizationPrompt = `You are a YouTube SEO expert specializing in viral Shorts content. Your goal is to maximize views, engagement, and algorithm favorability.
+    let optimizedMetadata;
+
+    // =====================
+    // AI 최적화 스킵 옵션
+    // =====================
+    if (this.skip_ai_optimization) {
+      $.export("status", "Using Script Generator metadata directly (AI optimization skipped)...");
+
+      // Script Generator의 title/hashtags 직접 사용
+      const directTitle = originalTitleObj[this.target_language] || originalTitleObj.japanese || originalTitleObj.korean || originalTitleObj.english || "Video";
+      const directHashtags = hashtagsObj[this.target_language] || hashtagsObj.japanese || hashtagsObj.english || [];
+
+      // #Shorts 해시태그 추가
+      const titleWithShorts = directTitle.includes("#Shorts") ? directTitle : `${directTitle} #Shorts`;
+
+      optimizedMetadata = {
+        optimized_title: titleWithShorts.substring(0, 100),
+        optimized_description: `${this.script_text?.substring(0, 300) || ''}\n\n${directHashtags.join(' ')}\n\n#Shorts`,
+        tags: [...new Set([...directHashtags.map(h => h.replace('#', '')), 'shorts', 'viral'])],
+        seo_score: "N/A (skipped)",
+        predicted_performance: "N/A (skipped)",
+      };
+
+      $.export("optimization_mode", "Direct (AI skipped)");
+    } else {
+      // =====================
+      // AI로 메타데이터 최적화
+      // =====================
+      $.export("status", "Optimizing metadata with AI...");
+
+      const optimizationPrompt = `You are a YouTube SEO expert specializing in viral Shorts content. Your goal is to maximize views, engagement, and algorithm favorability.
 
 ## INPUT DATA:
 - Original Title: ${JSON.stringify(originalTitleObj)}
-- Script: ${this.script_text.substring(0, 1000)}
+- Script: ${(this.script_text || '').substring(0, 1000)}
 - Existing Hashtags: ${JSON.stringify(hashtagsObj)}
 - Target Language: ${lang.name}
 - Content Category: ${this.content_category}
@@ -189,44 +272,46 @@ ${lang.instruction}
 
 Return ONLY valid JSON.`;
 
-    const aiResponse = await axios($, {
-      url: "https://api.openai.com/v1/chat/completions",
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${this.openai.$auth.api_key}`,
-        "Content-Type": "application/json",
-      },
-      data: {
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: "You are an expert YouTube SEO specialist. You know exactly what makes Shorts go viral. Always respond with valid JSON only.",
-          },
-          { role: "user", content: optimizationPrompt },
-        ],
-        temperature: 0.8,
-        max_tokens: 2000,
-      },
-    });
+      const aiResponse = await axios($, {
+        url: "https://api.openai.com/v1/chat/completions",
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${this.openai.$auth.api_key}`,
+          "Content-Type": "application/json",
+        },
+        data: {
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "system",
+              content: "You are an expert YouTube SEO specialist. You know exactly what makes Shorts go viral. Always respond with valid JSON only.",
+            },
+            { role: "user", content: optimizationPrompt },
+          ],
+          temperature: 0.8,
+          max_tokens: 2000,
+        },
+      });
 
-    let optimizedMetadata;
-    try {
-      let content = aiResponse.choices[0].message.content.trim();
-      if (content.startsWith("```json")) {
-        content = content.replace(/^```json\s*/, "").replace(/\s*```$/, "");
-      } else if (content.startsWith("```")) {
-        content = content.replace(/^```\s*/, "").replace(/\s*```$/, "");
+      try {
+        let content = aiResponse.choices[0].message.content.trim();
+        if (content.startsWith("```json")) {
+          content = content.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+        } else if (content.startsWith("```")) {
+          content = content.replace(/^```\s*/, "").replace(/\s*```$/, "");
+        }
+        optimizedMetadata = JSON.parse(content);
+      } catch (e) {
+        $.export("ai_error", e.message);
+        // Fallback to basic metadata
+        optimizedMetadata = {
+          optimized_title: originalTitleObj[this.target_language] || originalTitleObj.japanese || "Video #Shorts",
+          optimized_description: (this.script_text || '').substring(0, 500) + "\n\n#Shorts",
+          tags: ["shorts", "viral", "trending"],
+        };
       }
-      optimizedMetadata = JSON.parse(content);
-    } catch (e) {
-      $.export("ai_error", e.message);
-      // Fallback to basic metadata
-      optimizedMetadata = {
-        optimized_title: originalTitleObj[this.target_language] || originalTitleObj.japanese || "Video #Shorts",
-        optimized_description: this.script_text.substring(0, 500) + "\n\n#Shorts",
-        tags: ["shorts", "viral", "trending"],
-      };
+
+      $.export("optimization_mode", "AI Optimized");
     }
 
     $.export("ai_optimization", {
@@ -242,7 +327,7 @@ Return ONLY valid JSON.`;
 
     const videoResponse = await axios($, {
       method: "GET",
-      url: this.video_url,
+      url: videoUrl,
       responseType: "arraybuffer",
     });
 
@@ -311,9 +396,9 @@ Return ONLY valid JSON.`;
     });
 
     const videoId = uploadResponse.data.id;
-    const videoUrl = `https://www.youtube.com/shorts/${videoId}`;
+    const youtubeUrl = `https://www.youtube.com/shorts/${videoId}`;
 
-    $.export("$summary", `Uploaded to YouTube: ${videoUrl}`);
+    $.export("$summary", `Uploaded to YouTube: ${youtubeUrl}`);
 
     // =====================
     // 4. 결과 반환
@@ -321,7 +406,7 @@ Return ONLY valid JSON.`;
     return {
       success: true,
       video_id: videoId,
-      video_url: videoUrl,
+      video_url: youtubeUrl,
       shorts_url: `https://www.youtube.com/shorts/${videoId}`,
       watch_url: `https://www.youtube.com/watch?v=${videoId}`,
       studio_url: `https://studio.youtube.com/video/${videoId}/edit`,

@@ -2,14 +2,14 @@ import { axios } from "@pipedream/platform";
 
 export default defineComponent({
   name: "Creatomate Render",
-  description: "Combine videos, audio, and subtitles into final shorts video using Creatomate",
+  description: "Combine Stability AI videos, audio, and subtitles into final shorts video using Creatomate",
 
   props: {
     // 입력 데이터
     videos: {
       type: "string",
       label: "Videos JSON",
-      description: "JSON array of video objects with url, start, end fields",
+      description: "JSON array of video objects (with url, duration fields). Use: {{JSON.stringify(steps.Runway_Video_Generator.$return_value.videos)}}",
     },
     audio_url: {
       type: "string",
@@ -20,6 +20,20 @@ export default defineComponent({
       type: "string",
       label: "Subtitles JSON",
       description: "JSON array of subtitle objects with start, end, text fields",
+    },
+
+    // BGM 설정
+    bgm_url: {
+      type: "string",
+      label: "BGM URL",
+      description: "URL of the background music file (optional). Use: {{steps.BGM_Generator.$return_value.bgm_url}}",
+      optional: true,
+    },
+    bgm_volume: {
+      type: "string",
+      label: "BGM Volume",
+      description: "BGM volume level (0-100%)",
+      default: "30%",
     },
 
     // Creatomate 설정
@@ -84,6 +98,27 @@ export default defineComponent({
     const videos = typeof this.videos === 'string' ? JSON.parse(this.videos) : this.videos;
     const subtitles = typeof this.subtitles === 'string' ? JSON.parse(this.subtitles) : this.subtitles;
 
+    // folder_name 검증 및 폴백
+    let folderName = this.folder_name;
+    if (!folderName || folderName === 'undefined' || folderName === 'null') {
+      // 비디오 배열에서 folder_name 추출 시도
+      if (videos && videos.length > 0 && videos[0].url) {
+        const urlMatch = videos[0].url.match(/storage\.googleapis\.com\/[^/]+\/([^/]+)\//);
+        if (urlMatch) {
+          folderName = urlMatch[1];
+          $.export("folder_name_source", "Extracted from video URL");
+        }
+      }
+      // 여전히 없으면 타임스탬프 기반 폴백
+      if (!folderName || folderName === 'undefined') {
+        folderName = `render_${new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19)}`;
+        $.export("folder_name_source", "Generated fallback");
+      }
+    } else {
+      $.export("folder_name_source", "From prop");
+    }
+    $.export("folder_name_used", folderName);
+
     $.export("status", "Rendering final video with Creatomate...");
 
     // 디버깅: 입력 데이터 확인
@@ -95,28 +130,32 @@ export default defineComponent({
       throw new Error("No videos provided. Videos array is empty.");
     }
 
-    // 1. 영상 elements 생성
+    // 1. 영상 elements 생성 (Stability AI 비디오는 ~4초)
     const videoElements = videos.map((video, index) => {
       // 이전 영상들의 총 길이 계산
       const timeOffset = videos.slice(0, index).reduce((sum, v) => {
-        const dur = v.duration || (Number(v.end) - Number(v.start)) || 5;
+        // Stability AI 비디오는 기본 4초
+        const dur = v.duration || 4;
         return sum + dur;
       }, 0);
 
-      // duration 계산 (기본값 5초)
-      const videoDuration = video.duration || (Number(video.end) - Number(video.start)) || 5;
+      // duration 계산 (Stability AI 기본값 4초)
+      const videoDuration = video.duration || 4;
 
       return {
         type: "video",
         source: video.url,
         time: timeOffset,
         duration: videoDuration,
+        // 비디오 간 매끄러운 전환을 위한 설정
+        fit: "cover",
       };
     });
 
     // 총 영상 길이 계산
     const totalDuration = videos.reduce((sum, v) => {
-      const dur = v.duration || (Number(v.end) - Number(v.start)) || 5;
+      // Stability AI 비디오는 기본 4초
+      const dur = v.duration || 4;
       return sum + dur;
     }, 0);
 
@@ -128,15 +167,40 @@ export default defineComponent({
 
     $.export("debug_total_duration", totalDuration);
 
-    // 2. 오디오 element 생성
+    // 2. 나레이션 오디오 element 생성
     const audioElement = {
       type: "audio",
       source: this.audio_url,
       time: 0,
       duration: totalDuration,
+      volume: "100%",
     };
 
+    // 2-1. BGM element 생성 (선택사항)
+    let bgmElement = null;
+    if (this.bgm_url) {
+      bgmElement = {
+        type: "audio",
+        source: this.bgm_url,
+        time: 0,
+        duration: totalDuration,
+        volume: this.bgm_volume || "30%",
+      };
+      $.export("bgm_added", `BGM added with volume ${this.bgm_volume || "30%"}`);
+    } else {
+      $.export("bgm_added", "No BGM (bgm_url not provided)");
+    }
+
     // 3. 자막 elements 생성
+    // Creatomate: font_size는 px/vw/vh/vmin/vmax만 허용 (%는 안됨!)
+    let fontSizeValue = this.subtitle_font_size.replace(/\s+/g, '');
+    if (fontSizeValue.endsWith('%')) {
+      // %를 vw로 변환
+      const numValue = parseFloat(fontSizeValue);
+      fontSizeValue = `${numValue}vw`;
+    }
+    $.export("debug_font_size", fontSizeValue);
+
     const subtitleElements = subtitles.map((sub) => ({
       type: "text",
       text: sub.text,
@@ -149,7 +213,7 @@ export default defineComponent({
       x_anchor: "50%",
       y_anchor: "50%",
       font_family: this.subtitle_font_family,
-      font_size: this.subtitle_font_size.replace(/\s+/g, ''),  // Remove spaces (e.g., "5 vw" -> "5vw")
+      font_size: fontSizeValue,
       font_weight: "700",
       fill_color: this.subtitle_color,
       background_color: this.subtitle_background_color,
@@ -160,6 +224,14 @@ export default defineComponent({
     }));
 
     // 4. Creatomate 렌더링 요청
+    // elements 배열 구성 (BGM은 선택사항)
+    const allElements = [
+      ...videoElements,
+      audioElement,
+      ...(bgmElement ? [bgmElement] : []),
+      ...subtitleElements,
+    ];
+
     const renderRequest = {
       output_format: "mp4",
       source: {
@@ -168,11 +240,7 @@ export default defineComponent({
         height: this.video_height,
         frame_rate: 30,
         duration: totalDuration,
-        elements: [
-          ...videoElements,
-          audioElement,
-          ...subtitleElements,
-        ],
+        elements: allElements,
       },
     };
 
@@ -241,7 +309,7 @@ export default defineComponent({
     });
 
     const storage = google.storage({ version: 'v1', auth });
-    const objectName = `${this.folder_name}/${filename}`;
+    const objectName = `${folderName}/${filename}`;
 
     const bufferStream = new Readable();
     bufferStream.push(videoBuffer);
@@ -270,7 +338,7 @@ export default defineComponent({
       url: finalVideoUrl,
       creatomate_url: renderUrl,
       bucket: this.gcs_bucket_name,
-      folder_name: this.folder_name,
+      folder_name: folderName,
       total_duration: totalDuration,
       video_count: videos.length,
       subtitle_count: subtitles.length,

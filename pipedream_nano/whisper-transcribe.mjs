@@ -10,7 +10,7 @@ export default defineComponent({
     audio_url: {
       type: "string",
       label: "Audio URL",
-      description: "URL of the audio file to transcribe",
+      description: "URL of the audio file to transcribe. Use: {{steps.ElevenLabs_TTS.$return_value.audio_url}}",
     },
 
     // OpenAI 연결
@@ -19,17 +19,18 @@ export default defineComponent({
       app: "openai",
     },
 
-    // Whisper 설정
+    // Whisper 언어 설정
     language: {
       type: "string",
       label: "Language",
-      description: "Language of the audio (ISO 639-1 code)",
+      description: "Audio language. Use: {{steps.Script_Generator.$return_value.language}} or select manually.",
       default: "ja",
       options: [
-        { label: "Japanese", value: "ja" },
-        { label: "English", value: "en" },
-        { label: "Korean", value: "ko" },
-        { label: "Chinese", value: "zh" },
+        { label: "Japanese", value: "japanese" },
+        { label: "English", value: "english" },
+        { label: "Korean", value: "korean" },
+        { label: "Chinese", value: "chinese" },
+        { label: "Auto Detect", value: "auto" },
       ],
     },
 
@@ -53,14 +54,38 @@ export default defineComponent({
   async run({ steps, $ }) {
     $.export("status", "Transcribing audio with Whisper...");
 
-    // 1. 오디오 파일 다운로드
-    const audioResponse = await axios($, {
-      method: "GET",
-      url: this.audio_url,
-      responseType: "arraybuffer",
-    });
+    // 언어 코드 변환 (Script Generator: "japanese" → Whisper: "ja")
+    const languageMap = {
+      "japanese": "ja",
+      "english": "en",
+      "korean": "ko",
+      "chinese": "zh",
+      "ja": "ja",
+      "en": "en",
+      "ko": "ko",
+      "zh": "zh",
+      "auto": "auto",
+    };
 
-    const audioBuffer = Buffer.from(audioResponse);
+    const inputLang = this.language || "auto";
+    const detectedLanguage = languageMap[inputLang.toLowerCase()] || "auto";
+
+    $.export("detected_language", detectedLanguage);
+
+    // 1. 오디오 파일 다운로드
+    let audioBuffer;
+    try {
+      const audioResponse = await axios($, {
+        method: "GET",
+        url: this.audio_url,
+        responseType: "arraybuffer",
+      });
+      audioBuffer = Buffer.from(audioResponse);
+    } catch (downloadError) {
+      throw new Error(`Audio download failed: ${downloadError.response?.status || 'unknown'} - ${downloadError.message}. URL: ${this.audio_url}`);
+    }
+
+    $.export("audio_size_kb", Math.round(audioBuffer.length / 1024));
 
     // 2. Whisper API 호출 (verbose_json으로 타임스탬프 포함)
     const formData = new FormData();
@@ -69,7 +94,10 @@ export default defineComponent({
       contentType: "audio/mpeg",
     });
     formData.append("model", "whisper-1");
-    formData.append("language", this.language);
+    // auto가 아닌 경우에만 언어 지정 (auto면 Whisper가 자동 감지)
+    if (detectedLanguage && detectedLanguage !== "auto") {
+      formData.append("language", detectedLanguage);
+    }
     formData.append("response_format", "verbose_json");
     formData.append("timestamp_granularities[]", "word");
     formData.append("timestamp_granularities[]", "segment");

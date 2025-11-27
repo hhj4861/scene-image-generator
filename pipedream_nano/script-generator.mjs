@@ -2,23 +2,52 @@ import { axios } from "@pipedream/platform"
 
 export default defineComponent({
   name: "Shorts Script Generator",
-  description: "추출된 키워드를 기반으로 일본 YouTube 쇼츠용 대본 생성 (OpenAI GPT)",
+  description: "Generate viral, engaging scripts with unique angles and surprising facts",
   type: "action",
   props: {
     openai: {
       type: "app",
       app: "openai",
     },
+    // 주제 입력 (키워드보다 구체적)
+    topic: {
+      type: "string",
+      label: "Topic",
+      description: "구체적인 주제 (예: '시바견', '고양이 수면 패턴', '골든리트리버 성격')",
+    },
     keywords: {
       type: "string",
-      label: "Keywords",
-      description: "콘텐츠 키워드 (콤마로 구분) - 예: 힐링, 애니메이션, 자기계발",
+      label: "Additional Keywords (Optional)",
+      description: "추가 키워드 (콤마로 구분)",
+      optional: true,
+    },
+    // 바이럴 콘텐츠 앵글
+    content_angle: {
+      type: "string",
+      label: "Content Angle",
+      description: "바이럴 콘텐츠 앵글 선택",
+      options: [
+        { label: "🤯 충격적 사실 (99%가 모르는...)", value: "shocking_facts" },
+        { label: "🔬 과학적 발견 (연구로 밝혀진...)", value: "scientific" },
+        { label: "😢 감동 스토리 (실제로 있었던...)", value: "emotional_story" },
+        { label: "🆚 비교 분석 (A vs B)", value: "comparison" },
+        { label: "⚠️ 경고/주의 (절대 하면 안되는...)", value: "warning" },
+        { label: "💡 문제 해결 (이렇게 하면 해결)", value: "problem_solving" },
+        { label: "🏆 랭킹/TOP (가장 ~한 TOP 5)", value: "ranking" },
+        { label: "🕵️ 숨겨진 의미 (이 행동의 진짜 이유)", value: "hidden_meaning" },
+        { label: "🌍 문화 비교 (한국 vs 일본 vs 미국)", value: "culture_compare" },
+        { label: "⏰ 역사/기원 (원래는 ~였다)", value: "history_origin" },
+        { label: "💰 돈/비용 (실제 비용 공개)", value: "money_facts" },
+        { label: "👨‍⚕️ 전문가 의견 (수의사가 말하는...)", value: "expert_opinion" },
+      ],
+      default: "shocking_facts",
     },
     content_style: {
       type: "string",
       label: "Content Style",
       description: "콘텐츠 스타일",
       options: [
+        { label: "Pet (반려동물/강아지/고양이)", value: "pet" },
         { label: "Motivational (동기부여/자기계발)", value: "motivational" },
         { label: "Healing (힐링/감성)", value: "healing" },
         { label: "Story (스토리/서사)", value: "story" },
@@ -27,9 +56,8 @@ export default defineComponent({
         { label: "ASMR/Relaxing (ASMR/릴렉싱)", value: "asmr" },
         { label: "Daily Life (일상/Vlog)", value: "daily" },
         { label: "Cute (귀여운/사랑스러운)", value: "cute" },
-        { label: "Pet (반려동물/강아지/고양이)", value: "pet" },
       ],
-      default: "motivational",
+      default: "pet",
     },
     target_emotion: {
       type: "string",
@@ -107,6 +135,142 @@ export default defineComponent({
     },
   },
   async run({ $ }) {
+    // 바이럴 콘텐츠 앵글 가이드 (핵심!)
+    const angleGuides = {
+      shocking_facts: {
+        hook_template: "99%의 사람들이 모르는 {topic}의 비밀",
+        structure: "충격적 사실 제시 → 왜 몰랐는지 → 더 놀라운 사실들 → 시청자 반응 유도",
+        requirements: "구체적인 숫자, 연구 결과, 또는 검증된 사실 포함 필수",
+        examples: [
+          "시바견이 절대로 하지 않는 행동이 있는데, 이유가 충격적입니다",
+          "고양이가 박스를 좋아하는 진짜 이유, 과학자들도 놀랐습니다",
+          "강아지 코가 젖어있는 이유, 알고 나면 소름돋습니다",
+        ],
+        avoid: ["~에 대해 알아보겠습니다", "오늘은 ~를 소개합니다"],
+      },
+      scientific: {
+        hook_template: "최신 연구로 밝혀진 {topic}의 진실",
+        structure: "연구 결과 소개 → 실험 내용 → 결론 → 실생활 적용",
+        requirements: "실제 연구, 대학, 또는 전문 기관 언급. 구체적 수치 포함",
+        examples: [
+          "하버드 연구팀이 발견한 강아지 지능의 비밀",
+          "일본 수의학회가 경고한 고양이 사료의 진실",
+          "10년 추적 연구로 밝혀진 반려견 수명 연장법",
+        ],
+        avoid: ["~가 좋다고 합니다", "전문가들은 ~라고 말합니다"],
+      },
+      emotional_story: {
+        hook_template: "실제로 있었던 {topic} 이야기",
+        structure: "상황 설정 → 갈등/위기 → 전환점 → 감동적 결말",
+        requirements: "구체적인 장소, 시간, 인물 설정. 감정선 명확히",
+        examples: [
+          "버려진 시바견이 주인을 3년 동안 기다린 이유",
+          "유기견 보호소에서 마지막까지 입양되지 않던 강아지의 반전",
+          "교통사고로 주인을 잃은 고양이가 한 행동",
+        ],
+        avoid: ["감동적인 이야기입니다", "눈물 주의"],
+      },
+      comparison: {
+        hook_template: "{A} vs {B}, 승자는?",
+        structure: "비교 대상 소개 → 차이점 나열 → 의외의 공통점 → 결론",
+        requirements: "객관적 데이터 기반. 한쪽 편들지 않기",
+        examples: [
+          "시바견 vs 진돗개, 실제 성격 비교 결과",
+          "한국 vs 일본 강아지 문화 차이점 5가지",
+          "건식사료 vs 습식사료, 수의사의 결론",
+        ],
+        avoid: ["당연히 ~가 좋습니다", "모두 알다시피"],
+      },
+      warning: {
+        hook_template: "절대 {topic}에게 하면 안되는 것",
+        structure: "경고 → 왜 위험한지 → 실제 사례 → 대안 제시",
+        requirements: "구체적인 위험성. 과장 금지, 사실 기반",
+        examples: [
+          "강아지에게 절대 먹이면 안되는 과일 1위",
+          "고양이 집사 90%가 모르는 치명적 실수",
+          "수의사가 경고하는 강아지 산책 시 절대 금기",
+        ],
+        avoid: ["주의하세요", "조심해야 합니다"],
+      },
+      problem_solving: {
+        hook_template: "{문제}를 3일만에 해결한 방법",
+        structure: "문제 공감 → 시도했던 방법들 → 해결책 발견 → 결과",
+        requirements: "구체적인 방법과 기간. 실제 효과 수치",
+        examples: [
+          "강아지 분리불안, 수의사도 놀란 해결법",
+          "고양이 야옹 소리 멈추게 한 의외의 방법",
+          "강아지 입냄새 3일만에 없앤 비법",
+        ],
+        avoid: ["이렇게 해보세요", "~하면 됩니다"],
+      },
+      ranking: {
+        hook_template: "가장 {특성}한 {topic} TOP 5",
+        structure: "기준 설명 → 5위~2위 → 1위 공개 → 의외의 순위 해설",
+        requirements: "객관적 기준 제시. 순위 선정 이유 명확히",
+        examples: [
+          "가장 키우기 쉬운 강아지 품종 TOP 5",
+          "수의사들이 절대 안 키우는 품종 1위",
+          "일본에서 가장 인기있는 강아지 품종 변천사",
+        ],
+        avoid: ["개인 취향입니다", "정답은 없습니다"],
+      },
+      hidden_meaning: {
+        hook_template: "{topic}이 {행동}하는 진짜 이유",
+        structure: "행동 묘사 → 흔한 오해 → 진짜 이유 → 대처법",
+        requirements: "과학적/행동학적 근거. 출처 있으면 더 좋음",
+        examples: [
+          "강아지가 발을 핥는 진짜 이유, 애정 표현 아닙니다",
+          "고양이가 화장실 따라오는 숨겨진 의미",
+          "강아지가 잘 때 발을 떠는 이유, 꿈 때문 아닙니다",
+        ],
+        avoid: ["~일 수도 있습니다", "여러 이유가 있습니다"],
+      },
+      culture_compare: {
+        hook_template: "한국 vs 일본 vs 미국, {topic} 문화 차이",
+        structure: "각국 문화 소개 → 차이점 → 이유 분석 → 인사이트",
+        requirements: "정확한 국가별 정보. 편견 없이 객관적으로",
+        examples: [
+          "일본에서 강아지 산책할 때 이것 안하면 벌금",
+          "미국 vs 한국 강아지 훈련법 차이",
+          "독일에서 반려견 키우려면 면허가 필요한 이유",
+        ],
+        avoid: ["우리나라가 최고", "외국은 다릅니다"],
+      },
+      history_origin: {
+        hook_template: "{topic}의 놀라운 기원",
+        structure: "현재 모습 → 과거 기원 → 변천사 → 의외의 사실",
+        requirements: "역사적 사실 기반. 연도/시대 구체적으로",
+        examples: [
+          "시바견이 원래 사냥개였던 충격적인 과거",
+          "골든리트리버가 만들어진 진짜 이유",
+          "고양이가 신으로 숭배받던 시절의 비밀",
+        ],
+        avoid: ["옛날에는 ~했습니다", "역사를 알아봅시다"],
+      },
+      money_facts: {
+        hook_template: "{topic} 실제 비용, 공개합니다",
+        structure: "비용 공개 → 세부 항목 → 숨겨진 비용 → 절약팁",
+        requirements: "실제 가격/비용. 최신 정보로 업데이트",
+        examples: [
+          "강아지 한 마리 키우는데 진짜 드는 비용",
+          "시바견 분양가 왜 이렇게 비싼지 알려드림",
+          "반려견 의료비, 보험 가입 전후 비교",
+        ],
+        avoid: ["비용이 많이 듭니다", "경제적 부담이 있습니다"],
+      },
+      expert_opinion: {
+        hook_template: "수의사 15년차가 말하는 {topic}의 진실",
+        structure: "전문가 소개 → 일반 상식 뒤집기 → 전문가 조언 → 핵심 포인트",
+        requirements: "전문가 경력/자격 언급. 구체적인 조언",
+        examples: [
+          "수의사가 절대 자기 강아지에게 안 하는 것",
+          "브리더 20년차가 추천하는 강아지 선택법",
+          "동물행동전문가가 경고하는 훈련 실수",
+        ],
+        avoid: ["전문가에 따르면", "의사 선생님이 말하길"],
+      },
+    };
+
     const styleGuides = {
       motivational: {
         structure: "도입(공감) → 문제제기 → 해결/깨달음 → 행동촉구",
@@ -149,9 +313,9 @@ export default defineComponent({
         keywords_jp: ["かわいい", "癒し", "ふわふわ", "もふもふ", "キュン"],
       },
       pet: {
-        structure: "반려동물 소개 → 귀여운 일상 → 교감 순간 → 따뜻한 마무리",
-        tone: "따뜻하고 애정어린",
-        keywords_jp: ["犬", "猫", "ペット", "家族", "癒し", "かわいい"],
+        structure: "흥미로운 사실 → 귀여운 예시 → 깊은 정보 → 시청자 참여 유도",
+        tone: "따뜻하면서도 정보성 있는",
+        keywords_jp: ["犬", "猫", "ペット", "家族", "癒し", "かわいい", "驚き"],
       },
     };
 
@@ -229,15 +393,16 @@ export default defineComponent({
           $.export("history_status", "No history file found, will create new one");
         }
 
-        // 키워드 중복 체크
-        const currentKeywords = this.keywords.toLowerCase().split(',').map(k => k.trim()).sort().join(',');
-        const keywordKey = `${currentKeywords}|${this.content_style}|${this.language}`;
+        // 키워드 중복 체크 (topic + keywords + angle 조합)
+        const topicKey = (this.topic || '').toLowerCase().trim();
+        const currentKeywords = (this.keywords || '').toLowerCase().split(',').map(k => k.trim()).sort().join(',');
+        const keywordKey = `${topicKey}|${currentKeywords}|${this.content_angle}|${this.content_style}|${this.language}`;
 
-        // 같은 키워드 조합이 몇 번 사용되었는지 카운트
+        // 같은 조합이 몇 번 사용되었는지 카운트
         const usageCount = scriptHistory.keywords_used?.filter(k => k === keywordKey).length || 0;
         if (usageCount > 0) {
           isDuplicate = true;
-          $.export("duplicate_info", `ℹ️ Keywords "${this.keywords}" used ${usageCount} time(s) before. Generating variation #${usageCount + 1}`);
+          $.export("duplicate_info", `ℹ️ Topic "${this.topic}" + Angle "${this.content_angle}" used ${usageCount} time(s) before. Generating variation #${usageCount + 1}`);
         }
       } catch (e) {
         $.export("history_error", e.message);
@@ -248,70 +413,80 @@ export default defineComponent({
     const estimatedChars = this.duration_seconds * lang.chars_per_second;
     const sceneCount = Math.ceil(this.duration_seconds / 5); // 5초당 1장면
 
+    // 앵글 가이드 가져오기
+    const angle = angleGuides[this.content_angle] || angleGuides.shocking_facts;
+    const topicForPrompt = this.topic || this.keywords || "반려동물";
+
     // 중복인 경우 이전 대본들의 제목을 가져와서 AI에게 전달
     let previousScripts = [];
     if (isDuplicate && scriptHistory.scripts) {
-      const currentKeywords = this.keywords.toLowerCase().split(',').map(k => k.trim()).sort().join(',');
+      const currentKeywords = (this.keywords || '').toLowerCase().split(',').map(k => k.trim()).sort().join(',');
       previousScripts = scriptHistory.scripts
         .filter(s => {
-          const sKeywords = s.keywords.toLowerCase().split(',').map(k => k.trim()).sort().join(',');
+          const sKeywords = (s.keywords || '').toLowerCase().split(',').map(k => k.trim()).sort().join(',');
           return sKeywords === currentKeywords && s.content_style === this.content_style;
         })
         .map(s => s.title?.japanese || s.title?.korean || 'Unknown');
     }
 
-    const prompt = `You are an expert scriptwriter for viral YouTube Shorts targeting the Japanese market.
+    const prompt = `You are an expert viral content creator specializing in YouTube Shorts that get millions of views.
 
-## Input Information:
-- Keywords: ${this.keywords}
+## 🎯 TOPIC: "${topicForPrompt}"
+
+## 📐 CONTENT ANGLE (CRITICAL - FOLLOW THIS EXACTLY):
+- Type: ${this.content_angle}
+- Hook Template: "${angle.hook_template.replace('{topic}', topicForPrompt)}"
+- Structure: ${angle.structure}
+- Requirements: ${angle.requirements}
+
+### ✅ GOOD HOOK EXAMPLES (Study these patterns):
+${angle.examples.map(ex => `- "${ex}"`).join('\n')}
+
+### ❌ PHRASES TO AVOID (NEVER use these):
+${angle.avoid.map(av => `- "${av}"`).join('\n')}
+
+## 📊 CONTENT SETTINGS:
 - Content Style: ${this.content_style} (${style.tone})
-- Structure: ${style.structure}
 - Target Emotion: ${emotion}
 - Voice Style: ${voice}
 - Duration: ${this.duration_seconds} seconds
 - Language: ${lang.name}
 - Estimated characters: ~${estimatedChars} characters
 - Number of scenes: ${sceneCount}
+${this.keywords ? `- Additional Keywords: ${this.keywords}` : ''}
 ${isDuplicate ? `
-## ⚠️ IMPORTANT - CREATE A DIFFERENT VERSION:
-This keyword combination has been used ${previousScripts.length} time(s) before.
-Previous scripts with these keywords: ${previousScripts.join(', ')}
-
-You MUST create a COMPLETELY DIFFERENT script:
-- Different story/scenario
-- Different characters or situations
-- Different emotional arc
-- Different visual scenes
-- DO NOT repeat similar content
+## ⚠️ DUPLICATE WARNING - CREATE COMPLETELY DIFFERENT VERSION:
+Previous scripts with similar topic: ${previousScripts.join(', ')}
+You MUST create entirely different content - different facts, different angle, different story.
 ` : ''}
+
+## 🔥 VIRAL CONTENT RULES (MANDATORY):
+
+### 1. HOOK (First 3 seconds) - MAKE OR BREAK
+- Must create IMMEDIATE curiosity or shock
+- Use the hook template pattern above
+- NO generic openings like "오늘은 ~에 대해..."
+- Start with the most surprising fact or statement
+
+### 2. SPECIFICITY IS KING
+- ❌ BAD: "강아지는 후각이 좋습니다" (boring, everyone knows)
+- ✅ GOOD: "강아지 코에는 3억개의 후각 수용체가 있는데, 이건 인간의 50배입니다"
+- ❌ BAD: "산책이 중요합니다" (generic)
+- ✅ GOOD: "옥스포드 대학 연구팀이 8년간 추적한 결과, 하루 23분 산책하는 강아지의 수명이 평균 2.7년 길었습니다"
+
+### 3. EMOTIONAL TRIGGERS
+- Surprise: "이건 아무도 몰랐는데..."
+- Urgency: "지금 당장 확인해보세요"
+- Fear: "이걸 모르면 위험할 수 있습니다"
+- Curiosity: "진짜 이유는 따로 있었습니다"
+
+### 4. UNIQUE ANGLE REQUIREMENT
+- Find information that 99% of similar videos DON'T cover
+- Include at least ONE surprising statistic or research finding
+- Avoid rehashing the same generic tips everyone shares
+
 ## Japanese Market Keywords Reference:
 ${style.keywords_jp.join(", ")}
-
-## CRITICAL LENGTH REQUIREMENTS:
-- **MINIMUM ${estimatedChars} characters** for full_script (this is NON-NEGOTIABLE)
-- Duration: ${this.duration_seconds} seconds
-- Speaking rate: ${lang.chars_per_second} characters per second
-- You MUST write enough content to fill the ENTIRE ${this.duration_seconds} seconds
-- Each 5-second segment needs approximately ${lang.chars_per_second * 5} characters of narration
-- DO NOT write short, choppy scripts. Write FULL, DETAILED narration.
-
-## CONTENT UNIQUENESS REQUIREMENTS (VERY IMPORTANT):
-- DO NOT use generic, commonly known information
-- DO NOT write obvious advice that everyone already knows
-- INCLUDE surprising facts, lesser-known research, or unique perspectives
-- Use specific numbers, statistics, or research findings when possible
-- Share insights that make viewers think "I didn't know that!"
-- Avoid clichés and overused phrases
-- Examples of what to AVOID:
-  * "早起きは体にいい" (too generic)
-  * "分散投資が大事" (everyone knows this)
-  * "感謝の気持ちを持とう" (too common)
-- Examples of what to INCLUDE:
-  * Specific research findings with numbers
-  * Counter-intuitive facts
-  * Little-known historical stories
-  * Expert insights not widely shared
-  * Unusual connections between concepts
 
 ## Requirements:
 1. ${lang.instruction}
@@ -411,11 +586,40 @@ Return ONLY valid JSON, no markdown formatting.`;
       throw new Error(`Failed to parse OpenAI response: ${error.message}`);
     }
 
+    // folder_name 생성 (모든 Step에서 공유)
+    const { v4: uuidv4 } = await import("uuid");
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0].replace(/-/g, '');
+    const shortUuid = uuidv4().split('-')[0];
+    const safeTitle = (script.title?.english || script.title?.japanese || this.topic || 'shorts')
+      .replace(/[^a-zA-Z0-9_\s]/g, '')
+      .replace(/\s+/g, '_')
+      .substring(0, 30);
+    const folderName = `${dateStr}_${shortUuid}_${safeTitle}`;
+
     // 결과 정리 및 추가 정보 포함
     const result = {
+      // 폴더명 (모든 Step에서 사용)
+      folder_name: folderName,
+
+      // BGM 생성용 mood (target_emotion 기반)
+      mood: this.target_emotion,
+
+      // TTS/Whisper용 언어
+      language: this.language,
+
+      // 전체 스크립트 텍스트 (TTS용)
+      script_text: script.full_script,
+
+      // YouTube Upload용 (최상위 레벨로 복사)
+      title: script.title,
+      hashtags: script.hashtags,
+
       // 입력 파라미터
       input: {
+        topic: this.topic,
         keywords: this.keywords,
+        content_angle: this.content_angle,
         content_style: this.content_style,
         target_emotion: this.target_emotion,
         duration: this.duration_seconds,
@@ -435,7 +639,8 @@ Return ONLY valid JSON, no markdown formatting.`;
             start: seg.start_time,
             end: seg.end_time,
             prompt: seg.scene_description || `Scene ${idx + 1}: ${seg.visual_keywords?.join(", ")}`,
-            style: "anime illustration, high quality, detailed",
+            image_prompt: seg.scene_description || seg.visual_keywords?.join(", "),
+            style: "ultra realistic photography, high quality, detailed",
           })) || [],
         },
 
@@ -460,7 +665,7 @@ Return ONLY valid JSON, no markdown formatting.`;
     };
 
     $.export("$summary",
-      `스크립트 생성 완료: "${script.title?.korean || script.title?.japanese}" - ${script.script_segments?.length || 0}개 장면, ${this.duration_seconds}초`
+      `스크립트 생성: "${script.title?.korean || script.title?.japanese}" [${this.content_angle}] - ${script.script_segments?.length || 0}장면`
     );
 
     // =====================
@@ -477,19 +682,23 @@ Return ONLY valid JSON, no markdown formatting.`;
         });
         const storage = google.storage({ version: 'v1', auth });
 
-        // 현재 키워드 키 생성
-        const currentKeywords = this.keywords.toLowerCase().split(',').map(k => k.trim()).sort().join(',');
-        const keywordKey = `${currentKeywords}|${this.content_style}|${this.language}`;
+        // 현재 키워드 키 생성 (topic + keywords + angle 조합)
+        const topicKey = (this.topic || '').toLowerCase().trim();
+        const currentKeywords = (this.keywords || '').toLowerCase().split(',').map(k => k.trim()).sort().join(',');
+        const keywordKey = `${topicKey}|${currentKeywords}|${this.content_angle}|${this.content_style}|${this.language}`;
 
         // 히스토리 업데이트
         if (!scriptHistory.scripts) scriptHistory.scripts = [];
         if (!scriptHistory.keywords_used) scriptHistory.keywords_used = [];
 
         scriptHistory.scripts.push({
+          topic: this.topic,
           keywords: this.keywords,
+          content_angle: this.content_angle,
           content_style: this.content_style,
           language: this.language,
           title: script.title,
+          hook: script.hook,
           generated_at: new Date().toISOString(),
         });
         scriptHistory.keywords_used.push(keywordKey);

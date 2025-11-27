@@ -27,7 +27,7 @@ export async function renderFinalVideo(options) {
     videoWidth = 1080,
     videoHeight = 1920,
     // 자막 스타일
-    subtitleFontSize = "6.5%",
+    subtitleFontSize = "5vw",
     subtitleFontFamily = "Noto Sans JP",
     subtitleColor = "#FFFFFF",
     subtitleBgColor = "rgba(0,0,0,0.6)",
@@ -72,7 +72,15 @@ export async function renderFinalVideo(options) {
   };
 
   // 3. 자막 elements 생성
-  // Creatomate: font_size는 vw, padding은 %
+  // Creatomate: font_size는 vw/vh/px만 허용, padding은 %
+  // subtitleFontSize가 % 형식이면 vw로 변환
+  let fontSizeValue = subtitleFontSize;
+  if (fontSizeValue.endsWith('%')) {
+    // %를 vw로 변환 (근사값)
+    const numValue = parseFloat(fontSizeValue);
+    fontSizeValue = `${numValue}vw`;
+  }
+
   const subtitleElements = subtitles.map((sub) => ({
     type: "text",
     text: sub.text,
@@ -85,7 +93,7 @@ export async function renderFinalVideo(options) {
     x_anchor: "50%",
     y_anchor: "50%",
     font_family: subtitleFontFamily,
-    font_size: "5vw",
+    font_size: fontSizeValue,
     font_weight: "700",
     fill_color: subtitleColor,
     background_color: subtitleBgColor,

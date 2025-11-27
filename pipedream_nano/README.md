@@ -1,78 +1,120 @@
-# Pipedream Scene Image Generator
+# Pipedream Nano - YouTube Shorts Video Pipeline
 
-Pipedream에서 사용할 수 있는 씬 이미지 생성 컴포넌트입니다.
+Pipedream에서 사용할 수 있는 AI 기반 YouTube Shorts 자동 생성 파이프라인입니다.
 
-## 기능
+## 파이프라인 구조
 
-1. **AI 스타일 분석** (OpenAI GPT-4o)
-   - 대본 분석 후 아트 스타일 자동 결정
-   - 일관된 캐릭터 설명 생성
-   - 각 씬별 프롬프트 강화
-
-2. **이미지 생성** (Stability AI)
-   - Stable Diffusion XL 사용
-   - 씬별 이미지 생성
-   - 캐릭터/스타일 일관성 유지
-
-3. **GCS 업로드**
-   - 폴더별 이미지 원본 저장
-   - metadata.json 포함
+```
+[Script Generator] → [ElevenLabs TTS] → [Whisper Transcribe]
+        ↓                                         ↓
+[Google Imagen Generator] ──────────────────────────→ [Stability Video Generator]
+        ↓                                                        ↓
+[Creatomate Render] ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ←
+        ↓
+[YouTube Upload]
+```
 
 ---
 
-## 사용법
+## 컴포넌트 목록
 
-### 필요한 연결
-- **OpenAI** - GPT-4o API
-- **Google Cloud** - Service Account JSON
-- **Stability AI API Key**
+### 1. **Script Generator** (`script-generator.mjs`)
+- 키워드 기반 일본어 대본 생성
+- 중복 방지 시스템 (GCS 히스토리)
+- 고유한 정보 기반 콘텐츠 생성
 
-### Props 설정
+### 2. **ElevenLabs TTS** (`elevenlabs-tts.mjs`)
+- 대본을 일본어 음성으로 변환
+- 다양한 음성 선택 가능
 
-| Prop | 설명 | 예시 |
-|------|------|------|
-| `script_text` | 전체 대본 텍스트 | "朝、目が覚めた瞬間から..." |
-| `scenes` | 씬 배열 (JSON 문자열) | `[{"start": 0, "end": 5, "image_prompt": "..."}]` |
-| `stability_api_key` | Stability AI API 키 | sk-xxx |
-| `gcs_bucket_name` | GCS 버킷명 | scene-image-generator-storage-mcp-test-457809 |
-| `image_width` | 이미지 너비 | 640 |
-| `image_height` | 이미지 높이 | 1536 |
+### 3. **Whisper Transcribe** (`whisper-transcribe.mjs`)
+- 음성을 자막(타임스탬프 포함)으로 변환
+- 씬 타이밍 추출
 
-### 입력 예시
+### 4. **Gemini Image Generator** (`gemini-image-generator.mjs`)
+- **Gemini API**로 프롬프트 강화 및 일관성 분석
+- **Imagen 4** (Gemini API)로 고품질 이미지 생성
+- **Vertex AI 불필요** - API Key만 있으면 됨!
+- 캐릭터/환경/색상 일관성 유지
+- 비디오 전환을 위한 모션 힌트 포함
 
-```json
-{
-  "script_text": "朝、目が覚めた瞬間から始まる小さな挑戦...",
-  "scenes": "[{\"start\":0,\"end\":5,\"image_prompt\":\"A person waking up in bed\"},{\"start\":5,\"end\":10,\"image_prompt\":\"Rubbing tired eyes\"}]"
-}
+### 5. **Stability Video Generator** (`stability-video-generator.mjs`) ⭐ NEW
+- **Stability AI Image-to-Video** API 사용
+- 각 이미지를 ~4초 비디오로 변환
+- 매끄러운 연결을 위한 모션 설정
+
+### 6. **Creatomate Render** (`creatomate-render.mjs`)
+- 비디오 + 오디오 + 자막 합성
+- 최종 Shorts 영상 생성
+
+### 7. **YouTube Upload** (`youtube-upload.mjs`)
+- 자동 업로드
+- 트렌딩 해시태그 추가
+
+---
+
+## 필요한 연결 및 API 키
+
+| 서비스 | 용도 | 비고 |
+|--------|------|------|
+| **Gemini API** | 프롬프트 분석 + Imagen 이미지 생성 | API Key (Google AI Studio) |
+| **Stability AI** | Image-to-Video | API Key |
+| **Google Cloud** | GCS 스토리지 | Service Account JSON |
+| **ElevenLabs** | TTS | API Key |
+| **OpenAI** | Whisper | API Key |
+| **Creatomate** | 영상 합성 | API Key |
+| **YouTube** | 업로드 | OAuth |
+
+---
+
+## 워크플로우 예시
+
+### 전체 파이프라인
+
+```
+1. Script Generator
+   - 입력: 키워드 ("자기계발,아침,도전"), 스타일 ("motivational")
+   - 출력: 일본어 대본, 씬 정보
+
+2. ElevenLabs TTS
+   - 입력: 대본 텍스트
+   - 출력: 음성 파일 (MP3)
+
+3. Whisper Transcribe
+   - 입력: 음성 파일
+   - 출력: 타임스탬프 자막, 씬 배열
+
+4. Gemini + Stability Image Generator
+   - 입력: 대본, 씬 배열
+   - 출력: 씬별 이미지 (일관된 스타일)
+
+5. Stability Video Generator
+   - 입력: 이미지 배열
+   - 출력: 씬별 비디오 (~4초 each)
+
+6. Creatomate Render
+   - 입력: 비디오 배열, 오디오, 자막
+   - 출력: 최종 Shorts 영상
+
+7. YouTube Upload
+   - 입력: 최종 영상, 제목, 설명
+   - 출력: YouTube URL
 ```
 
-### 출력 예시
+---
 
-```json
-{
-  "success": true,
-  "folder_name": "20251126_abc123_Dawn_of_Resolve",
-  "bucket": "scene-image-generator-storage-mcp-test-457809",
-  "folder_url": "https://storage.googleapis.com/bucket/folder/",
-  "metadata_url": "https://storage.googleapis.com/bucket/folder/metadata.json",
-  "style_guide": {
-    "art_style": "anime japanese animation",
-    "title": "Dawn_of_Resolve",
-    "mood_keywords": ["determination", "hope"]
-  },
-  "total_scenes": 8,
-  "scenes": [
-    {
-      "filename": "scene_001_0-5.png",
-      "url": "https://storage.googleapis.com/...",
-      "start": 0,
-      "end": 5,
-      "duration": 5
-    }
-  ]
-}
-```
+## 일관성 보장 시스템
+
+### Imagen Generator의 일관성 기능
+- **main_character**: 모든 씬에서 동일한 캐릭터 묘사
+- **environment**: 일관된 배경/환경
+- **color_palette**: 통일된 색상 스키마
+- **lighting**: 동일한 조명 조건
+- **motion_hint**: 비디오 전환을 위한 움직임 힌트
+
+### Stability Video의 연속성 설정
+- **cfg_scale**: 이미지 충실도 (1.8 권장)
+- **motion_bucket_id**: 움직임 강도 (40 권장, 낮을수록 안정적)
 
 ---
 
@@ -80,53 +122,26 @@ Pipedream에서 사용할 수 있는 씬 이미지 생성 컴포넌트입니다.
 
 ```
 gs://scene-image-generator-storage-mcp-test-457809/
-  └── 20251126_abc123_Dawn_of_Resolve/
-      ├── scene_001_0-5.png
+  └── 20251128_abc123_Morning_Rise/
+      ├── scene_001_0-5.png       # 이미지
       ├── scene_002_5-10.png
-      ├── ...
-      └── metadata.json
+      ├── video_001_0-5.mp4       # 비디오
+      ├── video_002_5-10.mp4
+      ├── metadata.json           # 이미지 메타데이터
+      ├── video_metadata.json     # 비디오 메타데이터
+      └── final_shorts.mp4        # 최종 영상
 ```
 
 ---
 
-## metadata.json 구조
+## 비용 참고
 
-영상 제작 시 활용할 수 있는 메타데이터:
-
-```json
-{
-  "generated_at": "2025-11-26T07:54:49.614Z",
-  "folder": "20251126_abc123_Dawn_of_Resolve",
-  "style_guide": {
-    "art_style": "anime japanese animation",
-    "title": "Dawn_of_Resolve",
-    "character_description": "18-year-old Japanese male...",
-    "mood_keywords": ["determination", "hope"],
-    "color_palette": "warm, saturated tones"
-  },
-  "total_scenes": 8,
-  "scenes": [
-    {
-      "index": 0,
-      "filename": "scene_001_0-5.png",
-      "url": "https://storage.googleapis.com/...",
-      "start": 0,
-      "end": 5,
-      "duration": 5
-    }
-  ]
-}
-```
-
----
-
-## 워크플로우 예시
-
-```
-[Trigger] → [Scene Image Generator] → [Video Creator] → [Notify]
-```
-
-1. **Trigger**: 새 대본 입력 (Webhook, Spreadsheet 등)
-2. **Scene Image Generator**: 이미지 생성 및 GCS 업로드
-3. **Video Creator**: metadata.json URL로 영상 제작
-4. **Notify**: 완료 알림 (Slack, Email 등)
+| API | 예상 비용 (8장면 기준) |
+|-----|----------------------|
+| Gemini API (분석) | ~$0.01 |
+| Imagen 4 (이미지) | ~$0.31 (8 images @ $0.039/image) |
+| Stability AI (비디오) | ~$0.80 (8 videos) |
+| ElevenLabs | ~$0.10 |
+| Whisper | ~$0.02 |
+| Creatomate | ~$0.50 |
+| **총합** | **~$1.74/영상** |
