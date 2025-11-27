@@ -57,19 +57,15 @@ export default defineComponent({
       label: "Image Style",
       description: "Visual style for generated images",
       options: [
-        { label: "Ultra Realistic Photo (초고퀄 실사)", value: "ultra_realistic" },
-        { label: "Stock Photo (스톡 사진)", value: "stock_photo" },
-        { label: "Wildlife Photography (동물 사진)", value: "wildlife" },
-        { label: "Portrait Photography (인물 사진)", value: "portrait" },
-        { label: "Cinematic (시네마틱)", value: "cinematic" },
-        { label: "Photorealistic (실사)", value: "photorealistic" },
         { label: "Anime (アニメ)", value: "anime" },
+        { label: "Photorealistic (실사)", value: "photorealistic" },
         { label: "Digital Art (디지털 아트)", value: "digital_art" },
         { label: "Watercolor (수채화)", value: "watercolor" },
         { label: "3D Render (3D 렌더링)", value: "3d_render" },
         { label: "Oil Painting (유화)", value: "oil_painting" },
+        { label: "Cinematic (시네마틱)", value: "cinematic" },
       ],
-      default: "ultra_realistic",
+      default: "anime",
     },
   },
 
@@ -84,27 +80,6 @@ export default defineComponent({
 
     // 스타일 매핑
     const styleMap = {
-      // 초고퀄 실사 스타일들
-      ultra_realistic: {
-        name: "ultra realistic photography",
-        prefix: "ultra realistic photograph, hyper realistic, 8K UHD, RAW photo, extremely detailed, sharp focus, DSLR quality, Hasselblad quality, medium format camera, professional photography",
-        suffix: "natural lighting, photorealistic textures, real world photograph, National Geographic quality, award winning photography, ultra high resolution, incredible detail",
-      },
-      stock_photo: {
-        name: "professional stock photography",
-        prefix: "professional stock photo, high quality commercial photography, clean composition, perfect lighting, Getty Images quality, Shutterstock premium, advertising photography",
-        suffix: "studio lighting, clean background, commercial use ready, professional model photography, crisp details, high resolution stock image",
-      },
-      wildlife: {
-        name: "wildlife photography",
-        prefix: "professional wildlife photography, National Geographic style, nature documentary quality, telephoto lens shot, ultra detailed animal photograph, real animal photo, authentic wildlife",
-        suffix: "natural habitat, candid animal moment, BBC Earth quality, award winning wildlife photo, sharp fur detail, realistic animal features, nature photography masterpiece",
-      },
-      portrait: {
-        name: "portrait photography",
-        prefix: "professional portrait photography, studio portrait, Hasselblad medium format, 85mm lens, shallow depth of field, perfect skin detail, professional headshot",
-        suffix: "Rembrandt lighting, catchlights in eyes, natural skin texture, magazine cover quality, editorial portrait, high fashion photography",
-      },
       anime: {
         name: "anime japanese animation",
         prefix: "anime style, japanese animation, high quality anime art, detailed anime illustration",
@@ -142,7 +117,7 @@ export default defineComponent({
       },
     };
 
-    const selectedStyle = styleMap[this.image_style] || styleMap.ultra_realistic;
+    const selectedStyle = styleMap[this.image_style] || styleMap.anime;
     $.export("selected_style", this.image_style);
 
     const openai = new OpenAI({

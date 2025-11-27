@@ -13,21 +13,8 @@ export default defineComponent({
     },
     audio_url: {
       type: "string",
-      label: "Audio URL (Narration)",
-      description: "URL of the narration audio file (TTS)",
-    },
-    bgm_url: {
-      type: "string",
-      label: "BGM URL",
-      description: "URL of the background music file",
-      optional: true,
-    },
-    bgm_volume: {
-      type: "string",
-      label: "BGM Volume (%)",
-      description: "Background music volume (0-100). Recommended: 15-30 for narration videos",
-      default: "20",
-      optional: true,
+      label: "Audio URL",
+      description: "URL of the narration audio file",
     },
     subtitles: {
       type: "string",
@@ -141,35 +128,15 @@ export default defineComponent({
 
     $.export("debug_total_duration", totalDuration);
 
-    // 2. 나레이션 오디오 element 생성
-    const narrationElement = {
+    // 2. 오디오 element 생성
+    const audioElement = {
       type: "audio",
       source: this.audio_url,
       time: 0,
       duration: totalDuration,
-      volume: "100%",  // 나레이션은 100% 볼륨
     };
 
-    // 3. BGM 오디오 element 생성 (선택)
-    let bgmElement = null;
-    if (this.bgm_url) {
-      const bgmVolume = parseInt(this.bgm_volume || "20", 10);
-      bgmElement = {
-        type: "audio",
-        source: this.bgm_url,
-        time: 0,
-        duration: totalDuration,
-        volume: `${bgmVolume}%`,
-        // BGM이 영상보다 길면 잘림, 짧으면 반복
-        audio_loop: true,
-      };
-      $.export("bgm_applied", {
-        url: this.bgm_url,
-        volume: `${bgmVolume}%`,
-      });
-    }
-
-    // 4. 자막 elements 생성
+    // 3. 자막 elements 생성
     const subtitleElements = subtitles.map((sub) => ({
       type: "text",
       text: sub.text,
@@ -192,13 +159,7 @@ export default defineComponent({
       text_align: "center",
     }));
 
-    // 5. Creatomate 렌더링 요청
-    // 오디오 elements 배열 구성 (나레이션 + BGM)
-    const audioElements = [narrationElement];
-    if (bgmElement) {
-      audioElements.push(bgmElement);
-    }
-
+    // 4. Creatomate 렌더링 요청
     const renderRequest = {
       output_format: "mp4",
       source: {
@@ -209,7 +170,7 @@ export default defineComponent({
         duration: totalDuration,
         elements: [
           ...videoElements,
-          ...audioElements,
+          audioElement,
           ...subtitleElements,
         ],
       },
@@ -313,8 +274,6 @@ export default defineComponent({
       total_duration: totalDuration,
       video_count: videos.length,
       subtitle_count: subtitles.length,
-      has_bgm: !!this.bgm_url,
-      bgm_volume: this.bgm_url ? `${this.bgm_volume || 20}%` : null,
     };
   },
 });
