@@ -140,7 +140,7 @@ export default defineComponent({
     // 모델 우선순위: veo-3.0-fast-generate → veo-3.0-generate → (API Key 전환 후 재시도)
     const veoModels = [
       "veo-3.0-fast-generate-001",
-      "veo-3.0-generate-preview",
+      "veo-3.0-generate-001",
     ];
 
     const apiKeys = [this.gemini_api_key];
