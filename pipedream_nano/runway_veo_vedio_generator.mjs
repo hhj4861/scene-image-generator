@@ -102,7 +102,6 @@ export default defineComponent({
       description: "Backup API Key - 한도 초과 시 자동 전환",
       secret: true,
       optional: true,
-      default: "AIzaSyCUpTU6iWX81OvQU2eknDhXipEU86K40tA",
     },
 
     // GCS 설정
@@ -140,8 +139,8 @@ export default defineComponent({
     // =====================
     // 모델 우선순위: veo-3.0-fast-generate → veo-3.0-generate → (API Key 전환 후 재시도)
     const veoModels = [
-      "veo-3.0-fast-generate",  // 1순위: 빠른 생성
-      "veo-3.0-generate",       // 2순위: 일반 생성
+      "veo-3.0-fast-generate-001",
+      "veo-3.0-generate-preview",
     ];
 
     const apiKeys = [this.gemini_api_key];
@@ -240,8 +239,9 @@ export default defineComponent({
           let attempts = 0;
           const maxAttempts = 72; // 6분 (Veo는 최대 6분)
 
-          while (!videoUrl && attempts < maxAttempts) {
+          while (attempts < maxAttempts) {
             await new Promise(resolve => setTimeout(resolve, 5000));
+            attempts++;
 
             const statusResponse = await axios($, {
               method: "GET",
@@ -251,6 +251,7 @@ export default defineComponent({
               },
             });
 
+            // ★ done 체크를 먼저 하고, done이면 루프 탈출
             if (statusResponse.done) {
               if (statusResponse.error) {
                 throw new Error(`Veo failed: ${statusResponse.error.message}`);
@@ -280,6 +281,11 @@ export default defineComponent({
                 videoUrl = response.videos[0].gcsUri || response.videos[0].uri;
               }
 
+              // 형식 4: 직접 video 필드
+              if (!videoUrl && response?.video?.uri) {
+                videoUrl = response.video.uri;
+              }
+
               // gs:// URL을 https:// URL로 변환
               if (videoUrl && videoUrl.startsWith("gs://")) {
                 const gsMatch = videoUrl.match(/gs:\/\/([^/]+)\/(.+)/);
@@ -287,9 +293,16 @@ export default defineComponent({
                   videoUrl = `https://storage.googleapis.com/${gsMatch[1]}/${gsMatch[2]}`;
                 }
               }
+
+              // ★ done이면 무조건 루프 탈출 (videoUrl 있든 없든)
+              if (!videoUrl) {
+                // 디버깅: 응답 구조 확인
+                $.export(`veo_done_no_url_${sceneIndex}`, JSON.stringify(response).substring(0, 500));
+                throw new Error(`Veo completed but no video URL found. Response keys: ${Object.keys(response || {}).join(', ')}`);
+              }
+              break; // ★ 성공 시 루프 탈출
             }
 
-            attempts++;
             if (attempts % 6 === 0) {
               $.export(`veo_progress_${sceneIndex}`, `Waiting for Veo... (${attempts * 5}s)`);
             }
@@ -508,16 +521,28 @@ export default defineComponent({
       return promptParts.join(", ");
     };
 
-    $.export("status", `Generating ${images.length} video clips with Veo...`);
+    $.export("status", `Generating ${images.length} video clips with Veo (parallel)...`);
     $.export("motion_style", this.motion_style);
     $.export("content_type", this.content_type);
 
     // 통계
     const stats = { success: 0, failed: 0, models_used: {} };
 
-    // 각 이미지에 대해 영상 생성
-    for (let i = 0; i < images.length; i++) {
-      const image = images[i];
+    // GCS 업로드 준비 (한 번만 초기화)
+    const { google } = await import("googleapis");
+    const { Readable } = await import("stream");
+
+    const auth = new google.auth.GoogleAuth({
+      credentials: JSON.parse(this.google_cloud.$auth.key_json),
+      scopes: ['https://www.googleapis.com/auth/devstorage.read_write'],
+    });
+
+    const storage = google.storage({ version: 'v1', auth });
+
+    // =====================
+    // 병렬 처리 함수: 단일 영상 생성 + 업로드
+    // =====================
+    const processVideo = async (image, i) => {
       const prevImage = i > 0 ? images[i - 1] : null;
       const nextImage = i < images.length - 1 ? images[i + 1] : null;
 
@@ -525,18 +550,11 @@ export default defineComponent({
       const motionPrompt = generateMotionPrompt(image, i, images.length, prevImage, nextImage);
 
       try {
-        $.export(`prompt_${i}`, `Scene ${i + 1}: ${motionPrompt.substring(0, 80)}...`);
-
         // Veo로 비디오 생성 (모델/API Key fallback 포함)
         const result = await generateWithVeo(image.url, motionPrompt, i);
         const { videoUrl, model: usedModel, apiKeyIndex } = result;
 
-        stats.success++;
-        stats.models_used[usedModel] = (stats.models_used[usedModel] || 0) + 1;
-        $.export(`video_${i}_result`, `Generated with ${usedModel} (key ${apiKeyIndex + 1})`);
-
         // 영상 다운로드
-        // Veo URL은 API 키가 필요함 (generativelanguage.googleapis.com)
         const isVeoUrl = videoUrl.includes("generativelanguage.googleapis.com");
         const downloadApiKey = apiKeys[apiKeyIndex] || this.gemini_api_key;
         const downloadHeaders = isVeoUrl ? { "X-goog-api-key": downloadApiKey } : {};
@@ -551,19 +569,10 @@ export default defineComponent({
         const videoBuffer = Buffer.from(videoResponse);
         const filename = `video_${String(i + 1).padStart(3, '0')}_${image.start}-${image.end}.mp4`;
 
-        // 4. GCS 업로드
-        const { google } = await import("googleapis");
-        const { Readable } = await import("stream");
-
-        const auth = new google.auth.GoogleAuth({
-          credentials: JSON.parse(this.google_cloud.$auth.key_json),
-          scopes: ['https://www.googleapis.com/auth/devstorage.read_write'],
-        });
-
-        const storage = google.storage({ version: 'v1', auth });
+        // GCS 업로드
         const objectName = `${this.folder_name}/${filename}`;
 
-        const bufferStream = new Readable();
+        const bufferStream = new Readable({ read() {} });
         bufferStream.push(videoBuffer);
         bufferStream.push(null);
 
@@ -582,7 +591,8 @@ export default defineComponent({
 
         const gcsUrl = `https://storage.googleapis.com/${this.gcs_bucket_name}/${objectName}`;
 
-        generatedVideos.push({
+        return {
+          success: true,
           index: i,
           filename: filename,
           url: gcsUrl,
@@ -590,23 +600,69 @@ export default defineComponent({
           end: image.end,
           duration: image.end - image.start,
           motion_prompt: motionPrompt,
-          generated_by: usedModel, // 어떤 모델로 생성되었는지 기록
+          generated_by: usedModel,
           api_key_index: apiKeyIndex,
-        });
-
-        $.export(`video_${i}`, `Generated: ${filename} (${usedModel})`);
+        };
 
       } catch (error) {
-        stats.failed++;
         console.error(`Video ${i + 1} failed:`, error.message);
-        $.export(`error_${i}`, error.message);
+        return {
+          success: false,
+          index: i,
+          error: error.message,
+        };
       }
+    };
 
-      // Rate limit delay
-      if (i < images.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+    // =====================
+    // 병렬 처리 with Concurrency Limit
+    // API rate limit 고려하여 동시 3개씩 처리
+    // =====================
+    const CONCURRENCY_LIMIT = 3;
+
+    const processInBatches = async (items, processor, limit) => {
+      const results = [];
+      for (let i = 0; i < items.length; i += limit) {
+        const batch = items.slice(i, i + limit);
+        const batchIndices = batch.map((_, idx) => i + idx);
+
+        $.export(`batch_${Math.floor(i / limit) + 1}`,
+          `Processing scenes ${batchIndices.map(x => x + 1).join(', ')}...`);
+
+        const batchResults = await Promise.all(
+          batch.map((item, idx) => processor(item, i + idx))
+        );
+
+        results.push(...batchResults);
+
+        // 배치 간 딜레이 (rate limit 방지)
+        if (i + limit < items.length) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+      return results;
+    };
+
+    // 모든 영상 병렬 처리 실행
+    const results = await processInBatches(images, processVideo, CONCURRENCY_LIMIT);
+
+    // 결과 처리 (인덱스 순으로 정렬)
+    results.sort((a, b) => a.index - b.index);
+
+    for (const result of results) {
+      if (result.success) {
+        stats.success++;
+        stats.models_used[result.generated_by] = (stats.models_used[result.generated_by] || 0) + 1;
+        generatedVideos.push(result);
+        $.export(`video_${result.index}`, `Generated: ${result.filename} (${result.generated_by})`);
+      } else {
+        stats.failed++;
+        $.export(`error_${result.index}`, result.error);
       }
     }
+
+    // 결과 정렬 (인덱스 순서 보장)
+    generatedVideos.sort((a, b) => a.index - b.index);
 
     // 결과 요약
     const summaryParts = [`Generated ${generatedVideos.length}/${images.length} clips with Veo`];

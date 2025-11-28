@@ -5,6 +5,16 @@ export default defineComponent({
   description: "Generate viral, engaging scripts with unique angles and surprising facts (Gemini-powered)",
   type: "action",
   props: {
+    // =====================
+    // Topic Generator 연동 (선택)
+    // =====================
+    topic_generator_output: {
+      type: "string",
+      label: "Topic Generator Output (JSON) - Optional",
+      description: "Topic Generator의 출력. 사용시 topic/keywords 자동 설정. 사용: {{JSON.stringify(steps.Topic_Keyword_Generator.$return_value)}}",
+      optional: true,
+    },
+
     // Gemini API 설정
     gemini_api_key: {
       type: "string",
@@ -29,25 +39,26 @@ export default defineComponent({
     sample_shorts_url: {
       type: "string",
       label: "Sample Shorts URL (Optional)",
-      description: "참고할 쇼츠 링크 (예: https://youtube.com/shorts/xxxx) - 유사한 스타일로 대본 생성",
+      description: "참고할 쇼츠 링크 (예: https://youtube.com/shorts/xxxx) - 유사한 스타일로 대본/이미지스타일 생성",
       optional: true,
     },
     youtube_data_api: {
       type: "app",
       app: "youtube_data_api",
       description: "샘플 쇼츠 분석용 (sample_shorts_url 사용시 필요)",
-      optional: true,
+      // optional: true,
     },
-    // 주제 입력 (키워드보다 구체적)
+    // 주제 입력 (Topic Generator 사용시 자동 설정됨)
     topic: {
       type: "string",
       label: "Topic",
-      description: "구체적인 주제 (예: '시바견', '고양이 수면 패턴', '골든리트리버 성격')",
+      description: "구체적인 주제. Topic Generator 사용시 자동 설정됨",
+      optional: true,
     },
     keywords: {
       type: "string",
       label: "Additional Keywords (Optional)",
-      description: "추가 키워드 (콤마로 구분)",
+      description: "추가 키워드 (콤마로 구분). Topic Generator 사용시 자동 설정됨",
       optional: true,
     },
     // 바이럴 콘텐츠 앵글
@@ -144,26 +155,64 @@ export default defineComponent({
       description: "장면 설명 포함 여부 (이미지 생성용)",
       default: true,
     },
-    // 중복 방지 설정
-    google_cloud: {
-      type: "app",
-      app: "google_cloud",
-      description: "히스토리 저장용 GCS 연결 (중복 방지 기능 사용시 필요)",
-    },
-    gcs_bucket_name: {
+    // 등장인물 설정
+    character_image_url: {
       type: "string",
-      label: "GCS Bucket Name",
-      description: "히스토리 저장용 버킷 (중복 방지)",
-      default: "scene-image-generator-storage-mcp-test-457809",
+      label: "Character Image URL (Optional)",
+      description: "등장인물 참조 이미지 URL (이 이미지를 기반으로 캐릭터 생성). 입력하지 않으면 AI가 자동 생성",
+      optional: true,
     },
-    prevent_duplicate: {
-      type: "boolean",
-      label: "Prevent Duplicate Scripts",
-      description: "이전에 사용한 대본/키워드 중복 방지 (false로 설정하면 GCS 연결 없이도 동작)",
-      default: true,
+    character_name: {
+      type: "string",
+      label: "Character Name (Optional)",
+      description: "등장인물 이름 (예: '뽀삐', 'Max', 'モモ'). 입력하지 않으면 AI가 자동 생성",
+      optional: true,
     },
   },
   async run({ $ }) {
+    // =====================
+    // Topic Generator 출력 파싱 (있는 경우)
+    // =====================
+    let topicGenOutput = null;
+    let effectiveTopic = this.topic;
+    let effectiveKeywords = this.keywords;
+    let storyContext = null; // Topic Generator에서 전달된 스토리 컨텍스트
+
+    if (this.topic_generator_output) {
+      try {
+        topicGenOutput = typeof this.topic_generator_output === 'string'
+          ? JSON.parse(this.topic_generator_output)
+          : this.topic_generator_output;
+
+        // Topic Generator 출력에서 값 추출
+        effectiveTopic = this.topic || topicGenOutput.topic || topicGenOutput.selected?.topic;
+        effectiveKeywords = this.keywords || topicGenOutput.keywords || topicGenOutput.selected?.keywords;
+
+        // 스토리 컨텍스트 추출 (프롬프트에 사용)
+        storyContext = {
+          story_summary: topicGenOutput.story_summary || topicGenOutput.selected?.story_summary,
+          hook: topicGenOutput.hook || topicGenOutput.selected?.hook,
+          character_dynamics: topicGenOutput.character_dynamics || topicGenOutput.selected?.character_dynamics,
+          emotional_journey: topicGenOutput.emotional_journey || topicGenOutput.selected?.emotional_journey,
+          suggested_angle: topicGenOutput.suggested_angle || topicGenOutput.selected?.suggested_angle,
+        };
+
+        $.export("topic_generator_parsed", {
+          topic: effectiveTopic,
+          keywords: effectiveKeywords,
+          has_story_context: !!storyContext.story_summary,
+          suggested_angle: storyContext.suggested_angle,
+        });
+      } catch (e) {
+        $.export("topic_generator_parse_error", e.message);
+      }
+    }
+
+    // topic 필수 검증
+    if (!effectiveTopic) {
+      throw new Error("Topic is required. Either provide it directly or use Topic Generator output.");
+    }
+
     // 바이럴 콘텐츠 앵글 가이드 (핵심!)
     const angleGuides = {
       shocking_facts: {
@@ -393,39 +442,60 @@ export default defineComponent({
     const lang = languageConfig[this.language];
 
     // =====================
-    // 샘플 쇼츠 분석 (옵션)
+    // 병렬 분석: 샘플 쇼츠 + 캐릭터 이미지 동시 처리
     // =====================
-    let sampleAnalysis = null;
+
+    // Vision 분석용 빠른 모델 (Flash 사용으로 속도 향상)
+    const visionModel = this.gemini_model;
+
+    // 병렬 작업 정의
+    const parallelTasks = [];
+
+    // Task 1: 샘플 쇼츠 분석 (YouTube API + 썸네일 Vision 분석)
+    let sampleAnalysisPromise = null;
+    let videoId = null;
+
     if (this.sample_shorts_url && this.youtube_data_api) {
-      try {
-        // YouTube Shorts URL에서 video ID 추출
-        let videoId = null;
-        const shortsMatch = this.sample_shorts_url.match(/shorts\/([a-zA-Z0-9_-]+)/);
-        const watchMatch = this.sample_shorts_url.match(/[?&]v=([a-zA-Z0-9_-]+)/);
-        const shortUrlMatch = this.sample_shorts_url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+      const shortsMatch = this.sample_shorts_url.match(/shorts\/([a-zA-Z0-9_-]+)/);
+      const watchMatch = this.sample_shorts_url.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+      const shortUrlMatch = this.sample_shorts_url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
 
-        if (shortsMatch) videoId = shortsMatch[1];
-        else if (watchMatch) videoId = watchMatch[1];
-        else if (shortUrlMatch) videoId = shortUrlMatch[1];
+      if (shortsMatch) videoId = shortsMatch[1];
+      else if (watchMatch) videoId = watchMatch[1];
+      else if (shortUrlMatch) videoId = shortUrlMatch[1];
 
-        if (videoId) {
-          // YouTube Data API로 영상 정보 가져오기
-          const videoResponse = await axios($, {
-            url: "https://www.googleapis.com/youtube/v3/videos",
-            headers: {
-              Authorization: `Bearer ${this.youtube_data_api.$auth.oauth_access_token}`,
-            },
-            params: {
-              part: "snippet,statistics,contentDetails",
-              id: videoId,
-            },
-          });
+      if (videoId) {
+        sampleAnalysisPromise = (async () => {
+          try {
+            // 1단계: YouTube API 병렬 호출 (video info + channel videos 동시)
+            const thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
 
-          if (videoResponse.items && videoResponse.items.length > 0) {
+            const [videoResponse, thumbnailResponse] = await Promise.all([
+              axios($, {
+                url: "https://www.googleapis.com/youtube/v3/videos",
+                headers: {
+                  Authorization: `Bearer ${this.youtube_data_api.$auth.oauth_access_token}`,
+                },
+                params: {
+                  part: "snippet,statistics,contentDetails",
+                  id: videoId,
+                },
+              }),
+              axios($, {
+                method: "GET",
+                url: thumbnailUrl,
+                responseType: "arraybuffer",
+              }).catch(() => null), // 썸네일 실패해도 계속 진행
+            ]);
+
+            if (!videoResponse.items || videoResponse.items.length === 0) {
+              return null;
+            }
+
             const video = videoResponse.items[0];
 
-            // 채널의 다른 인기 영상도 가져오기
-            const channelVideosResponse = await axios($, {
+            // 2단계: 채널 영상 조회 + Vision 분석 병렬 실행
+            const channelVideosPromise = axios($, {
               url: "https://www.googleapis.com/youtube/v3/search",
               headers: {
                 Authorization: `Bearer ${this.youtube_data_api.$auth.oauth_access_token}`,
@@ -437,9 +507,92 @@ export default defineComponent({
                 maxResults: 5,
                 type: "video",
               },
-            });
+            }).catch(() => ({ items: [] }));
 
-            sampleAnalysis = {
+            let visionPromise = Promise.resolve(null);
+            if (thumbnailResponse) {
+              const thumbnailBase64 = Buffer.from(thumbnailResponse).toString("base64");
+              visionPromise = axios($, {
+                url: `https://generativelanguage.googleapis.com/v1beta/models/${visionModel}:generateContent`,
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "x-goog-api-key": this.gemini_api_key,
+                },
+                data: {
+                  contents: [{
+                    parts: [
+                      {
+                        text: `Analyze this YouTube Shorts thumbnail image and extract the visual style information for AI image generation.
+
+Return a JSON object with these fields:
+{
+  "image_style": "3d_render/anime/photorealistic/digital_art/watercolor/oil_painting/cinematic",
+  "character_type": "description of main character (e.g., 'cute white fluffy dog like Bichon Frise')",
+  "character_style": "anthropomorphized/realistic/cartoon/chibi",
+  "character_features": ["wearing clothes", "human-like pose", "holding objects", etc.],
+  "background_type": "indoor/outdoor/abstract/studio",
+  "background_description": "detailed background description",
+  "color_palette": "warm/cool/pastel/vibrant/muted",
+  "lighting": "soft/dramatic/natural/studio",
+  "mood": "cute/funny/emotional/dramatic/calm",
+  "special_elements": ["microphone", "food", "props", etc.],
+  "text_overlay_style": "description of text style if present",
+  "aspect_ratio": "9:16 for shorts",
+  "quality_keywords": ["high detail", "soft focus", "bokeh", etc.],
+  "negative_prompts": ["things to avoid in generation"]
+}
+
+Return ONLY valid JSON, no markdown.`
+                      },
+                      {
+                        inline_data: {
+                          mime_type: "image/jpeg",
+                          data: thumbnailBase64
+                        }
+                      }
+                    ]
+                  }],
+                  generationConfig: {
+                    temperature: 0.3,
+                    maxOutputTokens: 2048,
+                  },
+                },
+              }).catch(() => null);
+            }
+
+            const [channelVideosResponse, visionResponse] = await Promise.all([
+              channelVideosPromise,
+              visionPromise,
+            ]);
+
+            // Vision 결과 파싱
+            let imageStyleAnalysis = null;
+            if (visionResponse) {
+              try {
+                let styleContent = visionResponse.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+                if (styleContent) {
+                  if (styleContent.startsWith("```json")) {
+                    styleContent = styleContent.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+                  } else if (styleContent.startsWith("```")) {
+                    styleContent = styleContent.replace(/^```\s*/, "").replace(/\s*```$/, "");
+                  }
+                  const jsonMatch = styleContent.match(/\{[\s\S]*\}/);
+                  if (jsonMatch) {
+                    imageStyleAnalysis = JSON.parse(jsonMatch[0]);
+                  }
+                }
+              } catch (e) {
+                // Vision 파싱 실패는 무시
+              }
+            }
+
+            const finalThumbnailUrl = video.snippet.thumbnails?.maxres?.url ||
+                                      video.snippet.thumbnails?.high?.url ||
+                                      video.snippet.thumbnails?.medium?.url ||
+                                      thumbnailUrl;
+
+            return {
               video_id: videoId,
               title: video.snippet.title,
               description: video.snippet.description,
@@ -449,85 +602,181 @@ export default defineComponent({
               like_count: video.statistics?.likeCount,
               comment_count: video.statistics?.commentCount,
               duration: video.contentDetails?.duration,
+              thumbnail_url: finalThumbnailUrl,
+              image_style: imageStyleAnalysis,
               channel_top_videos: channelVideosResponse.items?.map(v => ({
                 title: v.snippet.title,
                 description: v.snippet.description?.substring(0, 200),
               })) || [],
             };
-
-            $.export("sample_analysis", `분석 완료: "${video.snippet.title}" (조회수: ${video.statistics?.viewCount})`);
+          } catch (e) {
+            $.export("sample_analysis_error", e.message);
+            return null;
           }
-        }
-      } catch (e) {
-        $.export("sample_analysis_error", e.message);
+        })();
+        parallelTasks.push(sampleAnalysisPromise);
       }
     }
 
-    // =====================
-    // 중복 체크 로직
-    // =====================
-    const HISTORY_FILE = "_script_history.json";
-    let scriptHistory = { scripts: [], keywords_used: [] };
-    let isDuplicate = false;
+    // Task 2: 캐릭터 이미지 분석
+    let characterAnalysisPromise = null;
 
-    if (this.prevent_duplicate && this.google_cloud) {
-      try {
-        const { google } = await import("googleapis");
-        const auth = new google.auth.GoogleAuth({
-          credentials: JSON.parse(this.google_cloud.$auth.key_json),
-          scopes: ['https://www.googleapis.com/auth/devstorage.read_write'],
-        });
-        const storage = google.storage({ version: 'v1', auth });
-
-        // 히스토리 파일 로드 시도
+    if (this.character_image_url) {
+      characterAnalysisPromise = (async () => {
         try {
-          const response = await storage.objects.get({
-            bucket: this.gcs_bucket_name,
-            object: HISTORY_FILE,
-            alt: 'media',
+          // 이미지 다운로드 + Vision 분석 순차 실행 (이미지 필요)
+          const characterImageResponse = await axios($, {
+            method: "GET",
+            url: this.character_image_url,
+            responseType: "arraybuffer",
           });
-          scriptHistory = response.data;
-          $.export("history_loaded", `Loaded ${scriptHistory.scripts?.length || 0} previous scripts`);
-        } catch (e) {
-          // 히스토리 파일이 없으면 새로 생성
-          $.export("history_status", "No history file found, will create new one");
-        }
+          const characterImageBase64 = Buffer.from(characterImageResponse).toString("base64");
 
-        // 키워드 중복 체크 (topic + keywords + angle 조합)
-        const topicKey = (this.topic || '').toLowerCase().trim();
-        const currentKeywords = (this.keywords || '').toLowerCase().split(',').map(k => k.trim()).sort().join(',');
-        const keywordKey = `${topicKey}|${currentKeywords}|${this.content_angle}|${this.content_style}|${this.language}`;
+          const characterVisionResponse = await axios($, {
+            url: `https://generativelanguage.googleapis.com/v1beta/models/${visionModel}:generateContent`,
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-goog-api-key": this.gemini_api_key,
+            },
+            data: {
+              contents: [{
+                parts: [
+                  {
+                    text: `Analyze this character/subject image for AI image generation reference.
+This character will be used as the main subject in all generated scenes.
 
-        // 같은 조합이 몇 번 사용되었는지 카운트
-        const usageCount = scriptHistory.keywords_used?.filter(k => k === keywordKey).length || 0;
-        if (usageCount > 0) {
-          isDuplicate = true;
-          $.export("duplicate_info", `ℹ️ Topic "${this.topic}" + Angle "${this.content_angle}" used ${usageCount} time(s) before. Generating variation #${usageCount + 1}`);
+Return a JSON object with these fields:
+{
+  "character_type": "type of subject (e.g., 'dog', 'cat', 'person', 'mascot')",
+  "species_breed": "specific breed or type if applicable (e.g., 'Shiba Inu', 'Persian cat')",
+  "appearance": {
+    "size": "small/medium/large",
+    "body_shape": "description of body shape",
+    "fur_hair_color": "main color(s)",
+    "fur_hair_texture": "fluffy/smooth/curly/short",
+    "distinctive_features": ["list of distinctive features"],
+    "face_description": "detailed face description",
+    "eye_color": "eye color",
+    "expression_style": "typical expression style"
+  },
+  "style_keywords": ["keywords for consistent generation"],
+  "clothing_accessories": ["any clothing or accessories if present"],
+  "personality_impression": "personality impression from the image",
+  "pose_suggestion": ["suggested poses that would suit this character"],
+  "image_generation_prompt": "A detailed prompt segment to consistently generate this character",
+  "negative_prompts": ["things to avoid to maintain consistency"]
+}
+
+Return ONLY valid JSON, no markdown.`
+                  },
+                  {
+                    inline_data: {
+                      mime_type: "image/jpeg",
+                      data: characterImageBase64
+                    }
+                  }
+                ]
+              }],
+              generationConfig: {
+                temperature: 0.3,
+                maxOutputTokens: 2048,
+              },
+            },
+          });
+
+          let characterContent = characterVisionResponse.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+          if (characterContent) {
+            if (characterContent.startsWith("```json")) {
+              characterContent = characterContent.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+            } else if (characterContent.startsWith("```")) {
+              characterContent = characterContent.replace(/^```\s*/, "").replace(/\s*```$/, "");
+            }
+            const jsonMatch = characterContent.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+              let jsonStr = jsonMatch[0];
+              let result;
+              try {
+                result = JSON.parse(jsonStr);
+              } catch (parseError) {
+                // JSON 파싱 실패 시 복구 시도
+                jsonStr = jsonStr.replace(/,\s*([}\]])/g, '$1');
+                jsonStr = jsonStr.replace(/[\n\r]/g, ' ');
+                jsonStr = jsonStr.replace(/(?<!\\)"\s*:\s*"([^"]*?)(?<!\\)"\s*([^,}\]])/g, '": "$1", $2');
+
+                try {
+                  result = JSON.parse(jsonStr);
+                } catch (secondError) {
+                  result = {
+                    parse_failed: true,
+                    raw_response: jsonMatch[0].substring(0, 500),
+                  };
+                }
+              }
+
+              if (result) {
+                result.name = this.character_name || null;
+                result.reference_image_url = this.character_image_url;
+              }
+              return result;
+            }
+          }
+          return null;
+        } catch (characterError) {
+          $.export("character_analysis_error", characterError.message);
+          if (this.character_name) {
+            return {
+              name: this.character_name,
+              reference_image_url: this.character_image_url,
+              analysis_failed: true,
+            };
+          }
+          return null;
         }
-      } catch (e) {
-        $.export("history_error", e.message);
+      })();
+      parallelTasks.push(characterAnalysisPromise);
+    }
+
+    // 모든 병렬 작업 실행 및 결과 수집
+    let sampleAnalysis = null;
+    let characterAnalysis = null;
+
+    if (parallelTasks.length > 0) {
+      const results = await Promise.all(parallelTasks);
+
+      // 결과 할당 (순서 보장)
+      let resultIndex = 0;
+      if (sampleAnalysisPromise) {
+        sampleAnalysis = results[resultIndex++];
+        if (sampleAnalysis) {
+          $.export("sample_analysis", `분석 완료: "${sampleAnalysis.title}" (조회수: ${sampleAnalysis.view_count})`);
+        }
+      }
+      if (characterAnalysisPromise) {
+        characterAnalysis = results[resultIndex++];
+        if (characterAnalysis) {
+          $.export("character_analysis", `캐릭터 분석 완료: ${characterAnalysis?.character_type || 'Unknown'} - ${characterAnalysis?.species_breed || ''}`);
+        }
       }
     }
 
-    // 예상 글자수 계산
+    // 캐릭터 이미지 없이 이름만 입력된 경우
+    if (!characterAnalysis && this.character_name) {
+      characterAnalysis = {
+        name: this.character_name,
+        character_type: "to_be_generated",
+        note: "AI will generate character appearance based on topic and style",
+      };
+      $.export("character_info", `캐릭터 이름 설정: ${this.character_name}`);
+    }
+
+    // 예상 글자수 계산 (최소 기준 - AI가 더 길게 쓸 수 있음)
     const estimatedChars = this.duration_seconds * lang.chars_per_second;
     const sceneCount = Math.ceil(this.duration_seconds / 5); // 5초당 1장면
 
     // 앵글 가이드 가져오기
     const angle = angleGuides[this.content_angle] || angleGuides.shocking_facts;
-    const topicForPrompt = this.topic || this.keywords || "반려동물";
-
-    // 중복인 경우 이전 대본들의 제목을 가져와서 AI에게 전달
-    let previousScripts = [];
-    if (isDuplicate && scriptHistory.scripts) {
-      const currentKeywords = (this.keywords || '').toLowerCase().split(',').map(k => k.trim()).sort().join(',');
-      previousScripts = scriptHistory.scripts
-        .filter(s => {
-          const sKeywords = (s.keywords || '').toLowerCase().split(',').map(k => k.trim()).sort().join(',');
-          return sKeywords === currentKeywords && s.content_style === this.content_style;
-        })
-        .map(s => s.title?.japanese || s.title?.korean || 'Unknown');
-    }
+    const topicForPrompt = effectiveTopic || effectiveKeywords || "반려동물";
 
     // 샘플 분석 섹션 생성
     const sampleAnalysisSection = sampleAnalysis ? `
@@ -551,10 +800,50 @@ ${sampleAnalysis.channel_top_videos?.map((v, i) => `${i + 1}. "${v.title}"`).joi
 - Apply the same engagement triggers
 ` : '';
 
+    // 등장인물 섹션 생성
+    const characterSection = characterAnalysis ? `
+## 🎭 MAIN CHARACTER (MUST USE IN ALL SCENES):
+${characterAnalysis.name ? `**Character Name: "${characterAnalysis.name}"** - Use this name in the script when referring to the character.` : 'AI will generate an appropriate name for the character.'}
+
+${characterAnalysis.image_generation_prompt ? `### Character Description (for consistent image generation):
+${characterAnalysis.image_generation_prompt}` : ''}
+
+${characterAnalysis.appearance ? `### Character Appearance:
+- Type: ${characterAnalysis.character_type || 'N/A'}
+- Breed/Species: ${characterAnalysis.species_breed || 'N/A'}
+- Size: ${characterAnalysis.appearance.size || 'N/A'}
+- Color: ${characterAnalysis.appearance.fur_hair_color || 'N/A'}
+- Texture: ${characterAnalysis.appearance.fur_hair_texture || 'N/A'}
+- Face: ${characterAnalysis.appearance.face_description || 'N/A'}
+- Eye Color: ${characterAnalysis.appearance.eye_color || 'N/A'}
+- Distinctive Features: ${characterAnalysis.appearance.distinctive_features?.join(', ') || 'N/A'}` : ''}
+
+${characterAnalysis.style_keywords ? `### Style Keywords for Generation:
+${characterAnalysis.style_keywords.join(', ')}` : ''}
+
+${characterAnalysis.personality_impression ? `### Character Personality:
+${characterAnalysis.personality_impression}` : ''}
+
+### ⚠️ IMPORTANT CHARACTER RULES:
+1. This character MUST appear in EVERY scene description
+2. Keep the character's appearance CONSISTENT across all scenes
+3. ${characterAnalysis.name ? `Use the name "${characterAnalysis.name}" in narration when appropriate` : 'Generate a fitting name for this character and use it in the script'}
+4. Reference the character's distinctive features in scene descriptions
+5. Adapt poses and expressions to match each scene's emotion while maintaining character identity
+` : `
+## 🎭 CHARACTER (AI GENERATED):
+No reference character provided. Please create an appropriate main character that fits the topic and content style.
+- Generate a memorable character with distinctive features
+- Create a fitting name for the character
+- Keep the character consistent across all scenes
+- The character should be visually appealing for the target audience
+`;
+
     const prompt = `You are an expert viral content creator specializing in YouTube Shorts that get millions of views.
 
 ## 🎯 TOPIC: "${topicForPrompt}"
 ${sampleAnalysisSection}
+${characterSection}
 ## 📐 CONTENT ANGLE (CRITICAL - FOLLOW THIS EXACTLY):
 - Type: ${this.content_angle}
 - Hook Template: "${angle.hook_template.replace('{topic}', topicForPrompt)}"
@@ -575,11 +864,36 @@ ${angle.avoid.map(av => `- "${av}"`).join('\n')}
 - Language: ${lang.name}
 - Estimated characters: ~${estimatedChars} characters
 - Number of scenes: ${sceneCount}
-${this.keywords ? `- Additional Keywords: ${this.keywords}` : ''}
-${isDuplicate ? `
-## ⚠️ DUPLICATE WARNING - CREATE COMPLETELY DIFFERENT VERSION:
-Previous scripts with similar topic: ${previousScripts.join(', ')}
-You MUST create entirely different content - different facts, different angle, different story.
+${effectiveKeywords ? `- Additional Keywords: ${effectiveKeywords}` : ''}
+${storyContext?.story_summary ? `
+## 📖 STORY CONTEXT (from Topic Generator):
+- **Story Summary**: ${storyContext.story_summary}
+- **Suggested Hook**: ${storyContext.hook || 'Create your own hook'}
+- **Character Dynamics**: ${storyContext.character_dynamics || 'Develop naturally'}
+- **Emotional Journey**: ${storyContext.emotional_journey || 'Build emotional arc'}
+` : ''}
+${(storyContext?.story_summary && characterAnalysis) ? `
+## 🔄 CONFLICT RESOLUTION (CRITICAL - READ CAREFULLY):
+There may be a conflict between the Topic/Story and the Character Image provided.
+
+**Topic/Keywords suggest**: "${topicForPrompt}" / "${effectiveKeywords || ''}"
+**Character Image shows**: "${characterAnalysis.character_type || 'unknown'}" - "${characterAnalysis.species_breed || characterAnalysis.appearance?.fur_hair_color || 'N/A'}"
+
+### ⚠️ IF THERE IS A MISMATCH (e.g., topic says "cat" but image is a "dog"):
+1. **ADAPT the story** to fit the ACTUAL CHARACTER from the image
+2. **KEEP the story structure and emotional journey** from the topic
+3. **REPLACE the mismatched animal/character** with the one from the image
+4. **PRESERVE the core concept** (e.g., "vs 로봇청소기", "냥펀치" → "멍펀치")
+
+### Example Adaptation:
+- Topic: "고양이 vs 로봇청소기" + Image: Shiba Inu dog
+- Result: "시바견 vs 로봇청소기" - same story structure, different protagonist
+- "냥펀치" → "멍발차기" or similar dog-appropriate action
+
+### PRIORITY ORDER:
+1. **Character from Image** (visual consistency is most important for video)
+2. **Story Structure from Topic** (keep the narrative arc)
+3. **Adapt keywords** to match the actual character
 ` : ''}
 
 ## 🔥 VIRAL CONTENT RULES (MANDATORY):
@@ -638,6 +952,11 @@ For each scene (approximately every 5 seconds), provide:
   },
   "hook": "First 2 seconds - attention grabber",
   "full_script": "Complete narration script in ${lang.name}",
+  "character": {
+    "name": "${characterAnalysis?.name || 'Generate a fitting name'}",
+    "description": "Brief character description for consistency",
+    "appearance_prompt": "Detailed prompt to generate this character consistently in every scene (include species, color, size, distinctive features)"
+  },
   "script_segments": [
     {
       "segment_number": 1,
@@ -645,20 +964,28 @@ For each scene (approximately every 5 seconds), provide:
       "end_time": 5,
       "narration": "Narration text for this segment",
       "emotion_note": "How to deliver this part",
-      ${this.include_scenes ? '"scene_description": "Detailed visual description for image generation - anime style, character details, background, mood, lighting",' : ""}
+      "scene_type": "narration or action - 'narration' if character is speaking/talking to camera, 'action' if character is doing something without speaking directly",
+      ${this.include_scenes ? '"scene_description": "Detailed visual description for image generation - MUST include the main character with consistent appearance, anime style, background, mood, lighting",' : ""}
       "visual_keywords": ["keyword1", "keyword2"]
     }
   ],
   "hashtags": {
     "japanese": ["#shorts", "#日本語ハッシュタグ"],
+    "korean": ["#shorts", "#쇼츠", "#한국어해시태그"],
     "english": ["#shorts", "#EnglishHashtags"]
   },
-  "thumbnail_idea": "Thumbnail concept description",
+  "thumbnail_prompt": "Detailed image generation prompt for thumbnail - MUST include the main character, eye-catching, vertical 9:16 format, dramatic lighting, text-free composition",
   "music_suggestion": "Background music style recommendation",
   "total_duration": ${this.duration_seconds},
   "character_count": "actual character count",
   "target_audience": "Target audience description",
-  "viral_elements": ["Element 1", "Element 2"]
+  "viral_elements": ["Element 1", "Element 2"],
+  "adaptation_notes": {
+    "had_conflict": true/false,
+    "original_topic": "Original topic if adapted",
+    "adapted_to": "What it was adapted to (if applicable)",
+    "changes_made": ["List of adaptations made to resolve conflicts"]
+  }
 }
 
 Create an emotionally engaging script that will resonate with Japanese YouTube Shorts viewers. Make it memorable and shareable.
@@ -716,12 +1043,72 @@ Return ONLY valid JSON, no markdown formatting.`;
       throw new Error(`Failed to parse Gemini response: ${error.message}`);
     }
 
+    // =====================
+    // 실제 스크립트 길이 기반 영상 길이 재계산
+    // =====================
+    const actualScriptLength = script.full_script?.length || 0;
+    const actualDurationSeconds = Math.ceil(actualScriptLength / lang.chars_per_second);
+
+    // 스크립트 길이에 맞게 segment 타이밍 재조정
+    if (script.script_segments && script.script_segments.length > 0) {
+      const totalNarrationLength = script.script_segments.reduce((sum, seg) => {
+        return sum + (seg.narration?.length || 0);
+      }, 0);
+
+      // 1차: 각 segment의 비율 기반 duration 계산
+      const segmentDurations = script.script_segments.map(seg => {
+        const segmentLength = seg.narration?.length || 0;
+        const rawDuration = totalNarrationLength > 0
+          ? (segmentLength / totalNarrationLength) * actualDurationSeconds
+          : actualDurationSeconds / script.script_segments.length;
+        return Math.max(rawDuration, 2); // 최소 2초
+      });
+
+      // 2차: 실제 총 duration 계산 (segment 합계)
+      const actualTotalDuration = Math.ceil(segmentDurations.reduce((sum, d) => sum + d, 0));
+
+      // 3차: segment에 시간 할당
+      let currentTime = 0;
+      script.script_segments = script.script_segments.map((seg, idx) => {
+        const segmentDuration = Math.ceil(segmentDurations[idx]);
+        const startTime = currentTime;
+        const endTime = currentTime + segmentDuration;
+        currentTime = endTime;
+
+        return {
+          ...seg,
+          segment_number: idx + 1,
+          start_time: startTime,
+          end_time: endTime,
+          duration: segmentDuration,
+        };
+      });
+
+      // ★ total_duration = 모든 segment duration의 합 (정확히 일치)
+      script.total_duration = currentTime;
+    } else {
+      script.total_duration = actualDurationSeconds;
+    }
+
+    // segment 합계 검증
+    const segmentDurationSum = script.script_segments?.reduce((sum, seg) => sum + (seg.duration || 0), 0) || 0;
+
+    $.export("script_length_info", {
+      input_duration: this.duration_seconds,
+      actual_script_chars: actualScriptLength,
+      calculated_duration: actualDurationSeconds,
+      segment_duration_sum: segmentDurationSum,
+      final_duration: script.total_duration,
+      duration_match: segmentDurationSum === script.total_duration,
+      segment_count: script.script_segments?.length || 0,
+    });
+
     // folder_name 생성 (모든 Step에서 공유)
     const { v4: uuidv4 } = await import("uuid");
     const now = new Date();
     const dateStr = now.toISOString().split('T')[0].replace(/-/g, '');
     const shortUuid = uuidv4().split('-')[0];
-    const safeTitle = (script.title?.english || script.title?.japanese || this.topic || 'shorts')
+    const safeTitle = (script.title?.english || script.title?.japanese || effectiveTopic || 'shorts')
       .replace(/[^a-zA-Z0-9_\s]/g, '')
       .replace(/\s+/g, '_')
       .substring(0, 30);
@@ -741,36 +1128,100 @@ Return ONLY valid JSON, no markdown formatting.`;
       // 전체 스크립트 텍스트 (TTS용)
       script_text: script.full_script,
 
+      // ★ 스크립트 길이 기반 영상/음성 길이 정보 (핵심!)
+      duration_info: {
+        input_duration: this.duration_seconds,           // 입력된 목표 길이
+        script_char_count: actualScriptLength,           // 실제 스크립트 글자수
+        chars_per_second: lang.chars_per_second,         // 언어별 초당 글자수
+        calculated_duration: actualDurationSeconds,       // 스크립트 기반 계산된 길이
+        final_duration: script.total_duration,           // 최종 영상 길이 (이 값 사용!)
+        segment_count: script.script_segments?.length || 0,
+      },
+      // 영상/BGM/TTS 길이에 사용할 최종 duration (초)
+      total_duration_seconds: script.total_duration,
+
       // YouTube Upload용 (최상위 레벨로 복사)
       title: script.title,
       hashtags: script.hashtags,
 
+      // 샘플 영상 분석 결과 (있는 경우)
+      sample_analysis: sampleAnalysis,
+
+      // 이미지 생성용 스타일 가이드 (샘플 영상 기반 + 캐릭터 정보)
+      image_style_guide: {
+        // 샘플 영상에서 분석된 이미지 스타일 (있는 경우)
+        ...(sampleAnalysis?.image_style || {}),
+        // 샘플 영상 참조 정보
+        reference_video: sampleAnalysis ? {
+          title: sampleAnalysis.title,
+          channel: sampleAnalysis.channel_title,
+          thumbnail_url: sampleAnalysis.thumbnail_url,
+        } : null,
+        // ★ 등장인물 정보 (핵심! - 이미지 생성 시 반드시 참조)
+        character: {
+          // 입력된 캐릭터 분석 정보
+          ...(characterAnalysis || {}),
+          // AI가 생성한 캐릭터 정보 (스크립트에서)
+          generated: script.character || null,
+          // 통합 프롬프트 (이미지 생성 시 사용)
+          prompt: characterAnalysis?.image_generation_prompt || script.character?.appearance_prompt || null,
+          // 캐릭터 이름
+          name: characterAnalysis?.name || script.character?.name || null,
+        },
+      },
+
+      // 등장인물 분석 결과 (별도 필드로도 제공)
+      character_info: characterAnalysis,
+
       // 입력 파라미터
       input: {
-        topic: this.topic,
-        keywords: this.keywords,
+        topic: effectiveTopic,
+        keywords: effectiveKeywords,
         content_angle: this.content_angle,
         content_style: this.content_style,
         target_emotion: this.target_emotion,
         duration: this.duration_seconds,
         language: this.language,
         voice_style: this.voice_style,
+        character_image_url: this.character_image_url || null,
+        character_name: this.character_name || null,
+        // Topic Generator 사용 여부
+        from_topic_generator: !!topicGenOutput,
       },
+
+      // Topic Generator 정보 (사용한 경우)
+      topic_generator_info: topicGenOutput ? {
+        story_summary: storyContext?.story_summary,
+        hook: storyContext?.hook,
+        character_dynamics: storyContext?.character_dynamics,
+        emotional_journey: storyContext?.emotional_journey,
+      } : null,
 
       // 생성된 스크립트
       script: script,
 
       // 파이프라인 연동용 데이터
       pipeline_data: {
+        // ★ 총 영상 길이 (모든 컴포넌트에서 이 값 사용)
+        total_duration_seconds: script.total_duration,
+
         // scene-image-generator 연동용
         image_generation: {
+          // style_guide는 최상위 image_style_guide 사용 (중복 제거)
+          // ★ 캐릭터 프롬프트 (모든 장면에 일관되게 적용)
+          character_prompt: characterAnalysis?.image_generation_prompt || script.character?.appearance_prompt || null,
+          character_name: characterAnalysis?.name || script.character?.name || null,
           scenes: script.script_segments?.map((seg, idx) => ({
             index: idx + 1,
             start: seg.start_time,
             end: seg.end_time,
+            duration: seg.end_time - seg.start_time,
             prompt: seg.scene_description || `Scene ${idx + 1}: ${seg.visual_keywords?.join(", ")}`,
             image_prompt: seg.scene_description || seg.visual_keywords?.join(", "),
-            style: "ultra realistic photography, high quality, detailed",
+            // ★ 씬 타입: narration(Hedra 립싱크) / action(Veo 모션)
+            scene_type: seg.scene_type || "narration",
+            // 나레이션 텍스트 (Hedra TTS용)
+            narration: seg.narration,
           })) || [],
         },
 
@@ -781,12 +1232,32 @@ Return ONLY valid JSON, no markdown formatting.`;
           voice_style: this.voice_style,
         },
 
+        // BGM Generator 연동용
+        bgm: {
+          mood: this.target_emotion,
+          content_style: this.content_style,
+          music_suggestion: script.music_suggestion,
+        },
+
         // 메타데이터
         metadata: {
           title: script.title,
           hashtags: script.hashtags,
-          thumbnail: script.thumbnail_idea,
+          // 썸네일용 이미지 프롬프트 (첫 번째 장면 기반)
+          thumbnail: script.thumbnail_prompt || script.script_segments?.[0]?.scene_description || script.thumbnail_idea,
           music: script.music_suggestion,
+        },
+
+        // Creatomate/Video Render 연동용
+        video: {
+          segment_count: script.script_segments?.length || 0,
+          segments: script.script_segments?.map((seg, idx) => ({
+            index: idx + 1,
+            start: seg.start_time,
+            end: seg.end_time,
+            duration: seg.end_time - seg.start_time,
+            narration: seg.narration,
+          })) || [],
         },
       },
 
@@ -795,69 +1266,8 @@ Return ONLY valid JSON, no markdown formatting.`;
     };
 
     $.export("$summary",
-      `스크립트 생성: "${script.title?.korean || script.title?.japanese}" [${this.content_angle}] - ${script.script_segments?.length || 0}장면`
+      `스크립트 생성: "${script.title?.korean || script.title?.japanese}" [${this.content_angle}] - ${script.script_segments?.length || 0}장면, ${actualScriptLength}자, ${script.total_duration}초`
     );
-
-    // =====================
-    // 히스토리 저장
-    // =====================
-    if (this.prevent_duplicate && this.google_cloud) {
-      try {
-        const { google } = await import("googleapis");
-        const { Readable } = await import("stream");
-
-        const auth = new google.auth.GoogleAuth({
-          credentials: JSON.parse(this.google_cloud.$auth.key_json),
-          scopes: ['https://www.googleapis.com/auth/devstorage.read_write'],
-        });
-        const storage = google.storage({ version: 'v1', auth });
-
-        // 현재 키워드 키 생성 (topic + keywords + angle 조합)
-        const topicKey = (this.topic || '').toLowerCase().trim();
-        const currentKeywords = (this.keywords || '').toLowerCase().split(',').map(k => k.trim()).sort().join(',');
-        const keywordKey = `${topicKey}|${currentKeywords}|${this.content_angle}|${this.content_style}|${this.language}`;
-
-        // 히스토리 업데이트
-        if (!scriptHistory.scripts) scriptHistory.scripts = [];
-        if (!scriptHistory.keywords_used) scriptHistory.keywords_used = [];
-
-        scriptHistory.scripts.push({
-          topic: this.topic,
-          keywords: this.keywords,
-          content_angle: this.content_angle,
-          content_style: this.content_style,
-          language: this.language,
-          title: script.title,
-          hook: script.hook,
-          generated_at: new Date().toISOString(),
-        });
-        scriptHistory.keywords_used.push(keywordKey);
-        scriptHistory.last_updated = new Date().toISOString();
-        scriptHistory.total_count = scriptHistory.scripts.length;
-
-        // GCS에 저장
-        const historyStream = new Readable();
-        historyStream.push(JSON.stringify(scriptHistory, null, 2));
-        historyStream.push(null);
-
-        await storage.objects.insert({
-          bucket: this.gcs_bucket_name,
-          name: HISTORY_FILE,
-          media: {
-            mimeType: 'application/json',
-            body: historyStream,
-          },
-          requestBody: {
-            name: HISTORY_FILE,
-            contentType: 'application/json',
-          },
-        });
-
-        $.export("history_saved", `Saved to history. Total scripts: ${scriptHistory.total_count}`);
-      } catch (e) {
-        $.export("history_save_error", e.message);
-      }
-    }
 
     return result;
   },

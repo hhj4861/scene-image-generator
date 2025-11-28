@@ -45,7 +45,15 @@
       "Bash(node --check:*)",
       "Bash(node:*)",
       "WebFetch(domain:platform.stability.ai)",
-      "Bash(source ~/.zshrc)"
+      "Bash(source ~/.zshrc)",
+      "Bash(FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch:*)",
+      "Bash(python3:*)",
+      "WebFetch(domain:www.hedra.com)",
+      "WebFetch(domain:docs.hedra.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(for:*)",
+      "Bash(do echo \"=== $f ===\")",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []
