@@ -1,8 +1,8 @@
 import { axios } from "@pipedream/platform";
 
 export default defineComponent({
-  name: "Video Generator (Runway + Veo)",
-  description: "Generate videos from images using Runway Gen-3 or Google Veo 3 with automatic fallback",
+  name: "Video Generator (Veo Only)",
+  description: "Generate videos from images using Google Veo 3 with automatic model/API key fallback",
 
   props: {
     // 입력 데이터
@@ -12,36 +12,24 @@ export default defineComponent({
       description: "JSON array of image objects with url, start, end, prompt, mood fields",
     },
 
-    // 이미지 스타일 (API 선택에 영향)
+    // 이미지 스타일 (프롬프트에 영향)
     image_style: {
       type: "string",
       label: "Image Style",
-      description: "이미지 스타일 - 실사 계열은 Veo 우선 사용",
+      description: "이미지 스타일",
       options: [
-        { label: "실사 (Ultra Realistic) → Veo 우선", value: "ultra_realistic" },
-        { label: "스톡 포토 (Stock Photo) → Veo 우선", value: "stock_photo" },
-        { label: "야생동물 사진 (Wildlife) → Veo 우선", value: "wildlife" },
-        { label: "인물 사진 (Portrait) → Veo 우선", value: "portrait" },
-        { label: "시네마틱 (Cinematic) → Veo 우선", value: "cinematic" },
-        { label: "애니메이션 (Anime) → Runway 우선", value: "anime" },
-        { label: "디지털 아트 (Digital Art) → Runway 우선", value: "digital_art" },
-        { label: "3D 렌더 (3D Render) → Runway 우선", value: "3d_render" },
-        { label: "수채화 (Watercolor) → Runway 우선", value: "watercolor" },
-        { label: "유화 (Oil Painting) → Runway 우선", value: "oil_painting" },
+        { label: "실사 (Ultra Realistic)", value: "ultra_realistic" },
+        { label: "스톡 포토 (Stock Photo)", value: "stock_photo" },
+        { label: "야생동물 사진 (Wildlife)", value: "wildlife" },
+        { label: "인물 사진 (Portrait)", value: "portrait" },
+        { label: "시네마틱 (Cinematic)", value: "cinematic" },
+        { label: "애니메이션 (Anime)", value: "anime" },
+        { label: "디지털 아트 (Digital Art)", value: "digital_art" },
+        { label: "3D 렌더 (3D Render)", value: "3d_render" },
+        { label: "수채화 (Watercolor)", value: "watercolor" },
+        { label: "유화 (Oil Painting)", value: "oil_painting" },
       ],
       default: "ultra_realistic",
-    },
-
-    // 비디오 생성 API 선택
-    preferred_api: {
-      type: "string",
-      label: "Preferred API",
-      description: "우선 사용할 API (실패 시 자동으로 다른 API 사용)",
-      options: [
-        { label: "Runway Gen-3 (권장)", value: "runway" },
-        { label: "Google Veo 3.1", value: "veo" },
-      ],
-      default: "runway",
     },
 
     // 모션 스타일 설정
@@ -99,34 +87,22 @@ export default defineComponent({
       optional: true,
     },
 
-    // Runway API 설정
-    runway_api_key: {
-      type: "string",
-      label: "Runway API Key",
-      secret: true,
-      optional: true,
-    },
-
-    // Google AI Studio API Key (Gemini/Veo 공용)
+    // Primary Google AI Studio API Key
     gemini_api_key: {
       type: "string",
-      label: "Google AI (Gemini) API Key",
-      description: "Google AI Studio API Key - Gemini와 Veo 모두 사용 (https://aistudio.google.com)",
+      label: "Primary Gemini API Key",
+      description: "Primary Google AI Studio API Key (https://aistudio.google.com)",
+      secret: true,
+    },
+
+    // Backup API Key (한도 초과 시 사용)
+    gemini_api_key_backup: {
+      type: "string",
+      label: "Backup Gemini API Key (Optional)",
+      description: "Backup API Key - 한도 초과 시 자동 전환",
       secret: true,
       optional: true,
-    },
-    veo_model: {
-      type: "string",
-      label: "Veo Model",
-      description: "사용할 Veo 모델",
-      options: [
-        { label: "Veo 3.1 (최신, 권장)", value: "veo-3.1-generate-preview" },
-        { label: "Veo 3.1 Fast (빠른 생성)", value: "veo-3.1-fast-generate-preview" },
-        { label: "Veo 3.0", value: "veo-3.0-generate-001" },
-        { label: "Veo 2.0", value: "veo-2.0-generate-001" },
-      ],
-      default: "veo-3.1-generate-preview",
-      optional: true,
+      default: "AIzaSyCUpTU6iWX81OvQU2eknDhXipEU86K40tA",
     },
 
     // GCS 설정
@@ -150,118 +126,48 @@ export default defineComponent({
       type: "integer",
       label: "Video Duration (seconds)",
       default: 5,
-      description: "Duration of each video clip (5 or 10 seconds)",
+      description: "Duration of each video clip (4, 6, or 8 seconds for Veo 3.x)",
     },
   },
 
   async run({ steps, $ }) {
     const images = typeof this.images === 'string' ? JSON.parse(this.images) : this.images;
 
-    const RUNWAY_API_URL = "https://api.dev.runwayml.com/v1";
     const generatedVideos = [];
 
     // =====================
-    // API 사용 가능 여부 체크
+    // Veo 모델 및 API Key fallback 설정
     // =====================
-    const runwayAvailable = !!this.runway_api_key;
-    const veoAvailable = !!this.gemini_api_key;
+    // 모델 우선순위: veo-3.0-fast-generate → veo-3.0-generate → (API Key 전환 후 재시도)
+    const veoModels = [
+      "veo-3.0-fast-generate",  // 1순위: 빠른 생성
+      "veo-3.0-generate",       // 2순위: 일반 생성
+    ];
 
-    // 사용 가능한 API 목록
-    const availableApis = [];
-    if (runwayAvailable) availableApis.push("runway");
-    if (veoAvailable) availableApis.push("veo");
-
-    // API 우선순위 결정
-    let primaryApi = this.preferred_api || "runway";
-    let fallbackApis = [];
-
-    // 선택한 API가 사용 불가능하면 다른 것으로 전환
-    if (!availableApis.includes(primaryApi)) {
-      primaryApi = availableApis[0];
+    const apiKeys = [this.gemini_api_key];
+    if (this.gemini_api_key_backup) {
+      apiKeys.push(this.gemini_api_key_backup);
     }
 
-    // fallback API 설정 (primary 제외한 나머지)
-    fallbackApis = availableApis.filter(api => api !== primaryApi);
+    // 현재 사용 중인 모델과 API Key 인덱스
+    let currentModelIndex = 0;
+    let currentApiKeyIndex = 0;
 
-    // 사용 가능한 API가 없으면 에러
-    if (availableApis.length === 0) {
-      throw new Error("No video generation API configured. Please provide Runway API Key or Gemini API Key.");
-    }
-
-    // preferred_api가 veo인데 gemini_api_key가 없으면 경고
-    if (this.preferred_api === "veo" && !veoAvailable) {
-      $.export("warning", "Veo selected but gemini_api_key not provided. Falling back to Runway.");
-    }
-
-    $.export("api_selection", {
-      primary: primaryApi,
-      fallbacks: fallbackApis,
-      available: availableApis,
+    $.export("veo_config", {
+      models: veoModels,
+      api_keys_count: apiKeys.length,
       image_style: this.image_style,
     });
 
     // =====================
-    // Runway API 호출 함수
+    // Google Veo API 호출 함수 (모델/API Key fallback 포함)
     // =====================
-    const generateWithRunway = async (imageUrl, motionPrompt) => {
-      const createResponse = await axios($, {
-        method: "POST",
-        url: `${RUNWAY_API_URL}/image_to_video`,
-        headers: {
-          "Authorization": `Bearer ${this.runway_api_key}`,
-          "Content-Type": "application/json",
-          "X-Runway-Version": "2024-11-06",
-        },
-        data: {
-          model: "gen3a_turbo",
-          promptImage: imageUrl,
-          promptText: motionPrompt,
-          duration: this.video_duration,
-          ratio: "768:1280",
-        },
-      });
-
-      const taskId = createResponse.id;
-
-      // 작업 완료 대기
-      let videoUrl = null;
-      let attempts = 0;
-      const maxAttempts = 60;
-
-      while (!videoUrl && attempts < maxAttempts) {
-        await new Promise(resolve => setTimeout(resolve, 5000));
-
-        const statusResponse = await axios($, {
-          method: "GET",
-          url: `${RUNWAY_API_URL}/tasks/${taskId}`,
-          headers: {
-            "Authorization": `Bearer ${this.runway_api_key}`,
-            "X-Runway-Version": "2024-11-06",
-          },
-        });
-
-        if (statusResponse.status === "SUCCEEDED") {
-          videoUrl = statusResponse.output[0];
-        } else if (statusResponse.status === "FAILED") {
-          throw new Error(`Runway task failed: ${statusResponse.failure || 'Unknown error'}`);
-        }
-
-        attempts++;
-      }
-
-      if (!videoUrl) {
-        throw new Error(`Runway timeout (task: ${taskId})`);
-      }
-
-      return { videoUrl, api: "runway", taskId };
-    };
-
-    // =====================
-    // Google Veo API 호출 함수 (Google AI Studio)
-    // =====================
-    const generateWithVeo = async (imageUrl, motionPrompt) => {
+    const generateWithVeo = async (imageUrl, motionPrompt, sceneIndex) => {
       const VEO_BASE_URL = "https://generativelanguage.googleapis.com/v1beta";
-      const modelId = this.veo_model || "veo-3.1-generate-preview";
+
+      // 현재 모델 및 API Key로 시작
+      let modelIdx = currentModelIndex;
+      let apiKeyIdx = currentApiKeyIndex;
 
       // 이미지 다운로드 후 base64로 변환
       const imageResponse = await axios($, {
@@ -277,192 +183,198 @@ export default defineComponent({
         mimeType = "image/jpeg";
       }
 
-      // Veo API 엔드포인트 (predictLongRunning)
-      const veoEndpoint = `${VEO_BASE_URL}/models/${modelId}:predictLongRunning`;
+      // Fallback 루프: 모델 → API Key 순서로 시도
+      while (modelIdx < veoModels.length || apiKeyIdx < apiKeys.length - 1) {
+        const modelId = veoModels[Math.min(modelIdx, veoModels.length - 1)];
+        const apiKey = apiKeys[apiKeyIdx];
 
-      $.export(`veo_model`, modelId);
+        // Veo API 엔드포인트 (predictLongRunning)
+        const veoEndpoint = `${VEO_BASE_URL}/models/${modelId}:predictLongRunning`;
 
-      // 요청 데이터 구성 (Google AI API 형식)
-      // durationSeconds: 정수! 유효값 4, 6, 8 (Veo 2.0은 5, 6, 7, 8)
-      let duration;
-      if (modelId.includes("veo-2.0")) {
-        // Veo 2.0: 5-8초
-        duration = Math.max(5, Math.min(8, this.video_duration));
-      } else {
-        // Veo 3.x: 4, 6, 8초만 가능
+        $.export(`veo_attempt_${sceneIndex}`, `Model: ${modelId}, API Key: ${apiKeyIdx + 1}/${apiKeys.length}`);
+
+        // durationSeconds: Veo 3.x는 4, 6, 8초만 가능
+        let duration;
         if (this.video_duration <= 4) duration = 4;
         else if (this.video_duration <= 6) duration = 6;
         else duration = 8;
-      }
 
-      const requestData = {
-        instances: [{
-          prompt: motionPrompt,
-          image: {
-            bytesBase64Encoded: imageBase64,
-            mimeType: mimeType,
-          },
-        }],
-        parameters: {
-          aspectRatio: "9:16",
-          durationSeconds: duration,
-          personGeneration: "allow_adult",
-        },
-      };
-
-      try {
-        $.export(`veo_request`, `Calling Veo ${modelId} (${duration}s)...`);
-
-        const createResponse = await axios($, {
-          method: "POST",
-          url: veoEndpoint,
-          headers: {
-            "Content-Type": "application/json",
-            "X-goog-api-key": this.gemini_api_key,
-          },
-          data: requestData,
-        });
-
-        // Long-running operation 응답
-        const operationName = createResponse.name;
-        if (!operationName) {
-          throw new Error("Veo did not return operation name");
-        }
-
-        $.export(`veo_operation`, operationName);
-
-        // Operation 완료 대기
-        let videoUrl = null;
-        let attempts = 0;
-        const maxAttempts = 72; // 6분 (Veo는 최대 6분)
-
-        while (!videoUrl && attempts < maxAttempts) {
-          await new Promise(resolve => setTimeout(resolve, 5000));
-
-          const statusResponse = await axios($, {
-            method: "GET",
-            url: `${VEO_BASE_URL}/${operationName}`,
-            headers: {
-              "X-goog-api-key": this.gemini_api_key,
+        const requestData = {
+          instances: [{
+            prompt: motionPrompt,
+            image: {
+              bytesBase64Encoded: imageBase64,
+              mimeType: mimeType,
             },
+          }],
+          parameters: {
+            aspectRatio: "9:16",
+            durationSeconds: duration,
+            personGeneration: "allow_adult",
+          },
+        };
+
+        try {
+          $.export(`veo_request_${sceneIndex}`, `Calling Veo ${modelId} (${duration}s)...`);
+
+          const createResponse = await axios($, {
+            method: "POST",
+            url: veoEndpoint,
+            headers: {
+              "Content-Type": "application/json",
+              "X-goog-api-key": apiKey,
+            },
+            data: requestData,
           });
 
-          if (statusResponse.done) {
-            if (statusResponse.error) {
-              throw new Error(`Veo failed: ${statusResponse.error.message}`);
-            }
+          // Long-running operation 응답
+          const operationName = createResponse.name;
+          if (!operationName) {
+            throw new Error("Veo did not return operation name");
+          }
 
-            // 비디오 데이터 추출 (Google AI API 응답 형식)
-            const response = statusResponse.response;
+          $.export(`veo_operation_${sceneIndex}`, operationName);
 
-            // 형식 1: generateVideoResponse.generatedSamples (최신 형식)
-            if (response?.generateVideoResponse?.generatedSamples?.length > 0) {
-              const sample = response.generateVideoResponse.generatedSamples[0];
-              if (sample.video?.uri) {
-                videoUrl = sample.video.uri;
+          // Operation 완료 대기
+          let videoUrl = null;
+          let attempts = 0;
+          const maxAttempts = 72; // 6분 (Veo는 최대 6분)
+
+          while (!videoUrl && attempts < maxAttempts) {
+            await new Promise(resolve => setTimeout(resolve, 5000));
+
+            const statusResponse = await axios($, {
+              method: "GET",
+              url: `${VEO_BASE_URL}/${operationName}`,
+              headers: {
+                "X-goog-api-key": apiKey,
+              },
+            });
+
+            if (statusResponse.done) {
+              if (statusResponse.error) {
+                throw new Error(`Veo failed: ${statusResponse.error.message}`);
+              }
+
+              // 비디오 데이터 추출 (Google AI API 응답 형식)
+              const response = statusResponse.response;
+
+              // 형식 1: generateVideoResponse.generatedSamples (최신 형식)
+              if (response?.generateVideoResponse?.generatedSamples?.length > 0) {
+                const sample = response.generateVideoResponse.generatedSamples[0];
+                if (sample.video?.uri) {
+                  videoUrl = sample.video.uri;
+                }
+              }
+
+              // 형식 2: generatedVideos
+              if (!videoUrl && response?.generatedVideos?.length > 0) {
+                const video = response.generatedVideos[0];
+                if (video.video?.uri) {
+                  videoUrl = video.video.uri;
+                }
+              }
+
+              // 형식 3: videos
+              if (!videoUrl && response?.videos?.length > 0) {
+                videoUrl = response.videos[0].gcsUri || response.videos[0].uri;
+              }
+
+              // gs:// URL을 https:// URL로 변환
+              if (videoUrl && videoUrl.startsWith("gs://")) {
+                const gsMatch = videoUrl.match(/gs:\/\/([^/]+)\/(.+)/);
+                if (gsMatch) {
+                  videoUrl = `https://storage.googleapis.com/${gsMatch[1]}/${gsMatch[2]}`;
+                }
               }
             }
 
-            // 형식 2: generatedVideos
-            if (!videoUrl && response?.generatedVideos?.length > 0) {
-              const video = response.generatedVideos[0];
-              if (video.video?.uri) {
-                videoUrl = video.video.uri;
-              }
-            }
-
-            // 형식 3: videos
-            if (!videoUrl && response?.videos?.length > 0) {
-              videoUrl = response.videos[0].gcsUri || response.videos[0].uri;
-            }
-
-            // gs:// URL을 https:// URL로 변환
-            if (videoUrl && videoUrl.startsWith("gs://")) {
-              const match = videoUrl.match(/gs:\/\/([^/]+)\/(.+)/);
-              if (match) {
-                videoUrl = `https://storage.googleapis.com/${match[1]}/${match[2]}`;
-              }
+            attempts++;
+            if (attempts % 6 === 0) {
+              $.export(`veo_progress_${sceneIndex}`, `Waiting for Veo... (${attempts * 5}s)`);
             }
           }
 
-          attempts++;
-          if (attempts % 6 === 0) {
-            $.export(`veo_progress`, `Waiting for Veo... (${attempts * 5}s)`);
+          if (!videoUrl) {
+            throw new Error(`Veo timeout after ${maxAttempts * 5}s (operation: ${operationName})`);
           }
-        }
 
-        if (!videoUrl) {
-          throw new Error(`Veo timeout after ${maxAttempts * 5}s (operation: ${operationName})`);
-        }
+          // 성공! 현재 모델/API Key 인덱스 업데이트 (다음 장면에서 사용)
+          currentModelIndex = modelIdx;
+          currentApiKeyIndex = apiKeyIdx;
 
-        return { videoUrl, api: "veo", model: modelId, operationName };
+          return { videoUrl, api: "veo", model: modelId, apiKeyIndex: apiKeyIdx, operationName };
 
-      } catch (error) {
-        const errorMsg = error.message || String(error);
-        const status = error.response?.status;
-        const responseData = error.response?.data;
-
-        // 403 에러: API 활성화 필요
-        if (status === 403 || errorMsg.includes("SERVICE_DISABLED") || errorMsg.includes("has not been used in project")) {
-          const apiEnableMsg = "Veo 403: Generative Language API가 활성화되지 않았습니다. " +
-            "Google AI Studio에서 새 API 키를 생성하세요: https://aistudio.google.com/apikey";
-          $.export(`veo_error`, apiEnableMsg);
-          throw new Error(apiEnableMsg);
-        }
-
-        $.export(`veo_error`, `Veo failed (${status}): ${errorMsg.substring(0, 150)}`);
-
-        if (responseData) {
-          $.export(`veo_error_detail`, JSON.stringify(responseData).substring(0, 300));
-        }
-
-        throw error;
-      }
-    };
-
-    // =====================
-    // 비디오 생성 함수 (fallback 포함)
-    // =====================
-    const generateVideo = async (imageUrl, motionPrompt, sceneIndex) => {
-      // primary + fallbacks
-      const apis = [primaryApi, ...fallbackApis];
-
-      let lastError = null;
-
-      for (const api of apis) {
-        try {
-          $.export(`attempt_${sceneIndex}`, `Trying ${api.toUpperCase()}...`);
-
-          if (api === "runway") {
-            return await generateWithRunway(imageUrl, motionPrompt);
-          } else if (api === "veo") {
-            return await generateWithVeo(imageUrl, motionPrompt);
-          }
         } catch (error) {
-          lastError = error;
           const errorMsg = error.message || String(error);
+          const status = error.response?.status;
+          const responseData = error.response?.data;
 
-          // Rate limit / Quota 에러 체크
-          const isRateLimitError = errorMsg.includes("daily task limit") ||
-                                   errorMsg.includes("rate limit") ||
-                                   errorMsg.includes("quota exceeded") ||
-                                   errorMsg.includes("Quota exceeded") ||
-                                   error.response?.status === 429;
+          // Rate limit / Quota 초과 에러 체크
+          const isQuotaError = errorMsg.includes("daily task limit") ||
+                               errorMsg.includes("rate limit") ||
+                               errorMsg.includes("quota exceeded") ||
+                               errorMsg.includes("Quota exceeded") ||
+                               errorMsg.includes("RESOURCE_EXHAUSTED") ||
+                               status === 429;
 
-          $.export(`error_${sceneIndex}_${api}`, `${api} failed: ${errorMsg.substring(0, 100)}`);
+          // 403 에러: API 활성화 필요
+          const isApiDisabledError = status === 403 ||
+                                     errorMsg.includes("SERVICE_DISABLED") ||
+                                     errorMsg.includes("has not been used in project");
 
-          if (isRateLimitError) {
-            $.export(`fallback_${sceneIndex}`, `${api} rate limited, switching to next API...`);
+          $.export(`veo_error_${sceneIndex}_${modelIdx}_${apiKeyIdx}`,
+            `${modelId} (key ${apiKeyIdx + 1}) failed: ${errorMsg.substring(0, 100)}`);
+
+          if (isQuotaError) {
+            // 한도 초과: 다음 모델 또는 API Key로 전환
+            $.export(`veo_fallback_${sceneIndex}`, `Quota exceeded, trying next option...`);
+
+            // 먼저 다음 모델 시도
+            if (modelIdx < veoModels.length - 1) {
+              modelIdx++;
+              continue;
+            }
+
+            // 모든 모델 실패 시 다음 API Key 시도
+            if (apiKeyIdx < apiKeys.length - 1) {
+              apiKeyIdx++;
+              modelIdx = 0; // 모델 인덱스 리셋
+              $.export(`veo_api_key_switch_${sceneIndex}`, `Switching to backup API Key ${apiKeyIdx + 1}`);
+              continue;
+            }
           }
 
-          // 다음 API 시도
-          if (apis.indexOf(api) < apis.length - 1) {
+          if (isApiDisabledError) {
+            $.export(`veo_api_disabled_${sceneIndex}`,
+              `API Key ${apiKeyIdx + 1} disabled, trying next...`);
+
+            if (apiKeyIdx < apiKeys.length - 1) {
+              apiKeyIdx++;
+              modelIdx = 0;
+              continue;
+            }
+          }
+
+          // 기타 에러: 다음 모델 시도
+          if (modelIdx < veoModels.length - 1) {
+            modelIdx++;
             continue;
           }
+
+          // 다음 API Key 시도
+          if (apiKeyIdx < apiKeys.length - 1) {
+            apiKeyIdx++;
+            modelIdx = 0;
+            continue;
+          }
+
+          // 모든 시도 실패
+          throw error;
         }
       }
 
-      throw lastError || new Error("All video APIs failed");
+      throw new Error("All Veo models and API keys exhausted");
     };
 
     // =====================
@@ -596,12 +508,12 @@ export default defineComponent({
       return promptParts.join(", ");
     };
 
-    $.export("status", `Generating ${images.length} video clips (Primary: ${primaryApi.toUpperCase()})...`);
+    $.export("status", `Generating ${images.length} video clips with Veo...`);
     $.export("motion_style", this.motion_style);
     $.export("content_type", this.content_type);
 
-    // API 사용 통계
-    const apiStats = { runway: 0, veo: 0, failed: 0 };
+    // 통계
+    const stats = { success: 0, failed: 0, models_used: {} };
 
     // 각 이미지에 대해 영상 생성
     for (let i = 0; i < images.length; i++) {
@@ -615,17 +527,19 @@ export default defineComponent({
       try {
         $.export(`prompt_${i}`, `Scene ${i + 1}: ${motionPrompt.substring(0, 80)}...`);
 
-        // 비디오 생성 (fallback 포함)
-        const result = await generateVideo(image.url, motionPrompt, i);
-        const { videoUrl, api: usedApi } = result;
+        // Veo로 비디오 생성 (모델/API Key fallback 포함)
+        const result = await generateWithVeo(image.url, motionPrompt, i);
+        const { videoUrl, model: usedModel, apiKeyIndex } = result;
 
-        apiStats[usedApi]++;
-        $.export(`video_${i}_api`, `Generated with ${usedApi.toUpperCase()}`);
+        stats.success++;
+        stats.models_used[usedModel] = (stats.models_used[usedModel] || 0) + 1;
+        $.export(`video_${i}_result`, `Generated with ${usedModel} (key ${apiKeyIndex + 1})`);
 
         // 영상 다운로드
         // Veo URL은 API 키가 필요함 (generativelanguage.googleapis.com)
         const isVeoUrl = videoUrl.includes("generativelanguage.googleapis.com");
-        const downloadHeaders = isVeoUrl ? { "X-goog-api-key": this.gemini_api_key } : {};
+        const downloadApiKey = apiKeys[apiKeyIndex] || this.gemini_api_key;
+        const downloadHeaders = isVeoUrl ? { "X-goog-api-key": downloadApiKey } : {};
 
         const videoResponse = await axios($, {
           method: "GET",
@@ -676,13 +590,14 @@ export default defineComponent({
           end: image.end,
           duration: image.end - image.start,
           motion_prompt: motionPrompt,
-          generated_by: usedApi, // 어떤 API로 생성되었는지 기록
+          generated_by: usedModel, // 어떤 모델로 생성되었는지 기록
+          api_key_index: apiKeyIndex,
         });
 
-        $.export(`video_${i}`, `Generated: ${filename} (${usedApi})`);
+        $.export(`video_${i}`, `Generated: ${filename} (${usedModel})`);
 
       } catch (error) {
-        apiStats.failed++;
+        stats.failed++;
         console.error(`Video ${i + 1} failed:`, error.message);
         $.export(`error_${i}`, error.message);
       }
@@ -694,25 +609,27 @@ export default defineComponent({
     }
 
     // 결과 요약
-    const summaryParts = [`Generated ${generatedVideos.length}/${images.length} clips`];
-    if (apiStats.runway > 0) summaryParts.push(`Runway: ${apiStats.runway}`);
-    if (apiStats.veo > 0) summaryParts.push(`Veo: ${apiStats.veo}`);
-    if (apiStats.failed > 0) summaryParts.push(`Failed: ${apiStats.failed}`);
+    const summaryParts = [`Generated ${generatedVideos.length}/${images.length} clips with Veo`];
+    Object.entries(stats.models_used).forEach(([model, count]) => {
+      summaryParts.push(`${model}: ${count}`);
+    });
+    if (stats.failed > 0) summaryParts.push(`Failed: ${stats.failed}`);
 
     $.export("$summary", summaryParts.join(" | "));
-    $.export("api_stats", apiStats);
+    $.export("stats", stats);
 
     return {
       success: true,
       folder_name: this.folder_name,
       bucket: this.gcs_bucket_name,
-      api_config: {
-        primary: primaryApi,
-        fallbacks: fallbackApis,
-        available: availableApis,
+      veo_config: {
+        models: veoModels,
+        api_keys_count: apiKeys.length,
+        final_model_index: currentModelIndex,
+        final_api_key_index: currentApiKeyIndex,
         image_style: this.image_style,
       },
-      api_stats: apiStats,
+      stats: stats,
       motion_settings: {
         style: this.motion_style,
         camera: this.camera_movement,

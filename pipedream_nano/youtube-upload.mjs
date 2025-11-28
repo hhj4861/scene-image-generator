@@ -9,6 +9,28 @@ export default defineComponent({
     youtube: {
       type: "app",
       app: "youtube_data_api",
+      description: "기본 YouTube 채널 (Pipedream에서 연결 시 채널 선택)",
+    },
+
+    // 두 번째 채널 (선택)
+    youtube_channel_2: {
+      type: "app",
+      app: "youtube_data_api",
+      label: "YouTube Channel 2 (Optional)",
+      description: "두 번째 YouTube 채널 (다른 채널에 업로드하려면 여기 연결)",
+      optional: true,
+    },
+
+    // 채널 선택
+    use_channel: {
+      type: "string",
+      label: "Upload to Channel",
+      description: "어느 채널에 업로드할지 선택",
+      options: [
+        { label: "Channel 1 (기본)", value: "channel_1" },
+        { label: "Channel 2", value: "channel_2" },
+      ],
+      default: "channel_1",
     },
 
     // OpenAI 연결 (메타데이터 최적화용)
@@ -339,12 +361,25 @@ Return ONLY valid JSON.`;
     // =====================
     $.export("status", "Uploading to YouTube...");
 
+    // 채널 선택 로직
+    let selectedChannel = this.youtube;
+    let channelName = "Channel 1 (기본)";
+
+    if (this.use_channel === "channel_2" && this.youtube_channel_2) {
+      selectedChannel = this.youtube_channel_2;
+      channelName = "Channel 2";
+    } else if (this.use_channel === "channel_2" && !this.youtube_channel_2) {
+      $.export("channel_warning", "Channel 2 선택되었지만 연결되지 않음. Channel 1로 업로드합니다.");
+    }
+
+    $.export("upload_channel", channelName);
+
     // YouTube Data API를 사용한 resumable upload
     const { google } = await import("googleapis");
 
     const oauth2Client = new google.auth.OAuth2();
     oauth2Client.setCredentials({
-      access_token: this.youtube.$auth.oauth_access_token,
+      access_token: selectedChannel.$auth.oauth_access_token,
     });
 
     const youtube = google.youtube({ version: "v3", auth: oauth2Client });
@@ -398,7 +433,7 @@ Return ONLY valid JSON.`;
     const videoId = uploadResponse.data.id;
     const youtubeUrl = `https://www.youtube.com/shorts/${videoId}`;
 
-    $.export("$summary", `Uploaded to YouTube: ${youtubeUrl}`);
+    $.export("$summary", `Uploaded to YouTube (${channelName}): ${youtubeUrl}`);
 
     // =====================
     // 4. 결과 반환
@@ -410,6 +445,7 @@ Return ONLY valid JSON.`;
       shorts_url: `https://www.youtube.com/shorts/${videoId}`,
       watch_url: `https://www.youtube.com/watch?v=${videoId}`,
       studio_url: `https://studio.youtube.com/video/${videoId}/edit`,
+      uploaded_channel: channelName,
       metadata: {
         title: optimizedMetadata.optimized_title,
         description_preview: optimizedMetadata.optimized_description.substring(0, 200) + "...",

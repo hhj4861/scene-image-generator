@@ -2,12 +2,41 @@ import { axios } from "@pipedream/platform"
 
 export default defineComponent({
   name: "Shorts Script Generator",
-  description: "Generate viral, engaging scripts with unique angles and surprising facts",
+  description: "Generate viral, engaging scripts with unique angles and surprising facts (Gemini-powered)",
   type: "action",
   props: {
-    openai: {
+    // Gemini API 설정
+    gemini_api_key: {
+      type: "string",
+      label: "Gemini API Key",
+      description: "Google AI Studio API Key (https://aistudio.google.com)",
+      secret: true,
+    },
+    gemini_model: {
+      type: "string",
+      label: "Gemini Model",
+      description: "사용할 Gemini 모델",
+      options: [
+        { label: "Gemini 3 Pro Preview (최신, 권장)", value: "gemini-3-pro-preview" },
+        { label: "Gemini 2.5 Pro Preview", value: "gemini-2.5-pro-preview-05-06" },
+        { label: "Gemini 2.0 Flash (Fast)", value: "gemini-2.0-flash-exp" },
+        { label: "Gemini 1.5 Pro", value: "gemini-1.5-pro" },
+        { label: "Gemini 1.5 Flash", value: "gemini-1.5-flash" },
+      ],
+      default: "gemini-3-pro-preview",
+    },
+    // 샘플 쇼츠 링크 분석
+    sample_shorts_url: {
+      type: "string",
+      label: "Sample Shorts URL (Optional)",
+      description: "참고할 쇼츠 링크 (예: https://youtube.com/shorts/xxxx) - 유사한 스타일로 대본 생성",
+      optional: true,
+    },
+    youtube_data_api: {
       type: "app",
-      app: "openai",
+      app: "youtube_data_api",
+      description: "샘플 쇼츠 분석용 (sample_shorts_url 사용시 필요)",
+      optional: true,
     },
     // 주제 입력 (키워드보다 구체적)
     topic: {
@@ -364,6 +393,77 @@ export default defineComponent({
     const lang = languageConfig[this.language];
 
     // =====================
+    // 샘플 쇼츠 분석 (옵션)
+    // =====================
+    let sampleAnalysis = null;
+    if (this.sample_shorts_url && this.youtube_data_api) {
+      try {
+        // YouTube Shorts URL에서 video ID 추출
+        let videoId = null;
+        const shortsMatch = this.sample_shorts_url.match(/shorts\/([a-zA-Z0-9_-]+)/);
+        const watchMatch = this.sample_shorts_url.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+        const shortUrlMatch = this.sample_shorts_url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+
+        if (shortsMatch) videoId = shortsMatch[1];
+        else if (watchMatch) videoId = watchMatch[1];
+        else if (shortUrlMatch) videoId = shortUrlMatch[1];
+
+        if (videoId) {
+          // YouTube Data API로 영상 정보 가져오기
+          const videoResponse = await axios($, {
+            url: "https://www.googleapis.com/youtube/v3/videos",
+            headers: {
+              Authorization: `Bearer ${this.youtube_data_api.$auth.oauth_access_token}`,
+            },
+            params: {
+              part: "snippet,statistics,contentDetails",
+              id: videoId,
+            },
+          });
+
+          if (videoResponse.items && videoResponse.items.length > 0) {
+            const video = videoResponse.items[0];
+
+            // 채널의 다른 인기 영상도 가져오기
+            const channelVideosResponse = await axios($, {
+              url: "https://www.googleapis.com/youtube/v3/search",
+              headers: {
+                Authorization: `Bearer ${this.youtube_data_api.$auth.oauth_access_token}`,
+              },
+              params: {
+                part: "snippet",
+                channelId: video.snippet.channelId,
+                order: "viewCount",
+                maxResults: 5,
+                type: "video",
+              },
+            });
+
+            sampleAnalysis = {
+              video_id: videoId,
+              title: video.snippet.title,
+              description: video.snippet.description,
+              tags: video.snippet.tags || [],
+              channel_title: video.snippet.channelTitle,
+              view_count: video.statistics?.viewCount,
+              like_count: video.statistics?.likeCount,
+              comment_count: video.statistics?.commentCount,
+              duration: video.contentDetails?.duration,
+              channel_top_videos: channelVideosResponse.items?.map(v => ({
+                title: v.snippet.title,
+                description: v.snippet.description?.substring(0, 200),
+              })) || [],
+            };
+
+            $.export("sample_analysis", `분석 완료: "${video.snippet.title}" (조회수: ${video.statistics?.viewCount})`);
+          }
+        }
+      } catch (e) {
+        $.export("sample_analysis_error", e.message);
+      }
+    }
+
+    // =====================
     // 중복 체크 로직
     // =====================
     const HISTORY_FILE = "_script_history.json";
@@ -429,10 +529,32 @@ export default defineComponent({
         .map(s => s.title?.japanese || s.title?.korean || 'Unknown');
     }
 
+    // 샘플 분석 섹션 생성
+    const sampleAnalysisSection = sampleAnalysis ? `
+## 📺 SAMPLE VIDEO ANALYSIS (CRITICAL - MATCH THIS QUALITY):
+You must create content that matches or exceeds this viral video's quality.
+
+### Reference Video:
+- Title: "${sampleAnalysis.title}"
+- Channel: ${sampleAnalysis.channel_title}
+- Views: ${sampleAnalysis.view_count} | Likes: ${sampleAnalysis.like_count}
+- Tags: ${sampleAnalysis.tags?.slice(0, 10).join(', ') || 'N/A'}
+- Description: ${sampleAnalysis.description?.substring(0, 500) || 'N/A'}
+
+### Channel's Top Performing Videos:
+${sampleAnalysis.channel_top_videos?.map((v, i) => `${i + 1}. "${v.title}"`).join('\n') || 'N/A'}
+
+### WHAT MADE THIS VIDEO VIRAL (analyze and replicate):
+- Study the hook pattern from the title
+- Match the emotional tone and pacing
+- Use similar visual storytelling techniques
+- Apply the same engagement triggers
+` : '';
+
     const prompt = `You are an expert viral content creator specializing in YouTube Shorts that get millions of views.
 
 ## 🎯 TOPIC: "${topicForPrompt}"
-
+${sampleAnalysisSection}
 ## 📐 CONTENT ANGLE (CRITICAL - FOLLOW THIS EXACTLY):
 - Type: ${this.content_angle}
 - Hook Template: "${angle.hook_template.replace('{topic}', topicForPrompt)}"
@@ -543,30 +665,38 @@ Create an emotionally engaging script that will resonate with Japanese YouTube S
 
 Return ONLY valid JSON, no markdown formatting.`;
 
+    // Gemini API 호출
+    const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${this.gemini_model}:generateContent`;
+
+    const systemPrompt = `You are an expert viral content scriptwriter specializing in Japanese YouTube Shorts. You understand Japanese culture, emotions, and what makes content go viral in Japan. You write scripts that are emotionally resonant, culturally appropriate, and optimized for short-form video. Always respond with valid JSON only.`;
+
     const aiResponse = await axios($, {
-      url: "https://api.openai.com/v1/chat/completions",
+      url: GEMINI_API_URL,
       method: "POST",
       headers: {
-        Authorization: `Bearer ${this.openai.$auth.api_key}`,
         "Content-Type": "application/json",
+        "x-goog-api-key": this.gemini_api_key,
       },
       data: {
-        model: "gpt-4o",
-        messages: [
+        contents: [
           {
-            role: "system",
-            content: `You are an expert viral content scriptwriter specializing in Japanese YouTube Shorts. You understand Japanese culture, emotions, and what makes content go viral in Japan. You write scripts that are emotionally resonant, culturally appropriate, and optimized for short-form video. Always respond with valid JSON only.`,
+            parts: [
+              {
+                text: `${systemPrompt}\n\n${prompt}`,
+              },
+            ],
           },
-          { role: "user", content: prompt },
         ],
-        temperature: 0.7,
-        max_tokens: 4000,
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 8192,
+        },
       },
     });
 
     let script;
     try {
-      let responseContent = aiResponse.choices[0].message.content.trim();
+      let responseContent = aiResponse.candidates[0].content.parts[0].text.trim();
 
       // Remove markdown code blocks if present
       if (responseContent.startsWith("```json")) {
@@ -583,7 +713,7 @@ Return ONLY valid JSON, no markdown formatting.`;
       script = JSON.parse(responseContent);
     } catch (error) {
       $.export("$summary", `Error parsing response: ${error.message}`);
-      throw new Error(`Failed to parse OpenAI response: ${error.message}`);
+      throw new Error(`Failed to parse Gemini response: ${error.message}`);
     }
 
     // folder_name 생성 (모든 Step에서 공유)

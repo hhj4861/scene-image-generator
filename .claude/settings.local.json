@@ -15,12 +15,9 @@
       "Bash(node scripts/create-buckets.js:*)",
       "Bash(gsutil cat:*)",
       "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Add multiple enhancements to Pipedream components\n\n- Script Generator: Add duplicate prevention with GCS history tracking\n- Script Generator: Add unique content requirements (avoid generic info)\n- Script Generator: Add minimum character length enforcement\n- Scene Image Generator: Add image style selection (7 styles)\n- YouTube Upload: Enhance title with 3-5 trending hashtags\n- Creatomate Render: Add duration validation and debugging\n- Creatomate Render: Fix font_size format (% -> vw)\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git push:*)",
       "Bash(git commit:*)",
-      "Bash(git rebase -i 756bafb --exec 'sed -i \"\"\"\" \"\"s/sk-proj-[a-zA-Z0-9_-]*/your_openai_api_key_here/g; s/sk-itkeIgX2rRQAVQ4sTvjm4DgS9yslFATfiaVFqxMK4YZrcRnq/your_stability_api_key_here/g; s/968a045e9d971eb754eee1c9240997c0aadc64353399943d6201eb543bbea203/your_elevenlabs_api_key_here/g; s/key_04ee02b422f6b04f911420be27bf67a8b20005e57583f581dcf172e76e7e94e19e79709554f325df960d583f707dce8282c63e2b116041c5138056fb1199c8c5/your_runway_api_key_here/g; s/5bad4e3eb03b4fb391fc5b0085bb8a05d7abab1be8b8c1b88bde1c29a175f4f5f230cbede093b2cdd3575740655cc262/your_creatomate_api_key_here/g\"\" .env.example 2>/dev/null; git add .env.example 2>/dev/null; git commit --amend --no-edit 2>/dev/null || true')",
       "Bash(git stash:*)",
-      "Bash(git rebase -i 756bafb~1 --exec 'if [ -f .env.example ]; then cat > .env.example << \"\"ENVEOF\"\"\n# Stability AI API Key\n# Get your API key from: https://platform.stability.ai/account/keys\nSTABILITY_API_KEY=your_stability_api_key_here\n\n# OpenAI API Key (for GPT-4o style analysis & Whisper)\n# Get your API key from: https://platform.openai.com/api-keys\nOPENAI_API_KEY=your_openai_api_key_here\n\n# ElevenLabs API Key (for TTS)\n# Get your API key from: https://elevenlabs.io/\nELEVENLABS_API_KEY=your_elevenlabs_api_key_here\n\n# Runway API Key (for image-to-video)\n# Get your API key from: https://runway.ml/\nRUNWAY_API_KEY=your_runway_api_key_here\n\n# Creatomate API Key (for video composition)\n# Get your API key from: https://creatomate.com/\nCREATOMATE_API_KEY=your_creatomate_api_key_here\n\n# Google Cloud Storage\n# Path to service account JSON file\nGOOGLE_CREDENTIALS_PATH=./google-credentials.json\nGCS_BUCKET_NAME=your_bucket_name_here\nENVEOF\ngit add .env.example && git commit --amend --no-edit; fi')",
       "WebFetch(domain:mubert.com)",
       "WebFetch(domain:sunoapi.org)",
       "WebFetch(domain:musicapi.ai)",
@@ -44,11 +41,11 @@
       "Bash(node test-veo-full.js:*)",
       "Bash(source:*)",
       "Bash(echo:*)",
-      "Bash(GEMINI_API_KEY=REDACTED_API_KEY node:*)",
       "Bash(node test-gemini-image-generator.js:*)",
       "Bash(node --check:*)",
       "Bash(node:*)",
-      "WebFetch(domain:platform.stability.ai)"
+      "WebFetch(domain:platform.stability.ai)",
+      "Bash(source ~/.zshrc)"
     ],
     "deny": [],
     "ask": []

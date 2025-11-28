@@ -31,5 +31,5 @@ Thumbs.db
 *.log
 npm-debug.log*
 
-
+.claude/
 .env.example

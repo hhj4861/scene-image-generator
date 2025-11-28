@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "AIzaSyClH-yPbmKLXaDUKpBnhCDUIXREf24uOPI";
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 const GOOGLE_CREDENTIALS_PATH = process.env.GOOGLE_CREDENTIALS_PATH || "./google-credentials.json";
 const GCS_BUCKET_NAME = process.env.GCS_BUCKET_NAME || "scene-image-generator-storage-mcp-test-457809";
 
