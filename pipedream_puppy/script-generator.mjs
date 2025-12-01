@@ -872,26 +872,45 @@ Create ${sceneCount} segments with complete visual details!`;
         text_overlays: false,
         watermarks: false,
 
-        // 캐릭터 프롬프트
+        // ★ 인터뷰 형식일 때 이미지 생성에 필요한 캐릭터만 필터링
+        // (인터뷰어는 화면에 안 나오므로 제외, 조연들도 인터뷰 형식에서는 불필요)
         character_prompts: Object.fromEntries(
-          Object.entries(characters).map(([key, char]) => [key, char.analysis.image_generation_prompt])
+          Object.entries(characters)
+            .filter(([key]) => {
+              // 인터뷰 형식: main만 포함 (interviewer는 화면에 안 나옴)
+              if (scriptFormat === "interview") {
+                return key === "main";
+              }
+              // 다른 형식: 모두 포함 (interviewer 제외)
+              return key !== "interviewer";
+            })
+            .map(([key, char]) => [key, char.analysis.image_generation_prompt])
         ),
 
         // ★ 캐릭터 상세 정보 (옷, 악세서리, 특징)
         character_details: Object.fromEntries(
-          Object.entries(characters).map(([key, char]) => [key, {
-            name: char.name,
-            base_prompt: char.analysis?.image_generation_prompt || "",
-            species: char.analysis?.species || "dog",
-            breed: char.analysis?.breed || "unknown",
-            fur_color: char.analysis?.fur_color || "",
-            fur_texture: char.analysis?.fur_texture || "",
-            eye_color: char.analysis?.eye_color || "",
-            outfit: char.analysis?.clothing || char.analysis?.outfit || "",
-            accessories: char.analysis?.accessories || [],
-            distinctive_features: char.analysis?.distinctive_features || [],
-            personality: char.analysis?.personality_impression || "",
-          }])
+          Object.entries(characters)
+            .filter(([key]) => {
+              // 인터뷰 형식: main만 포함
+              if (scriptFormat === "interview") {
+                return key === "main";
+              }
+              // 다른 형식: 모두 포함 (interviewer 제외)
+              return key !== "interviewer";
+            })
+            .map(([key, char]) => [key, {
+              name: char.name,
+              base_prompt: char.analysis?.image_generation_prompt || "",
+              species: char.analysis?.species || "dog",
+              breed: char.analysis?.breed || "unknown",
+              fur_color: char.analysis?.fur_color || "",
+              fur_texture: char.analysis?.fur_texture || "",
+              eye_color: char.analysis?.eye_color || "",
+              outfit: char.analysis?.clothing || char.analysis?.outfit || "",
+              accessories: char.analysis?.accessories || [],
+              distinctive_features: char.analysis?.distinctive_features || [],
+              personality: char.analysis?.personality_impression || "",
+            }])
         ),
 
         overall_style: script.overall_style || "photorealistic",

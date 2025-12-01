@@ -33,3 +33,5 @@ npm-debug.log*
 
 .claude/
 .env.example
+
+settings.local.json
