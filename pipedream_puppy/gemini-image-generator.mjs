@@ -2,13 +2,13 @@ import { axios } from "@pipedream/platform";
 
 export default defineComponent({
   name: "Puppy Image Generator",
-  description: "Imagen 4로 캐릭터별 이미지 병렬 생성 (상세 프롬프트 기반 일관성 유지)",
+  description: "Puppy Script Generator 결과 기반 Imagen 4로 씬별 이미지 생성",
 
   props: {
     script_generator_output: {
       type: "string",
       label: "Script Generator Output (JSON)",
-      description: "{{JSON.stringify(steps.Shorts_Script_Generator.$return_value)}}",
+      description: "{{JSON.stringify(steps.Puppy_Script_Generator.$return_value)}}",
     },
     gemini_api_key: {
       type: "string",
@@ -50,33 +50,103 @@ export default defineComponent({
     const IMAGEN_URL = `https://generativelanguage.googleapis.com/v1beta/models/${this.imagen_model}:predict`;
 
     // =====================
-    // 1. 입력 파싱
+    // 1. 입력 파싱 (Script Generator 또는 Image Generator 출력 모두 지원)
     // =====================
-    const scriptOutput = typeof this.script_generator_output === "string"
+    const scriptData = typeof this.script_generator_output === "string"
       ? JSON.parse(this.script_generator_output)
       : this.script_generator_output;
 
-    // 디버깅: 입력값 구조 확인
-    $.export("debug_input_type", typeof this.script_generator_output);
-    $.export("debug_input_keys", Object.keys(scriptOutput || {}));
-    $.export("debug_has_image_generation", !!scriptOutput.image_generation);
+    const folderName = scriptData.folder_name;
 
-    // Script Generator 출력값에서 scenes 찾기
-    // 1. image_generation.scenes (정상 경로)
-    // 2. scriptOutput.scenes (직접 전달된 경우 - 호환성)
-    const scenes = scriptOutput.image_generation?.scenes || scriptOutput.scenes || [];
-    const folderName = scriptOutput.folder_name;
-    const overallStyle = scriptOutput.image_generation?.overall_style || scriptOutput.overall_style || "photorealistic";
-    const characters = scriptOutput.characters || {};
-    const characterPrompts = scriptOutput.image_generation?.character_prompts || scriptOutput.character_prompts || {};
+    // ★★★ 입력 형식 자동 감지 ★★★
+    // puppy-script-generator 출력: script.script_segments 에 씬 정보
+    // puppy-image-generator 출력: scenes 에 씬 정보
+    const isFromScriptGenerator = !!(scriptData.script?.script_segments);
+    const isFromImageGenerator = !!(scriptData.scenes && scriptData.character_prompts);
 
-    if (!scenes.length) {
-      // 더 자세한 에러 메시지
-      throw new Error(`No scenes found. Input keys: ${Object.keys(scriptOutput || {}).join(", ")}. image_generation exists: ${!!scriptOutput.image_generation}. Direct scenes exists: ${!!scriptOutput.scenes}`);
+    let characters, scriptSegments, contentType, contentTypeConfig, scriptFormat, bgmInfo, overallStyle, consistencyInfo;
+
+    if (isFromScriptGenerator) {
+      // puppy-script-generator 출력 형식
+      characters = scriptData.characters || {};
+      const script = scriptData.script || {};
+      scriptSegments = script.script_segments || [];
+      contentType = scriptData.content_type || "satire";
+      contentTypeConfig = scriptData.content_type_config || {};
+      scriptFormat = scriptData.topic_info?.script_format || "interview";
+      bgmInfo = scriptData.bgm || {};
+      overallStyle = script.overall_style || "photorealistic";
+      // ★★★ 일관성 정보 추출 ★★★
+      consistencyInfo = scriptData.consistency || {};
+    } else if (isFromImageGenerator) {
+      // puppy-image-generator 출력 형식 (scenes 배열 사용)
+      // character_details에서 캐릭터 정보 추출
+      characters = {};
+      const charDetails = scriptData.character_details || {};
+      for (const [key, detail] of Object.entries(charDetails)) {
+        characters[key] = {
+          name: detail.name,
+          image_prompt: detail.base_prompt,
+          species: detail.species,
+          breed: detail.breed,
+          fur_color: detail.fur_color,
+          fur_texture: detail.fur_texture,
+          eye_color: detail.eye_color,
+          clothing: detail.outfit,
+          accessories: detail.accessories,
+          distinctive_features: detail.distinctive_features,
+          personality: detail.personality,
+        };
+      }
+
+      // scenes 배열을 script_segments 형식으로 변환
+      scriptSegments = (scriptData.scenes || []).map((scene) => ({
+        segment_number: scene.segment_number || scene.index,
+        index: scene.index,
+        start_time: scene.start,
+        end_time: scene.end,
+        duration: scene.duration,
+        narration: scene.narration,
+        narration_english: scene.narration_english,
+        speaker: scene.speaker,
+        character_name: scene.character_name,
+        voice_type: scene.voice_type,
+        emotion: scene.emotion,
+        emotion_transition: scene.emotion_transition,
+        scene_type: scene.scene_type,
+        has_narration: scene.has_narration,
+        image_prompt: scene.image_prompt || scene.detailed_image_prompt,
+        scene_details: scene.scene_details || scene.scene_environment,
+        video_prompt: scene.video_prompt,
+        action_cues: scene.action_cues,
+        is_performance: scene.is_performance,
+        performance_type: scene.performance_type,
+        performance_phase: scene.performance_phase,
+        audio_details: scene.audio_details,
+      }));
+
+      contentType = scriptData.content_type || "satire";
+      contentTypeConfig = {};
+      scriptFormat = scriptData.script_format || "interview";
+      bgmInfo = {};
+      overallStyle = scriptData.overall_style || "photorealistic";
+      consistencyInfo = {};
+    } else {
+      throw new Error(`Unknown input format. Keys: ${Object.keys(scriptData).join(", ")}`);
     }
 
-    $.export("input", { scenes: scenes.length, folder: folderName, characters: Object.keys(characters) });
-    $.export("character_prompts", characterPrompts);
+    $.export("input_info", {
+      folder_name: folderName,
+      segments_count: scriptSegments.length,
+      characters_count: Object.keys(characters).length,
+      content_type: contentType,
+      script_format: scriptFormat,
+      input_source: isFromScriptGenerator ? "script_generator" : "image_generator",
+    });
+
+    if (!scriptSegments.length) {
+      throw new Error(`No script segments found. Keys: ${Object.keys(scriptData).join(", ")}`);
+    }
 
     // =====================
     // 2. GCS 준비
@@ -91,7 +161,7 @@ export default defineComponent({
     const storage = google.storage({ version: "v1", auth });
 
     // =====================
-    // 3. 스타일 프롬프트 설정
+    // 3. 스타일 설정
     // =====================
     const styleConfig = {
       photorealistic: {
@@ -109,57 +179,210 @@ export default defineComponent({
     };
     const { prefix: stylePrefix, suffix: styleSuffix } = styleConfig[overallStyle] || styleConfig.photorealistic;
 
-    // ★ 주인공(main) 캐릭터 프롬프트 (상세 분석 결과)
-    const mainPrompt = characterPrompts.main || characters.main?.image_prompt || "cute adorable puppy";
+    // =====================
+    // 4. 콘텐츠 타입별 무드 설정
+    // =====================
+    const contentTypeMood = {
+      satire: { mood: "dramatic, news-like, satirical", lighting: "studio interview lighting, professional" },
+      comic: { mood: "funny, exaggerated expressions, comedic", lighting: "bright playful lighting" },
+      emotional: { mood: "warm, touching, emotional", lighting: "soft golden hour lighting, cinematic" },
+      daily: { mood: "cozy, casual, everyday life", lighting: "natural daylight, comfortable" },
+      mukbang: { mood: "appetizing, happy eating, delicious", lighting: "food photography lighting, appetizing" },
+      healing: { mood: "peaceful, calm, relaxing", lighting: "soft warm ambient lighting, dreamy" },
+      drama: { mood: "dramatic, story-driven, cinematic", lighting: "cinematic dramatic lighting" },
+      performance: {
+        mood: "energetic, confident, performer vibe, stage presence, cool swagger",
+        lighting: "concert stage lighting, spotlight, colorful dynamic lights, neon glow",
+      },
+      random: { mood: "varied, natural", lighting: "natural lighting" },
+    };
+    const currentMood = contentTypeMood[contentType] || contentTypeMood.satire;
 
     // =====================
-    // 4. 모든 이미지 병렬 생성 (상세 프롬프트 기반)
+    // 5. 퍼포먼스 씬 타입별 이미지 프롬프트 + 악세서리
     // =====================
-    $.export("status", `Generating ${scenes.length} images...`);
+    const performanceImagePrompts = {
+      beatbox: {
+        start: "doing beatbox, mouth rhythmically opening, cool confident expression, stage lighting with neon lights, energetic pose",
+        break: "pausing beatbox, looking at camera with confident smirk, dramatic stage lighting, about to say something",
+        resume: "continuing beatbox performance, mouth moving to beat, head bobbing, body grooving, colorful stage lights",
+        accessories: "wearing cool black sunglasses, gold chain necklace, backwards snapback cap",
+      },
+      singing: {
+        start: "singing into microphone, emotional expression, spotlight shining, eyes slightly closed feeling the music",
+        break: "pausing singing, looking at camera with passionate expression, microphone in paw, dramatic spotlight",
+        resume: "singing with emotion, swaying gently, eyes closed feeling the music, soft spotlight",
+        accessories: "holding wireless microphone, wearing sparkly stage outfit, small earpiece",
+      },
+      dance: {
+        start: "dancing energetically, dynamic pose, disco lights, paws in the air",
+        break: "freeze pose in dance, looking at camera with excited expression, colorful disco lights",
+        resume: "dancing with full energy, spinning move, rainbow stage lights, happy expression",
+        accessories: "wearing trendy sunglasses, colorful LED sneakers, sporty headband",
+      },
+      rap: {
+        start: "rapping with swagger, hand gestures, hip-hop style, cool pose with mic",
+        break: "pausing rap, confident pose, looking at camera with swag, hip-hop style lighting",
+        resume: "continuing rap performance, hand gestures, head nodding to beat, cool expression",
+        accessories: "wearing oversized sunglasses, thick gold chain, sideways snapback cap, holding microphone",
+      },
+      instrument: {
+        start: "playing instrument passionately, focused expression, stage lighting",
+        break: "pausing performance, looking at camera proudly, instrument visible, dramatic lighting",
+        resume: "playing instrument with passion, body moving with melody, spotlight",
+        accessories: "wearing round stylish glasses, bow tie, formal vest",
+      },
+    };
 
-    const imagePromises = scenes.map(async (scene) => {
-      const sceneDetails = scene.scene_details || {};
-      const characterAppearance = scene.character_appearance || {};
-      const sceneEnvironment = scene.scene_environment || {};
+    // =====================
+    // 5-1. 일관된 배경 설정 (script-generator의 consistency 정보 우선 사용)
+    // =====================
+    // ★★★ script-generator에서 전달된 일관성 정보 사용 ★★★
+    const consistentBackground = consistencyInfo.consistent_background
+      || scriptSegments[0]?.scene_details?.background
+      || "clean professional studio background with soft gradient";
 
-      // ★ 새로운 detailed_image_prompt가 있으면 우선 사용
-      const detailedPrompt = scene.detailed_image_prompt;
+    const consistentLighting = consistencyInfo.consistent_lighting
+      || scriptSegments[0]?.scene_details?.lighting
+      || currentMood.lighting;
 
-      // 환경 정보
-      const locationInfo = sceneEnvironment.location === "outdoor" || sceneDetails.location === "outdoor"
-        ? `outdoor setting, ${sceneEnvironment.weather || sceneDetails.weather || "sunny"} weather`
-        : "indoor setting";
-      const backgroundInfo = sceneEnvironment.background || sceneDetails.background || "";
-      const lightingInfo = sceneEnvironment.lighting || sceneDetails.lighting ? `${sceneEnvironment.lighting || sceneDetails.lighting} lighting` : "";
-      const moodInfo = sceneEnvironment.mood || sceneDetails.mood ? `${sceneEnvironment.mood || sceneDetails.mood} atmosphere` : "";
+    // 퍼포먼스용 일관된 스테이지 배경
+    const performanceStageBackground = consistencyInfo.performance_stage_background
+      || "dark concert stage with purple and blue neon lights, colorful spotlights from above, subtle smoke effects at the bottom";
 
-      // speaker에 따라 캐릭터 프롬프트 선택
-      const speaker = scene.speaker || "main";
-      const speakerPrompt = characterPrompts[speaker] || characters[speaker]?.image_prompt || mainPrompt;
+    // 주인공 캐릭터 프롬프트 (script-generator에서 분석된 것 사용)
+    const mainCharacter = characters.main || {};
+    const mainPrompt = consistencyInfo.main_character_prompt
+      || mainCharacter.image_prompt
+      || "cute adorable puppy";
 
-      // ★ 인터뷰 질문인지 확인 (강아지가 듣는 표정)
-      const isInterviewQuestion = scene.scene_type === "interview_question" || speaker === "interviewer";
+    // 실제 강아지 강조 문구
+    const realDogEmphasis = consistencyInfo.real_dog_emphasis
+      || "Real living dog. Actual puppy. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in dog mask. Real fur. Real animal.";
 
-      let finalPrompt;
+    // 텍스트 제거 문구
+    const noTextEmphasis = consistencyInfo.no_text_emphasis
+      || "No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.";
 
-      // ★ detailed_image_prompt가 있으면 그대로 사용 (스크립트 생성기에서 이미 조합됨)
-      if (detailedPrompt) {
-        finalPrompt = `${stylePrefix}, ${detailedPrompt}, ${styleSuffix}`;
-      } else if (isInterviewQuestion) {
-        // ★ 인터뷰 질문: 강아지가 듣는 표정으로 생성
-        finalPrompt = `IMPORTANT: Generate EXACTLY this character - ${mainPrompt}. Single character alone, curious listening expression, head slightly tilted, ears perked up, attentive, ${backgroundInfo}, ${locationInfo}, ${lightingInfo}, ${moodInfo}. ${stylePrefix}, ${styleSuffix}. CRITICAL: Must match the character description exactly - same breed, fur color, accessories.`;
-      } else if (speaker === "main") {
-        // ★ 주인공만 등장 - 상세 프롬프트 사용
-        finalPrompt = `IMPORTANT: Generate EXACTLY this character - ${mainPrompt}. Single character alone, ${scene.emotion || "happy"} expression, ${backgroundInfo}, ${locationInfo}, ${lightingInfo}, ${moodInfo}. ${stylePrefix}, ${styleSuffix}. CRITICAL: Must match the character description exactly - same breed, fur color, accessories.`;
-      } else {
-        // ★ 조연이 말하는 씬 - 조연 + 주인공 함께 등장
-        finalPrompt = `IMPORTANT: Generate EXACTLY these characters - Character 1: ${speakerPrompt}. Character 2: ${mainPrompt}. Both characters together, ${scene.emotion || "happy"} expression, ${backgroundInfo}, ${locationInfo}, ${lightingInfo}, ${moodInfo}. ${stylePrefix}, ${styleSuffix}. CRITICAL: Must match both character descriptions exactly.`;
-      }
+    // =====================
+    // 5-2. 퍼포먼스 타입 전역 감지 (script-generator의 consistency 정보 우선 사용)
+    // =====================
+    // ★★★ script-generator에서 전달된 퍼포먼스 정보 사용 ★★★
+    const hasPerformanceScenes = consistencyInfo.has_performance
+      || scriptSegments.some(seg =>
+        ["performance_start", "performance_break", "performance_resume"].includes(seg.scene_type)
+      );
 
-      // 프롬프트 정리
-      finalPrompt = finalPrompt.replace(/,\s*,/g, ",").replace(/\s+/g, " ").trim();
+    // 전역 퍼포먼스 타입
+    const globalPerformanceType = consistencyInfo.performance_type
+      || scriptSegments.find(seg => seg.performance_type)?.performance_type
+      || bgmInfo.primary_performance_type
+      || "beatbox";
 
-      // 이미지 생성 함수 (에러 시 null 반환)
+    // ★★★ 퍼포먼스 악세서리 (script-generator에서 전달된 것 사용) ★★★
+    const globalPerformanceAccessories = consistencyInfo.performance_accessories
+      || (hasPerformanceScenes
+        ? (performanceImagePrompts[globalPerformanceType]?.accessories || performanceImagePrompts.beatbox.accessories)
+        : "");
+
+    $.export("consistency_used", {
+      background: consistentBackground,
+      lighting: consistentLighting,
+      main_prompt: mainPrompt,
+      has_performance: hasPerformanceScenes,
+      performance_type: globalPerformanceType,
+      accessories: globalPerformanceAccessories,
+    });
+
+    // =====================
+    // 6. 씬별 이미지 생성
+    // =====================
+    $.export("status", `Generating ${scriptSegments.length} images...`);
+
+    const imagePromises = scriptSegments.map(async (seg, idx) => {
+      const speaker = seg.speaker || "main";
+      const character = characters[speaker] || characters.main || {};
+      const isInterviewQuestion = seg.scene_type === "interview_question" || speaker === "interviewer";
+
+      // 퍼포먼스 씬 감지
+      const isPerformanceStart = seg.scene_type === "performance_start";
+      const isPerformanceBreak = seg.scene_type === "performance_break";
+      const isPerformanceResume = seg.scene_type === "performance_resume";
+      const isAnyPerformance = isPerformanceStart || isPerformanceBreak || isPerformanceResume;
+
+      // 퍼포먼스 타입
+      const performanceType = seg.performance_type || bgmInfo.primary_performance_type || "beatbox";
+      const performancePhase = isPerformanceStart ? "start" : isPerformanceBreak ? "break" : isPerformanceResume ? "resume" : null;
+
+      // 씬 환경 정보 (★★★ 일관된 배경 사용 ★★★)
+      const sceneDetails = seg.scene_details || {};
+      const sceneMood = sceneDetails.mood || currentMood.mood;
+
+      // 캐릭터 외형 정보
+      const characterAppearance = {
+        base: character.image_prompt || mainPrompt,
+        outfit: character.clothing || "",
+        accessories: character.accessories || [],
+        fur_color: character.fur_color || "",
+      };
+
+      // 이미지 프롬프트 생성
+      const generateImagePrompt = () => {
+        let prompt = characterAppearance.base;
+
+        // 퍼포먼스 씬일 때 특별 프롬프트 + 악세서리
+        if (isAnyPerformance && performancePhase) {
+          const perfPrompts = performanceImagePrompts[globalPerformanceType] || performanceImagePrompts.beatbox;
+          const perfPrompt = perfPrompts[performancePhase] || perfPrompts.start;
+
+          // ★★★ 전역 퍼포먼스 악세서리 사용 (모든 퍼포먼스 씬 동일) ★★★
+          prompt += `, ${globalPerformanceAccessories}`;
+          prompt += `, ${perfPrompt}`;
+          // ★★★ 일관된 퍼포먼스 스테이지 배경 ★★★
+          prompt += `. ${performanceStageBackground}`;
+        } else if (isInterviewQuestion) {
+          // 인터뷰 질문: 강아지가 듣는 표정
+          if (characterAppearance.outfit) {
+            prompt += `, wearing ${characterAppearance.outfit}`;
+          }
+          if (characterAppearance.accessories?.length > 0) {
+            prompt += `, with ${characterAppearance.accessories.join(", ")}`;
+          }
+          prompt += `, curious listening expression, head slightly tilted, ears perked up, attentive`;
+          // ★★★ 일관된 배경 사용 ★★★
+          prompt += `. ${consistentBackground}`;
+          prompt += `. ${consistentLighting}`;
+        } else {
+          // 일반 씬 (비퍼포먼스)
+          if (characterAppearance.outfit) {
+            prompt += `, wearing ${characterAppearance.outfit}`;
+          }
+          if (characterAppearance.accessories?.length > 0) {
+            prompt += `, with ${characterAppearance.accessories.join(", ")}`;
+          }
+          const emotion = seg.emotion || "happy";
+          prompt += `. ${emotion} expression`;
+          // ★★★ 일관된 배경 사용 ★★★
+          prompt += `. ${consistentBackground}`;
+          prompt += `. ${consistentLighting}`;
+        }
+
+        // 무드 추가
+        prompt += `. ${sceneMood}`;
+
+        // 품질 설정
+        prompt += `. ${stylePrefix}, ${styleSuffix}`;
+        // ★★★ 실제 강아지 강조 (탈/마스코트/인형 방지) - script-generator에서 전달된 문구 사용 ★★★
+        prompt += `. ${realDogEmphasis}`;
+        // ★★★ 텍스트 완전 제거 (한글 깨짐 방지) - script-generator에서 전달된 문구 사용 ★★★
+        prompt += `. ${noTextEmphasis}. Single character alone.`;
+
+        return prompt.replace(/,\s*,/g, ",").replace(/\s+/g, " ").trim();
+      };
+
+      const finalPrompt = generateImagePrompt();
+
+      // 이미지 생성 함수
       const generateImage = async (prompt) => {
         try {
           const response = await axios($, {
@@ -181,48 +404,51 @@ export default defineComponent({
           });
           return response.predictions?.[0]?.bytesBase64Encoded || null;
         } catch (e) {
-          // 에러 시 null 반환 (fallback 시도를 위해)
-          $.export(`error_${scene.index}_attempt`, e.response?.data?.error?.message || e.message);
+          $.export(`error_scene_${idx + 1}`, e.response?.data?.error?.message || e.message);
           return null;
         }
       };
 
-      // 1차 시도: 원래 프롬프트
+      // 이미지 생성 시도
       let base64 = await generateImage(finalPrompt);
-      let usedPrompt = finalPrompt;
 
-      // 2차 시도: 사람 캐릭터 실패 시 (null 반환 또는 에러) 강아지만 등장하는 프롬프트로 재시도
-      if (!base64 && speaker !== "main") {
-        const fallbackPrompt = `IMPORTANT: Generate EXACTLY this character - ${mainPrompt}. Single character alone, ${scene.emotion || "happy"} expression, listening attentively, ${backgroundInfo}, ${locationInfo}, ${lightingInfo}, ${moodInfo}. ${stylePrefix}, ${styleSuffix}. CRITICAL: Must match the character description exactly - same breed, fur color, accessories.`;
+      // 실패 시 간단한 프롬프트로 재시도
+      if (!base64) {
+        const fallbackPrompt = `${mainPrompt}, ${seg.emotion || "happy"} expression, clean simple background, ${stylePrefix}, ${styleSuffix}. Real living dog. Actual puppy. NOT a mascot. NOT a costume. NOT a plush toy. No text anywhere. No signs. No banners. No letters. No watermarks.`;
         base64 = await generateImage(fallbackPrompt);
-        usedPrompt = fallbackPrompt;
         if (base64) {
-          $.export(`fallback_${scene.index}`, "Used main character fallback");
+          $.export(`fallback_scene_${idx + 1}`, "Used simplified fallback prompt");
         }
       }
 
       if (base64) {
         return {
           success: true,
-          index: scene.index,
-          start: scene.start,
-          end: scene.end,
-          duration: scene.duration,
+          index: idx + 1,
+          segment_number: seg.segment_number || idx + 1,
+          start_time: seg.start_time || 0,
+          end_time: seg.end_time || 0,
+          duration: seg.duration,
           base64: base64,
-          prompt: usedPrompt,
-          narration: scene.narration,
-          speaker: scene.speaker,
-          voice_type: scene.voice_type,
-          scene_type: scene.scene_type,
-          emotion: scene.emotion,
-          scene_details: sceneDetails,
-          // ★ 새로운 필드들
-          character_appearance: characterAppearance,
-          scene_environment: sceneEnvironment,
+          prompt: finalPrompt,
+          narration: seg.narration || "",
+          narration_english: seg.narration_english || "",
+          speaker: speaker,
+          character_name: seg.character_name,
+          voice_type: seg.voice_type,
+          scene_type: seg.scene_type,
+          emotion: seg.emotion,
+          has_narration: seg.has_narration,
           is_interview_question: isInterviewQuestion,
+          is_performance: isAnyPerformance,
+          performance_type: isAnyPerformance ? performanceType : null,
+          performance_phase: performancePhase,
+          audio_details: seg.audio_details,
+          scene_details: sceneDetails,
         };
       }
-      return { success: false, index: scene.index, error: "No prediction after retry" }
+
+      return { success: false, index: idx + 1, error: "Image generation failed" };
     });
 
     const results = await Promise.all(imagePromises);
@@ -235,7 +461,7 @@ export default defineComponent({
     }
 
     // =====================
-    // 6. GCS 병렬 업로드
+    // 7. GCS 업로드
     // =====================
     $.export("status", "Uploading to GCS...");
 
@@ -255,24 +481,12 @@ export default defineComponent({
         requestBody: { name: objectName, contentType: "image/png" },
       });
 
+      // base64 제거하고 URL 추가
+      const { base64, ...rest } = img;
       return {
-        index: img.index,
+        ...rest,
         filename,
         url: `https://storage.googleapis.com/${this.gcs_bucket_name}/${objectName}`,
-        start: img.start,
-        end: img.end,
-        duration: img.duration,
-        image_prompt: img.prompt,
-        narration: img.narration,
-        speaker: img.speaker,
-        voice_type: img.voice_type,
-        scene_type: img.scene_type,
-        emotion: img.emotion,
-        scene_details: img.scene_details,
-        // ★ 새로운 필드들
-        character_appearance: img.character_appearance,
-        scene_environment: img.scene_environment,
-        is_interview_question: img.is_interview_question,
       };
     });
 
@@ -280,20 +494,39 @@ export default defineComponent({
     uploadedFiles.sort((a, b) => a.index - b.index);
 
     // =====================
-    // 6. 결과 반환
+    // 8. 결과 반환
     // =====================
-    $.export("$summary", `Generated ${uploadedFiles.length} images (${this.imagen_model})`);
+    const totalDuration = uploadedFiles.reduce((sum, s) => sum + (s.duration || 0), 0);
+
+    $.export("$summary", `Generated ${uploadedFiles.length} images (${this.imagen_model}), ${totalDuration}s total`);
 
     return {
       success: true,
       folder_name: folderName,
       bucket: this.gcs_bucket_name,
       imagen_model: this.imagen_model,
-      character_prompts: characterPrompts,
-      characters: characters,
-      total_duration_seconds: scriptOutput.total_duration_seconds,
       total_scenes: uploadedFiles.length,
+      total_duration_seconds: totalDuration,
+
+      // 콘텐츠 타입 정보
+      content_type: contentType,
+      content_type_config: contentTypeConfig,
+      script_format: scriptFormat,
+
+      // 캐릭터 정보
+      characters: characters,
+
+      // BGM 정보 (퍼포먼스용)
+      bgm: bgmInfo,
+
+      // 씬별 이미지 정보
       scenes: uploadedFiles,
+
+      // 원본 스크립트 참조
+      script_reference: {
+        title: scriptData.title,
+        topic: scriptData.topic_info?.topic,
+      },
     };
   },
 });

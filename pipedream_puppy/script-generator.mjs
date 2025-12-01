@@ -101,12 +101,38 @@ export default defineComponent({
     const effectiveTopic = topicData?.topic || "귀여운 강아지의 일상";
     const dailyContext = topicData?.daily_context;
 
-    // ★ 풍자/패러디 정보 추출
-    const isSatire = topicData?.is_satire || false;
+    // ★★★ 콘텐츠 타입 정보 추출 (NEW!) ★★★
+    const contentType = topicData?.content_type || "satire";
+    const contentTypeConfig = topicData?.content_type_config || {
+      name: "풍자",
+      emoji: "🎭",
+      description: "시사/이슈를 강아지 세계로 풍자",
+      tone: "satirical, clever, witty",
+      mood: "playful but sharp",
+      recommended_script_format: "interview",
+      themes: ["시사 풍자"],
+      emotion_range: ["분노", "억울", "당당"],
+    };
+    const contentTypeInfo = topicData?.content_type_info || null;
+
+    // ★ 풍자/패러디 정보 추출 (풍자 모드일 때만)
+    const isSatire = contentType === "satire" || topicData?.is_satire || false;
     const originalTopic = topicData?.original_topic || null;
     const keywordHint = topicData?.keyword_hint || null;
     const satireInfo = topicData?.satire_info || topicData?.selected?.satire_info || null;
-    const scriptFormat = topicData?.script_format || "interview";
+    const scriptFormat = topicData?.script_format || contentTypeConfig.recommended_script_format || "interview";
+
+    // ★★★ 배경 정보 추출 (NEW!) ★★★
+    const backgroundData = topicData?.background || {};
+    const backgroundPrompt = backgroundData.final_prompt || backgroundData.user_setting || null;
+    const hasCustomBackground = backgroundData.has_custom_background || false;
+    const backgroundAiGenerated = backgroundData.ai_generated || null;
+
+    $.export("background_info", {
+      has_custom: hasCustomBackground,
+      prompt: backgroundPrompt,
+      ai_generated: backgroundAiGenerated,
+    });
     const storyContext = {
       story_summary: topicData?.story_summary || topicData?.selected?.story_summary || null,
       hook: topicData?.hook || topicData?.selected?.hook || null,
@@ -434,7 +460,32 @@ ${Object.entries(characters).map(([key, char]) =>
 TOPIC: ${effectiveTopic}
 ${dailyContext ? `CONTEXT: ${dailyContext.season}, ${dailyContext.day_of_week}` : ""}
 
-${isSatire ? `★★★ 풍자/패러디 모드 (CRITICAL!) ★★★
+★★★ 배경 설정 (CRITICAL - 모든 씬에 일관되게 적용!) ★★★
+${hasCustomBackground ? `
+🎯 **USER-SPECIFIED BACKGROUND** (최우선 적용!):
+"${backgroundPrompt}"
+
+⚠️ IMPORTANT: 이 배경을 모든 씬의 scene_details.background와 image_prompt에 반드시 포함!
+` : backgroundAiGenerated ? `
+🤖 **AI-GENERATED BACKGROUND**:
+- Location: ${backgroundAiGenerated.location || "auto"}
+- Style: ${backgroundAiGenerated.style || "auto"}
+- Lighting: ${backgroundAiGenerated.lighting || "auto"}
+- Description: ${backgroundAiGenerated.description || "auto"}
+
+모든 씬에서 이 배경을 일관되게 사용하세요!
+` : `
+🤖 **AUTO BACKGROUND**: 콘텐츠 타입(${contentType})에 맞는 배경을 자동 생성하되, 모든 씬에서 일관성 유지!
+`}
+
+★★★ 콘텐츠 타입: ${contentTypeConfig.emoji} ${contentTypeConfig.name.toUpperCase()} (${contentType}) ★★★
+**Tone**: ${contentTypeConfig.tone}
+**Mood**: ${contentTypeConfig.mood}
+**Key Emotions**: ${contentTypeConfig.emotion_range?.join(", ") || "다양함"}
+${contentTypeInfo?.key_element ? `**Key Element**: ${contentTypeInfo.key_element}` : ""}
+
+${contentType === 'satire' && isSatire ? `
+### 🎭 풍자/패러디 모드 가이드
 이 콘텐츠는 실제 이슈를 강아지 세계로 풍자한 것입니다.
 
 📰 원본 주제: ${originalTopic || "N/A"}
@@ -455,7 +506,155 @@ ${satireInfo ? `
 ★ 예시:
 - "쿠팡 개인정보 유출 3700만건" → "차우차우한테 3700만개 사료 털렸다고?!"
 - "테슬라 자율주행 사고" → "로봇청소기가 나를 치고 도망갔어!"
-` : ""}
+` : ''}
+
+${contentType === 'comic' ? `
+### 😂 코믹 모드 가이드
+웃기고 재미있는 콘텐츠를 만들어주세요!
+
+★ 코믹 스크립트 규칙:
+1. **반전 (Twist)** - 예상 밖의 결말로 웃음 유발
+2. **과장 (Exaggeration)** - 귀여운 과장으로 코믹한 상황
+3. **당황 (Confusion)** - 멘붕하는 표정과 리액션 강조
+4. **타이밍** - 코미디 타이밍이 중요! 빠른 템포와 반전
+5. **효과음** - 코믹한 효과음 적극 활용
+
+★ 코믹 요소:
+- 실패 모음 (귀여운 실수)
+- vs 시리즈 (로봇청소기, 거울, 그림자)
+- 과장된 리액션
+- 예상 밖 반전
+` : ''}
+
+${contentType === 'emotional' ? `
+### 🥺 감동 모드 가이드
+따뜻하고 감동적인 스토리를 만들어주세요!
+
+★ 감동 스크립트 규칙:
+1. **감정 곡선** - 평범함 → 감정적 계기 → 클라이맥스 → 따뜻한 마무리
+2. **디테일** - 작은 디테일에서 감동 유발 (기다림, 흔적, 추억)
+3. **음악** - 감동적인 배경음악과 조화
+4. **표정** - 눈빛, 표정 변화 섬세하게 표현
+5. **여운** - 끝나고도 여운이 남는 마무리
+
+★ 감동 요소:
+- 재회 (오랜만에 만난 가족)
+- 감사 (주인에 대한 고마움)
+- 극복 (어려움을 이겨낸 이야기)
+- 사랑 (가족의 사랑)
+` : ''}
+
+${contentType === 'daily' ? `
+### 😊 일상 모드 가이드
+귀여운 일상 브이로그 스타일로 만들어주세요!
+
+★ 일상 스크립트 규칙:
+1. **자연스러움** - 편안하고 자연스러운 일상
+2. **공감** - 반려인이 공감할 수 있는 상황
+3. **디테일** - 소소한 일상의 디테일
+4. **시간대** - 아침/점심/저녁 등 시간대 반영
+5. **루틴** - 반복되는 귀여운 루틴
+
+★ 일상 요소:
+- 아침 기상, 밥 먹기
+- 산책, 낮잠
+- 간식 타임
+- 주인 기다리기
+` : ''}
+
+${contentType === 'mukbang' ? `
+### 🍽️ 먹방 모드 가이드
+맛있고 행복한 먹방 콘텐츠를 만들어주세요!
+
+★ 먹방 스크립트 규칙:
+1. **기대감** - 간식을 받기 전 기대하는 표정
+2. **리액션** - 첫 입에 대한 리액션 강조
+3. **소리** - ASMR 요소 (씹는 소리, 핥는 소리)
+4. **표정** - 행복한 먹방 표정
+5. **평가** - 간식에 대한 솔직한 평가
+
+★ 먹방 요소:
+- 간식 리뷰
+- 처음 먹어보는 음식 반응
+- ASMR 먹방
+- 먹방 후 만족스러운 표정
+` : ''}
+
+${contentType === 'healing' ? `
+### 💕 힐링 모드 가이드
+편안하고 치유되는 콘텐츠를 만들어주세요!
+
+★ 힐링 스크립트 규칙:
+1. **평화로움** - 조용하고 평화로운 분위기
+2. **자연** - 자연 소리, 환경 소리 활용
+3. **느린 템포** - 천천히 여유있게
+4. **따뜻함** - 포근하고 따뜻한 장면
+5. **ASMR** - 힐링 사운드 (빗소리, 새소리)
+
+★ 힐링 요소:
+- 비 오는 날 창밖 구경
+- 포근한 이불 속 낮잠
+- 할머니 무릎 베개
+- 햇살 아래 졸기
+` : ''}
+
+${contentType === 'drama' ? `
+### 🎬 드라마 모드 가이드
+스토리가 있는 미니 드라마를 만들어주세요!
+
+★ 드라마 스크립트 규칙:
+1. **구조** - 도입 → 사건 → 전개 → 클라이맥스 → 결말
+2. **갈등** - 명확한 갈등/문제 설정
+3. **캐릭터** - 캐릭터 간 관계와 감정
+4. **긴장감** - 적절한 긴장감 유지
+5. **결말** - 만족스러운 결말 (반전 또는 해피엔딩)
+
+★ 드라마 요소:
+- 미스터리 (사라진 간식)
+- 모험 (탈출, 탐험)
+- 갈등과 화해
+- 성장과 극복
+` : ''}
+
+${contentType === 'performance' ? `
+### 🎤 퍼포먼스 모드 가이드
+비트박스, 노래, 댄스, 랩 등 음악 퍼포먼스 콘텐츠를 만들어주세요!
+
+★ 퍼포먼스 스크립트 규칙:
+1. **리듬감** - 대사/동작이 비트에 맞아야 함
+2. **입 모양** - 비트박스: 다양한 입 모양 (붐, 칫, 츠, 크)
+3. **몸 동작** - 리듬에 맞춰 몸이 움직임
+4. **클라이맥스** - 하이라이트 순간 (드롭, 고음, 브레이크)
+5. **관객 반응** - 환호, 박수 연출
+
+★ 퍼포먼스 타입별 가이드:
+- **비트박스**: "붐 칫 붐붐 칫" 같은 의성어, 입 모양 변화, 리듬 패턴
+- **노래**: 가사, 감정 표현, 음정 변화
+- **댄스**: 동작 설명, 타이밍, 포즈
+- **랩**: 가사, 플로우, 라임, 스웨그
+
+★ 씬 구성:
+1. **인트로** - 마이크 잡기, 준비 자세
+2. **빌드업** - 점점 빨라지는 비트
+3. **드롭/클라이맥스** - 최고 하이라이트
+4. **아웃트로** - 마이크 드롭, 인사
+
+★ 비트박스 예시 대사:
+- "붐 칫 붐붐 칫! 츠크츠크 붐!"
+- "피쓰 피쓰 크크크 붐!"
+- "부왘부왘 치키치키 붐붐!"
+
+★ 중요:
+- narration에 비트박스 소리 패턴 포함
+- lip_sync: "yes" (입 모양 중요!)
+- 리듬감 있는 씬 전환
+` : ''}
+
+${contentType === 'random' ? `
+### 🎲 랜덤 모드
+AI가 가장 적합한 스타일을 선택했습니다.
+주제와 상황에 맞는 톤과 무드로 자연스럽게 작성해주세요.
+` : ''}
 
 ${storyContext.story_summary ? `★★★ 스토리 가이드 ★★★
 📖 스토리 요약: ${storyContext.story_summary}
@@ -816,7 +1015,7 @@ Create ${sceneCount} segments with complete visual details!`;
     // =====================
     // 9. 결과 반환
     // =====================
-    $.export("$summary", `🎬 ${script.script_segments?.length || 0} scenes, ${script.total_duration}s, ${Object.keys(characters).length} characters`);
+    $.export("$summary", `${contentTypeConfig.emoji} [${contentTypeConfig.name}] ${script.script_segments?.length || 0} scenes, ${script.total_duration}s, ${Object.keys(characters).length} characters`);
 
     return {
       folder_name: folderName,
@@ -825,9 +1024,16 @@ Create ${sceneCount} segments with complete visual details!`;
       total_duration_seconds: script.total_duration || targetDuration,
       title: script.title,
 
+      // ★★★ 콘텐츠 타입 정보 (NEW!) ★★★
+      content_type: contentType,
+      content_type_config: contentTypeConfig,
+      content_type_info: contentTypeInfo,
+
       // ★ 토픽 정보 (풍자 모드 포함)
       topic_info: {
         topic: effectiveTopic,
+        content_type: contentType,
+        content_type_config: contentTypeConfig,
         is_satire: isSatire,
         original_topic: originalTopic,
         keyword_hint: keywordHint,

@@ -65,7 +65,8 @@
       "WebFetch(domain:www.youtube.com)",
       "Bash(fc-list:*)",
       "Bash(pip3 show:*)",
-      "Bash(jq:*)"
+      "Bash(jq:*)",
+      "WebFetch(domain:storage.googleapis.com)"
     ],
     "deny": [],
     "ask": []
