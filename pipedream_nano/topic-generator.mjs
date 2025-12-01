@@ -2,9 +2,19 @@ import { axios } from "@pipedream/platform";
 
 export default defineComponent({
   name: "Topic & Keyword Generator",
-  description: "AI가 자동으로 바이럴 가능성 높은 토픽과 키워드를 생성합니다. 중복 방지 기능 포함.",
+  description: "AI가 자동으로 바이럴 가능성 높은 토픽과 키워드를 생성합니다. 입력값이 있으면 그 주제를 기반으로 핫한 토픽을 재생성하고, 없으면 AI가 트렌디한 토픽을 자동 생성합니다. 강아지 중심의 재미/풍자/귀여움 콘텐츠에 특화되어 있습니다.",
 
   props: {
+    // =====================
+    // 사용자 입력 토픽 (선택)
+    // =====================
+    user_topic_input: {
+      type: "string",
+      label: "Topic Input (Optional)",
+      description: "사용자가 원하는 주제/키워드를 입력하세요. 입력하면 해당 주제를 기반으로 바이럴될만한 토픽을 재생성합니다. 비워두면 AI가 현재 트렌드에 맞는 토픽을 자동 생성합니다. 예: '로봇청소기', '다이어트', '명절', '산책'",
+      optional: true,
+    },
+
     // Gemini API 설정
     gemini_api_key: {
       type: "string",
@@ -23,7 +33,7 @@ export default defineComponent({
         { label: "Gemini 1.5 Pro", value: "gemini-1.5-pro" },
         { label: "Gemini 1.5 Flash", value: "gemini-1.5-flash" },
       ],
-      default: "gemini-3-pro-preview",
+      default: "gemini-2.0-flash-exp",
     },
 
     // 생성 개수
@@ -112,7 +122,41 @@ export default defineComponent({
     const previousStorySummaries = topicHistory.story_summaries || [];
 
     // =====================
-    // 2. 프롬프트 생성
+    // 2. 날짜/계절 정보 계산
+    // =====================
+    const now = new Date();
+    const month = now.getMonth() + 1; // 1-12
+    const day = now.getDate();
+    const dayOfWeek = now.toLocaleDateString('en-US', { weekday: 'long' });
+
+    // 계절 판단
+    let season, seasonThemes;
+    if (month >= 3 && month <= 5) {
+      season = "봄 (Spring)";
+      seasonThemes = ["벚꽃 구경", "산책", "피크닉", "알레르기", "봄맞이 청소", "새학기", "입학", "졸업", "꽃놀이", "따뜻해진 날씨"];
+    } else if (month >= 6 && month <= 8) {
+      season = "여름 (Summer)";
+      seasonThemes = ["수영", "더위", "에어컨", "아이스크림", "휴가", "바다", "수박", "여름 더위", "물놀이", "선풍기", "장마"];
+    } else if (month >= 9 && month <= 11) {
+      season = "가을 (Autumn)";
+      seasonThemes = ["단풍", "추석/한가위", "명절", "가을 산책", "낙엽", "할로윈", "고구마", "밤", "환절기", "선선한 날씨"];
+    } else {
+      season = "겨울 (Winter)";
+      seasonThemes = ["크리스마스", "새해", "눈", "따뜻한 집", "이불", "난로", "핫초코", "연말", "설날", "보온", "털옷"];
+    }
+
+    // 특별 이벤트/기념일 체크
+    const specialEvents = [];
+    if (month === 12 && day >= 20 && day <= 26) specialEvents.push("크리스마스 시즌");
+    if (month === 12 && day >= 29 || (month === 1 && day <= 3)) specialEvents.push("새해/연말 시즌");
+    if (month === 2 && day >= 10 && day <= 15) specialEvents.push("밸런타인데이");
+    if (month === 3 && day >= 12 && day <= 15) specialEvents.push("화이트데이");
+    if (month === 10 && day >= 28 || (month === 11 && day <= 1)) specialEvents.push("할로윈");
+    if (dayOfWeek === "Monday") specialEvents.push("월요병/월요일 블루스");
+    if (dayOfWeek === "Friday") specialEvents.push("불금/주말 기대");
+
+    // =====================
+    // 3. 프롬프트 생성
     // =====================
     const langConfig = {
       japanese: {
@@ -146,8 +190,8 @@ Below are story summaries that have been used before. YOU must determine if your
 ${previousStorySummaries.slice(-50).map((s, i) => `${i + 1}. "${s}"`).join('\n')}
 
 ### SIMILARITY JUDGMENT CRITERIA (YOU decide):
-- **SIMILAR** if: Same main characters (e.g., both about "dog vs cat"), same core conflict, same emotional arc, same punchline concept
-- **NOT SIMILAR** if: Different characters, different situation, different emotional journey, unique twist even with similar elements
+- **SIMILAR** if: Same main scenario (e.g., both about "dog vs robot vacuum"), same core conflict, same punchline concept
+- **NOT SIMILAR** if: Different scenario, different conflict, unique twist even with similar elements
 
 For each idea you generate, you MUST:
 1. Compare it against ALL previous stories above
@@ -156,105 +200,147 @@ For each idea you generate, you MUST:
 4. PRIORITIZE ideas marked as NOT similar
 ` : '';
 
-    const prompt = `You are a creative AI content strategist specializing in viral short-form video content.
+    // 사용자 입력 토픽에 따른 프롬프트 분기
+    const userInputSection = this.user_topic_input ? `
+## 🎯 USER INPUT TOPIC (MUST USE):
+The user has provided this topic/keyword: **"${this.user_topic_input}"**
 
-## YOUR MISSION:
-Autonomously generate ${this.generate_count} unique, creative, and viral-worthy content ideas for ${this.target_platform}.
-You have COMPLETE FREEDOM to choose any topic, category, characters, and storyline.
+YOUR MISSION: Create ${this.generate_count} viral-worthy content ideas that incorporate this topic with a PUPPY/DOG as the main character.
+- Transform this topic into entertaining puppy-centric content
+- Find unexpected, funny, or touching angles related to this topic
+- Think: "What would happen if a puppy encountered/experienced ${this.user_topic_input}?"
+- Make it relatable, shareable, and emotionally engaging
+
+Examples of transformation:
+- Input "로봇청소기" → "로봇청소기 vs 겁쟁이 강아지, 3일간의 전쟁 기록"
+- Input "다이어트" → "다이어트 중인 주인 몰래 간식 훔치는 강아지의 치밀한 작전"
+- Input "명절" → "설날 친척집 가기 싫은 강아지의 연기력 대결"
+` : `
+## 🎯 AUTO-GENERATE VIRAL TOPICS:
+No user input provided. YOU must autonomously generate trending, viral-worthy topics.
+Focus on what's currently popular and timely considering the date and season below.
+`;
+
+    const prompt = `You are a creative AI content strategist specializing in viral short-form video content featuring PUPPIES/DOGS.
+
+${userInputSection}
+
+## 📅 CURRENT DATE & SEASON CONTEXT (VERY IMPORTANT FOR VIRAL CONTENT):
+- **Today**: ${now.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}
+- **Season**: ${season}
+- **Seasonal Themes**: ${seasonThemes.join(', ')}
+${specialEvents.length > 0 ? `- **Special Events**: ${specialEvents.join(', ')}` : ''}
+
+🔥 **TIMING IS EVERYTHING**: Create content that feels CURRENT and RELEVANT to today's date!
+- If it's winter, feature cozy/snow/holiday themes
+- If it's Monday, relate to Monday blues
+- If it's near a holiday, incorporate holiday elements
+- Seasonal content gets 40% more engagement!
+
+## 🐕 CORE REQUIREMENT: PUPPY/DOG AS MAIN CHARACTER
+
+**EVERY idea MUST feature a puppy or dog as the MAIN CHARACTER.**
+The dog should be:
+- Cute and lovable (귀여움)
+- Funny and relatable (재미/유머)
+- Sometimes satirical of human behavior (풍자)
+- Emotionally expressive
+- Easy to anthropomorphize
 
 ## PLATFORM OPTIMIZATION:
 ${platformGuides[this.target_platform]}
 ${previousStoriesSection}
-## CONTENT GUIDELINES:
 
-### ✅ ENCOURAGED CONTENT TYPES:
-1. **Pet Content** (반려동물)
-   - 강아지, 고양이, 햄스터 등의 귀여운/재미있는 상황
-   - 동물들 간의 상호작용, 우정, 라이벌 관계
-   - 예: "시비거는 강아지 vs 참다가 폭발한 고양이의 냥펀치 대결"
+## 🎬 CONTENT THEMES FOR PUPPY CONTENT:
 
-2. **Heartwarming Stories** (감동 스토리)
-   - 가족, 우정, 성장, 재회
-   - 작은 친절이 만드는 큰 변화
-   - 예: "버려진 강아지가 새 가족을 만나기까지"
+### 1. **일상 코미디 (Daily Comedy)**
+   - 강아지의 엉뚱한 행동, 반전 리액션
+   - 주인과의 귀여운 밀당
+   - 예: "택배 올 때마다 경비대장 모드 ON하는 강아지"
 
-3. **Comedy/Humor** (코미디)
-   - 일상의 웃긴 상황, 반전, 아이러니
-   - 과장된 리액션, 예상치 못한 결말
-   - 예: "다이어트 결심 후 '마지막 한 입'을 100번 반복하는 나"
+### 2. **VS 대결 시리즈 (VS Battles)**
+   - 강아지 vs 일상용품 (로봇청소기, 거울, 레이저포인터)
+   - 강아지 vs 상황 (목욕, 병원, 미용실)
+   - 예: "로봇청소기에 영역 침범당한 강아지의 분노"
 
-4. **Surprising Facts** (놀라운 사실)
-   - 99%가 모르는 정보, 반전 있는 진실
-   - 과학적 발견, 역사적 비하인드
-   - 예: "고양이가 박스를 좋아하는 진짜 이유"
+### 3. **인간 풍자 (Human Satire through Dogs)**
+   - 강아지 시점에서 본 인간의 이상한 행동
+   - 직장인/학생/부모의 일상을 강아지로 표현
+   - 예: "재택근무하는 주인이 이상해진 강아지의 관찰일지"
 
-5. **Relatable Daily Life** (공감 일상)
-   - 직장인, 학생, 부모 등의 공감 상황
-   - "나만 그런 줄 알았는데" 모먼트
-   - 예: "월요일 아침 vs 금요일 저녁의 나"
+### 4. **감동/힐링 (Heartwarming)**
+   - 강아지와 가족의 따뜻한 순간
+   - 우정, 충성, 기다림의 스토리
+   - 예: "퇴근길 매일 같은 자리에서 기다리는 강아지"
 
-6. **Fantasy/Creative Stories** (창작 스토리)
-   - 동물들의 의인화된 상황
-   - 상상력 가득한 시나리오
-   - 예: "고양이 카페 사장님의 하루 (고양이 시점)"
+### 5. **시즌/이벤트 연동 (Seasonal)**
+   - 현재 계절/기념일에 맞는 콘텐츠
+   - 예: (겨울) "첫눈 내린 날 강아지의 리액션", (크리스마스) "산타 할아버지 도둑으로 착각한 강아지"
 
-7. **Healing/ASMR** (힐링)
-   - 마음이 편안해지는 콘텐츠
-   - 자연, 일상의 소소함, 위로
-   - 예: "비 오는 날 창가에서 낮잠 자는 고양이"
+### 6. **트렌드/밈 패러디 (Trend Parody)**
+   - 유행하는 밈, 챌린지를 강아지 버전으로
+   - 인기 있는 포맷의 강아지 버전
+   - 예: "요즘 유행하는 '조용히 해줄래요' 강아지 버전"
 
-8. **Dramatic Relationships** (드라마틱한 관계)
-   - 라이벌에서 친구로, 적에서 연인으로
-   - 오해와 화해, 반전 있는 관계 변화
-   - 예: "매일 싸우던 강아지와 고양이, 한쪽이 아프자 벌어진 일"
+### 7. **정보성 콘텐츠 (Educational but Fun)**
+   - 강아지에 대한 놀라운 사실 + 귀여운 영상
+   - 예: "강아지가 고개를 갸웃하는 진짜 이유"
 
-### 🎬 STORY STRUCTURE PATTERNS (choose one for each idea):
-- **반전형**: 예상 → 반전 → 더 큰 반전 → 웃음/감동
-- **성장형**: 시작 → 갈등 → 극복 → 성장
+## 🎭 STORY STRUCTURE PATTERNS:
+- **반전형**: 예상 → 반전 → 더 큰 반전 → 웃음
 - **대결형**: 대립 → 클라이맥스 → 예상 밖 결말
-- **감동형**: 일상 → 위기 → 도움 → 따뜻한 결말
 - **코미디형**: 설정 → 반복/에스컬레이션 → 펀치라인
+- **감동형**: 일상 → 위기 → 도움 → 따뜻한 결말
+- **풍자형**: 인간 행동 → 강아지 시점 해석 → 웃음 포인트
 
-### ⛔ STRICTLY PROHIBITED CONTENT:
-- Sexual content or innuendo (성적인 내용)
-- Violence, gore, cruelty (폭력, 잔인함)
-- Hate speech, discrimination (혐오, 차별)
-- Illegal activities (불법 행위)
-- Self-harm, dangerous challenges (자해, 위험한 도전)
-- Political propaganda (정치적 선전)
-- Fetish or perverted content (변태적 내용)
-- Animal abuse (동물 학대)
-- Bullying, harassment (괴롭힘)
-- Misinformation, fake news (허위 정보)
+## ⛔ STRICTLY PROHIBITED:
+- Sexual content, Violence, Hate speech
+- Animal abuse or dangerous situations
+- Sad endings (we want POSITIVE emotions!)
+- Content that makes dogs look stupid or mean
 
 ## OUTPUT REQUIREMENTS:
 ${lang.instruction}
 
-Generate creative, family-friendly content that:
-1. Can go viral (high shareability)
-2. Evokes strong emotions (laughter, warmth, surprise, empathy)
-3. Is visually interesting for short-form video
-4. Has a clear story arc within 30-60 seconds
-5. Appeals to a wide audience
-6. IS COMPLETELY DIFFERENT from previous topics listed above
+Generate content that:
+1. Features a PUPPY/DOG as the main character (MANDATORY)
+2. Incorporates current season/date context
+3. Is funny (재미), satirical (풍자), or cute (귀여움)
+4. Can go viral (high shareability)
+5. Has a clear story arc within 30-60 seconds
+6. IS COMPLETELY DIFFERENT from previous stories
 
 ## OUTPUT FORMAT (JSON only, no markdown):
 {
-  "generation_theme": "AI가 선택한 이번 생성의 전체 테마/분위기",
+  "generation_theme": "이번 생성의 전체 테마 (예: '겨울맞이 강아지 일상', '월요일 강아지의 고충')",
+  "date_context": {
+    "season": "${season}",
+    "special_events": ${JSON.stringify(specialEvents)},
+    "incorporated": "how the date/season was incorporated into ideas"
+  },
+  "user_input": ${this.user_topic_input ? `"${this.user_topic_input}"` : 'null'},
   "ideas": [
     {
       "id": 1,
-      "category": "pet/comedy/heartwarming/surprising_facts/daily_life/fantasy/healing/drama",
-      "topic": "간결하고 임팩트 있는 토픽 제목",
+      "category": "daily_comedy/vs_battle/human_satire/heartwarming/seasonal/trend_parody/educational",
+      "topic": "간결하고 임팩트 있는 토픽 제목 (반드시 강아지 관련)",
       "keywords": "키워드1, 키워드2, 키워드3, 키워드4, 키워드5",
-      "main_characters": ["캐릭터1", "캐릭터2"],
+      "main_characters": ["강아지 캐릭터 설명", "기타 캐릭터"],
+      "puppy_character": {
+        "personality": "강아지 성격 (예: 겁쟁이, 먹보, 호기심왕)",
+        "breed_suggestion": "추천 견종 (예: 시바견, 골든리트리버, 포메라니안)",
+        "key_trait": "핵심 특성 (이 영상에서 강조될 특성)"
+      },
       "story_summary": "2-3문장의 스토리 요약 (시작-전개-결말)",
       "hook": "첫 2-3초에 보여줄 강력한 후킹 장면/대사",
+      "funny_elements": ["웃음 포인트1", "웃음 포인트2"],
+      "cute_elements": ["귀여움 포인트1", "귀여움 포인트2"],
+      "satire_elements": ["풍자 포인트 (있는 경우)"],
       "emotional_journey": "감정1 → 감정2 → 감정3",
-      "story_structure": "반전형/성장형/대결형/감동형/코미디형",
-      "character_dynamics": "캐릭터 간의 관계/상호작용 설명",
+      "story_structure": "반전형/대결형/코미디형/감동형/풍자형",
       "viral_elements": ["바이럴 요소1", "바이럴 요소2"],
       "viral_potential": 1-10,
+      "seasonal_relevance": "계절/날짜와의 연관성 설명",
       "suggested_content_angle": "shocking_facts/emotional_story/comparison/warning/problem_solving/ranking/hidden_meaning",
       "suggested_tone": "funny_cute/emotional/dramatic/heartwarming/surprising",
       "is_similar_to_previous": false,
@@ -262,12 +348,12 @@ Generate creative, family-friendly content that:
     }
   ],
   "best_pick": {
-    "id": "가장 바이럴 가능성 높고 이전 스토리와 유사하지 않은 아이디어 ID",
-    "reason": "선택 이유 (유사하지 않은 이유 포함)"
+    "id": "가장 바이럴 가능성 높고 유니크한 아이디어 ID",
+    "reason": "선택 이유 (계절성, 유니크함, 바이럴 가능성)"
   }
 }
 
-Be wildly creative! The best viral content is unexpected and emotionally engaging.`;
+Be wildly creative! The best puppy content is unexpected, relatable, and makes people want to share it immediately!`;
 
     // =====================
     // 3. Gemini API 호출
@@ -419,6 +505,12 @@ Be wildly creative! The best viral content is unexpected and emotionally engagin
       suggested_angle: selectedIdea.suggested_content_angle,
       suggested_tone: selectedIdea.suggested_tone,
 
+      // ★ 강아지 캐릭터 정보 (새로 추가)
+      puppy_character: selectedIdea.puppy_character || null,
+      funny_elements: selectedIdea.funny_elements || [],
+      cute_elements: selectedIdea.cute_elements || [],
+      satire_elements: selectedIdea.satire_elements || [],
+
       // 선택된 아이디어 상세
       selected: selectedIdea,
 
@@ -430,6 +522,20 @@ Be wildly creative! The best viral content is unexpected and emotionally engagin
 
       // AI가 선택한 테마
       generation_theme: result.generation_theme,
+
+      // ★ 날짜/계절 컨텍스트 (새로 추가)
+      date_context: result.date_context || {
+        season: season,
+        special_events: specialEvents,
+        incorporated: selectedIdea.seasonal_relevance || null,
+      },
+
+      // ★ 사용자 입력 정보 (새로 추가)
+      user_input: {
+        provided: !!this.user_topic_input,
+        original_input: this.user_topic_input || null,
+        transformed_to: selectedIdea.topic,
+      },
 
       // 선택 이유
       selection_reason: result.best_pick?.reason || `Highest viral potential: ${selectedIdea.viral_potential}/10`,
@@ -452,7 +558,11 @@ Be wildly creative! The best viral content is unexpected and emotionally engagin
       generated_at: new Date().toISOString(),
     };
 
-    $.export("$summary", `🎯 Generated ${result.ideas.length} ideas (${uniqueIdeas.length} unique). Selected: "${output.topic}" (Viral: ${selectedIdea.viral_potential}/10)`);
+    // 입력값 유무에 따른 요약 메시지 변경
+    const inputInfo = this.user_topic_input
+      ? `📝 Input: "${this.user_topic_input}" → `
+      : `🎲 Auto-generated: `;
+    $.export("$summary", `🐕 ${inputInfo}"${output.topic}" (${season}) | Viral: ${selectedIdea.viral_potential}/10`);
 
     return output;
   },

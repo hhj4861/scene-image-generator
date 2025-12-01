@@ -1,0 +1,44 @@
+{
+  "output_format": "mp4",
+  "width": 1080,
+  "height": 1920,
+  "frame_rate": 30,
+  "duration": 5,
+  "elements": [
+    {
+      "type": "shape",
+      "shape": "rectangle",
+      "width": "100%",
+      "height": "100%",
+      "fill_color": "#000000",
+      "time": 0
+    },
+    {
+      "type": "video",
+      "source": "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      "time": 0,
+      "duration": 5,
+      "fit": "contain"
+    },
+    {
+      "type": "text",
+      "text": "땅콩이 테스트 자막!",
+      "time": 1,
+      "duration": 3,
+      "width": "90%",
+      "x": "50%",
+      "y": "85%",
+      "x_anchor": "50%",
+      "y_anchor": "50%",
+      "font_family": "Noto Sans KR",
+      "font_size": "5vw",
+      "font_weight": "700",
+      "fill_color": "#FFFFFF",
+      "background_color": "rgba(0,0,0,0.6)",
+      "background_x_padding": "3%",
+      "background_y_padding": "2%",
+      "background_border_radius": "5%",
+      "text_align": "center"
+    }
+  ]
+}

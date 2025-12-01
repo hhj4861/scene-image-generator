@@ -1,0 +1,252 @@
+{
+  "characters": {
+    "main": {
+      "name": "땅콩",
+      "role": "main",
+      "analysis": {
+        "character_type": "animal",
+        "species": "dog",
+        "breed": "Pomeranian",
+        "estimated_age": "adult",
+        "gender_appearance": "unknown",
+        "fur_color": "tan and cream",
+        "fur_texture": "fluffy",
+        "eye_color": "brown",
+        "size": "small",
+        "distinctive_features": [
+          "fluffy fur",
+          "small size",
+          "black nose"
+        ],
+        "accessories": [
+          "gray knitted scarf",
+          "yellow leash"
+        ],
+        "personality_impression": "cute",
+        "image_generation_prompt": "A cute Pomeranian dog with tan and cream fluffy fur, wearing a gray knitted scarf and a yellow leash, looking up with brown eyes.",
+        "suggested_voice_type": "child_female"
+      }
+    },
+    "sub1": {
+      "name": "할미",
+      "role": "sub1",
+      "analysis": {
+        "character_type": "human",
+        "estimated_age_range": "50s",
+        "gender": "female",
+        "ethnicity": "East Asian",
+        "hair_color": "black",
+        "hair_style": "short, wavy bob",
+        "eye_color": "brown",
+        "facial_features": "round face, warm smile",
+        "body_type": "average",
+        "clothing": "maroon dress with 3/4 sleeves and pearl details",
+        "accessories": [
+          "thin silver necklace"
+        ],
+        "personality_impression": "friendly, approachable, professional",
+        "image_generation_prompt": "A middle-aged East Asian woman with a round face and warm smile, wearing a maroon dress with 3/4 sleeves and pearl details, and a thin silver necklace. She has short, wavy black hair styled in a bob.",
+        "suggested_voice_type": "adult_female"
+      }
+    }
+  },
+  "script": {
+    "title": {
+      "japanese": "",
+      "korean": "땅콩이의 간식 조르기",
+      "english": "Ttang-kong's Snack Begging"
+    },
+    "full_script": "땅콩: 할미! 땅콩이 배고파요! 간식 주세요! 🥺 할미: 아이고, 우리 땅콩이 배고팠어? 조금만 기다려봐~ 할미가 맛있는 거 줄게. 땅콩: 멍! 진짜죠?! 빨리 줘요! 😋 할미: 알았어, 알았어. 여기 있다. 냠냠 맛있게 먹어! 땅콩: 냠냠! 할미 최고! 🥰",
+    "location_setting": "할머니 집 거실",
+    "script_segments": [
+      {
+        "segment_number": 1,
+        "speaker": "main",
+        "character_name": "땅콩",
+        "narration": "할미! 땅콩이 배고파요! 간식 주세요! 🥺",
+        "image_prompt": "Close-up of a cute Pomeranian dog named Ttang-kong with tan and cream fluffy fur, wearing a gray knitted scarf and a yellow leash. Ttang-kong is looking up with big, pleading brown eyes. The background is slightly blurred, showing a living room. He looks directly at the camera with an adorable, hungry expression.",
+        "video_prompt": {
+          "character_action": "Ttang-kong looks up and whimpers slightly.",
+          "lip_sync": "yes",
+          "facial_expression": "Pleading, hungry",
+          "body_movement": "Slight head tilt",
+          "camera_movement": "Slight zoom in"
+        },
+        "scene_details": {
+          "location": "indoor",
+          "background": "Cozy living room with a sofa and coffee table",
+          "weather": "N/A",
+          "lighting": "Soft, warm lighting",
+          "mood": "Cute, playful",
+          "characters_in_scene": [
+            "땅콩"
+          ]
+        },
+        "audio_details": {
+          "voice_style": "Child-like, whiny, cute",
+          "sound_effects": "Whimpering sound",
+          "background_sound": "Soft background music"
+        },
+        "emotion": "Hunger, longing"
+      },
+      {
+        "segment_number": 2,
+        "speaker": "sub1",
+        "character_name": "할미",
+        "narration": "아이고, 우리 땅콩이 배고팠어? 조금만 기다려봐~ 할미가 맛있는 거 줄게.",
+        "image_prompt": "A middle-aged East Asian woman with a round face and warm smile, wearing a maroon dress with 3/4 sleeves and pearl details, and a thin silver necklace, looking down at Ttang-kong with a loving expression. She is kneeling slightly, holding her hands out towards the dog. The living room background is visible, slightly out of focus.",
+        "video_prompt": {
+          "character_action": "Halmi kneels down and reaches out to pet Ttang-kong.",
+          "lip_sync": "yes",
+          "facial_expression": "Loving, caring",
+          "body_movement": "Kneeling down",
+          "camera_movement": "Pan down from Halmi to Ttang-kong"
+        },
+        "scene_details": {
+          "location": "indoor",
+          "background": "Cozy living room with a sofa and coffee table",
+          "weather": "N/A",
+          "lighting": "Soft, warm lighting",
+          "mood": "Warm, affectionate",
+          "characters_in_scene": [
+            "땅콩",
+            "할미"
+          ]
+        },
+        "audio_details": {
+          "voice_style": "Warm, gentle, motherly",
+          "sound_effects": "N/A",
+          "background_sound": "Soft background music"
+        },
+        "emotion": "Affection, compassion"
+      },
+      {
+        "segment_number": 3,
+        "speaker": "main",
+        "character_name": "땅콩",
+        "narration": "멍! 진짜죠?! 빨리 줘요! 😋",
+        "image_prompt": "Ttang-kong, the Pomeranian, jumps up and down excitedly, looking at Halmi with bright, anticipating eyes. He's wearing his gray scarf and yellow leash. Close-up shot focusing on his face, showing his eagerness. The background is slightly blurred.",
+        "video_prompt": {
+          "character_action": "Jumping up and down excitedly",
+          "lip_sync": "yes",
+          "facial_expression": "Eager, excited",
+          "body_movement": "Jumping",
+          "camera_movement": "Zoom in on face during jump"
+        },
+        "scene_details": {
+          "location": "indoor",
+          "background": "Cozy living room with a sofa and coffee table",
+          "weather": "N/A",
+          "lighting": "Soft, warm lighting",
+          "mood": "Excited, playful",
+          "characters_in_scene": [
+            "땅콩",
+            "할미"
+          ]
+        },
+        "audio_details": {
+          "voice_style": "Child-like, high-pitched, excited",
+          "sound_effects": "Barking sound",
+          "background_sound": "Soft background music"
+        },
+        "emotion": "Excitement, anticipation"
+      },
+      {
+        "segment_number": 4,
+        "speaker": "sub1",
+        "character_name": "할미",
+        "narration": "알았어, 알았어. 여기 있다. 냠냠 맛있게 먹어!",
+        "image_prompt": "Halmi smiles and holds out a small dog treat to Ttang-kong. She's still kneeling, and the treat is visible in her hand. She is wearing her maroon dress with pearl details. The living room is in the background, slightly blurred.",
+        "video_prompt": {
+          "character_action": "Halmi hands the treat to Ttang-kong.",
+          "lip_sync": "yes",
+          "facial_expression": "Smiling, gentle",
+          "body_movement": "Extending hand with treat",
+          "camera_movement": "Focus on the treat and hand-off"
+        },
+        "scene_details": {
+          "location": "indoor",
+          "background": "Cozy living room with a sofa and coffee table",
+          "weather": "N/A",
+          "lighting": "Soft, warm lighting",
+          "mood": "Kind, caring",
+          "characters_in_scene": [
+            "땅콩",
+            "할미"
+          ]
+        },
+        "audio_details": {
+          "voice_style": "Warm, gentle, encouraging",
+          "sound_effects": "N/A",
+          "background_sound": "Soft background music"
+        },
+        "emotion": "Kindness, nurturing"
+      },
+      {
+        "segment_number": 5,
+        "speaker": "main",
+        "character_name": "땅콩",
+        "narration": "냠냠! 할미 최고! 🥰",
+        "image_prompt": "Ttang-kong happily eats the treat, looking up at Halmi with a grateful expression. He is wearing his gray scarf and yellow leash. His tail is wagging slightly. Close-up shot of him enjoying the treat. The background is slightly blurred.",
+        "video_prompt": {
+          "character_action": "Eating the treat happily",
+          "lip_sync": "yes",
+          "facial_expression": "Happy, grateful",
+          "body_movement": "Chewing, tail wagging",
+          "camera_movement": "Zoom in on mouth while eating"
+        },
+        "scene_details": {
+          "location": "indoor",
+          "background": "Cozy living room with a sofa and coffee table",
+          "weather": "N/A",
+          "lighting": "Soft, warm lighting",
+          "mood": "Joyful, thankful",
+          "characters_in_scene": [
+            "땅콩",
+            "할미"
+          ]
+        },
+        "audio_details": {
+          "voice_style": "Child-like, happy, satisfied",
+          "sound_effects": "Chewing sounds",
+          "background_sound": "Soft background music"
+        },
+        "emotion": "Happiness, gratitude"
+      },
+      {
+        "segment_number": 6,
+        "speaker": "sub1",
+        "character_name": "할미",
+        "narration": "",
+        "image_prompt": "Halmi is smiling warmly at Ttang-kong, petting him gently on the head. She is wearing her maroon dress with pearl details and her thin silver necklace. The camera focuses on their interaction, conveying the loving bond between them. The living room background is softly blurred.",
+        "video_prompt": {
+          "character_action": "Petting Ttang-kong gently",
+          "lip_sync": "no",
+          "facial_expression": "Warm smile",
+          "body_movement": "Petting",
+          "camera_movement": "Slow pan from Ttang-kong to Halmi's face"
+        },
+        "scene_details": {
+          "location": "indoor",
+          "background": "Cozy living room with a sofa and coffee table",
+          "weather": "N/A",
+          "lighting": "Soft, warm lighting",
+          "mood": "Heartwarming, loving",
+          "characters_in_scene": [
+            "땅콩",
+            "할미"
+          ]
+        },
+        "audio_details": {
+          "voice_style": "N/A",
+          "sound_effects": "N/A",
+          "background_sound": "Heartwarming background music"
+        },
+        "emotion": "Love, contentment"
+      }
+    ],
+    "music_mood": "cute",
+    "overall_style": "photorealistic"
+  },
+  "generated_at": "2025-11-30T02:44:31.212Z"
+}

@@ -1,0 +1,63 @@
+{
+  "summary": "강아지 땅콩이가 스시와 튀김 먹방을 하는 영상",
+  "title": "강아지, 스시 첫경험?!",
+  "channel_name": "댕댕냠냠",
+  "subtitles": [
+    {
+      "start": 1,
+      "end": 2.5,
+      "text": "여러분 안녕하세요 땅콩입니다",
+      "text_english": "Hello everyone, I am Peanut"
+    },
+    {
+      "start": 2.5,
+      "end": 4.5,
+      "text": "오늘은 스시 먹방이에요",
+      "text_english": "Today is sushi mukbang"
+    },
+    {
+      "start": 4.5,
+      "end": 6,
+      "text": "드디어 먹어도 된대요",
+      "text_english": "Finally I can eat"
+    },
+    {
+      "start": 6,
+      "end": 8,
+      "text": "그럼 먹어볼게요",
+      "text_english": "Let me try it"
+    },
+    {
+      "start": 8,
+      "end": 12,
+      "text": "냠냠냠...",
+      "text_english": "nom nom nom..."
+    },
+    {
+      "start": 12,
+      "end": 16,
+      "text": "으음~ 맛있다",
+      "text_english": "Mmm~ delicious"
+    },
+    {
+      "start": 16,
+      "end": 20,
+      "text": "바삭바삭...",
+      "text_english": "crispy crispy..."
+    },
+    {
+      "start": 20,
+      "end": 24,
+      "text": "고구마튀김 최고!",
+      "text_english": "Sweet potato tempura is the best!"
+    }
+  ],
+  "mood": "funny",
+  "keywords": [
+    "강아지",
+    "먹방",
+    "스시",
+    "댕댕이",
+    "귀여움"
+  ]
+}

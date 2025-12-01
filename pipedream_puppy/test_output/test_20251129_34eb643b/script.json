@@ -1,0 +1,95 @@
+{
+  "folder_name": "test_20251129_34eb643b",
+  "language": "korean",
+  "title": {
+    "korean": "땅콩이의 사자후 vs 미어캣",
+    "japanese": "땅콩の獅子吼 vs ミーアキャット",
+    "english": "Peanut's Lion Roar vs Meerkat"
+  },
+  "characters": {
+    "puppy": {
+      "name": "땅콩",
+      "voice_type": "female_child",
+      "voice_description": "cute baby-like female voice"
+    },
+    "owner": {
+      "name": "아빠",
+      "voice_type": "male_adult",
+      "voice_description": "warm gentle male voice"
+    }
+  },
+  "puppy_character": {
+    "name": "땅콩",
+    "breed": "Pomeranian",
+    "image_prompt": "cute fluffy orange Pomeranian puppy, small round face, bright dark eyes, fluffy orange-cream fur, tiny black nose, pointed ears, adorable expression"
+  },
+  "script_segments": [
+    {
+      "index": 1,
+      "speaker": "puppy",
+      "narration": "아빠! 땅콩이 사자후 보여줄까? 어흥! 내가 제일 쎄다!",
+      "emotion": "excited",
+      "puppy_pose": "standing proudly with chest out, mouth open like roaring",
+      "background": "cozy living room with soft lighting",
+      "start_time": 0,
+      "end_time": 5,
+      "duration": 5
+    },
+    {
+      "index": 2,
+      "speaker": "owner",
+      "narration": "우리 땅콩이 진짜 호랑이네! 으르렁!",
+      "emotion": "amused",
+      "puppy_pose": "looking up at camera with happy smile",
+      "background": "cozy living room with soft lighting",
+      "start_time": 5,
+      "end_time": 8,
+      "duration": 3
+    },
+    {
+      "index": 3,
+      "speaker": "puppy",
+      "narration": "에헤헤... 이번엔 미어캣! 땅콩이 미어캣도 잘해! 읭?",
+      "emotion": "playful",
+      "puppy_pose": "standing on hind legs like meerkat, looking around",
+      "background": "cozy living room with soft lighting",
+      "start_time": 8,
+      "end_time": 13,
+      "duration": 5
+    },
+    {
+      "index": 4,
+      "speaker": "owner",
+      "narration": "그래, 땅콩이 미어캣처럼 두리번두리번 해봐!",
+      "emotion": "encouraging",
+      "puppy_pose": "standing on hind legs, looking left and right curiously",
+      "background": "cozy living room with soft lighting",
+      "start_time": 13,
+      "end_time": 16,
+      "duration": 3
+    },
+    {
+      "index": 5,
+      "speaker": "puppy",
+      "narration": "읭? 읭? 꺄악! 털 젖었어! 미어캣 아니고 물에 빠진 쥐다!",
+      "emotion": "surprised",
+      "puppy_pose": "wet fur, shocked wide eyes, water droplets on face",
+      "background": "bathroom with tiles, water splashes",
+      "start_time": 16,
+      "end_time": 22,
+      "duration": 6
+    },
+    {
+      "index": 6,
+      "speaker": "owner",
+      "narration": "아이고, 우리 땅콩이 쥐돌이 됐네! 괜찮아, 아빠가 닦아줄게!",
+      "emotion": "loving",
+      "puppy_pose": "wrapped in fluffy white towel, only face visible, cute look",
+      "background": "warm cozy bathroom",
+      "start_time": 22,
+      "end_time": 27,
+      "duration": 5
+    }
+  ],
+  "total_duration_seconds": 27
+}

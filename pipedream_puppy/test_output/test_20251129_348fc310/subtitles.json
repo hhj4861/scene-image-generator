@@ -1,0 +1,44 @@
+[
+  {
+    "index": 1,
+    "start": 0,
+    "end": 5,
+    "text": "아빠! 땅콩이 사자후 보여줄까? 어흥! 내가 제일 쎄다!",
+    "speaker": "puppy"
+  },
+  {
+    "index": 2,
+    "start": 5,
+    "end": 8,
+    "text": "우리 땅콩이 진짜 호랑이네! 으르렁!",
+    "speaker": "owner"
+  },
+  {
+    "index": 3,
+    "start": 8,
+    "end": 13,
+    "text": "에헤헤... 이번엔 미어캣! 땅콩이 미어캣도 잘해! 읭?",
+    "speaker": "puppy"
+  },
+  {
+    "index": 4,
+    "start": 13,
+    "end": 16,
+    "text": "그래, 땅콩이 미어캣처럼 두리번두리번 해봐!",
+    "speaker": "owner"
+  },
+  {
+    "index": 5,
+    "start": 16,
+    "end": 22,
+    "text": "읭? 읭? 꺄악! 털 젖었어! 미어캣 아니고 물에 빠진 쥐다!",
+    "speaker": "puppy"
+  },
+  {
+    "index": 6,
+    "start": 22,
+    "end": 27,
+    "text": "아이고, 우리 땅콩이 쥐돌이 됐네! 괜찮아, 아빠가 닦아줄게!",
+    "speaker": "owner"
+  }
+]

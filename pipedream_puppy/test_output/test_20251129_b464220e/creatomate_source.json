@@ -1,0 +1,229 @@
+{
+  "output_format": "mp4",
+  "width": 1080,
+  "height": 1920,
+  "frame_rate": 30,
+  "duration": 20.140251,
+  "elements": [
+    {
+      "type": "shape",
+      "shape": "rectangle",
+      "width": "100%",
+      "height": "100%",
+      "fill_color": "#F5F5F5",
+      "time": 0
+    },
+    {
+      "type": "video",
+      "source": "/Users/admin/Desktop/workSpace/socar/scene-image-generator/pipedream_puppy/test_output/test_20251129_b464220e/video_001_veo.mp4",
+      "time": 0,
+      "duration": 3.657125,
+      "fit": "contain"
+    },
+    {
+      "type": "audio",
+      "source": "/Users/admin/Desktop/workSpace/socar/scene-image-generator/pipedream_puppy/test_output/test_20251129_b464220e/video_001_veo.mp4",
+      "time": 0,
+      "duration": 3.657125,
+      "volume": "100%"
+    },
+    {
+      "type": "video",
+      "source": "/Users/admin/Desktop/workSpace/socar/scene-image-generator/pipedream_puppy/test_output/test_20251129_b464220e/video_002_veo.mp4",
+      "time": 3.657125,
+      "duration": 2.324875,
+      "fit": "contain"
+    },
+    {
+      "type": "audio",
+      "source": "/Users/admin/Desktop/workSpace/socar/scene-image-generator/pipedream_puppy/test_output/test_20251129_b464220e/video_002_veo.mp4",
+      "time": 3.657125,
+      "duration": 2.324875,
+      "volume": "100%"
+    },
+    {
+      "type": "video",
+      "source": "/Users/admin/Desktop/workSpace/socar/scene-image-generator/pipedream_puppy/test_output/test_20251129_b464220e/video_003_veo.mp4",
+      "time": 5.982,
+      "duration": 3.36975,
+      "fit": "contain"
+    },
+    {
+      "type": "audio",
+      "source": "/Users/admin/Desktop/workSpace/socar/scene-image-generator/pipedream_puppy/test_output/test_20251129_b464220e/video_003_veo.mp4",
+      "time": 5.982,
+      "duration": 3.36975,
+      "volume": "100%"
+    },
+    {
+      "type": "video",
+      "source": "/Users/admin/Desktop/workSpace/socar/scene-image-generator/pipedream_puppy/test_output/test_20251129_b464220e/video_004_veo.mp4",
+      "time": 9.35175,
+      "duration": 2.768938,
+      "fit": "contain"
+    },
+    {
+      "type": "audio",
+      "source": "/Users/admin/Desktop/workSpace/socar/scene-image-generator/pipedream_puppy/test_output/test_20251129_b464220e/video_004_veo.mp4",
+      "time": 9.35175,
+      "duration": 2.768938,
+      "volume": "100%"
+    },
+    {
+      "type": "video",
+      "source": "/Users/admin/Desktop/workSpace/socar/scene-image-generator/pipedream_puppy/test_output/test_20251129_b464220e/video_005_veo.mp4",
+      "time": 12.120688,
+      "duration": 4.310188,
+      "fit": "contain"
+    },
+    {
+      "type": "audio",
+      "source": "/Users/admin/Desktop/workSpace/socar/scene-image-generator/pipedream_puppy/test_output/test_20251129_b464220e/video_005_veo.mp4",
+      "time": 12.120688,
+      "duration": 4.310188,
+      "volume": "100%"
+    },
+    {
+      "type": "video",
+      "source": "/Users/admin/Desktop/workSpace/socar/scene-image-generator/pipedream_puppy/test_output/test_20251129_b464220e/video_006_veo.mp4",
+      "time": 16.430875999999998,
+      "duration": 3.709375,
+      "fit": "contain"
+    },
+    {
+      "type": "audio",
+      "source": "/Users/admin/Desktop/workSpace/socar/scene-image-generator/pipedream_puppy/test_output/test_20251129_b464220e/video_006_veo.mp4",
+      "time": 16.430875999999998,
+      "duration": 3.709375,
+      "volume": "100%"
+    },
+    {
+      "type": "audio",
+      "source": "https://cdn1.suno.ai/78d59481-8ba4-41b3-84ad-867042147e40.mp3",
+      "time": 0,
+      "duration": 20.140251,
+      "volume": "20%",
+      "audio_fade_out": "2s"
+    },
+    {
+      "type": "text",
+      "text": "아빠! 땅콩이 사자후 보여줄까? 어흥! 내가 제일 쎄다!",
+      "time": 0,
+      "duration": 5,
+      "width": "90%",
+      "x": "50%",
+      "y": "85%",
+      "x_anchor": "50%",
+      "y_anchor": "50%",
+      "font_family": "Noto Sans KR",
+      "font_size": "5vw",
+      "font_weight": "700",
+      "fill_color": "#FFFFFF",
+      "background_color": "rgba(0,0,0,0.6)",
+      "background_x_padding": "3%",
+      "background_y_padding": "2%",
+      "background_border_radius": "5%",
+      "text_align": "center"
+    },
+    {
+      "type": "text",
+      "text": "우리 땅콩이 진짜 호랑이네! 으르렁!",
+      "time": 5,
+      "duration": 3,
+      "width": "90%",
+      "x": "50%",
+      "y": "85%",
+      "x_anchor": "50%",
+      "y_anchor": "50%",
+      "font_family": "Noto Sans KR",
+      "font_size": "5vw",
+      "font_weight": "700",
+      "fill_color": "#FFFFFF",
+      "background_color": "rgba(0,0,0,0.6)",
+      "background_x_padding": "3%",
+      "background_y_padding": "2%",
+      "background_border_radius": "5%",
+      "text_align": "center"
+    },
+    {
+      "type": "text",
+      "text": "에헤헤... 이번엔 미어캣! 땅콩이 미어캣도 잘해! 읭?",
+      "time": 8,
+      "duration": 5,
+      "width": "90%",
+      "x": "50%",
+      "y": "85%",
+      "x_anchor": "50%",
+      "y_anchor": "50%",
+      "font_family": "Noto Sans KR",
+      "font_size": "5vw",
+      "font_weight": "700",
+      "fill_color": "#FFFFFF",
+      "background_color": "rgba(0,0,0,0.6)",
+      "background_x_padding": "3%",
+      "background_y_padding": "2%",
+      "background_border_radius": "5%",
+      "text_align": "center"
+    },
+    {
+      "type": "text",
+      "text": "그래, 땅콩이 미어캣처럼 두리번두리번 해봐!",
+      "time": 13,
+      "duration": 3,
+      "width": "90%",
+      "x": "50%",
+      "y": "85%",
+      "x_anchor": "50%",
+      "y_anchor": "50%",
+      "font_family": "Noto Sans KR",
+      "font_size": "5vw",
+      "font_weight": "700",
+      "fill_color": "#FFFFFF",
+      "background_color": "rgba(0,0,0,0.6)",
+      "background_x_padding": "3%",
+      "background_y_padding": "2%",
+      "background_border_radius": "5%",
+      "text_align": "center"
+    },
+    {
+      "type": "text",
+      "text": "읭? 읭? 꺄악! 털 젖었어! 미어캣 아니고 물에 빠진 쥐다!",
+      "time": 16,
+      "duration": 6,
+      "width": "90%",
+      "x": "50%",
+      "y": "85%",
+      "x_anchor": "50%",
+      "y_anchor": "50%",
+      "font_family": "Noto Sans KR",
+      "font_size": "5vw",
+      "font_weight": "700",
+      "fill_color": "#FFFFFF",
+      "background_color": "rgba(0,0,0,0.6)",
+      "background_x_padding": "3%",
+      "background_y_padding": "2%",
+      "background_border_radius": "5%",
+      "text_align": "center"
+    },
+    {
+      "type": "text",
+      "text": "아이고, 우리 땅콩이 쥐돌이 됐네! 괜찮아, 아빠가 닦아줄게!",
+      "time": 22,
+      "duration": 5,
+      "width": "90%",
+      "x": "50%",
+      "y": "85%",
+      "x_anchor": "50%",
+      "y_anchor": "50%",
+      "font_family": "Noto Sans KR",
+      "font_size": "5vw",
+      "font_weight": "700",
+      "fill_color": "#FFFFFF",
+      "background_color": "rgba(0,0,0,0.6)",
+      "background_x_padding": "3%",
+      "background_y_padding": "2%",
+      "background_border_radius": "5%",
+      "text_align": "center"
+    }
+  ]
+}
