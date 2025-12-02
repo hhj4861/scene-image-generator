@@ -134,11 +134,23 @@ export default defineComponent({
         resume: "continuing rap performance, mouth moving to beat, hand gestures, head nodding, cool expression",
         accessories: "wearing oversized sunglasses, thick gold chain, sideways snapback cap, holding microphone",
       },
+      hiphop: {
+        start: "hip-hop style performance, swagger pose, head nodding to beat, body grooving",
+        break: "pausing performance, confident pose looking at camera, swag expression",
+        resume: "continuing hip-hop performance, body grooving, head nodding, cool expression",
+        accessories: "wearing oversized sunglasses, thick gold chain, sideways snapback cap, baggy clothes",
+      },
       instrument: {
         start: "playing instrument passionately, paws on instrument, body moving with melody, focused expression",
         break: "pausing performance, looking at camera proudly, instrument visible",
         resume: "continuing instrument performance, paws moving on instrument, body swaying with music",
         accessories: "wearing round stylish glasses, bow tie, formal vest",
+      },
+      kpop: {
+        start: "K-pop dance performance, synchronized move, polished expression, dynamic choreography",
+        break: "freeze pose, looking at camera with idol smile, camera ready pose",
+        resume: "continuing K-pop performance, dynamic choreography, energetic expression",
+        accessories: "wearing stylish outfit, small accessories, polished look, idol-style fashion",
       },
     };
 
@@ -291,25 +303,26 @@ export default defineComponent({
 
           if (isPerformanceStart || isPerformanceResume) {
             // 퍼포먼스 시작/재개: BGM에 맞춰 립싱크 (TTS 없음)
-            return `8K cinematic performance video. ${perfCharPrompt}, ${perfPrompt}. ${performanceStageBackground}. Dog's mouth moves rhythmically to the background music beat. Energetic dynamic camera. Same dog appearance maintained. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles.`;
+            return `8K cinematic performance video. ${perfCharPrompt}, ${perfPrompt}. ${performanceStageBackground}. Dog performing alone on stage. Dog's mouth moves rhythmically to the beat. Energetic dynamic camera. Same dog appearance maintained. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles. No microphone in frame. No human hands. No people. Single dog performer only.`;
           } else if (isPerformanceBreak) {
-            // 퍼포먼스 브레이크: 짧은 대사 (기계음 TTS)
-            return `8K cinematic performance video. ${perfCharPrompt}, ${perfPrompt}. ${performanceStageBackground}. Dog pauses and looks at camera, then speaks short word "${seg.narration || '콩파민!'}" with robotic voice effect. Dramatic freeze moment. Same dog appearance maintained. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles.`;
+            // 퍼포먼스 브레이크: 짧은 대사 (기계음 TTS) - 안전 필터 방지용 프롬프트
+            return `8K cinematic performance video. ${perfCharPrompt}, ${perfPrompt}. ${performanceStageBackground}. Dog pauses dramatically alone on stage, looks directly at camera with confident expression, mouth opens slightly then closes. Dramatic freeze pose moment. Same dog appearance maintained. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles. No microphone in frame. No human hands. No people. Single dog performer only.`;
           }
         }
 
         if (isInterviewQuestion) {
           // 인터뷰 질문: 강아지가 듣는 장면 (lip_sync 없음, 인터뷰어 음성만 재생)
-          return `8K cinematic interview video. ${charPrompt} sits facing camera, listening attentively. ${bgPrompt}. ${lightingPrompt}. Dog has curious listening expression, head slightly tilted, ears perked up, mouth CLOSED. Occasionally blinks and makes small subtle nods. No talking. No mouth movement. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles.`;
+          // ★★★ 안전 필터 + 품질 강화: 사람/손/마이크 제거, 입 닫힘 강조 ★★★
+          return `8K cinematic video. ${charPrompt} sitting alone, listening attentively. ${bgPrompt}. ${lightingPrompt}. Dog has curious listening expression, head slightly tilted, ears perked up. IMPORTANT: Dog mouth must stay COMPLETELY CLOSED throughout entire video. Dog is NOT talking. Dog is only listening. Natural breathing only. Occasional gentle blinks and subtle head tilts. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles. No microphone. No human hands. No people. Single dog only.`;
         } else if (isFlashback) {
           // 회상 장면
           return `8K cinematic flashback video. ${charPrompt} in recalled scene. ${bgPrompt}. Slightly dreamy/vintage filter effect. ${emotionPrompt} expression. ${lightingPrompt}. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles.`;
         } else if (hasNarration) {
           // 대사 장면
-          return `8K cinematic video. ${charPrompt} sits facing camera. ${bgPrompt}. ${lightingPrompt}. Dog speaks to camera with precise mouth movements matching each Korean syllable. ${emotionPrompt} expression. Same dog appearance maintained throughout. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles.`;
+          return `8K cinematic video. ${charPrompt} sitting alone facing camera. ${bgPrompt}. ${lightingPrompt}. Dog with gentle mouth movements. ${emotionPrompt} expression. Same dog appearance maintained throughout. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles. No microphone. No human hands. No people. Single dog only.`;
         } else {
           // 리액션/대기 장면
-          return `8K cinematic video. ${charPrompt}. ${bgPrompt}. ${lightingPrompt}. ${emotionPrompt} expression, natural subtle movements. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles.`;
+          return `8K cinematic video. ${charPrompt} sitting alone. ${bgPrompt}. ${lightingPrompt}. ${emotionPrompt} expression, natural subtle movements. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles. No microphone. No human hands. No people. Single dog only.`;
         }
       };
 
@@ -501,19 +514,6 @@ export default defineComponent({
         // 씬 환경 정보
         scene_environment: sceneEnvironment,
 
-        // 시각적 연속성
-        visual_continuity: {
-          instruction: "Same visual appearance throughout video",
-          dog: `Same ${characterAppearance.fur_color || 'fur color'}, same face, same ${characterAppearance.outfit || 'costume'} as reference`,
-          accessories: characterAppearance.accessories?.length > 0
-            ? `Must keep: ${characterAppearance.accessories.join(", ")}`
-            : "No accessories",
-          background: sceneEnvironment.background,
-          keep_same: isInterviewQuestion
-            ? "Everything identical - dog is LISTENING (mouth closed, no movement)"
-            : "Everything identical to reference image except mouth movement",
-        },
-
         // 인터뷰 질문 전용 정보
         interview_question_info: isInterviewQuestion ? {
           dog_state: "listening",
@@ -584,6 +584,9 @@ export default defineComponent({
 
         // ★★★ 립싱크 타이밍 (대사가 있을 때) ★★★
         lip_sync_timing: hasNarration && !isInterviewQuestion ? generateLipSyncTiming() : null,
+
+        // ★★★ 한글 입모양 매핑 (Veo 3 립싱크 참고용) ★★★
+        mouth_shapes: mouthShapes,
 
         // ★★★ TTS 정보 (script-generator에서 전달된 값 포함) ★★★
         tts_info: {

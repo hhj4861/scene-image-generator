@@ -62,13 +62,42 @@ export default defineComponent({
     // =====================
     // 1. 입력 파싱
     // =====================
-    const imagesData = typeof this.images_data === "string"
-      ? JSON.parse(this.images_data)
-      : this.images_data;
 
-    const videoGenData = typeof this.video_generator_output === "string"
-      ? JSON.parse(this.video_generator_output)
-      : this.video_generator_output;
+    // ★★★ 디버깅: 원본 입력 확인 ★★★
+    $.export("debug_raw_images_data", typeof this.images_data === "string"
+      ? this.images_data.substring(0, 500)
+      : JSON.stringify(this.images_data).substring(0, 500));
+
+    $.export("debug_raw_video_data", typeof this.video_generator_output === "string"
+      ? this.video_generator_output.substring(0, 500)
+      : JSON.stringify(this.video_generator_output).substring(0, 500));
+
+    // images_data가 비어있거나 없는 경우 체크
+    if (!this.images_data) {
+      throw new Error("images_data is empty or undefined. Check if Image Generator step ran successfully and the step name matches.");
+    }
+
+    let imagesData;
+    try {
+      imagesData = typeof this.images_data === "string"
+        ? JSON.parse(this.images_data)
+        : this.images_data;
+    } catch (e) {
+      throw new Error(`Failed to parse images_data: ${e.message}. Raw: ${String(this.images_data).substring(0, 200)}`);
+    }
+
+    let videoGenData;
+    try {
+      videoGenData = typeof this.video_generator_output === "string"
+        ? JSON.parse(this.video_generator_output)
+        : this.video_generator_output;
+    } catch (e) {
+      throw new Error(`Failed to parse video_generator_output: ${e.message}`);
+    }
+
+    // ★★★ 디버깅: 파싱된 데이터 구조 확인 ★★★
+    $.export("debug_imagesData_keys", Object.keys(imagesData || {}));
+    $.export("debug_videoGenData_keys", Object.keys(videoGenData || {}));
 
     // Image Generator 출력에서 씬 이미지 정보
     const imageScenes = imagesData.scenes || [];
@@ -91,7 +120,8 @@ export default defineComponent({
     });
 
     if (!imageScenes.length) {
-      throw new Error("No image scenes found");
+      // 더 상세한 에러 메시지
+      throw new Error(`No image scenes found. imagesData.scenes is ${JSON.stringify(imagesData.scenes)}. Available keys: ${Object.keys(imagesData || {}).join(", ")}. Check Pipedream step name: should be "Gemini_Image_Generator"`);
     }
 
     // ★★★ 이미지와 비디오 씬 매칭 (veo_script_sample JSON 형식 기반) ★★★
@@ -129,6 +159,9 @@ export default defineComponent({
 
         // 립싱크 타이밍 (veo_script_sample 형식)
         lip_sync_timing: videoScene.lip_sync_timing || null,
+
+        // ★★★ 한글 입모양 매핑 (Veo 3 립싱크 참고용) ★★★
+        mouth_shapes: videoScene.mouth_shapes || null,
 
         // 일관성 체크 (veo_script_sample 형식)
         consistency_check: videoScene.consistency_check || {},
@@ -203,12 +236,29 @@ export default defineComponent({
     // scene.prompt를 직접 사용
 
     const getVeo3Prompt = (scene) => {
-      // puppy-video-generator에서 생성된 prompt가 있으면 그대로 사용
-      if (scene.veo3_prompt) {
-        return scene.veo3_prompt;
+      let basePrompt = scene.veo3_prompt || "8K cinematic video. Same puppy from reference image. Natural movements. No text. No watermarks.";
+
+      // ★★★ mouth_shapes 정보를 프롬프트에 포함 (대사가 있고 인터뷰 질문이 아닐 때) ★★★
+      if (scene.mouth_shapes && Object.keys(scene.mouth_shapes).length > 0 && scene.has_narration && !scene.is_interview_question) {
+        // mouth_shapes 정보를 자연어로 변환
+        const mouthShapeDescriptions = Object.entries(scene.mouth_shapes)
+          .slice(0, 5) // 상위 5개만 사용 (프롬프트 길이 제한)
+          .map(([char, desc]) => `"${char}": ${desc}`)
+          .join("; ");
+
+        // 프롬프트에 립싱크 지시 추가
+        basePrompt += ` Korean lip sync guide: ${mouthShapeDescriptions}. Match mouth movements to these Korean syllable shapes.`;
       }
-      // 없으면 에러 방지용 기본 프롬프트
-      return "8K cinematic video. Same puppy from reference image. Natural movements. No text. No watermarks.";
+
+      // ★★★ lip_sync_style 정보 추가 ★★★
+      if (scene.lip_sync_style) {
+        const lsStyle = scene.lip_sync_style;
+        if (lsStyle.type && lsStyle.mouth_movement) {
+          basePrompt += ` Lip sync: ${lsStyle.type}. Mouth: ${lsStyle.mouth_movement}.`;
+        }
+      }
+
+      return basePrompt;
     };
 
     // =====================

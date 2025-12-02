@@ -13,13 +13,20 @@ export default defineComponent({
     script_generator_output: {
       type: "string",
       label: "Script Generator Output (JSON)",
-      description: "{{JSON.stringify(steps.Shorts_Script_Generator.$return_value)}}",
+      description: "{{JSON.stringify(steps.Puppy_Script_Generator.$return_value)}}",
       optional: true,
     },
     topic_generator_output: {
       type: "string",
       label: "Topic Generator Output (JSON)",
-      description: "{{JSON.stringify(steps.Topic_Keyword_Generator.$return_value)}}",
+      description: "{{JSON.stringify(steps.Puppy_Topic_Generator.$return_value)}}",
+      optional: true,
+    },
+    // ★★★ TTS Generator 출력 추가 ★★★
+    tts_generator_output: {
+      type: "string",
+      label: "TTS Generator Output (JSON)",
+      description: "{{JSON.stringify(steps.Puppy_ElevenLabs_TTS.$return_value)}}",
       optional: true,
     },
     bgm_url: {
@@ -97,6 +104,24 @@ export default defineComponent({
           ? JSON.parse(this.topic_generator_output) : this.topic_generator_output)
       : null;
 
+    // ★★★ TTS Generator 출력 파싱 ★★★
+    const ttsOutput = this.tts_generator_output
+      ? (typeof this.tts_generator_output === "string"
+          ? JSON.parse(this.tts_generator_output) : this.tts_generator_output)
+      : null;
+
+    // TTS 파일을 index로 빠르게 찾기 위한 맵
+    const ttsMap = new Map();
+    if (ttsOutput?.tts_files) {
+      for (const tts of ttsOutput.tts_files) {
+        if (tts.success && tts.url) {
+          ttsMap.set(tts.index, tts);
+        }
+      }
+    }
+
+    $.export("tts_loaded", ttsMap.size);
+
     const videos = videoOutput.videos || [];
     const folderName = videoOutput.folder_name || scriptOutput?.folder_name || `render_${Date.now()}`;
 
@@ -132,11 +157,12 @@ export default defineComponent({
       time: 0,
     });
 
-    // 비디오 + 오디오 (★ 순서대로, 전체 화면)
+    // 비디오 + TTS 오디오 (★ 순서대로, 전체 화면)
     for (const video of sortedVideos) {
       const duration = video.duration || 5;
+      const videoIndex = video.index;
 
-      // 비디오 (전체 화면 - cover)
+      // 비디오 (전체 화면 - cover, 음소거 - TTS로 대체)
       elements.push({
         type: "video",
         source: video.url,
@@ -145,13 +171,15 @@ export default defineComponent({
         width: "100%",
         height: "100%",
         fit: "cover",
+        volume: "0%", // ★★★ Veo 3 영상 음소거 (TTS로 대체) ★★★
       });
 
-      // 오디오 (Veo 3는 영상에 오디오 포함)
-      if (video.has_audio !== false) {
+      // ★★★ TTS 오디오 추가 (ElevenLabs에서 생성된 음성) ★★★
+      const ttsFile = ttsMap.get(videoIndex);
+      if (ttsFile && ttsFile.url) {
         elements.push({
           type: "audio",
-          source: video.url,
+          source: ttsFile.url,
           time: currentTime,
           duration,
           volume: "100%",

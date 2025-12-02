@@ -108,6 +108,13 @@ export default defineComponent({
     };
     const contentTypeInfo = topicData?.content_type_info || null;
 
+    // ★★★ 퍼포먼스 타입 정보 추출 (topic-generator에서 전달받음) ★★★
+    // topic-generator에서 사용자가 직접 선택한 퍼포먼스 타입 (props.performance_type)
+    const primaryPerformanceType = contentTypeConfig.primary_performance_type
+      || (contentType === "performance" ? "beatbox" : null);
+
+    $.export("performance_type_from_topic", primaryPerformanceType);
+
     // ★ 풍자/패러디 정보 추출
     const isSatire = contentType === "satire" || topicData?.is_satire || false;
     const originalTopic = topicData?.original_topic || null;
@@ -1262,22 +1269,31 @@ ${lang.instruction}
       singing: "holding wireless microphone, wearing sparkly stage outfit, small earpiece",
       dance: "wearing trendy sunglasses, colorful LED sneakers, sporty headband",
       rap: "wearing oversized sunglasses, thick gold chain, sideways snapback cap, holding microphone",
+      hiphop: "wearing oversized sunglasses, thick gold chain, sideways snapback cap, baggy clothes",
       instrument: "wearing round stylish glasses, bow tie, formal vest",
+      kpop: "wearing stylish outfit, small accessories, polished look, idol-style fashion",
     };
 
-    // 전역 퍼포먼스 타입 감지
+    // ★★★ 전역 퍼포먼스 타입 (topic-generator → script-generator → image-generator) ★★★
     const hasPerformanceScenes = script.script_segments?.some(seg =>
       ["performance_start", "performance_break", "performance_resume"].includes(seg.scene_type)
-    ) || false;
+    ) || (contentType === "performance");
 
-    const globalPerformanceType = script.script_segments?.find(seg => seg.performance_type)?.performance_type
-      || contentTypeConfig.primary_performance_type
+    // ★★★ 퍼포먼스 타입: topic-generator에서 사용자가 선택한 타입 우선 사용! ★★★
+    const globalPerformanceType = primaryPerformanceType
+      || script.script_segments?.find(seg => seg.performance_type)?.performance_type
       || "beatbox";
 
-    // 전역 퍼포먼스 악세서리
+    // ★★★ 전역 퍼포먼스 악세서리 (모든 퍼포먼스 씬에 동일하게 적용) ★★★
     const globalPerformanceAccessories = hasPerformanceScenes
       ? (performanceAccessoriesMap[globalPerformanceType] || performanceAccessoriesMap.beatbox)
       : "";
+
+    $.export("performance_config", {
+      has_performance: hasPerformanceScenes,
+      type: globalPerformanceType,
+      accessories: globalPerformanceAccessories,
+    });
 
     // ★★★ 일관된 배경 설정 ★★★
     const firstSceneBackground = script.script_segments?.[0]?.scene_details?.background

@@ -41,7 +41,26 @@ export default defineComponent({
       optional: true,
     },
     // =====================
-    // 배경 설정 (NEW!)
+    // 퍼포먼스 타입 선택 (콘텐츠 타입이 performance일 때)
+    // =====================
+    performance_type: {
+      type: "string",
+      label: "🎵 퍼포먼스 타입",
+      description: "퍼포먼스 콘텐츠일 때 타입을 선택하세요. 선택한 타입에 맞는 악세서리(선글라스, 금목걸이 등)와 무대가 적용됩니다.",
+      options: [
+        { label: "🎤 비트박스 (Beatbox) - 입으로 비트 만들기", value: "beatbox" },
+        { label: "🎵 노래 (Singing) - 귀여운 보컬 퍼포먼스", value: "singing" },
+        { label: "💃 댄스 (Dance) - 댄스 챌린지, 춤", value: "dance" },
+        { label: "🎙️ 랩 (Rap) - 강아지 랩, 디스전", value: "rap" },
+        { label: "🎸 힙합 (Hiphop) - 힙합 스타일 퍼포먼스", value: "hiphop" },
+        { label: "🎹 악기 연주 (Instrument) - 피아노, 드럼 등", value: "instrument" },
+        { label: "🎶 케이팝 (K-pop) - 아이돌 스타일", value: "kpop" },
+      ],
+      default: "beatbox",
+      optional: true,
+    },
+    // =====================
+    // 배경 설정
     // =====================
     background_setting: {
       type: "string",
@@ -1146,52 +1165,15 @@ Mood: ${currentConfig.mood}`;
     }
 
     // =====================
-    // 6. 퍼포먼스 타입 자동 감지 (토픽 키워드 기반)
+    // 6. 퍼포먼스 타입 (사용자 선택 기반)
     // =====================
-    const detectPerformanceType = (topic, keywords, hints) => {
-      const searchText = `${topic || ""} ${keywords || ""} ${hints || ""}`.toLowerCase();
-
-      // 퍼포먼스 타입별 키워드 매핑
-      const performanceKeywords = {
-        beatbox: ["비트박스", "beatbox", "비트", "입으로", "mouth percussion", "보이스퍼커션"],
-        singing: ["노래", "singing", "song", "보컬", "vocal", "음정", "멜로디", "발라드", "가창"],
-        dance: ["댄스", "dance", "춤", "안무", "choreography", "디제이", "dj", "클럽", "edm"],
-        rap: ["랩", "rap", "래퍼", "rapper", "플로우", "flow", "마이크"],
-        hiphop: ["힙합", "hiphop", "hip-hop", "hip hop", "올드스쿨", "붐뱁", "boom bap"],
-        rock: ["락", "rock", "기타", "guitar", "밴드", "band", "메탈", "metal", "드럼솔로"],
-        instrument: ["악기", "instrument", "피아노", "piano", "바이올린", "violin", "드럼", "drum", "연주"],
-        kpop: ["케이팝", "kpop", "k-pop", "아이돌", "idol", "걸그룹", "보이그룹"],
-      };
-
-      // 각 타입별 매칭 점수 계산
-      const scores = {};
-      for (const [type, keywords] of Object.entries(performanceKeywords)) {
-        scores[type] = 0;
-        for (const keyword of keywords) {
-          if (searchText.includes(keyword)) {
-            scores[type] += 1;
-          }
-        }
-      }
-
-      // 가장 높은 점수의 타입 반환
-      const maxScore = Math.max(...Object.values(scores));
-      if (maxScore > 0) {
-        const detectedType = Object.entries(scores).find(([_, score]) => score === maxScore)?.[0];
-        return detectedType || "beatbox";
-      }
-
-      // 기본값: beatbox (가장 일반적인 퍼포먼스)
-      return "beatbox";
-    };
-
-    // 퍼포먼스 타입 감지 (performance 콘텐츠 타입일 때만)
-    const detectedPerformanceType = contentType === "performance"
-      ? detectPerformanceType(selectedIdea.topic, selectedIdea.keywords, this.user_keyword_hint)
+    // ★★★ 키워드 감지 대신 사용자가 직접 선택한 퍼포먼스 타입 사용 ★★★
+    const selectedPerformanceType = contentType === "performance"
+      ? (this.performance_type || "beatbox")
       : null;
 
-    if (detectedPerformanceType) {
-      $.export("detected_performance_type", detectedPerformanceType);
+    if (selectedPerformanceType) {
+      $.export("performance_type", selectedPerformanceType);
     }
 
     // =====================
@@ -1206,8 +1188,8 @@ Mood: ${currentConfig.mood}`;
       content_type: contentType,
       content_type_config: {
         ...currentConfig,
-        // ★★★ 퍼포먼스 타입 추가 (감지된 경우) ★★★
-        primary_performance_type: detectedPerformanceType,
+        // ★★★ 퍼포먼스 타입 (사용자 선택) ★★★
+        primary_performance_type: selectedPerformanceType,
       },
       content_type_info: selectedIdea.content_type_info || {
         tone: currentConfig.tone,
