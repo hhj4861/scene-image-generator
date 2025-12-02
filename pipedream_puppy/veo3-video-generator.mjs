@@ -230,35 +230,107 @@ export default defineComponent({
     };
 
     // =====================
-    // 3. Veo 3 프롬프트 (puppy-video-generator에서 이미 생성됨)
+    // 3. Veo 3 프롬프트 (한국어 음성 지원)
     // =====================
-    // puppy-video-generator.mjs가 veo_script_sample 형식의 JSON을 생성하므로
-    // scene.prompt를 직접 사용
+    // puppy-video-generator.mjs가 veo_script_sample 형식의 JSON을 생성
+    // 한국어 대사가 있는 경우 한국어 음성으로 생성되도록 프롬프트 수정
+
+    // ★★★ 한국어 대사 길이 기반 duration 계산 (초당 약 5-6음절) ★★★
+    const calculateDurationFromNarration = (narration, baseDuration, isInterviewQuestion = false) => {
+      if (!narration) return baseDuration;
+
+      // 한국어 음절 수 계산 (공백, 특수문자 제외)
+      const syllableCount = narration.replace(/[^가-힣a-zA-Z0-9]/g, "").length;
+
+      // 인터뷰어 질문은 더 빠르게 말함 (초당 6음절), 강아지 대사는 느림 (초당 5음절)
+      const syllablesPerSecond = isInterviewQuestion ? 6 : 5;
+      const calculatedDuration = Math.ceil(syllableCount / syllablesPerSecond);
+
+      // Veo 3 지원 duration: 4, 6, 8초
+      if (calculatedDuration <= 4) return 4;
+      if (calculatedDuration <= 6) return 6;
+      return 8;
+    };
 
     const getVeo3Prompt = (scene) => {
-      let basePrompt = scene.veo3_prompt || "8K cinematic video. Same puppy from reference image. Natural movements. No text. No watermarks.";
+      // ★★★ 한국어 음성 지원 + 자막/텍스트 제거 (간결한 프롬프트) ★★★
+      // 인터뷰어 대사는 dialogue.interviewer 우선 사용
+      const narration = scene.dialogue?.interviewer || scene.narration || scene.dialogue?.script || "";
+      const hasKoreanDialogue = scene.has_narration && narration && !scene.is_interview_question;
 
-      // ★★★ mouth_shapes 정보를 프롬프트에 포함 (대사가 있고 인터뷰 질문이 아닐 때) ★★★
-      if (scene.mouth_shapes && Object.keys(scene.mouth_shapes).length > 0 && scene.has_narration && !scene.is_interview_question) {
-        // mouth_shapes 정보를 자연어로 변환
-        const mouthShapeDescriptions = Object.entries(scene.mouth_shapes)
-          .slice(0, 5) // 상위 5개만 사용 (프롬프트 길이 제한)
-          .map(([char, desc]) => `"${char}": ${desc}`)
-          .join("; ");
+      // 기본 프롬프트 (puppy-video-generator에서 생성된 것 또는 기본값)
+      let basePrompt = scene.veo3_prompt || "8K cinematic video. Same puppy from reference image. Natural movements.";
 
-        // 프롬프트에 립싱크 지시 추가
-        basePrompt += ` Korean lip sync guide: ${mouthShapeDescriptions}. Match mouth movements to these Korean syllable shapes.`;
+      // ★★★ 깨진 한글/텍스트 제거 강조 (모든 씬에 적용) ★★★
+      const noTextEmphasis = "IMPORTANT: No Korean text. No Chinese characters. No Japanese text. No Asian characters on any objects. No text on microphone. No text on props. No letters. No writing. Clean props without any text.";
+
+      // ★★★ 퍼포먼스 씬 (비트박스 등) - BGM에 맞춰 입 움직임 ★★★
+      const isPerformance = scene.is_performance || scene.scene_details?.is_performance;
+      const perfInfo = scene.performance_info || {};
+      const perfPhase = perfInfo.phase || scene.scene_details?.performance_phase;
+
+      if (isPerformance && perfInfo.lip_sync_to === "bgm") {
+        // 비트박스 퍼포먼스: BGM에 맞춰 입 움직임 (입모양 강조)
+        basePrompt += ` Dog performing beatbox on stage. IMPORTANT: Mouth opens and closes frequently and visibly to the beat. Exaggerated mouth movements - wide open then closed repeatedly. Rapid lip sync mimicking beatbox sounds "boots and cats". Head bobbing, body grooving to rhythm. Cool confident energetic expression. Background audio: beatbox rhythmic music playing loudly.`;
       }
 
-      // ★★★ lip_sync_style 정보 추가 ★★★
-      if (scene.lip_sync_style) {
-        const lsStyle = scene.lip_sync_style;
-        if (lsStyle.type && lsStyle.mouth_movement) {
-          basePrompt += ` Lip sync: ${lsStyle.type}. Mouth: ${lsStyle.mouth_movement}.`;
+      // 한국어 대사가 있는 경우 (강아지가 말하는 씬)
+      if (hasKoreanDialogue && !isPerformance) {
+        const emotionTone = scene.emotion || "happy";
+
+        // ★★★ Safety filter 회피 + 특수 음성 효과 처리 ★★★
+        let safeNarration = narration;
+        let voiceEffect = "";
+
+        // "콩파민" - 빠른 기계음으로 처리
+        if (narration.includes("콩파민")) {
+          safeNarration = narration.replace(/콩파민/g, "Kong-pa-min");
+          voiceEffect = " Fast robotic voice effect. Quick mechanical speech.";
         }
+
+        // 간결한 한국어 음성 프롬프트 추가
+        basePrompt += ` Dog speaks Korean dialogue with cute voice: "${safeNarration}". ${emotionTone} expression. Language: Korean. Lip sync to speech.${voiceEffect}`;
       }
+
+      // ★★★ 퍼포먼스 브레이크 (콩파민 등 짧은 외침) ★★★
+      if (isPerformance && perfPhase === "break" && narration) {
+        let safeNarration = narration;
+        if (narration.includes("콩파민")) {
+          safeNarration = "Kong-pa-min";
+        }
+        // 빠른 기계음 외침
+        basePrompt += ` Dog suddenly stops and shouts "${safeNarration}!" in fast robotic mechanical voice. Quick short exclamation. Dramatic pause moment. Confident smirk expression.`;
+      }
+
+      // 인터뷰어가 말하는 씬 (인터뷰 질문) - 강아지는 듣고만 있음, 마이크가 강아지 입 근처에 보임
+      if (scene.is_interview_question && narration) {
+        basePrompt += ` Off-screen Korean female interviewer voice says: "${narration}". A plain black microphone without any text or logos is held near the dog's mouth from the side, interview style. ${noTextEmphasis} Dog MUST keep mouth completely closed and still. No lip movement. No mouth opening. Dog only listens with curious expression, ears perked, slight head tilt. Mouth stays shut the entire time.`;
+      }
+
+      // ★★★ 모든 영상 마지막에 웃는 표정 ★★★
+      basePrompt += ` IMPORTANT: At the end of the video, dog must show a happy smiling expression with a cute grin.`;
+
+      // ★★★ 자막/텍스트 제거 (최종 강화) ★★★
+      basePrompt += ` CRITICAL: No text. No subtitles. No captions. No watermarks. No on-screen text of any kind. ${noTextEmphasis}`;
 
       return basePrompt;
+    };
+
+    // ★★★ Duration 계산 함수 (대사 길이 고려) ★★★
+    const getOptimalDuration = (scene) => {
+      // 인터뷰어 대사는 dialogue.interviewer 우선 사용
+      const narration = scene.dialogue?.interviewer || scene.narration || scene.dialogue?.script || "";
+      const baseDuration = scene.duration || 6;
+      const isInterviewQuestion = scene.is_interview_question || scene.scene_details?.is_interview_question;
+
+      if (narration && scene.has_narration) {
+        return calculateDurationFromNarration(narration, baseDuration, isInterviewQuestion);
+      }
+
+      // 기본 정규화
+      if (baseDuration <= 4) return 4;
+      if (baseDuration <= 6) return 6;
+      return 8;
     };
 
     // =====================
@@ -304,8 +376,8 @@ export default defineComponent({
           const imageBase64 = Buffer.from(imageResponse).toString("base64");
           const mimeType = scene.image_url.toLowerCase().includes(".jpg") ? "image/jpeg" : "image/png";
 
-          // Duration 정규화 (4, 6, 8초만)
-          const duration = normalizeDuration(scene.duration);
+          // Duration 계산 (대사 길이 고려하여 최적화)
+          const duration = getOptimalDuration(scene);
           const apiKey = apiKeys[currentApiKeyIndex];
           const endpoint = `${VEO_BASE_URL}/models/${MODEL_ID}:predictLongRunning`;
 
