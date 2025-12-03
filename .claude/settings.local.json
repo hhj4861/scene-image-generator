@@ -72,7 +72,13 @@
       "Bash(gcloud config:*)",
       "Bash(mkdir:*)",
       "Bash(terraform plan:*)",
-      "Bash(terraform apply:*)"
+      "Bash(terraform apply:*)",
+      "Bash(find:*)",
+      "Bash(gcloud auth application-default print-access-token:*)",
+      "Bash(gcloud compute ssh:*)",
+      "Bash(ssh:*)",
+      "Bash(terraform taint:*)",
+      "Bash(GOOGLE_APPLICATION_CREDENTIALS=/Users/admin/Desktop/workSpace/socar/scene-image-generator/google-credentials.json node:*)"
     ],
     "deny": [],
     "ask": []
