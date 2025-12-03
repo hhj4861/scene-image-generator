@@ -313,11 +313,47 @@ export default defineComponent({
 
     const imagePromises = scriptSegments.map(async (seg, idx) => {
       const speaker = seg.speaker || "main";
-      // ★★★ 항상 주인공 강아지 이미지를 생성 (인터뷰어 질문 씬도 강아지가 듣는 모습) ★★★
-      // 주인공 캐릭터 정보를 우선 사용하여 일관성 유지
       const mainCharacter = characters.main || {};
-      const character = characters[speaker] || mainCharacter;
-      const isInterviewQuestion = seg.scene_type === "interview_question" || speaker === "interviewer";
+      const speakerCharacter = characters[speaker] || {};
+      const isInterviewQuestion = seg.scene_type === "interview_question";
+      const isInterviewerSpeaking = isInterviewQuestion && speaker === "interviewer";
+
+      // ★★★ 화면에 등장하는 캐릭터 결정 (수정됨) ★★★
+      // 1. interviewer가 질문 (speaker=interviewer) → 다음 씬의 응답자(interviewee) 표시
+      // 2. main이 직접 질문 (speaker=main) → main 캐릭터 표시
+      // 3. sub1, sub2, sub3 씬 → 해당 캐릭터 이미지가 있으면 그 캐릭터 사용
+      // 4. 조연 이미지가 없으면 → 주인공 사용 (기존 동작)
+
+      let visualCharacterKey = speaker;
+
+      if (isInterviewerSpeaking) {
+        // 인터뷰어가 질문할 때: 다음 씬의 응답자(interviewee) 찾기
+        const nextSeg = scriptSegments[idx + 1];
+        if (nextSeg && nextSeg.scene_type === "interview_answer") {
+          visualCharacterKey = nextSeg.speaker || "main";
+        } else {
+          // characters_in_scene에서 찾기 (등록된 캐릭터 중 interviewer가 아닌 것)
+          const charsInScene = seg.scene_details?.characters_in_scene || [];
+          // ★★★ 동적으로 등록된 캐릭터 이름 가져오기 (interviewer 제외) ★★★
+          const registeredCharNames = Object.values(characters)
+            .filter(c => c.role !== "interviewer")
+            .map(c => c.name);
+          const visibleChar = charsInScene.find(charName => registeredCharNames.includes(charName));
+          if (visibleChar) {
+            const foundKey = Object.entries(characters).find(([k, v]) => v.name === visibleChar)?.[0];
+            if (foundKey) visualCharacterKey = foundKey;
+          }
+        }
+      }
+
+      const visualCharacter = characters[visualCharacterKey] || mainCharacter;
+      const hasSubCharacterImage = visualCharacterKey.startsWith("sub") && visualCharacter.image_url;
+
+      // ★★★ 실제 이미지 프롬프트 결정 ★★★
+      // 화면에 보이는 캐릭터의 분석된 프롬프트 사용
+      const visualPrompt = hasSubCharacterImage
+        ? (visualCharacter.image_prompt || seg.image_prompt || mainPrompt)
+        : (visualCharacter.image_prompt || mainPrompt);
 
       // 퍼포먼스 씬 감지
       const isPerformanceStart = seg.scene_type === "performance_start";
@@ -333,38 +369,39 @@ export default defineComponent({
       const sceneDetails = seg.scene_details || {};
       const sceneMood = sceneDetails.mood || currentMood.mood;
 
-      // ★★★ 캐릭터 외형 정보 - 항상 주인공(강아지) 프롬프트 사용! ★★★
-      // 인터뷰어 질문 씬도 강아지가 듣는 모습으로 생성해야 하므로,
-      // 항상 mainPrompt(주인공 이미지 분석 결과)를 기본으로 사용
+      // ★★★ 캐릭터 외형 정보 - 조연 이미지 있으면 조연 사용, 없으면 주인공 ★★★
       const characterAppearance = {
-        // ★★★ 주인공 프롬프트를 항상 우선 사용 (일관성 유지) ★★★
-        base: mainPrompt,
-        // 주인공의 의상/악세서리 정보 사용
-        outfit: mainCharacter.clothing || character.clothing || "",
-        accessories: mainCharacter.accessories || character.accessories || [],
-        fur_color: mainCharacter.fur_color || character.fur_color || "",
+        base: visualPrompt,
+        outfit: visualCharacter.clothing || "",
+        accessories: visualCharacter.accessories || [],
+        fur_color: visualCharacter.fur_color || "",
+        // 조연인지 주인공인지 구분
+        isSubCharacter: hasSubCharacterImage,
+        characterType: visualCharacter.character_type || "animal",
       };
 
       // 이미지 프롬프트 생성
       const generateImagePrompt = () => {
         let prompt = characterAppearance.base;
 
-        // ★★★ 퍼포먼스 콘텐츠면 모든 씬에 악세서리 적용! ★★★
-        // (인터뷰 씬에서도 선글라스, 금목걸이 등 착용 유지)
-        if (hasPerformanceScenes && globalPerformanceAccessories) {
+        // ★★★ 조연 캐릭터인 경우 seg.image_prompt 그대로 사용 가능 ★★★
+        const isSubCharacter = characterAppearance.isSubCharacter;
+        const isAnimal = characterAppearance.characterType === "animal";
+
+        // ★★★ 퍼포먼스 악세서리는 주인공(동물)에게만 적용 ★★★
+        if (hasPerformanceScenes && globalPerformanceAccessories && !isSubCharacter) {
           prompt += `, ${globalPerformanceAccessories}`;
         }
 
-        // 퍼포먼스 씬일 때 특별 프롬프트
-        if (isAnyPerformance && performancePhase) {
+        // 퍼포먼스 씬일 때 특별 프롬프트 (주인공만)
+        if (isAnyPerformance && performancePhase && !isSubCharacter) {
           const perfPrompts = performanceImagePrompts[globalPerformanceType] || performanceImagePrompts.beatbox;
           const perfPrompt = perfPrompts[performancePhase] || perfPrompts.start;
 
           prompt += `, ${perfPrompt}`;
-          // ★★★ 일관된 퍼포먼스 스테이지 배경 ★★★
           prompt += `. ${performanceStageBackground}`;
-        } else if (isInterviewQuestion) {
-          // 인터뷰 질문: 강아지가 듣는 표정
+        } else if (isInterviewerSpeaking) {
+          // 인터뷰어가 질문: interviewee 캐릭터가 듣는 표정
           if (characterAppearance.outfit && !hasPerformanceScenes) {
             prompt += `, wearing ${characterAppearance.outfit}`;
           }
@@ -372,15 +409,29 @@ export default defineComponent({
             prompt += `, with ${characterAppearance.accessories.join(", ")}`;
           }
           prompt += `, curious listening expression, head slightly tilted, ears perked up, attentive`;
-          // ★★★ 일관된 배경 사용 (퍼포먼스면 스테이지, 아니면 일반 배경) ★★★
           if (hasPerformanceScenes) {
             prompt += `. ${performanceStageBackground}`;
           } else {
             prompt += `. ${consistentBackground}`;
             prompt += `. ${consistentLighting}`;
           }
+        } else if (hasSubCharacterImage) {
+          // ★★★ 조연 캐릭터가 말하는 씬: seg.image_prompt 활용 ★★★
+          // 조연의 의상/악세서리 추가
+          if (characterAppearance.outfit) {
+            prompt += `, wearing ${characterAppearance.outfit}`;
+          }
+          if (characterAppearance.accessories?.length > 0) {
+            prompt += `, with ${characterAppearance.accessories.join(", ")}`;
+          }
+          const emotion = seg.emotion || "happy";
+          prompt += `. ${emotion} expression`;
+          // 배경은 seg.scene_details에서 가져오거나 일관된 배경 사용
+          const segBackground = seg.scene_details?.background || consistentBackground;
+          prompt += `. ${segBackground}`;
+          prompt += `. ${consistentLighting}`;
         } else {
-          // 일반 씬 (비퍼포먼스)
+          // 일반 씬 (주인공, 비퍼포먼스)
           if (characterAppearance.outfit && !hasPerformanceScenes) {
             prompt += `, wearing ${characterAppearance.outfit}`;
           }
@@ -389,7 +440,6 @@ export default defineComponent({
           }
           const emotion = seg.emotion || "happy";
           prompt += `. ${emotion} expression`;
-          // ★★★ 일관된 배경 사용 (퍼포먼스면 스테이지, 아니면 일반 배경) ★★★
           if (hasPerformanceScenes) {
             prompt += `. ${performanceStageBackground}`;
           } else {
@@ -403,9 +453,17 @@ export default defineComponent({
 
         // 품질 설정
         prompt += `. ${stylePrefix}, ${styleSuffix}`;
-        // ★★★ 실제 강아지 강조 (탈/마스코트/인형 방지) - script-generator에서 전달된 문구 사용 ★★★
-        prompt += `. ${realDogEmphasis}`;
-        // ★★★ 텍스트 완전 제거 (한글 깨짐 방지) - script-generator에서 전달된 문구 사용 ★★★
+
+        // ★★★ 캐릭터 타입에 따른 강조 문구 ★★★
+        if (isAnimal) {
+          // 동물 캐릭터: 실제 동물 강조
+          prompt += `. ${realDogEmphasis}`;
+        } else {
+          // 사람 캐릭터: 실제 사람 강조
+          prompt += `. Real person. Natural human appearance. NOT a cartoon. NOT an illustration. Realistic human.`;
+        }
+
+        // ★★★ 텍스트 완전 제거 (한글 깨짐 방지) ★★★
         prompt += `. ${noTextEmphasis}. Single character alone.`;
 
         return prompt.replace(/,\s*,/g, ",").replace(/\s+/g, " ").trim();
@@ -445,14 +503,20 @@ export default defineComponent({
 
       // 실패 시 간단한 프롬프트로 재시도
       if (!base64) {
-        // ★★★ 퍼포먼스 씬이면 악세서리 포함 ★★★
-        const fallbackAccessories = (isAnyPerformance && globalPerformanceAccessories)
+        // ★★★ 조연/주인공에 따라 다른 fallback 프롬프트 ★★★
+        const isSubCharacter = characterAppearance.isSubCharacter;
+        const isAnimal = characterAppearance.characterType === "animal";
+        const fallbackBase = isSubCharacter ? visualPrompt : mainPrompt;
+        const fallbackAccessories = (isAnyPerformance && globalPerformanceAccessories && !isSubCharacter)
           ? `, ${globalPerformanceAccessories}`
           : "";
-        const fallbackPrompt = `${mainPrompt}${fallbackAccessories}, ${seg.emotion || "happy"} expression, clean simple background, ${stylePrefix}, ${styleSuffix}. ${realDogEmphasis}. ${noTextEmphasis}`;
+        const characterEmphasis = isAnimal
+          ? realDogEmphasis
+          : "Real person. Natural human appearance. Realistic human.";
+        const fallbackPrompt = `${fallbackBase}${fallbackAccessories}, ${seg.emotion || "happy"} expression, clean simple background, ${stylePrefix}, ${styleSuffix}. ${characterEmphasis}. ${noTextEmphasis}`;
         base64 = await generateImage(fallbackPrompt);
         if (base64) {
-          $.export(`fallback_scene_${idx + 1}`, "Used simplified fallback prompt");
+          $.export(`fallback_scene_${idx + 1}`, `Used simplified fallback prompt for ${isSubCharacter ? "sub character" : "main character"}`);
         }
       }
 

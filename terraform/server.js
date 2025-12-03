@@ -32,6 +32,14 @@ const PEANUT_STYLE = {
     y_percent: 5,
     max_chars_per_line: 12,
   },
+  // ★★★ 영어 헤더 (한글보다 작은 폰트) ★★★
+  header_english: {
+    font_size: 48,
+    color: "0xFFFFFF",
+    border_color: "0x5D4E37",
+    border_width: 3,
+    y_offset: 90, // 한글 헤더 아래 오프셋 (픽셀)
+  },
   footer: {
     font_size: 75,
     color: "0xF4A460",
@@ -243,6 +251,7 @@ app.post("/render/puppy", async (req, res) => {
       bgm_url,
       bgm_volume = 0.2,
       header_text,
+      header_text_english, // ★★★ 영어 헤더 추가 ★★★
       footer_text = "땅콩이네",
       subtitle_enabled = true,
       subtitle_english_enabled = false,
@@ -306,7 +315,11 @@ app.post("/render/puppy", async (req, res) => {
 
     for (const { duration, video, index } of downloadedVideos) {
       const sceneNum = video.index || (index + 1);
+      // 실제 음성 대사 (TTS용)
       const narration = video.dialogue?.script || video.dialogue?.interviewer || video.dialogue?.["땅콩"] || video.narration || "";
+      // ★★★ 한글 자막용 (영어 캐릭터도 한글 자막 표시) ★★★
+      // narration_korean이 있으면 사용, 없으면 narration 사용 (한국어 캐릭터의 경우)
+      const narrationKorean = video.narration_korean || narration;
       const narrationEnglish = video.dialogue?.script_english || video.narration_english || "";
       const isInterviewQuestion = video.is_interview_question || video.scene_type === "interview_question";
       const isPerformance = video.is_performance && !narration;
@@ -315,10 +328,11 @@ app.post("/render/puppy", async (req, res) => {
         subtitles.push({
           start: currentTime + 0.3,
           end: currentTime + duration - 0.3,
-          text: narration,
+          text: narrationKorean,  // ★★★ 한글 자막 (항상 한국어)
           text_english: narrationEnglish,
-          speaker: isInterviewQuestion ? "interviewer" : "main",
+          speaker: isInterviewQuestion ? "interviewer" : (video.speaker || "main"),
           scene_index: sceneNum,
+          spoken_language: video.spoken_language || "korean",  // 캐릭터 언어 (디버깅용)
         });
       }
 
@@ -417,16 +431,27 @@ app.post("/render/puppy", async (req, res) => {
       }
     });
 
-    // 상단 타이틀 필터
-    const titleLines = splitHeaderLines(header_text || "", PEANUT_STYLE.header.max_chars_per_line);
+    // ★★★ 상단 타이틀 필터 (한글 + 영어 2줄) ★★★
+    const titleLinesKorean = splitHeaderLines(header_text || "", PEANUT_STYLE.header.max_chars_per_line);
     const titleLineHeight = PEANUT_STYLE.header.font_size + 10;
     let headerFilters = "";
-    if (titleLines.length > 0) {
-      titleLines.forEach((line, idx) => {
+    let lastKoreanLineY = headerY;
+
+    // 1. 한글 헤더 (큰 폰트)
+    if (titleLinesKorean.length > 0) {
+      titleLinesKorean.forEach((line, idx) => {
         const escapedLine = escapeText(line);
         const lineY = headerY + (idx * titleLineHeight);
+        lastKoreanLineY = lineY;
         headerFilters += `drawtext=text='${escapedLine}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${PEANUT_STYLE.header.font_size}:fontcolor=${PEANUT_STYLE.header.color}:borderw=${PEANUT_STYLE.header.border_width}:bordercolor=${PEANUT_STYLE.header.border_color}:x=(w-text_w)/2:y=${lineY},`;
       });
+    }
+
+    // 2. 영어 헤더 (작은 폰트, 한글 아래)
+    if (header_text_english) {
+      const englishY = lastKoreanLineY + PEANUT_STYLE.header_english.y_offset;
+      const escapedEnglish = escapeText(header_text_english);
+      headerFilters += `drawtext=text='${escapedEnglish}':fontsize=${PEANUT_STYLE.header_english.font_size}:fontcolor=${PEANUT_STYLE.header_english.color}:borderw=${PEANUT_STYLE.header_english.border_width}:bordercolor=${PEANUT_STYLE.header_english.border_color}:x=(w-text_w)/2:y=${englishY},`;
     }
 
     const escapedChannel = escapeText(footer_text || "땅콩이네");

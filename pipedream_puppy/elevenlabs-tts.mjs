@@ -32,11 +32,23 @@ export default defineComponent({
       description: "인터뷰어 음성 (여성 앵커)",
       default: "21m00Tcm4TlvDq8ikWAM", // Rachel (professional female)
     },
-    voice_sub: {
+    voice_sub_animal: {
       type: "string",
-      label: "Sub Character Voice ID",
-      description: "보조 캐릭터 음성",
+      label: "Sub Character Voice ID (Animal)",
+      description: "동물 조연 음성 (귀여운 음성)",
+      default: "EXAVITQu4vr4xnSDxMaL", // Bella (young female) - 강아지와 비슷
+    },
+    voice_sub_human_female: {
+      type: "string",
+      label: "Sub Character Voice ID (Human Female)",
+      description: "사람 조연 음성 (여성/할머니)",
       default: "AZnzlk1XvdvUeBnXmlld", // Domi (warm female)
+    },
+    voice_sub_human_male: {
+      type: "string",
+      label: "Sub Character Voice ID (Human Male)",
+      description: "사람 조연 음성 (남성/할아버지)",
+      default: "VR6AewLTigWG4xSOukaG", // Arnold (mature male)
     },
 
     model_id: {
@@ -73,23 +85,58 @@ export default defineComponent({
     const segments = script.script_segments || [];
     const folderName = scriptData.folder_name || `tts_${Date.now()}`;
 
-    // Speaker별 음성 매핑
-    const voiceMap = {
-      main: this.voice_main,
-      interviewer: this.voice_interviewer,
-      sub1: this.voice_sub,
-      sub2: this.voice_sub,
-      sub3: this.voice_sub,
+    // ★★★ 캐릭터 정보 추출 ★★★
+    const characters = scriptData.characters || {};
+
+    // ★★★ 캐릭터 타입에 따른 음성 선택 함수 ★★★
+    const getVoiceForSpeaker = (speaker) => {
+      if (speaker === "main") return this.voice_main;
+      if (speaker === "interviewer") return this.voice_interviewer;
+
+      // 조연 캐릭터 (sub1, sub2, sub3)
+      const character = characters[speaker] || {};
+      const characterType = character.character_type || "human";
+      const gender = character.gender || "female";
+
+      if (characterType === "animal") {
+        // 동물 조연: 귀여운 음성
+        return this.voice_sub_animal;
+      } else {
+        // 사람 조연: 성별에 따라 다른 음성
+        return gender === "male" ? this.voice_sub_human_male : this.voice_sub_human_female;
+      }
     };
 
-    // Speaker별 음성 설정 (stability, similarity)
-    const voiceSettings = {
-      main: { stability: 0.4, similarity_boost: 0.8, style: 0.5 }, // 귀엽고 변화있는 음성
-      interviewer: { stability: 0.7, similarity_boost: 0.75, style: 0.3 }, // 안정적이고 전문적인 음성
-      sub1: { stability: 0.5, similarity_boost: 0.75, style: 0.4 },
-      sub2: { stability: 0.5, similarity_boost: 0.75, style: 0.4 },
-      sub3: { stability: 0.5, similarity_boost: 0.75, style: 0.4 },
+    // ★★★ 캐릭터 타입에 따른 음성 설정 ★★★
+    const getVoiceSettingsForSpeaker = (speaker) => {
+      if (speaker === "main") {
+        return { stability: 0.4, similarity_boost: 0.8, style: 0.5 }; // 귀엽고 변화있는 음성
+      }
+      if (speaker === "interviewer") {
+        return { stability: 0.7, similarity_boost: 0.75, style: 0.3 }; // 안정적이고 전문적인 음성
+      }
+
+      // 조연 캐릭터
+      const character = characters[speaker] || {};
+      const characterType = character.character_type || "human";
+
+      if (characterType === "animal") {
+        // 동물 조연: 귀여운 음성 (주인공과 비슷)
+        return { stability: 0.4, similarity_boost: 0.8, style: 0.5 };
+      } else {
+        // 사람 조연: 자연스러운 음성
+        return { stability: 0.6, similarity_boost: 0.75, style: 0.3 };
+      }
     };
+
+    // 디버깅용: 캐릭터 정보 출력
+    $.export("characters_info", Object.entries(characters).map(([key, char]) => ({
+      speaker: key,
+      name: char.name,
+      type: char.character_type,
+      gender: char.gender,
+      voice: getVoiceForSpeaker(key),
+    })));
 
     $.export("input_info", {
       total_segments: segments.length,
@@ -116,8 +163,9 @@ export default defineComponent({
         return null;
       }
 
-      const voiceId = voiceMap[speaker] || this.voice_main;
-      const settings = voiceSettings[speaker] || voiceSettings.main;
+      // ★★★ 캐릭터 타입에 따른 동적 음성 선택 ★★★
+      const voiceId = getVoiceForSpeaker(speaker);
+      const settings = getVoiceSettingsForSpeaker(speaker);
 
       try {
         const response = await axios($, {
@@ -257,7 +305,9 @@ export default defineComponent({
       voice_config: {
         main: this.voice_main,
         interviewer: this.voice_interviewer,
-        sub: this.voice_sub,
+        sub_animal: this.voice_sub_animal,
+        sub_human_female: this.voice_sub_human_female,
+        sub_human_male: this.voice_sub_human_male,
         model: this.model_id,
       },
     };

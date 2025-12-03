@@ -37,13 +37,23 @@ export default defineComponent({
     openai: {
       type: "app",
       app: "openai",
+      optional: true,
     },
 
-    // 입력 데이터
+    // ★★★ FFmpeg 출력 (youtube_metadata 포함) ★★★
+    ffmpeg_output: {
+      type: "string",
+      label: "FFmpeg Output (JSON)",
+      description: "{{JSON.stringify(steps.Puppy_FFmpeg.$return_value)}}",
+      optional: true,
+    },
+
+    // 입력 데이터 (레거시 - FFmpeg 출력이 없을 때 사용)
     video_url: {
       type: "string",
       label: "Video URL",
-      description: "GCS URL of the final video to upload",
+      description: "GCS URL of the final video to upload (FFmpeg output이 없을 때 사용)",
+      optional: true,
     },
     original_title: {
       type: "string",
@@ -55,6 +65,7 @@ export default defineComponent({
       type: "string",
       label: "Script Text",
       description: "Full script text for AI analysis",
+      optional: true,
     },
     hashtags: {
       type: "string",
@@ -136,13 +147,32 @@ export default defineComponent({
 
   async run({ steps, $ }) {
     // =====================
-    // 0. 입력값 검증
+    // 0. 입력값 검증 및 FFmpeg 출력 파싱
     // =====================
 
-    // video_url 검증
-    let videoUrl = this.video_url;
+    // ★★★ FFmpeg 출력에서 youtube_metadata 추출 ★★★
+    let ffmpegData = null;
+    let youtubeMetadata = null;
+    let generatedTitles = null;
+
+    if (this.ffmpeg_output && this.ffmpeg_output !== 'undefined' && this.ffmpeg_output !== 'null') {
+      try {
+        ffmpegData = typeof this.ffmpeg_output === 'string'
+          ? JSON.parse(this.ffmpeg_output) : this.ffmpeg_output;
+        youtubeMetadata = ffmpegData.youtube_metadata || null;
+        generatedTitles = ffmpegData.generated_titles || null;
+        $.export("ffmpeg_data_source", "Parsed from FFmpeg output");
+      } catch (e) {
+        $.export("ffmpeg_parse_error", e.message);
+      }
+    }
+
+    $.export("has_youtube_metadata", !!youtubeMetadata);
+
+    // video_url: FFmpeg 출력 우선, 그 다음 직접 입력
+    let videoUrl = ffmpegData?.url || this.video_url;
     if (!videoUrl || videoUrl === 'undefined' || videoUrl === 'null') {
-      throw new Error(`video_url is required. Received: ${videoUrl}. Connect Creatomate Render's url output: {{steps.Creatomate_Render.$return_value.url}}`);
+      throw new Error(`video_url is required. Received: ${videoUrl}. Connect FFmpeg output: {{JSON.stringify(steps.Puppy_FFmpeg.$return_value)}}`);
     }
 
     // URL 형식 검증
@@ -245,9 +275,56 @@ export default defineComponent({
     let optimizedMetadata;
 
     // =====================
-    // AI 최적화 스킵 옵션
+    // ★★★ AI 생성 youtube_metadata 우선 사용 ★★★
     // =====================
-    if (this.skip_ai_optimization) {
+    if (youtubeMetadata && youtubeMetadata.title) {
+      $.export("status", "Using AI-generated youtube_metadata from Viral Title Generator...");
+
+      // youtube_metadata에서 직접 사용
+      const metaTitle = youtubeMetadata.title || generatedTitles?.header_korean || "Video";
+      const metaDescription = youtubeMetadata.description || "";
+      const metaHashtags = youtubeMetadata.hashtags || [];
+      const metaHashtagsString = youtubeMetadata.hashtags_string || metaHashtags.join(' ');
+
+      // #Shorts 해시태그 추가
+      const titleWithShorts = metaTitle.includes("#Shorts") ? metaTitle : `${metaTitle} #Shorts`;
+
+      // ★ 풍자 콘텐츠일 때 면책 문구 추가
+      const satireDisclaimer = this.is_satire
+        ? "\n\n⚠️ 본 영상은 실제 사건을 바탕으로 한 풍자/패러디 콘텐츠입니다."
+        : "";
+
+      // 설명 조합: AI 생성 설명 + 해시태그 + 채널명 + 면책문구
+      const fullDescription = `${metaDescription}\n\n${metaHashtagsString}\n\n🐕 ${channelHashtag}${satireDisclaimer}`;
+
+      // 태그 추출 (# 제거)
+      const tagsFromHashtags = metaHashtags.map(h => h.replace('#', ''));
+
+      optimizedMetadata = {
+        optimized_title: titleWithShorts.substring(0, 100),
+        optimized_description: fullDescription.substring(0, 5000),
+        tags: [...new Set([
+          ...tagsFromHashtags,
+          ...viralKeywords.slice(0, 5),
+          channelHashtag,
+          'shorts', 'viral',
+          ...(this.is_satire ? ['풍자', '패러디', 'satire', 'parody'] : [])
+        ])],
+        seo_score: "AI Generated",
+        predicted_performance: "AI Generated",
+        source: "youtube_metadata",
+      };
+
+      $.export("optimization_mode", "AI Generated (Viral Title)");
+      $.export("youtube_metadata_used", {
+        title: metaTitle,
+        hashtags_count: metaHashtags.length,
+      });
+    }
+    // =====================
+    // AI 최적화 스킵 옵션 (레거시)
+    // =====================
+    else if (this.skip_ai_optimization) {
       $.export("status", "Using Script Generator metadata directly (AI optimization skipped)...");
 
       // Script Generator의 title/hashtags 직접 사용
@@ -287,7 +364,7 @@ export default defineComponent({
 
       $.export("optimization_mode", "Direct (AI skipped)");
       $.export("generated_hashtags", uniqueHashtags);
-    } else {
+    } else if (this.openai) {
       // =====================
       // AI로 메타데이터 최적화
       // =====================
@@ -395,6 +472,24 @@ Return ONLY valid JSON.`;
       }
 
       $.export("optimization_mode", "AI Optimized");
+    } else {
+      // =====================
+      // OpenAI 없고 youtube_metadata도 없는 경우 기본 폴백
+      // =====================
+      $.export("status", "Using basic fallback metadata (no OpenAI, no youtube_metadata)...");
+
+      const fallbackTitle = originalTitleObj[this.target_language] || originalTitleObj.korean || originalTitleObj.japanese || "Video";
+      const titleWithShorts = fallbackTitle.includes("#Shorts") ? fallbackTitle : `${fallbackTitle} #Shorts`;
+
+      optimizedMetadata = {
+        optimized_title: titleWithShorts.substring(0, 100),
+        optimized_description: `${this.script_text?.substring(0, 300) || ''}\n\n#Shorts #강아지 #puppy\n\n🐕 ${channelHashtag}`,
+        tags: [...viralKeywords.slice(0, 10), channelHashtag, 'shorts', 'viral'],
+        seo_score: "N/A (basic fallback)",
+        predicted_performance: "N/A (basic fallback)",
+      };
+
+      $.export("optimization_mode", "Basic Fallback");
     }
 
     $.export("ai_optimization", {
@@ -513,6 +608,7 @@ Return ONLY valid JSON.`;
         tags_count: tags.length,
         category_id: this.content_category,
         privacy: this.privacy_status,
+        source: optimizedMetadata.source || "openai_or_fallback",
       },
       ai_insights: {
         seo_score: optimizedMetadata.seo_score,
@@ -521,6 +617,12 @@ Return ONLY valid JSON.`;
         best_upload_times: optimizedMetadata.best_upload_times,
         optimization_notes: optimizedMetadata.optimization_notes,
       },
+      // ★★★ FFmpeg 데이터 포함 (재사용 가능) ★★★
+      ffmpeg_info: ffmpegData ? {
+        folder_name: ffmpegData.folder_name,
+        total_duration: ffmpegData.total_duration,
+        render_engine: ffmpegData.render_engine,
+      } : null,
       uploaded_at: new Date().toISOString(),
     };
   },

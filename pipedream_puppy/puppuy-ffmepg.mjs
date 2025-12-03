@@ -8,7 +8,7 @@ export default defineComponent({
     video_generator_output: {
       type: "string",
       label: "Video Generator Output (JSON)",
-      description: "{{JSON.stringify(steps.Veo3_Video_Generator.$return_value)}}",
+      description: "{{JSON.stringify(steps.Puppy_Viral_Title.$return_value)}}",
     },
     script_generator_output: {
       type: "string",
@@ -40,8 +40,14 @@ export default defineComponent({
     },
     header_text: {
       type: "string",
-      label: "Header Text (상단 제목)",
-      description: "에피소드 타이틀 (예: 비트박스 천재견 땅콩의 반전)",
+      label: "Header Text Korean (상단 제목 - 한글)",
+      description: "에피소드 타이틀 한글 (예: 비트박스 천재견 땅콩의 반전)",
+      optional: true,
+    },
+    header_text_english: {
+      type: "string",
+      label: "Header Text English (상단 제목 - 영어)",
+      description: "에피소드 타이틀 영어 (예: Beatbox Genius Peanut's Plot Twist)",
       optional: true,
     },
     footer_text: {
@@ -60,7 +66,13 @@ export default defineComponent({
       type: "boolean",
       label: "Enable English Subtitles",
       description: "한글 자막 아래 영어 자막 표시",
-      default: false,
+      default: true,
+    },
+    header_bilingual: {
+      type: "boolean",
+      label: "Show Bilingual Header (Korean + English)",
+      description: "상단 타이틀에 한글과 영문 모두 표시",
+      default: true,
     },
     video_width: {
       type: "integer",
@@ -115,8 +127,30 @@ export default defineComponent({
     // =====================
     // 2. 헤더/푸터 텍스트 설정
     // =====================
-    const headerText = this.header_text || topicOutput?.topic || scriptOutput?.title?.korean || "";
-    const footerText = this.footer_text || "땅콩이네";
+    // ★★★ AI 생성 바이럴 타이틀 우선 사용 ★★★
+    // 우선순위: 수동 지정 > AI 생성 > Topic/Script 폴백 > 기본값
+    const generatedTitles = videoOutput?.generated_titles || {};
+    const youtubeMetadata = videoOutput?.youtube_metadata || {};
+
+    const headerTextKorean = this.header_text
+      || generatedTitles.header_korean
+      || topicOutput?.topic
+      || scriptOutput?.title?.korean
+      || "";
+    const headerTextEnglish = this.header_text_english
+      || generatedTitles.header_english
+      || scriptOutput?.title?.english
+      || "";
+    const footerText = this.footer_text
+      || generatedTitles.footer
+      || "땅콩이네";
+
+    $.export("titles", {
+      korean: headerTextKorean,
+      english: headerTextEnglish,
+      footer: footerText,
+      source: generatedTitles.header_korean ? "ai_generated" : "manual_or_fallback"
+    });
 
     // =====================
     // 3. FFmpeg VM API 호출
@@ -130,17 +164,27 @@ export default defineComponent({
         duration: v.duration,
         dialogue: v.dialogue,
         narration: v.narration,
+        // ★★★ 한글 자막용 (영어 캐릭터도 한글 자막 표시) ★★★
+        narration_korean: v.narration_korean || v.narration,
         narration_english: v.narration_english,
+        spoken_language: v.spoken_language || "korean",  // 캐릭터 언어
         is_interview_question: v.is_interview_question,
         scene_type: v.scene_type,
         is_performance: v.is_performance,
+        // ★★★ 조연 캐릭터 지원을 위한 추가 정보 ★★★
+        speaker: v.speaker,
+        character_name: v.character_name,
       })),
       bgm_url: this.bgm_url || null,
       bgm_volume: parseFloat(this.bgm_volume) || 0.2,
-      header_text: headerText,
+      // ★★★ 한글/영어 헤더 분리 전송 ★★★
+      header_text: headerTextKorean,
+      header_text_english: headerTextEnglish,
       footer_text: footerText,
+      // ★★★ 자막 및 타이틀 설정 ★★★
       subtitle_enabled: this.subtitle_enabled,
       subtitle_english_enabled: this.subtitle_english_enabled,
+      header_bilingual: this.header_bilingual,  // 상단에 한글+영어 타이틀 동시 표시
       width: this.video_width,
       height: this.video_height,
       output_bucket: this.gcs_bucket_name,
@@ -166,13 +210,17 @@ export default defineComponent({
         total_duration: response.total_duration,
         render_engine: "ffmpeg-vm",
         job_id: response.job_id,
+        // ★★★ 유튜브 메타데이터 포함 (업로드 시 사용) ★★★
+        youtube_metadata: youtubeMetadata,
+        generated_titles: generatedTitles,
         stats: response.stats || {
           video_count: sortedVideos.length,
           has_bgm: !!this.bgm_url,
-          has_header: !!headerText,
+          has_header: !!headerTextKorean,
           has_footer: !!footerText,
           has_subtitles: this.subtitle_enabled,
           has_english_subtitles: this.subtitle_english_enabled,
+          titles_source: generatedTitles.header_korean ? "ai_generated" : "manual_or_fallback",
         },
       };
 

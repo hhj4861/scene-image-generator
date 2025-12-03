@@ -78,7 +78,9 @@
       "Bash(gcloud compute ssh:*)",
       "Bash(ssh:*)",
       "Bash(terraform taint:*)",
-      "Bash(GOOGLE_APPLICATION_CREDENTIALS=/Users/admin/Desktop/workSpace/socar/scene-image-generator/google-credentials.json node:*)"
+      "Bash(GOOGLE_APPLICATION_CREDENTIALS=/Users/admin/Desktop/workSpace/socar/scene-image-generator/google-credentials.json node:*)",
+      "Bash(brew list:*)",
+      "Bash(/usr/local/bin/gcloud:*)"
     ],
     "deny": [],
     "ask": []

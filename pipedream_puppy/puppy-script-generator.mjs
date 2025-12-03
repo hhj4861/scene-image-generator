@@ -23,6 +23,17 @@ export default defineComponent({
       default: "땅콩",
       optional: true,
     },
+    main_character_language: {
+      type: "string",
+      label: "Main Character Spoken Language",
+      description: "주인공이 말하는 언어",
+      options: [
+        { label: "한국어 (Korean)", value: "korean" },
+        { label: "영어 (English)", value: "english" },
+      ],
+      default: "korean",
+      optional: true,
+    },
     // ★ 조연1 (주인/할머니)
     sub_character1_image_url: {
       type: "string",
@@ -36,6 +47,17 @@ export default defineComponent({
       default: "할미",
       optional: true,
     },
+    sub_character1_language: {
+      type: "string",
+      label: "Sub Character 1 Spoken Language",
+      description: "조연1이 말하는 언어",
+      options: [
+        { label: "한국어 (Korean)", value: "korean" },
+        { label: "영어 (English)", value: "english" },
+      ],
+      default: "korean",
+      optional: true,
+    },
     // ★ 조연2
     sub_character2_image_url: {
       type: "string",
@@ -47,6 +69,17 @@ export default defineComponent({
       label: "Sub Character 2 Name",
       optional: true,
     },
+    sub_character2_language: {
+      type: "string",
+      label: "Sub Character 2 Spoken Language",
+      description: "조연2가 말하는 언어",
+      options: [
+        { label: "한국어 (Korean)", value: "korean" },
+        { label: "영어 (English)", value: "english" },
+      ],
+      default: "korean",
+      optional: true,
+    },
     // ★ 조연3
     sub_character3_image_url: {
       type: "string",
@@ -56,6 +89,17 @@ export default defineComponent({
     sub_character3_name: {
       type: "string",
       label: "Sub Character 3 Name",
+      optional: true,
+    },
+    sub_character3_language: {
+      type: "string",
+      label: "Sub Character 3 Spoken Language",
+      description: "조연3이 말하는 언어",
+      options: [
+        { label: "한국어 (Korean)", value: "korean" },
+        { label: "영어 (English)", value: "english" },
+      ],
+      default: "korean",
       optional: true,
     },
     gemini_api_key: {
@@ -146,9 +190,9 @@ export default defineComponent({
     };
 
     // =====================
-    // 2. 이미지 분석 함수
+    // 2. 이미지 분석 함수 (자동 동물/사람 판별)
     // =====================
-    const analyzeCharacterImage = async (imageUrl, characterType) => {
+    const analyzeCharacterImage = async (imageUrl) => {
       if (!imageUrl) return null;
 
       try {
@@ -156,51 +200,22 @@ export default defineComponent({
         const imageBase64 = Buffer.from(imageResponse).toString("base64");
         const mimeType = imageUrl.includes(".png") ? "image/png" : "image/jpeg";
 
-        const analysisPrompt = characterType === "animal"
-          ? `Analyze this animal image in EXTREME DETAIL for consistent image regeneration.
+        // ★★★ 통합 분석 프롬프트: 이미지를 보고 자동으로 동물/사람 판별 ★★★
+        const analysisPrompt = `Analyze this image and determine if it's an ANIMAL or HUMAN, then provide detailed analysis for consistent image regeneration.
 
-Return JSON only:
-{
-  "character_type": "animal",
-  "species": "exact species (예: dog, cat, rabbit)",
-  "breed": "exact breed (예: Pomeranian, Golden Retriever, Persian cat)",
-  "estimated_age": "puppy/adult/senior",
-  "gender_appearance": "male/female/unknown",
-  "fur_color": "EXACT fur color with details (예: golden cream with white chest, orange tabby with white paws)",
-  "fur_texture": "fluffy/smooth/curly/long/short",
-  "fur_pattern": "solid/spotted/striped/mixed - describe pattern",
-  "eye_color": "exact eye color",
-  "nose_color": "black/pink/brown",
-  "ear_shape": "pointy/floppy/rounded",
-  "size": "small/medium/large",
-  "distinctive_features": ["specific unique features - scars, markings, etc"],
-  "accessories": ["EXACT accessories with colors - grey knit sweater, red collar, blue leash"],
-  "personality_impression": "cute/playful/calm/fierce",
-  "image_generation_prompt": "CRITICAL: Write a VERY SPECIFIC prompt that will generate the EXACT SAME animal. Include: breed, fur color+pattern, eye color, nose color, ear shape, size, ALL accessories with colors. Example: 'Pomeranian puppy with golden cream fluffy fur, white chest patch, dark brown eyes, small black nose, pointy ears, wearing a grey knitted sweater with brown leather tag, yellow leash attached'",
-  "suggested_voice_type": "baby_girl/child_boy/adult_female"
-}`
-          : `Analyze this person image in EXTREME DETAIL for consistent image regeneration.
+STEP 1: Determine character_type by looking at the image
+- If the image shows a dog, cat, rabbit, bird, or any animal → character_type: "animal"
+- If the image shows a person/human → character_type: "human"
 
-Return JSON only:
-{
-  "character_type": "human",
-  "estimated_age_range": "20s/30s/40s/50s/60s+",
-  "gender": "male/female",
-  "ethnicity": "Asian/Caucasian/African/Hispanic/etc",
-  "skin_tone": "fair/medium/tan/dark",
-  "hair_color": "exact color (예: dark brown, salt-and-pepper grey)",
-  "hair_style": "exact style (예: short bob, long wavy, tied back)",
-  "hair_length": "short/medium/long",
-  "eye_color": "exact color",
-  "eye_shape": "round/almond/monolid",
-  "facial_features": "specific features - round face, high cheekbones, etc",
-  "body_type": "slim/average/heavy",
-  "clothing": "EXACT clothing with colors (예: burgundy dress with white pearl necklace)",
-  "accessories": ["ALL accessories with colors - glasses, jewelry, etc"],
-  "personality_impression": "warm/stern/friendly/elegant",
-  "image_generation_prompt": "CRITICAL: Write a VERY SPECIFIC prompt that will generate the EXACT SAME person. Include: age, gender, ethnicity, skin tone, hair color+style, eye details, facial features, body type, EXACT clothing with colors, ALL accessories. Example: 'Asian woman in her 50s, fair skin, short black bob hair, warm brown eyes, round friendly face, wearing a burgundy bell-sleeve dress with white pearl necklace, gentle maternal smile'",
-  "suggested_voice_type": "elderly_female/adult_male/child_female"
-}`;
+STEP 2: Return appropriate JSON based on what you see
+
+If you see an ANIMAL, return this JSON format:
+{"character_type":"animal","species":"dog/cat/rabbit/etc","breed":"EXACT breed name (e.g., French Bulldog, Pomeranian, Golden Retriever, Persian Cat)","estimated_age":"puppy/adult/senior","gender_appearance":"male/female/unknown","fur_color":"EXACT color with details (e.g., solid black, golden cream, white with brown spots, brindle)","fur_texture":"fluffy/smooth/curly/long/short/wiry","fur_pattern":"solid/spotted/striped/brindle/mixed","eye_color":"exact color (e.g., dark brown, amber, blue)","nose_color":"black/pink/brown","ear_shape":"bat-like erect/pointy erect/floppy/rounded/drop/folded","face_shape":"flat/long/round/square/wrinkled","body_build":"compact muscular/slim/stocky/athletic/chunky","size":"small/medium/large","distinctive_features":["list ALL unique features like wrinkles, underbite, short snout, etc"],"accessories":["EXACT accessories with colors - collars, clothes, chains, etc"],"personality_impression":"cute/playful/calm/fierce/goofy/serious","image_generation_prompt":"CRITICAL: Create a VERY DETAILED prompt to regenerate EXACTLY this animal. Must include: exact breed name, fur color+texture+pattern, eye color, nose color, ear shape, face shape, body build, size, ALL visible accessories with exact colors. Example for French Bulldog: 'French Bulldog, solid black short smooth coat, dark brown round wide-set eyes, black nose, large bat-like erect ears, flat wrinkled face with short snout, compact muscular stocky body, small size, wearing grey ribbed shirt and gold chain necklace'","suggested_voice_type":"baby_girl/child_boy/adult_male/adult_female"}
+
+If you see a HUMAN, return this JSON format:
+{"character_type":"human","estimated_age_range":"child/teens/20s/30s/40s/50s/60s+","gender":"male/female","ethnicity":"Asian/Caucasian/African/Hispanic/Mixed","skin_tone":"fair/light/medium/tan/dark","hair_color":"exact color","hair_style":"exact style description","hair_length":"short/medium/long/bald","eye_color":"exact color","eye_shape":"round/almond/monolid/hooded","facial_features":"specific notable features (e.g., round cheeks, sharp jawline)","face_shape":"oval/round/square/heart/long","body_type":"slim/average/athletic/heavy","clothing":"EXACT clothing description with colors and style","accessories":["ALL accessories with colors"],"personality_impression":"warm/stern/friendly/elegant/cheerful/serious","image_generation_prompt":"CRITICAL: Create a VERY DETAILED prompt to regenerate EXACTLY this person. Must include: age range, gender, ethnicity, skin tone, hair (color+style+length), eye details, face shape, body type, EXACT clothing with colors, ALL accessories. Example: 'Asian woman in 50s, fair skin, short black bob hair, brown almond eyes, round friendly face, average build, wearing burgundy knit cardigan over white blouse, pearl necklace, warm gentle smile'","suggested_voice_type":"elderly_female/elderly_male/adult_female/adult_male/child_female/child_male/baby_girl/baby_boy"}
+
+IMPORTANT: Look at the image carefully and return ONLY the JSON, no markdown code blocks or explanations.`;
 
         const visionResponse = await axios($, {
           url: GEMINI_URL,
@@ -213,7 +228,7 @@ Return JSON only:
                 { inline_data: { mime_type: mimeType, data: imageBase64 } }
               ]
             }],
-            generationConfig: { temperature: 0.2, maxOutputTokens: 1024 },
+            generationConfig: { temperature: 0.2, maxOutputTokens: 1500 },
           },
         });
 
@@ -232,11 +247,12 @@ Return JSON only:
     // =====================
     $.export("status", "Analyzing character images...");
 
+    // ★★★ 모든 캐릭터 이미지를 자동 판별 (동물/사람 구분 없이) ★★★
     const [mainCharAnalysis, sub1Analysis, sub2Analysis, sub3Analysis] = await Promise.all([
-      analyzeCharacterImage(this.main_character_image_url, "animal"),
-      analyzeCharacterImage(this.sub_character1_image_url, "human"),
-      analyzeCharacterImage(this.sub_character2_image_url, "human"),
-      analyzeCharacterImage(this.sub_character3_image_url, "human"),
+      analyzeCharacterImage(this.main_character_image_url),
+      analyzeCharacterImage(this.sub_character1_image_url),
+      analyzeCharacterImage(this.sub_character2_image_url),
+      analyzeCharacterImage(this.sub_character3_image_url),
     ]);
 
     // 캐릭터 정보 구성
@@ -245,6 +261,7 @@ Return JSON only:
         name: this.main_character_name || "땅콩",
         role: "main",
         image_url: this.main_character_image_url,
+        spoken_language: this.main_character_language || "korean",
         analysis: mainCharAnalysis || {
           character_type: "animal",
           species: "dog",
@@ -260,6 +277,7 @@ Return JSON only:
         name: this.sub_character1_name || "할미",
         role: "sub1",
         image_url: this.sub_character1_image_url,
+        spoken_language: this.sub_character1_language || "korean",
         analysis: sub1Analysis || {
           character_type: "human",
           estimated_age_range: "50s",
@@ -275,6 +293,7 @@ Return JSON only:
         name: this.sub_character2_name || "할비",
         role: "sub2",
         image_url: this.sub_character2_image_url,
+        spoken_language: this.sub_character2_language || "korean",
         analysis: sub2Analysis || {
           character_type: "human",
           image_generation_prompt: "person",
@@ -288,6 +307,7 @@ Return JSON only:
         name: this.sub_character3_name || "조연3",
         role: "sub3",
         image_url: this.sub_character3_image_url,
+        spoken_language: this.sub_character3_language || "korean",
         analysis: sub3Analysis || {
           character_type: "human",
           image_generation_prompt: "person",
@@ -343,23 +363,34 @@ Return JSON only:
     // =====================
     // 5. 캐릭터 정보를 프롬프트로 변환
     // =====================
+    // ★★★ 영어 사용 캐릭터 목록 (자막 처리용) ★★★
+    const englishSpeakingChars = Object.entries(characters)
+      .filter(([k, c]) => c.spoken_language === "english")
+      .map(([k, c]) => ({ key: k, name: c.name }));
+    const hasEnglishSpeakers = englishSpeakingChars.length > 0;
+
     const characterDescriptions = Object.entries(characters).map(([key, char]) => {
       const analysis = char.analysis;
+      const spokenLang = char.spoken_language || "korean";
+      const langLabel = spokenLang === "english" ? "🇺🇸 영어 (English)" : "🇰🇷 한국어 (Korean)";
 
       if (key === "interviewer") {
         return `- ${char.name} (INTERVIEWER): 화면에 등장하지 않음 (음성만)
   역할: 질문하는 인터뷰어
+  언어: 🇰🇷 한국어 (Korean)
   음성: ${analysis.voice_description || "Korean female news anchor, 30s, professional friendly tone"}
   ⚠️ 인터뷰어가 질문할 때: 강아지는 듣는 표정, lip_sync 없음`;
       }
 
       if (analysis.character_type === "animal") {
         return `- ${char.name} (${key.toUpperCase()}): ${analysis.species || "animal"}, ${analysis.breed || "unknown breed"}, ${analysis.estimated_age || "unknown age"}, ${analysis.personality_impression || "cute"} personality, Voice: ${analysis.suggested_voice_type || "baby_girl"}
+  🗣️ 대사 언어: ${langLabel}
   외형: ${analysis.image_generation_prompt || "cute animal"}
   특징: ${(analysis.distinctive_features || []).join(", ") || "adorable"}
   악세서리: ${(analysis.accessories || []).join(", ") || "none"}`;
       } else {
         return `- ${char.name} (${key.toUpperCase()}): ${analysis.gender || "unknown"}, ${analysis.estimated_age_range || "unknown age"}, ${analysis.personality_impression || "friendly"} personality, Voice: ${analysis.suggested_voice_type || "adult"}
+  🗣️ 대사 언어: ${langLabel}
   외형: ${analysis.image_generation_prompt || "person"}
   의상: ${analysis.clothing || "casual"}
   특징: ${analysis.facial_features || ""}`;
@@ -376,242 +407,70 @@ Return JSON only:
       const contentTypeGuides = {
         satire: `
 ## 🎭 콘텐츠 타입: 풍자 (SATIRE MODE)
-**Tone**: ${contentTypeConfig.tone}
-**Mood**: ${contentTypeConfig.mood}
-**Themes**: ${contentTypeConfig.themes?.join(", ") || "시사 풍자"}
-**Emotion Range**: ${contentTypeConfig.emotion_range?.join(", ") || "분노, 억울, 당당"}
-
+**Tone**: ${contentTypeConfig.tone} | **Mood**: ${contentTypeConfig.mood}
+**Themes**: ${contentTypeConfig.themes?.join(", ") || "시사 풍자"} | **Emotions**: ${contentTypeConfig.emotion_range?.join(", ") || "분노, 억울, 당당"}
 ${originalTopic ? `
-### 🎯 USER INPUT - SATIRE/PARODY TRANSFORMATION (CRITICAL!)
-**Original Topic to Satirize**: "${userTopic}"
-**Conversion Hints**: "${userHint}"
-
-### YOUR MISSION:
-Transform the above real-world topic into a PUPPY-VERSION SATIRE/PARODY.
-The original topic should be recognizable but converted into a cute, funny puppy world scenario.
-
-### TRANSFORMATION RULES:
-1. **Keep the core structure** of the original topic (numbers, scale, impact)
-2. **Replace human elements** with puppy/dog world equivalents
-3. **Use the keyword hints** to guide the transformation
-4. **Make it funny and cute** while maintaining the satirical edge
-5. **The satire should be obvious** but not offensive
-
-### TRANSFORMATION EXAMPLES:
-| Original Topic | Keyword Hints | Puppy Version |
-|---------------|---------------|---------------|
-| 쿠팡 개인정보 유출 3700만건 | 중국, 차우차우, 사료 | "중국집 차우차우한테 3700만개 사료 털린 강아지의 분노" |
-| 테슬라 자율주행 사고 | 로봇청소기, 충돌 | "자율주행 로봇청소기에 치인 강아지의 복수극" |
-| 국회 난투극 | 강아지 유치원, 싸움 | "강아지 유치원 간식시간 난투극 현장" |
-` : `
-### 🎯 AUTO-GENERATE SATIRE MODE:
-Generate satirical puppy content based on current trends and news.
-`}`,
+### 🎯 SATIRE TRANSFORMATION (CRITICAL!)
+**Original**: "${userTopic}" | **Hints**: "${userHint}"
+Transform to PUPPY-VERSION: Keep core structure (numbers, scale), replace human→puppy elements, make funny & cute but satirical.
+예시: 쿠팡 개인정보 유출→"중국집 차우차우한테 3700만개 사료 털린 강아지" / 국회 난투극→"강아지 유치원 간식시간 난투극"
+` : `### 🎯 AUTO SATIRE: Generate satirical puppy content based on current trends.`}`,
 
         comic: `
-## 😂 콘텐츠 타입: 코믹 (COMIC MODE)
-**Tone**: ${contentTypeConfig.tone}
-**Mood**: ${contentTypeConfig.mood}
-
-### COMIC ELEMENTS:
-1. **반전 (Twist)** - 예상 밖의 결말로 웃음 유발
-2. **과장 (Exaggeration)** - 귀여운 과장으로 코믹한 상황
-3. **실패 (Fail)** - 강아지의 귀여운 실패 모음
-4. **당황 (Confusion)** - 멘붕하는 강아지의 표정
-5. **vs 시리즈** - 강아지 vs 로봇청소기, 강아지 vs 거울 등`,
+## 😂 코믹 (COMIC) - Tone: ${contentTypeConfig.tone} | Mood: ${contentTypeConfig.mood}
+ELEMENTS: 반전(예상밖 결말), 과장(귀여운 과장), 실패(귀여운 실패), 당황(멘붕 표정), vs시리즈(강아지vs로봇청소기)`,
 
         emotional: `
-## 🥺 콘텐츠 타입: 감동 (EMOTIONAL MODE)
-**Tone**: ${contentTypeConfig.tone}
-**Mood**: ${contentTypeConfig.mood}
-
-### EMOTIONAL ELEMENTS:
-1. **재회 (Reunion)** - 오랜만에 만난 주인/가족
-2. **성장 (Growth)** - 아기 강아지의 성장 스토리
-3. **우정 (Friendship)** - 다른 동물/강아지와의 우정
-4. **감사 (Gratitude)** - 주인에게 감사하는 마음
-5. **극복 (Overcome)** - 어려움을 이겨낸 이야기
-
-### EMOTIONAL STORY ARC:
-평범한 시작 → 감정적 계기 → 클라이맥스 (눈물) → 따뜻한 마무리`,
+## 🥺 감동 (EMOTIONAL) - Tone: ${contentTypeConfig.tone} | Mood: ${contentTypeConfig.mood}
+ELEMENTS: 재회, 성장, 우정, 감사, 극복 | ARC: 평범한시작→감정적계기→클라이맥스(눈물)→따뜻한마무리`,
 
         daily: `
-## 😊 콘텐츠 타입: 일상 (DAILY MODE)
-**Tone**: ${contentTypeConfig.tone}
-**Mood**: ${contentTypeConfig.mood}
-
-### DAILY VLOG ELEMENTS:
-1. **루틴 (Routine)** - 아침/저녁 루틴, 산책 루틴
-2. **먹방 (Eating)** - 간식 타임, 밥 먹기
-3. **놀이 (Play)** - 장난감, 공놀이
-4. **휴식 (Rest)** - 낮잠, 이불 속
-5. **산책 (Walk)** - 동네 산책, 공원`,
+## 😊 일상 (DAILY) - Tone: ${contentTypeConfig.tone} | Mood: ${contentTypeConfig.mood}
+ELEMENTS: 루틴(아침/저녁/산책), 먹방(간식타임), 놀이(장난감/공놀이), 휴식(낮잠/이불), 산책(동네/공원)`,
 
         mukbang: `
-## 🍽️ 콘텐츠 타입: 먹방 (MUKBANG MODE)
-**Tone**: ${contentTypeConfig.tone}
-**Mood**: ${contentTypeConfig.mood}
-
-### MUKBANG ELEMENTS:
-1. **리뷰 (Review)** - 신상 간식 리뷰, 비교 리뷰
-2. **ASMR** - 사각사각, 오도독 먹는 소리
-3. **반응 (Reaction)** - 처음 먹어보는 음식 반응
-4. **랭킹 (Ranking)** - 간식 순위, 최애 간식
-5. **먹방 (Eating Show)** - 맛있게 먹는 모습`,
+## 🍽️ 먹방 (MUKBANG) - Tone: ${contentTypeConfig.tone} | Mood: ${contentTypeConfig.mood}
+ELEMENTS: 리뷰(신상간식/비교), ASMR(사각사각/오도독), 반응(처음음식), 랭킹(간식순위), 먹방(맛있게먹기)`,
 
         healing: `
-## 💕 콘텐츠 타입: 힐링 (HEALING MODE)
-**Tone**: ${contentTypeConfig.tone}
-**Mood**: ${contentTypeConfig.mood}
-
-### HEALING ELEMENTS:
-1. **휴식 (Rest)** - 포근한 이불, 햇살 아래
-2. **자연 (Nature)** - 비 오는 날, 눈 오는 날
-3. **함께함 (Together)** - 주인과 함께하는 시간
-4. **평화 (Peace)** - 조용한 오후, 나른한 시간
-5. **치유 (Comfort)** - 힘든 하루 끝 위로`,
+## 💕 힐링 (HEALING) - Tone: ${contentTypeConfig.tone} | Mood: ${contentTypeConfig.mood}
+ELEMENTS: 휴식(이불/햇살), 자연(비/눈), 함께함(주인과시간), 평화(조용한오후), 치유(하루끝위로)`,
 
         drama: `
-## 🎬 콘텐츠 타입: 드라마 (DRAMA MODE)
-**Tone**: ${contentTypeConfig.tone}
-**Mood**: ${contentTypeConfig.mood}
-
-### DRAMA ELEMENTS:
-1. **갈등 (Conflict)** - 문제 상황, 위기
-2. **미스터리 (Mystery)** - 사라진 간식, 수상한 소리
-3. **모험 (Adventure)** - 탈출, 탐험, 도전
-4. **로맨스 (Romance)** - 옆집 강아지와의 사랑
-5. **성장 (Growth)** - 두려움 극복, 용기
-
-### DRAMA STORY STRUCTURE:
-1. **도입** - 평화로운 일상
-2. **사건 발생** - 갈등/문제 등장
-3. **전개** - 해결을 위한 노력
-4. **클라이맥스** - 최고 긴장 순간
-5. **결말** - 해피엔딩 또는 반전`,
+## 🎬 드라마 (DRAMA) - Tone: ${contentTypeConfig.tone} | Mood: ${contentTypeConfig.mood}
+ELEMENTS: 갈등(위기), 미스터리(사라진간식), 모험(탈출/탐험), 로맨스(옆집강아지), 성장(용기)
+STRUCTURE: 도입(평화)→사건발생→전개(해결노력)→클라이맥스→결말(해피엔딩/반전)`,
 
         performance: `
 ## 🎤 콘텐츠 타입: 퍼포먼스 (PERFORMANCE MODE)
-**Tone**: ${contentTypeConfig.tone}
-**Mood**: ${contentTypeConfig.mood}
+**Tone**: ${contentTypeConfig.tone} | **Mood**: ${contentTypeConfig.mood}
 
-### ⚠️⚠️⚠️ 퍼포먼스 = 인터뷰 + 퍼포먼스 씬 하이브리드! ⚠️⚠️⚠️
-
+### ⚠️ 퍼포먼스 = 인터뷰 + 퍼포먼스 씬 하이브리드!
 퍼포먼스 콘텐츠는 **인터뷰 형식 중간에 퍼포먼스 씬을 삽입**하는 구조입니다!
 
-### 📋 전체 스크립트 구조 (30초 기준)
-
-1. **인터뷰 질문 1** - speaker: "interviewer" (존대말 필수!)
-   - scene_type: "interview_question"
-   - narration: "땅콩 씨, 비트박스를 시작하게 된 계기가 무엇인가요?"
-
-2. **인터뷰 대답 1** - speaker: "main"
-   - scene_type: "interview_answer"
-   - narration: "어릴 때부터 리듬을 타는 게 너무 좋았어요!"
-
-3. **인터뷰 질문 2 (퍼포먼스 유도)** - speaker: "interviewer"
-   - scene_type: "interview_question"
-   - narration: "그렇군요! 그럼 오늘 비트박스 실력을 보여주시겠어요?"
-
-4. **퍼포먼스 시작 (4초)** - speaker: "main"
-   - scene_type: "performance_start"
-   - narration: "" (대사 없음!)
-   - has_narration: false
-   - audio_details.bgm_featured: true
-   - audio_details.bgm_volume: 0.8
-   - 설명: BGM 비트박스 음악이 나오고, 강아지가 BGM에 맞춰 입 움직임
-
-5. **퍼포먼스 멈춤 + 대사 (2초)** - speaker: "main"
-   - scene_type: "performance_break"
-   - narration: "콩파민!" (짧은 단어 2-3글자!)
-   - has_narration: true
-   - audio_details.bgm_featured: false (BGM 멈춤!)
-   - audio_details.bgm_volume: 0
-   - audio_details.voice_effect: "robotic"
-   - 설명: BGM 멈추고, 강아지가 기계음으로 외침
-
-6. **퍼포먼스 재개 (4초)** - speaker: "main"
-   - scene_type: "performance_resume"
-   - narration: "" (대사 없음!)
-   - has_narration: false
-   - audio_details.bgm_featured: true
-   - audio_details.bgm_volume: 0.8
-   - 설명: BGM 다시 시작, 강아지가 BGM에 맞춰 다시 립싱크
-
-7. **인터뷰 마무리** - speaker: "interviewer"
-   - scene_type: "interview_question"
-   - narration: "와! 정말 대단하시네요! 마지막으로 한마디 해주세요."
-
-8. **아웃트로** - speaker: "main"
-   - scene_type: "interview_answer"
-   - narration: "헥헥... 구독하고 좋아요 눌러주세요!"
+### 📋 전체 스크립트 구조 (30초 기준, 8개 segment)
+1. 인터뷰 질문 1 (interviewer, 존대말!) → 2. 인터뷰 대답 1 (main)
+3. 인터뷰 질문 2 - 퍼포먼스 유도 (interviewer)
+4. performance_start (main, narration:"", bgm_featured:true, bgm_volume:0.8) - BGM+립싱크
+5. performance_break (main, narration:"콩파민!", bgm_featured:false, voice_effect:"robotic") - BGM멈춤+기계음
+6. performance_resume (main, narration:"", bgm_featured:true, bgm_volume:0.8) - BGM재개+립싱크
+7. 인터뷰 마무리 (interviewer) → 8. 아웃트로 (main)
 
 ### 🎵 퍼포먼스 씬 3단계 (필수!)
-
-#### STEP 1: performance_start (3-4초)
-- narration: "" (빈 문자열!)
-- has_narration: false
-- bgm_featured: true, bgm_volume: 0.8
-- 강아지가 BGM에 맞춰 입 움직임 (립싱크)
-
-#### STEP 2: performance_break (2-3초)
-- narration: "콩파민!" 등 짧은 단어 (2-3글자)
-- has_narration: true
-- bgm_featured: false, bgm_volume: 0 (BGM 멈춤!)
-- voice_effect: "robotic" (기계음)
-- BGM 멈추고 강아지가 기계음으로 외침
-
-#### STEP 3: performance_resume (3-4초)
-- narration: "" (빈 문자열!)
-- has_narration: false
-- bgm_featured: true, bgm_volume: 0.8
-- BGM 다시 시작, 강아지 립싱크
+- STEP 1 performance_start (6초): narration:"", has_narration:false, bgm_featured:true, bgm_volume:0.8
+- STEP 2 performance_break (4초): narration:"콩파민!"(2-3글자), has_narration:true, bgm_featured:false, voice_effect:"robotic"
+- STEP 3 performance_resume (6초): narration:"", has_narration:false, bgm_featured:true, bgm_volume:0.8
 
 ### 🎙️ 인터뷰어 규칙
-- ⚠️ **인터뷰어는 항상 존대말!**
-- ❌ 금지: "땅콩아, 비트박스 해봐" (반말)
-- ✅ 올바른 예: "땅콩 씨, 비트박스 실력을 보여주시겠어요?" (존대말)
+⚠️ 인터뷰어는 항상 존대말! ❌ "땅콩아, 해봐" → ✅ "땅콩 씨, 보여주시겠어요?"
 
-### 🎵 퍼포먼스 타입별 설정
+### 🎵 퍼포먼스 타입별 break 대사/BGM
+- 비트박스: "콩파민!","부웅!" / beatbox rhythmic
+- 노래: "랄랄라!","우우!" / vocal melody
+- 댄스: "이얍!","춤춰!" / dance beat, EDM
+- 랩: "요!","간식왕!" / hip-hop beat
 
-#### 비트박스 (Beatbox)
-- break 대사: "콩파민!", "부웅!", "츠크츠크!"
-- BGM: beatbox rhythmic, mouth percussion
-
-#### 노래 (Singing)
-- break 대사: "랄랄라!", "우우!", "예에!"
-- BGM: vocal melody, acapella
-
-#### 댄스 (Dance)
-- break 대사: "이얍!", "춤춰!", "고고!"
-- BGM: dance beat, EDM
-
-#### 랩 (Rap)
-- break 대사: "요!", "간식왕!", "멍멍!"
-- BGM: hip-hop beat, trap
-
-### ⚠️ FINAL CHECKLIST:
-- ✅ 인터뷰어는 존대말 사용!
-- ✅ 퍼포먼스 씬 3단계 (start → break → resume) 반드시 포함!
-- ✅ performance_start/resume는 narration 빈 문자열!
-- ✅ performance_break만 짧은 대사 (2-3글자) + voice_effect: "robotic"!
-
-### 📋 JSON 출력 예시
-\`\`\`json
-{
-  "title": {"korean": "땅콩의 비트박스 데뷔", "english": "Peanut's Beatbox Debut"},
-  "script_segments": [
-    {"segment_number": 1, "speaker": "interviewer", "scene_type": "interview_question", "narration": "땅콩 씨, 비트박스를 시작하게 된 계기가 무엇인가요?", "has_narration": true},
-    {"segment_number": 2, "speaker": "main", "scene_type": "interview_answer", "narration": "어릴 때부터 리듬 타는 게 좋았어요!", "has_narration": true},
-    {"segment_number": 3, "speaker": "interviewer", "scene_type": "interview_question", "narration": "오늘 실력을 보여주시겠어요?", "has_narration": true},
-    {"segment_number": 4, "speaker": "main", "scene_type": "performance_start", "narration": "", "has_narration": false, "audio_details": {"bgm_featured": true, "bgm_volume": 0.8}},
-    {"segment_number": 5, "speaker": "main", "scene_type": "performance_break", "narration": "콩파민!", "has_narration": true, "audio_details": {"bgm_featured": false, "bgm_volume": 0, "voice_effect": "robotic"}},
-    {"segment_number": 6, "speaker": "main", "scene_type": "performance_resume", "narration": "", "has_narration": false, "audio_details": {"bgm_featured": true, "bgm_volume": 0.8}},
-    {"segment_number": 7, "speaker": "interviewer", "scene_type": "interview_question", "narration": "대단하시네요! 마지막 한마디 해주세요.", "has_narration": true},
-    {"segment_number": 8, "speaker": "main", "scene_type": "interview_answer", "narration": "헥헥... 구독 눌러주세요!", "has_narration": true}
-  ]
-}
-\`\`\``,
+### ⚠️ CHECKLIST: 인터뷰어 존대말 / 3단계 필수(start→break→resume) / start,resume는 narration:"" / break만 짧은대사+robotic`,
 
         random: `
 ## 🎲 콘텐츠 타입: 랜덤 (RANDOM MODE)
@@ -627,81 +486,18 @@ Generate satirical puppy content based on current trends and news.
     const generateScriptFormatSection = () => {
       if (scriptFormat === 'interview') {
         return `
-★★★ 스크립트 형식: INTERVIEW (매우 중요!!!) ★★★
-
-🎤 **인터뷰 형식 (INTERVIEW FORMAT) - 반드시 이 형식으로 작성!**
-
-⚠️ **절대 규칙: 할미, 할비 등 조연이 직접 대화하는 장면 금지!**
-⚠️ **오직 인터뷰어 질문 → 주인공 대답 구조만 사용!**
-
-### 🎙️ 인터뷰어 말투 규칙 (CRITICAL!)
-⚠️ **인터뷰어는 항상 존대말(존칭)을 사용!**
-- ❌ 금지: "콩아, 비트박스를 시작하게 된 계기가 뭐야?" (반말)
-- ❌ 금지: "그래서 어떻게 됐어?" (반말)
-- ✅ 올바른 예: "땅콩 씨, 비트박스를 시작하게 된 계기가 무엇인가요?" (존대말)
-- ✅ 올바른 예: "그래서 어떻게 되셨나요?" (존대말)
-- ✅ 올바른 예: "당시 심정이 어떠셨나요?" (존대말)
-- 인터뷰어는 전문 뉴스 앵커처럼 격식있고 정중하게 질문!
-
-**인터뷰 구성 (필수!):**
-1. 인터뷰어가 질문할 때: 강아지는 듣는 표정 (lip_sync: no), 인터뷰어 음성만 재생
-2. 주인공(강아지)이 대답할 때: 카메라 정면 보고 말하기 (lip_sync: yes)
-3. 필요시 과거 회상 장면 삽입 (flashback)
-4. 조연(할미 등)은 회상 장면에서만 등장 가능
-
-**올바른 인터뷰 형식 예시:**
-[인터뷰어 질문 - 자막만] "이 사건에 대해 어떻게 생각하세요?"
-[땅콩 - 카메라 정면] "아니 내가 말이야... 진짜 어이가 없어서..."
-
-[인터뷰어 질문 - 자막만] "당시 상황을 설명해주세요"
-[땅콩 - 회상하며] "그날 밤이었어... (회상 장면 시작)"
-[회상 장면] 차우차우가 사료를 털어가는 모습
-[땅콩 - 다시 카메라] "그래서 3700만 봉지가 사라진거야!"
-
-**segment 구성:**
-- scene_type: "interview_question" → speaker: "interviewer", narration: 질문 내용
-- scene_type: "interview_answer" → speaker: "main", narration: 대답 내용
-- scene_type: "flashback" → speaker: "main", narration: 회상 나레이션
-
-**speaker 규칙:**
-- "interviewer": 질문만 (화면에 자막, 음성 없음)
-- "main": 주인공 강아지 (대부분의 대답, 80% 이상)
-- "sub1", "sub2": 회상 장면에서만 등장 가능`;
+★★★ INTERVIEW FORMAT (매우 중요!) ★★★
+⚠️ 절대규칙: 조연(할미,할비) 직접대화 금지! 오직 인터뷰어질문→주인공대답 구조만!
+⚠️ 인터뷰어는 항상 존대말! ❌"콩아,뭐야?"→✅"땅콩씨,무엇인가요?"
+구성: 1.인터뷰어질문(강아지듣는표정,lip_sync:no) 2.주인공대답(카메라정면,lip_sync:yes) 3.필요시flashback 4.조연은회상장면에서만등장
+segment: interview_question(speaker:interviewer) / interview_answer(speaker:main) / flashback(speaker:main)
+speaker: "interviewer"=질문만, "main"=주인공(80%이상), "sub1","sub2"=회상장면에서만`;
       } else if (scriptFormat === 'monologue') {
-        return `
-★★★ 스크립트 형식: MONOLOGUE ★★★
-
-📖 **독백 형식 (MONOLOGUE FORMAT)**
-강아지가 혼자 이야기하는 1인칭 나레이션.
-
-**구성 예시:**
-- "오늘 있었던 일을 말해줄게..."
-- "내가 얼마나 억울했는지 알아?"
-
-**특징:**
-- 강아지 시점의 스토리텔링
-- 감정 이입이 쉬움`;
+        return `★★★ MONOLOGUE FORMAT ★★★ 강아지 1인칭 나레이션. 예: "오늘 있었던 일을 말해줄게..." 강아지시점 스토리텔링, 감정이입 용이`;
       } else if (scriptFormat === 'dialogue') {
-        return `
-★★★ 스크립트 형식: DIALOGUE ★★★
-
-💬 **대화 형식 (DIALOGUE FORMAT)**
-강아지와 주인/다른 동물의 대화.
-
-**구성 예시:**
-- 강아지: "할미! 이거 봐!"
-- 할머니: "어머, 이게 뭐야?"
-
-**특징:**
-- 자연스러운 일상 대화
-- 여러 캐릭터 등장`;
+        return `★★★ DIALOGUE FORMAT ★★★ 강아지와 주인/다른동물 대화. 예: 강아지:"할미! 이거봐!" 할머니:"어머, 이게뭐야?" 자연스러운일상대화, 여러캐릭터등장`;
       } else {
-        return `
-★★★ 스크립트 형식: MIXED ★★★
-
-🎭 **혼합 형식 (MIXED FORMAT)**
-상황에 맞게 인터뷰/독백/대화를 AI가 자동 선택.
-풍자 콘텐츠는 주로 인터뷰 형식 추천.`;
+        return `★★★ MIXED FORMAT ★★★ 상황에맞게 인터뷰/독백/대화 AI자동선택. 풍자콘텐츠는 인터뷰형식 추천`;
       }
     };
 
@@ -712,85 +508,44 @@ Generate satirical puppy content based on current trends and news.
 
     const prompt = `Create a viral YouTube Short script with DETAILED visual descriptions.
 
-★★★ VEO3 VIDEO DURATION RULES (매우 중요!) ★★★
-- ⚠️ Veo3는 4초, 6초, 8초만 지원! (5초, 7초 등 불가능!)
-- 각 씬의 duration은 반드시 4, 6, 8 중 하나로 설정!
-- 씬 개수: ${sceneCountGuide}
-- 퍼포먼스 씬 duration: start(6초), break(4초), resume(6초)
-- ⚠️ 각 segment에 "duration" 필드 필수! (예: "duration": 6)
+★★★ VEO3 DURATION RULES ★★★
+⚠️ Veo3: 4/6/8초만 지원! 각 씬 duration 필수! 씬개수: ${sceneCountGuide} | 퍼포먼스: start(6초), break(4초), resume(6초)
 
-★★★ CHARACTERS (이미지 분석 결과 기반) ★★★
+★★★ CHARACTERS ★★★
 ${characterDescriptions}
+${Object.entries(characters).map(([key, char]) => `- ${char.name}: ${char.analysis.image_generation_prompt || ""} (모든씬동일외형)`).join("\n")}
 
-★★★ CRITICAL - CHARACTER APPEARANCE CONSISTENCY ★★★
-${Object.entries(characters).map(([key, char]) =>
-  `- ${char.name}: ${char.analysis.image_generation_prompt || ""}
-   모든 씬에서 동일한 외형 유지!`
-).join("\n")}
+TOPIC: ${effectiveTopic}${dailyContext ? ` | CONTEXT: ${dailyContext.season}, ${dailyContext.day_of_week}` : ""}
 
-TOPIC: ${effectiveTopic}
-${dailyContext ? `CONTEXT: ${dailyContext.season}, ${dailyContext.day_of_week}` : ""}
-
-★★★ 배경 설정 (CRITICAL - 모든 씬에 일관되게 적용!) ★★★
-${hasCustomBackground ? `
-🎯 **USER-SPECIFIED BACKGROUND** (최우선 적용!):
-"${backgroundPrompt}"
-
-⚠️ IMPORTANT: 이 배경을 모든 씬의 scene_details.background와 image_prompt에 반드시 포함!
-` : backgroundAiGenerated ? `
-🤖 **AI-GENERATED BACKGROUND**:
-- Location: ${backgroundAiGenerated.location || "auto"}
-- Style: ${backgroundAiGenerated.style || "auto"}
-- Lighting: ${backgroundAiGenerated.lighting || "auto"}
-- Description: ${backgroundAiGenerated.description || "auto"}
-
-모든 씬에서 이 배경을 일관되게 사용하세요!
-` : `
-🤖 **AUTO BACKGROUND**: 콘텐츠 타입(${contentType})에 맞는 배경을 자동 생성하되, 모든 씬에서 일관성 유지!
-`}
+★★★ 배경 ★★★
+${hasCustomBackground ? `🎯 USER BACKGROUND: "${backgroundPrompt}" - 모든씬에 반드시 포함!` : backgroundAiGenerated ? `🤖 AI BACKGROUND: ${backgroundAiGenerated.location||"auto"}, ${backgroundAiGenerated.style||"auto"}, ${backgroundAiGenerated.lighting||"auto"}` : `🤖 AUTO: ${contentType}에 맞는 배경 자동생성, 일관성유지`}
 
 ${generateContentTypeSection()}
-
-${storyContext.story_summary ? `★★★ 스토리 가이드 ★★★
-📖 스토리 요약: ${storyContext.story_summary}
-🎣 후킹 대사: ${storyContext.hook || "N/A"}
-🎭 나레이션 스타일: ${storyContext.narration_style || "N/A"}
-💓 감정 여정: ${storyContext.emotional_journey || "N/A"}
-🔥 바이럴 요소: ${storyContext.viral_elements?.join(", ") || "N/A"}
-` : ""}
-
+${storyContext.story_summary ? `★★★ 스토리 ★★★ 요약:${storyContext.story_summary} | 후킹:${storyContext.hook||"N/A"} | 스타일:${storyContext.narration_style||"N/A"} | 감정:${storyContext.emotional_journey||"N/A"} | 바이럴:${storyContext.viral_elements?.join(",")||"N/A"}` : ""}
 ${generateScriptFormatSection()}
 
 ★★★ SCRIPT RULES ★★★
-${scriptFormat === 'interview' ? `
-- ⚠️ 인터뷰 형식: 주인공(${characters.main.name})이 카메라 보고 대답 (80% 이상)
-- ⚠️ 인터뷰어 질문은 자막으로만 표시 (speaker: "interviewer")
-- ⚠️ 조연(할미 등)은 회상 장면(flashback)에서만 등장!
-- ⚠️ 조연이 직접 대화하는 장면 절대 금지!
-- speaker 필드: "main", "interviewer", 또는 회상 시 "sub1", "sub2"
-- scene_type 필드: "interview_question", "interview_answer", "flashback", "reaction"
-` : `
-- 주인공(${characters.main.name})이 주로 말하고 (60-70%)
-- 조연들이 반응하거나 대화 (30-40%)
-- 캐릭터별 성격과 목소리 특성 반영
-- speaker 필드는 반드시 다음 중 하나: "main", "sub1", "sub2", "sub3", "interviewer"
-`}
+${scriptFormat === 'interview' ? `인터뷰형식: 주인공(${characters.main.name})카메라대답80%이상 / 인터뷰어질문=자막(speaker:interviewer) / 조연=flashback에서만 / speaker:"main","interviewer","sub1","sub2" / scene_type:"interview_question","interview_answer","flashback","reaction"` : `주인공(${characters.main.name})60-70%, 조연30-40% / speaker:"main","sub1","sub2","sub3","interviewer"`}
 
-★★★ 코미디 효과음 규칙 ★★★
-- 대사 중 의성어(멍멍! 왈왈! 낑!)가 나올 때, 귀여운 효과음을 sound_effects에 추가
-- 예시:
-  * "멍멍!" → sound_effects: ["playful bark", "cute whoosh"]
-  * "왈왈!" → sound_effects: ["excited puppy bark", "happy jingle"]
-  * "낑..." → sound_effects: ["tiny whimper", "soft piano"]
-- ⚠️ 금지: lion roar, tiger, thunder, explosion, growl 등 자극적 표현 금지!
+★★★ 대사/효과음/안전규칙 ★★★
+⚠️ 대사 금지: "멍!", "왈왈!", "낑~", "캉캉!" 등 동물 추임새/의성어 금지! 사람처럼 자연스러운 말투로만 작성!
+효과음: ❌금지: lion,tiger,thunder,explosion,growl,bark,woof
+감정: 대사에 (신나서),(당황) 포함, voice_style에 상세기술
+안전: ❌동물흉내(사자,호랑이,으르렁),공격표현
 
-★★★ 감정 표현 규칙 ★★★
-- 대사에 감정/액션 지시어 포함: (신나서), (당황), (작은 목소리로)
-- 목소리 스타일 변화도 voice_style에 상세히 기술
-
-★★★ 대사 안전 규칙 ★★★
-- ⚠️ 금지: 동물 흉내(사자,호랑이,으르렁), 공격적 표현(때리다,죽이다)
-- ✅ 허용: "멍멍!", "왈왈!", "낑~", "캉캉!" 등 귀여운 표현
+${hasEnglishSpeakers ? `
+★★★ 영어 캐릭터 대사 규칙 (매우 중요!) ★★★
+${englishSpeakingChars.map(c => `- ${c.name} (${c.key})`).join(", ")} = 영어로 말하는 캐릭터!
+⚠️ 영어 캐릭터 대사 처리:
+- narration: 영어 대사 (실제 TTS/음성에 사용)
+- narration_korean: 한글 번역 (자막에 사용) - 반드시 작성!
+- narration_english: 영어 원문 (narration과 동일)
+예시:
+  "speaker": "sub1",
+  "narration": "Oh my gosh! This is so embarrassing!",
+  "narration_korean": "세상에! 이건 너무 창피해!",
+  "narration_english": "Oh my gosh! This is so embarrassing!"
+` : ""}
 
 ${lang.instruction}
 
@@ -805,8 +560,9 @@ ${lang.instruction}
       "duration": 6,  // ⚠️ 필수! 반드시 4, 6, 8 중 하나!
       "speaker":"main or sub1 or sub2 or sub3 or interviewer",
       "character_name":"캐릭터 이름",
-      "narration":"대사 내용 (한국어)",
-      "narration_english":"English translation of narration",
+      "narration":"대사 내용 (한국어 캐릭터=한국어, 영어 캐릭터=영어)",
+      "narration_korean":"⚠️ 필수! 한글 자막용 (영어 캐릭터=한글 번역, 한국어 캐릭터=narration과 동일)",
+      "narration_english":"⚠️ REQUIRED! English subtitle (Korean character=English translation, English character=same as narration). NEVER leave empty!",
       "scene_type":"interview_question/interview_answer/flashback/narration/reaction",
 
       "image_prompt":"이미지 생성용 상세 프롬프트 (영어) - 캐릭터 외모 + 감정에 맞는 포즈/표정 + 배경 + 조명",
@@ -844,7 +600,16 @@ ${lang.instruction}
   "overall_style":"photorealistic"
 }
 
-스토리 흐름에 맞게 자연스러운 씬 개수로 구성하세요! (각 씬 duration 포함 필수)`;
+스토리 흐름에 맞게 자연스러운 씬 개수로 구성하세요! (각 씬 duration 포함 필수)
+
+★★★ 마지막 씬 (OUTRO) - 매우 중요! ★★★
+마지막 씬은 재미있는 마무리 대사로 끝내세요! (면책 씬은 자동 추가됨)
+- 구독 유도: "구독 안 하면 간식 안 줌!", "좋아요 누르면 꼬리 흔들어줄게~"
+- 반전 유머: 갑자기 간식 달라고 조르기, 예상치 못한 귀여운 반전
+- 여운: "다음 화에서 복수한다... 기다려라!", 뒤돌아보며 윙크
+- 감정 폭발: 억울해서 바닥 구르기, 분노의 멍멍!, 승리의 만세
+⚠️ 면책 문구 씬은 생성하지 마세요! (시스템에서 자동 추가됨)`;
+
 
     const scriptResponse = await axios($, {
       url: GEMINI_URL,
@@ -852,7 +617,7 @@ ${lang.instruction}
       headers: { "Content-Type": "application/json", "x-goog-api-key": this.gemini_api_key },
       data: {
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.8, maxOutputTokens: 4096 },
+        generationConfig: { temperature: 0.8, maxOutputTokens: 8192 },
       },
     });
 
@@ -860,22 +625,108 @@ ${lang.instruction}
     try {
       let content = scriptResponse.candidates[0].content.parts[0].text.trim();
       content = content.replace(/```json\s*/g, "").replace(/```\s*/g, "");
+
+      // ★★★ JSON 정리: 불필요한 문자 제거 ★★★
       const jsonMatch = content.match(/\{[\s\S]*\}/);
-      script = JSON.parse(jsonMatch ? jsonMatch[0] : content);
+      let jsonStr = jsonMatch ? jsonMatch[0] : content;
+
+      // 잘못된 이스케이프 문자 수정
+      jsonStr = jsonStr
+        .replace(/[\x00-\x1F\x7F]/g, " ") // 제어 문자 제거
+        .replace(/,\s*}/g, "}") // trailing comma 제거
+        .replace(/,\s*]/g, "]"); // trailing comma 제거
+
+      script = JSON.parse(jsonStr);
     } catch (e) {
-      throw new Error(`Script parse error: ${e.message}`);
+      // 디버깅을 위해 원본 내용 일부 출력
+      const rawContent = scriptResponse.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      $.export("parse_error_content_preview", rawContent.substring(0, 500));
+      $.export("parse_error_content_end", rawContent.substring(Math.max(0, rawContent.length - 500)));
+      throw new Error(`Script parse error: ${e.message}. Content length: ${rawContent.length}`);
+    }
+
+    // =====================
+    // 8-1. 영어 대사 자동 감지 및 한글 번역 후처리
+    // =====================
+    const isEnglishText = (text) => {
+      if (!text?.trim() || text.length < 5) return false;
+      const cleaned = text.replace(/\([^)]*[\uAC00-\uD7AF]+[^)]*\)/g, "").trim();
+      const ko = (cleaned.match(/[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/g) || []).length;
+      const en = (cleaned.match(/[a-zA-Z]/g) || []).length;
+      return en > ko * 2 && en > 10;
+    };
+
+    const segmentsNeedingTranslation = (script.script_segments || [])
+      .map((seg, i) => ({ index: i, narration: seg.narration || "" }))
+      .filter(s => isEnglishText(s.narration) && (!script.script_segments[s.index].narration_korean || isEnglishText(script.script_segments[s.index].narration_korean)));
+
+    // 번역이 필요한 세그먼트가 있으면 일괄 번역
+    if (segmentsNeedingTranslation.length > 0) {
+      $.export("translation_needed", `${segmentsNeedingTranslation.length} segments need Korean translation`);
+
+      try {
+        const translationPrompt = `Translate these English sentences to Korean.
+Keep any Korean text in parentheses as-is.
+Return ONLY a JSON array of translations in the same order.
+
+Sentences to translate:
+${segmentsNeedingTranslation.map((s, idx) => `${idx + 1}. "${s.narration}"`).join("\n")}
+
+Example output format:
+["한글 번역 1", "한글 번역 2", ...]
+
+Return ONLY the JSON array, no markdown, no explanation.`;
+
+        const translationResponse = await axios($, {
+          url: GEMINI_URL,
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": this.gemini_api_key },
+          data: {
+            contents: [{ parts: [{ text: translationPrompt }] }],
+            generationConfig: { temperature: 0.3, maxOutputTokens: 2000 },
+          },
+        });
+
+        let translations = [];
+        try {
+          let content = translationResponse.candidates[0].content.parts[0].text.trim();
+          content = content.replace(/```json\s*/g, "").replace(/```\s*/g, "");
+          translations = JSON.parse(content);
+        } catch (e) {
+          $.export("translation_parse_error", e.message);
+        }
+
+        // 번역 적용
+        if (translations.length > 0) {
+          for (let i = 0; i < segmentsNeedingTranslation.length && i < translations.length; i++) {
+            const segIdx = segmentsNeedingTranslation[i].index;
+            script.script_segments[segIdx].narration_korean = translations[i];
+            // spoken_language도 english로 업데이트
+            script.script_segments[segIdx].spoken_language = "english";
+          }
+          $.export("translations_applied", translations.length);
+        }
+      } catch (e) {
+        $.export("translation_error", e.message);
+      }
     }
 
     // =====================
     // 9. 풍자 모드일 때 면책 엔딩 씬 추가
     // =====================
     if (isSatire && script.script_segments?.length > 0) {
+      // 면책 멘트 랜덤 선택
+      const disclaimerMessages = [
+        { korean: "(귀엽게 절하며) 풍자 콘텐츠예요~ 너그럽게 봐주세요! 흐흐흐흐흐!", english: "It's satire content~ Please be generous! Hehe!" },
+      ];
+      const randomDisclaimer = disclaimerMessages[Math.floor(Math.random() * disclaimerMessages.length)];
+
       const disclaimerSegment = {
         segment_number: script.script_segments.length + 1,
         speaker: "main",
         character_name: characters.main?.name || "땅콩",
-        narration: "이 영상은 실제 사건을 바탕으로 한 풍자입니다~ 헤헤헤!",
-        narration_english: "This video is a satire based on real events~ Hehehe!",
+        narration: randomDisclaimer.korean,
+        narration_english: randomDisclaimer.english,
         scene_type: "disclaimer",
         image_prompt: `${characters.main?.analysis?.image_generation_prompt || "cute adorable puppy"}, full body shot, standing on hind legs, doing a cute polite bow (Korean style belly button bow), front paws together at belly, bending forward respectfully, mischievous smile, warm cozy background`,
         video_prompt: {
@@ -905,7 +756,7 @@ ${lang.instruction}
       };
 
       script.script_segments.push(disclaimerSegment);
-      $.export("disclaimer_added", "Satire disclaimer ending scene added");
+      $.export("disclaimer_added", `Satire disclaimer added: "${randomDisclaimer.korean}"`);
     }
 
     // =====================
@@ -983,269 +834,127 @@ ${lang.instruction}
 
       script.script_segments = script.script_segments.map((seg, idx) => {
         const charLen = seg.narration?.length || 0;
-        const speaker = seg.speaker || "main";
+        const speaker = ["main", "sub1", "sub2", "sub3"].includes(seg.speaker) ? seg.speaker : "interviewer";
         const character = characters[speaker] || characters.main;
-        const isInterviewQuestion = seg.scene_type === "interview_question" || speaker === "interviewer";
+        const isInterviewQuestion = speaker === "interviewer" || seg.scene_type === "interview_question";
 
-        // ★★★ 퍼포먼스 씬 타입 감지 (새로운 3단계 구조) ★★★
-        const isPerformance = isPerformanceScene(seg.scene_type);
-        const isPerformanceStart = seg.scene_type === "performance_start";
-        const isPerformanceBreak = seg.scene_type === "performance_break";
-        const isPerformanceResume = seg.scene_type === "performance_resume";
-        const isAnyPerformance = isPerformance || isPerformanceStart || isPerformanceBreak || isPerformanceResume;
+        // 퍼포먼스 씬 타입 감지
+        const sceneType = seg.scene_type;
+        const isPerformanceStart = sceneType === "performance_start";
+        const isPerformanceBreak = sceneType === "performance_break";
+        const isPerformanceResume = sceneType === "performance_resume";
+        const isAnyPerformance = isPerformanceScene(sceneType) || isPerformanceStart || isPerformanceBreak || isPerformanceResume;
 
-        // ★★★ Veo3 제한: 4초, 6초, 8초만 가능! ★★★
-        // 가장 가까운 허용 duration을 찾는 함수
-        const findClosestAllowedDuration = (target, allowedOptions = VEO3_ALLOWED_DURATIONS) => {
-          return allowedOptions.reduce((prev, curr) =>
-            Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev
-          );
-        };
+        // duration 계산 (Veo3: 4/6/8초만 가능)
+        const findClosest = (t) => VEO3_ALLOWED_DURATIONS.reduce((p, c) => Math.abs(c - t) < Math.abs(p - t) ? c : p);
+        const preferredDuration = isPerformanceBreak ? 4 : 6;
+        const calcDuration = seg.duration || (!seg.duration && charLen > 0 ? findClosest(Math.ceil(charLen / lang.charsPerSec)) : preferredDuration);
+        const duration = VEO3_ALLOWED_DURATIONS.includes(calcDuration) ? calcDuration : findClosest(calcDuration);
 
-        // 퍼포먼스 장면별 권장 duration
-        let preferredDuration;
-        if (isPerformanceStart || isPerformanceResume) {
-          preferredDuration = 6; // BGM 재생 구간: 6초 권장
-        } else if (isPerformanceBreak) {
-          preferredDuration = 4; // 짧은 대사 구간: 4초 (Veo3 최소)
-        } else {
-          preferredDuration = 6; // 일반 씬: 6초 기본값
-        }
+        // narration 유무 (퍼포먼스 start/resume는 narration 없음)
+        const hasNarration = (isPerformanceStart || isPerformanceResume) ? false : !!(seg.narration?.trim());
 
-        // ★★★ duration: Gemini가 제공한 값 우선, 없으면 대사 길이 기반 계산 ★★★
-        let calculatedDuration = seg.duration || preferredDuration;
-
-        // Gemini가 duration을 제공하지 않은 경우 대사 길이 기반으로 추정
-        if (!seg.duration && charLen > 0) {
-          // 한국어 기준 초당 5글자로 계산
-          const estimatedDuration = Math.ceil(charLen / lang.charsPerSec);
-          calculatedDuration = findClosestAllowedDuration(estimatedDuration);
-        }
-
-        // Veo3 허용 duration (4, 6, 8) 중 가장 가까운 값으로 조정
-        const duration = VEO3_ALLOWED_DURATIONS.includes(calculatedDuration)
-          ? calculatedDuration
-          : findClosestAllowedDuration(calculatedDuration);
-
-        // 퍼포먼스 break 장면만 narration 있음
-        const hasNarration = isPerformanceBreak
-          ? !!(seg.narration && seg.narration.trim())
-          : (isPerformanceStart || isPerformanceResume)
-            ? false
-            : !!(seg.narration && seg.narration.trim());
-
-        // ★★★ 퍼포먼스 타입별 처리 ★★★
-        const performanceType = getPerformanceType(seg.scene_type);
+        // 퍼포먼스 타입별 처리
+        const performanceType = getPerformanceType(sceneType);
         const perfDefaults = performanceType ? performanceDefaults[performanceType] : null;
-
         const videoPrompt = seg.video_prompt || {};
-        let defaultVideoPrompt;
+        const isPerformance = isPerformanceScene(sceneType);
 
-        if (isPerformanceStart || isPerformanceResume) {
-          // 퍼포먼스 시작/재개: BGM + 립싱크
-          defaultVideoPrompt = {
-            character_action: perfDefaults?.character_action || "mouth moving to beat rhythm, head bobbing, body grooving",
-            lip_sync: "yes", // BGM 비트에 맞춰 립싱크!
-            lip_sync_to: "bgm", // TTS가 아닌 BGM에 맞춤
-            facial_expression: perfDefaults?.facial_expression || "cool and rhythmic",
-            body_movement: perfDefaults?.body_movement || "rhythmic body movement to beat",
-            camera_movement: "dynamic",
-            is_performance: true,
-            performance_phase: isPerformanceStart ? "start" : "resume",
-          };
-        } else if (isPerformanceBreak) {
-          // 퍼포먼스 브레이크: BGM 멈춤 + 짧은 대사 (기계음)
-          defaultVideoPrompt = {
-            character_action: "pausing performance, looking at camera, saying short word",
-            lip_sync: "yes", // 대사에 맞춰 립싱크
-            lip_sync_to: "tts",
-            facial_expression: "confident and cool",
-            body_movement: "brief pause, then dramatic pose",
-            camera_movement: "zoom_in",
-            is_performance: true,
-            performance_phase: "break",
-          };
-        } else if (isPerformance && perfDefaults) {
-          // 기존 퍼포먼스 타입 (호환성)
-          defaultVideoPrompt = {
-            character_action: perfDefaults.character_action,
-            lip_sync: "yes",
-            lip_sync_to: "bgm",
-            facial_expression: perfDefaults.facial_expression,
-            body_movement: perfDefaults.body_movement,
-            camera_movement: "dynamic",
-            is_performance: true,
-            performance_type: performanceType,
-          };
-        } else {
-          defaultVideoPrompt = {
-            character_action: isInterviewQuestion
-              ? "listening attentively with curious expression, head slightly tilted, ears perked up"
-              : (hasNarration ? "talking with perfectly synchronized lip movements" : "natural idle animation"),
-            lip_sync: isInterviewQuestion ? "no" : (hasNarration ? "yes" : "no"),
-            facial_expression: isInterviewQuestion ? "curious listening" : (seg.emotion || "happy"),
-            body_movement: isInterviewQuestion
-              ? "subtle listening pose, occasional small nod, ears twitching"
-              : (hasNarration ? "subtle expressive gestures while talking" : "gentle breathing and natural movements"),
-            camera_movement: "static",
-            is_interviewer_speaking: isInterviewQuestion,
-          };
-        }
+        const defaultVideoPrompt = (isPerformanceStart || isPerformanceResume) ? {
+          character_action: perfDefaults?.character_action || "mouth moving to beat rhythm, head bobbing, body grooving",
+          lip_sync: "yes", lip_sync_to: "bgm",
+          facial_expression: perfDefaults?.facial_expression || "cool and rhythmic",
+          body_movement: perfDefaults?.body_movement || "rhythmic body movement to beat",
+          camera_movement: "dynamic", is_performance: true, performance_phase: isPerformanceStart ? "start" : "resume",
+        } : isPerformanceBreak ? {
+          character_action: "pausing performance, looking at camera, saying short word",
+          lip_sync: "yes", lip_sync_to: "tts",
+          facial_expression: "confident and cool", body_movement: "brief pause, then dramatic pose",
+          camera_movement: "zoom_in", is_performance: true, performance_phase: "break",
+        } : (isPerformance && perfDefaults) ? {
+          character_action: perfDefaults.character_action, lip_sync: "yes", lip_sync_to: "bgm",
+          facial_expression: perfDefaults.facial_expression, body_movement: perfDefaults.body_movement,
+          camera_movement: "dynamic", is_performance: true, performance_type: performanceType,
+        } : {
+          character_action: isInterviewQuestion ? "listening attentively with curious expression, head slightly tilted, ears perked up"
+            : (hasNarration ? "talking with perfectly synchronized lip movements" : "natural idle animation"),
+          lip_sync: isInterviewQuestion ? "no" : (hasNarration ? "yes" : "no"),
+          facial_expression: isInterviewQuestion ? "curious listening" : (seg.emotion || "happy"),
+          body_movement: isInterviewQuestion ? "subtle listening pose, occasional small nod, ears twitching"
+            : (hasNarration ? "subtle expressive gestures while talking" : "gentle breathing and natural movements"),
+          camera_movement: "static", is_interviewer_speaking: isInterviewQuestion,
+        };
 
         const sceneDetails = seg.scene_details || {};
-        const defaultSceneDetails = {
-          location: "indoor",
-          background: "cozy living room with soft warm lighting",
-          weather: "none",
-          lighting: "warm soft natural",
-          mood: "cozy heartwarming",
-          characters_in_scene: [character.name],
-        };
+        const defaultSceneDetails = { location: "indoor", background: "cozy living room with soft warm lighting", weather: "none", lighting: "warm soft natural", mood: "cozy heartwarming", characters_in_scene: [character.name] };
 
         const audioDetails = seg.audio_details || {};
-        let defaultAudioDetails;
+        const defaultAudioDetails = (isPerformanceStart || isPerformanceResume) ? {
+          voice_style: "no voice - BGM only", voice_type: "none", speaking_speed: "none", sound_effects: [], background_sound: "",
+          bgm_featured: true, bgm_volume: 0.8, performance_phase: isPerformanceStart ? "start" : "resume",
+          bgm_style: perfDefaults?.bgm_style || "beatbox rhythmic", tts_enabled: false,
+        } : isPerformanceBreak ? {
+          voice_style: "robotic voice effect", voice_type: "robotic", voice_effect: "robotic", speaking_speed: "fast",
+          sound_effects: ["record scratch", "bass drop"], background_sound: "",
+          bgm_featured: false, bgm_volume: 0, performance_phase: "break", tts_enabled: true,
+        } : (isPerformance && perfDefaults) ? {
+          voice_style: "no voice - BGM only", voice_type: "none", speaking_speed: "none", sound_effects: [], background_sound: "",
+          bgm_featured: true, bgm_volume: 0.8, performance_type: performanceType, bgm_style: perfDefaults.bgm_style, tts_enabled: false,
+        } : {
+          voice_style: voiceStyleMap[speaker] || "natural voice", voice_type: speakerToVoice[speaker] || "adult",
+          speaking_speed: speaker === "main" ? "slow and cute" : "natural", sound_effects: [], background_sound: "",
+          bgm_featured: false, bgm_volume: 0.3, tts_enabled: true,
+        };
 
-        if (isPerformanceStart || isPerformanceResume) {
-          // ★★★ 퍼포먼스 시작/재개: BGM 80%, TTS 없음 ★★★
-          defaultAudioDetails = {
-            voice_style: "no voice - BGM only",
-            voice_type: "none",
-            speaking_speed: "none",
-            sound_effects: [],
-            background_sound: "",
-            bgm_featured: true, // BGM이 메인 오디오!
-            bgm_volume: 0.8, // 80% 볼륨
-            performance_phase: isPerformanceStart ? "start" : "resume",
-            bgm_style: perfDefaults?.bgm_style || "beatbox rhythmic",
-            tts_enabled: false, // TTS 비활성화
-          };
-        } else if (isPerformanceBreak) {
-          // ★★★ 퍼포먼스 브레이크: BGM 멈춤, 기계음 TTS ★★★
-          defaultAudioDetails = {
-            voice_style: "robotic voice effect",
-            voice_type: "robotic", // 기계음
-            voice_effect: "robotic", // 오토튠/기계음 효과
-            speaking_speed: "fast",
-            sound_effects: ["record scratch", "bass drop"],
-            background_sound: "",
-            bgm_featured: false, // BGM 멈춤!
-            bgm_volume: 0, // BGM 볼륨 0
-            performance_phase: "break",
-            tts_enabled: true, // TTS 활성화 (기계음)
-          };
-        } else if (isPerformance && perfDefaults) {
-          // ★★★ 기존 퍼포먼스 타입 (호환성) ★★★
-          defaultAudioDetails = {
-            voice_style: "no voice - BGM only",
-            voice_type: "none",
-            speaking_speed: "none",
-            sound_effects: [],
-            background_sound: "",
-            bgm_featured: true,
-            bgm_volume: 0.8,
-            performance_type: performanceType,
-            bgm_style: perfDefaults.bgm_style,
-            tts_enabled: false,
-          };
-        } else {
-          defaultAudioDetails = {
-            voice_style: voiceStyleMap[speaker] || "natural voice",
-            voice_type: speakerToVoice[speaker] || "adult",
-            speaking_speed: speaker === "main" ? "slow and cute" : "natural",
-            sound_effects: [],
-            background_sound: "",
-            bgm_featured: false,
-            bgm_volume: 0.3, // 일반 장면은 BGM 30%
-            tts_enabled: true,
-          };
-        }
+        // 이미지 프롬프트
+        const basePrompt = character.analysis?.image_generation_prompt || "cute adorable puppy";
+        const imagePrompt = seg.image_prompt || (isAnyPerformance
+          ? `${basePrompt}, ${perfDefaults?.image_prompt_suffix || "doing performance, stage lighting, energetic pose"}`
+          : `${basePrompt}, ${isInterviewQuestion ? "curious listening" : seg.emotion || "happy"} expression`);
 
-        // ★★★ 퍼포먼스 장면 이미지 프롬프트 ★★★
-        let imagePrompt;
-        if (isAnyPerformance) {
-          const basePrompt = character.analysis?.image_generation_prompt || "cute adorable puppy";
-          const perfSuffix = perfDefaults?.image_prompt_suffix || "doing performance, stage lighting, energetic pose";
-          imagePrompt = seg.image_prompt || `${basePrompt}, ${perfSuffix}`;
-        } else {
-          imagePrompt = seg.image_prompt || `${character.analysis?.image_generation_prompt || "character"}, ${isInterviewQuestion ? "curious listening" : seg.emotion || "happy"} expression`;
-        }
+        const performancePhase = isPerformanceStart ? "start" : isPerformanceBreak ? "break" : isPerformanceResume ? "resume" : isPerformance ? "main" : null;
+        const ttsEnabled = isPerformanceBreak ? true : (isPerformanceStart || isPerformanceResume || isPerformance) ? false : hasNarration;
+        const ttsVoice = isPerformanceBreak ? "Korean baby girl with robotic effect"
+          : (isPerformanceStart || isPerformanceResume || isPerformance) ? null
+          : isInterviewQuestion ? "Korean female news anchor, 30s, professional friendly tone" : "Korean baby girl, 2-3 years old toddler voice";
 
-        // 퍼포먼스 phase 결정
-        const performancePhase = isPerformanceStart ? "start" :
-                                isPerformanceBreak ? "break" :
-                                isPerformanceResume ? "resume" :
-                                isPerformance ? "main" : null;
+        // 캐릭터 언어 처리 (번역 단계 감지 > 캐릭터 설정 > 기본값)
+        const finalSpokenLang = seg.spoken_language || character.spoken_language || "korean";
+        const narrationKorean = finalSpokenLang === "english" ? (seg.narration_korean || seg.narration || "") : (seg.narration || "");
 
-        // ★★★ TTS 관련 필드 (voice_segments 통합) ★★★
-        const ttsEnabled = isPerformanceBreak ? true :
-                          (isPerformanceStart || isPerformanceResume || isPerformance) ? false :
-                          hasNarration;
+        const voiceType = (isPerformanceStart || isPerformanceResume) ? "none" : isPerformanceBreak ? "robotic" : (speakerToVoice[speaker] || "adult");
+        const lipSyncTo = (isPerformanceStart || isPerformanceResume) ? "bgm" : isPerformanceBreak ? "tts" : (hasNarration ? "tts" : null);
+        const bgmVol = (isPerformanceStart || isPerformanceResume || isPerformance) ? 0.8 : isPerformanceBreak ? 0 : 0.3;
 
-        const ttsVoice = isPerformanceBreak
-          ? "Korean baby girl with robotic effect"
-          : (isPerformanceStart || isPerformanceResume || isPerformance)
-            ? null
-            : (isInterviewQuestion
-              ? "Korean female news anchor, 30s, professional friendly tone"
-              : "Korean baby girl, 2-3 years old toddler voice");
+        time += duration;
+        // ★★★ 영어 번역 폴백 처리 ★★★
+        // 1) AI가 생성한 narration_english
+        // 2) 영어 캐릭터면 narration 그대로
+        // 3) 한국어 대사면 [Korean] 표시 (나중에 번역 필요)
+        const narrationEnglish = seg.narration_english
+          || (finalSpokenLang === "english" ? seg.narration : "")
+          || (seg.narration ? `[${seg.narration}]` : "");  // 한국어 대사를 표시 (번역 대기)
 
-        const result = {
-          ...seg,
-          index: idx + 1,
-          segment_number: idx + 1,
-          start_time: time,
-          end_time: time + duration,
-          duration,
-          speaker,
-          character_name: character.name,
-          voice_type: (isPerformanceStart || isPerformanceResume) ? "none" :
-                      isPerformanceBreak ? "robotic" :
-                      (speakerToVoice[speaker] || "adult"),
-          scene_type: seg.scene_type || "narration",
-          has_narration: hasNarration,
-          narration_english: seg.narration_english || "",
-          image_prompt: imagePrompt,
-          video_prompt: {
-            ...defaultVideoPrompt,
-            ...videoPrompt,
-            // 퍼포먼스 시작/재개: BGM에 맞춰 립싱크, 브레이크: TTS에 맞춰 립싱크
+        return {
+          ...seg, index: idx + 1, segment_number: idx + 1, start_time: time - duration, end_time: time, duration, speaker,
+          character_name: character.name, spoken_language: finalSpokenLang, voice_type: voiceType,
+          scene_type: sceneType || "narration", has_narration: hasNarration,
+          narration_korean: narrationKorean, narration_english: narrationEnglish, image_prompt: imagePrompt,
+          video_prompt: { ...defaultVideoPrompt, ...videoPrompt,
             lip_sync: isAnyPerformance ? "yes" : (isInterviewQuestion ? "no" : (hasNarration ? "yes" : (videoPrompt.lip_sync || "no"))),
-            lip_sync_to: (isPerformanceStart || isPerformanceResume) ? "bgm" :
-                        isPerformanceBreak ? "tts" :
-                        (hasNarration ? "tts" : null),
-            is_interviewer_speaking: isInterviewQuestion,
-            is_performance: isAnyPerformance,
-            performance_type: performanceType,
-            performance_phase: performancePhase,
+            lip_sync_to: lipSyncTo, is_interviewer_speaking: isInterviewQuestion,
+            is_performance: isAnyPerformance, performance_type: performanceType, performance_phase: performancePhase,
           },
-          scene_details: {
-            ...defaultSceneDetails,
-            ...sceneDetails,
-            // 퍼포먼스 장면은 스테이지 배경
-            ...(isAnyPerformance ? {
-              location: "stage",
-              background: sceneDetails.background || "concert stage with colorful spotlights and neon lights",
-              lighting: sceneDetails.lighting || "dramatic stage lighting with colorful spotlights",
-              mood: sceneDetails.mood || "energetic performance",
-            } : {}),
+          scene_details: { ...defaultSceneDetails, ...sceneDetails,
+            ...(isAnyPerformance ? { location: "stage", background: sceneDetails.background || "concert stage with colorful spotlights and neon lights",
+              lighting: sceneDetails.lighting || "dramatic stage lighting with colorful spotlights", mood: sceneDetails.mood || "energetic performance" } : {}),
           },
           audio_details: { ...defaultAudioDetails, ...audioDetails },
-          // ★★★ 퍼포먼스 관련 메타데이터 ★★★
-          is_performance: isAnyPerformance,
-          performance_type: performanceType,
-          performance_phase: performancePhase, // start, break, resume, main, null
-          bgm_featured: (isPerformanceStart || isPerformanceResume || isPerformance), // BGM이 메인인 장면
-          bgm_volume: (isPerformanceStart || isPerformanceResume) ? 0.8 :
-                      isPerformanceBreak ? 0 :
-                      isPerformance ? 0.8 : 0.3,
-          // ★★★ TTS 관련 필드 (voice_segments에서 통합) ★★★
-          tts_enabled: ttsEnabled,
-          tts_voice: ttsVoice,
-          voice_effect: isPerformanceBreak ? "robotic" : null,
+          is_performance: isAnyPerformance, performance_type: performanceType, performance_phase: performancePhase,
+          bgm_featured: (isPerformanceStart || isPerformanceResume || isPerformance), bgm_volume: bgmVol,
+          tts_enabled: ttsEnabled, tts_voice: ttsVoice, voice_effect: isPerformanceBreak ? "robotic" : null,
           dog_lip_sync: isAnyPerformance ? "yes" : (!isInterviewQuestion && hasNarration),
         };
-        time += duration;
-        return result;
       });
       script.total_duration = time;
     }
