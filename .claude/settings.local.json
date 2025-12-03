@@ -66,7 +66,13 @@
       "Bash(fc-list:*)",
       "Bash(pip3 show:*)",
       "Bash(jq:*)",
-      "WebFetch(domain:storage.googleapis.com)"
+      "WebFetch(domain:storage.googleapis.com)",
+      "mcp__ide__getDiagnostics",
+      "WebFetch(domain:ulazai.com)",
+      "Bash(gcloud config:*)",
+      "Bash(mkdir:*)",
+      "Bash(terraform plan:*)",
+      "Bash(terraform apply:*)"
     ],
     "deny": [],
     "ask": []
