@@ -1,0 +1,69 @@
+{
+  "video": 2,
+  "title": "할로윈 호박 인터뷰 - 본심",
+  "duration": "8 seconds",
+  "resolution": "8K",
+
+  "prompt": "8K cinematic interview video. Seamless continuation from Video 1. Use the same reference image as the exact visual base for the entire 8 seconds. A golden-brown fluffy Pomeranian wearing orange pumpkin costume with jack-o-lantern face design and green stem hat sits facing camera. Halloween photo booth background with orange, black, brown, gold, green balloon arch. White backdrop. Black spider web floor mat. Small white ghost decorations. Warm festive lighting. The dog appearance must stay identical to reference image from 0:00 to 0:08. When dog speaks from 3.5-8 seconds, keep the same dog face, same fur color, same costume, same green stem hat, same background. Only add subtle mouth opening and closing movements for lip sync. Maintain visual continuity throughout. No text overlays. No subtitles. No captions. No watermarks.",
+
+  "dialogue": {
+    "timing": {
+      "0.0_to_1.0_sec": "Silence, dog waiting",
+      "1.0_to_3.5_sec": "Interviewer audio, dog mouth closed",
+      "3.5_to_8.0_sec": "Ddangkong audio, subtle mouth movement only, ends with proud huff"
+    },
+    "interviewer": "그래도 지금 보니까 정말 잘 어울리시는데요. 본인 생각은 어떠세요?",
+    "ddangkong": "...그렇죠? 사실 거울 보니까 좀 귀엽긴 해요. 근데 이거 입고 밖에 나가면 다들 웃어요. 귀엽나봐요 훗",
+    "audio_only": true
+  },
+
+  "voice_settings": {
+    "interviewer": {
+      "type": "Korean female news anchor, 30s, professional friendly tone",
+      "consistent_across": "Video 1, 2, 3"
+    },
+    "ddangkong": {
+      "type": "Korean baby girl, 2-3 years old toddler voice, slightly pleased then proud at end",
+      "ending": "Proud confident nose huff sound for 훗 - smug baby superiority",
+      "consistent_across": "Video 1, 2, 3"
+    }
+  },
+
+  "visual_continuity": {
+    "instruction": "Same visual appearance for all 8 seconds, matching Video 1",
+    "0.0_to_3.5_sec": {
+      "base": "Reference image exactly, same as Video 1",
+      "dog": "Same as reference",
+      "mouth": "Closed"
+    },
+    "3.5_to_8.0_sec": {
+      "base": "Same reference image",
+      "dog": "Same fur color, same face, same costume, same hat as 0-3.5 seconds",
+      "mouth": "Subtle open and close for lip sync only",
+      "ending_expression": "Proud smug look with slight nose up for 훗",
+      "change_only": "Mouth movement",
+      "keep_same": "Everything else identical to reference image"
+    }
+  },
+
+  "lip_sync_style": {
+    "type": "Subtle talking photo style",
+    "method": "Minimal mouth animation on static image",
+    "mouth_movement": "Small natural opening and closing matching Korean syllables",
+    "ending_sound": "Short proud huff through nose for 훗",
+    "face": "Keep same expression, only mouth area moves slightly"
+  },
+
+  "consistency_check": {
+    "fur_color": "Golden-brown must stay same as Video 1",
+    "costume": "Orange pumpkin must be visible entire video",
+    "hat": "Green stem hat must be visible entire video",
+    "background": "Balloon arch must look same as Video 1"
+  },
+
+  "output": {
+    "format": "Clean video only",
+    "text_overlays": false,
+    "subtitles": false
+  }
+}

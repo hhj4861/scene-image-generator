@@ -333,7 +333,9 @@ app.get("/fonts", async (req, res) => {
 });
 
 // =====================
-// 땅콩이 렌더링 API (메인)
+// 통합 렌더링 API (동적 레이아웃)
+// - question 필드 있음 → 상단: 질문(씬마다), 하단: 답변
+// - question 필드 없음 → 상단: 타이틀(고정), 하단: 나레이션
 // =====================
 app.post("/render/puppy", async (req, res) => {
   const jobId = uuidv4();
@@ -347,285 +349,6 @@ app.post("/render/puppy", async (req, res) => {
       bgm_url,
       bgm_volume = 0.2,
       header_text,
-      footer_text = "땅콩이네",
-      subtitle_enabled = true,
-      subtitle_english_enabled = false,
-      width = 1080,
-      height = 1920,
-      output_bucket,
-      output_path,
-      folder_name,
-    } = req.body;
-
-    if (!videos || !videos.length) {
-      return res.status(400).json({ error: "No videos provided" });
-    }
-
-    console.log(`[${jobId}] Starting Puppy render: ${videos.length} videos`);
-    console.log(`[${jobId}] Output: ${output_bucket}/${output_path}`);
-
-    // 동적 자막 설정 계산
-    const SUBTITLE_WIDTH_PERCENT = 70;
-    const availableWidth = Math.round(width * SUBTITLE_WIDTH_PERCENT / 100);
-    const KOR_CHAR_WIDTH = 50;
-    const ENG_CHAR_WIDTH = 20;
-    const MAX_CHARS_PER_LINE = Math.floor(availableWidth / KOR_CHAR_WIDTH);
-    const MAX_CHARS_PER_LINE_ENG = Math.floor(availableWidth / ENG_CHAR_WIDTH);
-
-    // 1. 영상 다운로드 및 길이 측정 (병렬)
-    console.log(`[${jobId}] Downloading ${videos.length} videos...`);
-    const sortedVideos = [...videos].sort((a, b) => a.index - b.index);
-
-    const downloadPromises = sortedVideos.map(async (video, i) => {
-      const filePath = path.join(jobDir, `input_${i}.mp4`);
-      const response = await axios({
-        method: "GET",
-        url: video.url,
-        responseType: "arraybuffer",
-        timeout: 120000,
-      });
-      fs.writeFileSync(filePath, Buffer.from(response.data));
-
-      // 영상 길이 측정
-      let duration = video.duration || 6;
-      try {
-        const { stdout } = await execAsync(
-          `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`
-        );
-        duration = parseFloat(stdout.trim());
-      } catch {}
-
-      return { index: i, filePath, duration, video };
-    });
-
-    const downloadedVideos = await Promise.all(downloadPromises);
-    downloadedVideos.sort((a, b) => a.index - b.index);
-
-    const totalDuration = downloadedVideos.reduce((sum, v) => sum + v.duration, 0);
-    console.log(`[${jobId}] Total duration: ${totalDuration.toFixed(2)}s`);
-
-    // 2. 자막 데이터 생성
-    const subtitles = [];
-    let currentTime = 0;
-
-    for (const { duration, video, index } of downloadedVideos) {
-      const sceneNum = video.index || (index + 1);
-      const narration = video.dialogue?.script || video.dialogue?.interviewer || video.dialogue?.["땅콩"] || video.narration || "";
-      const narrationEnglish = video.dialogue?.script_english || video.narration_english || "";
-      const isInterviewQuestion = video.is_interview_question || video.scene_type === "interview_question";
-      const isPerformance = video.is_performance && !narration;
-
-      if (narration && !isPerformance && subtitle_enabled) {
-        subtitles.push({
-          start: currentTime + 0.3,
-          end: currentTime + duration - 0.3,
-          text: narration,
-          text_english: narrationEnglish,
-          speaker: isInterviewQuestion ? "interviewer" : "main",
-          scene_index: sceneNum,
-        });
-      }
-
-      currentTime += duration;
-    }
-
-    // 3. 영상 정규화
-    console.log(`[${jobId}] Normalizing videos...`);
-    const videoHeight = Math.round(height * PEANUT_STYLE.video_height_percent / 100);
-
-    const normalizePromises = downloadedVideos.map(async ({ index, filePath }) => {
-      const normalizedPath = path.join(jobDir, `normalized_${index}.mp4`);
-      await execAsync(`ffmpeg -y -i "${filePath}" \
-        -vf "scale=${width}:${videoHeight}:force_original_aspect_ratio=decrease,pad=${width}:${videoHeight}:(ow-iw)/2:(oh-ih)/2:black,setsar=1" \
-        -c:v libx264 -preset fast -crf 18 \
-        -c:a aac -b:a 192k -ar 44100 -ac 2 \
-        -r 30 \
-        "${normalizedPath}"`, { maxBuffer: 1024 * 1024 * 50 });
-      return { index, normalizedPath };
-    });
-
-    const normalizedVideos = await Promise.all(normalizePromises);
-    normalizedVideos.sort((a, b) => a.index - b.index);
-
-    // 4. 영상 연결
-    console.log(`[${jobId}] Concatenating videos...`);
-    const concatListPath = path.join(jobDir, "concat.txt");
-    const concatContent = normalizedVideos.map(v => `file '${v.normalizedPath}'`).join("\n");
-    fs.writeFileSync(concatListPath, concatContent);
-
-    const concatenatedPath = path.join(jobDir, "concatenated.mp4");
-    await execAsync(`ffmpeg -y -f concat -safe 0 -i "${concatListPath}" -c copy "${concatenatedPath}"`, { maxBuffer: 1024 * 1024 * 50 });
-
-    // 5. BGM 다운로드 (선택)
-    let bgmPath = null;
-    if (bgm_url) {
-      console.log(`[${jobId}] Downloading BGM...`);
-      bgmPath = path.join(jobDir, "bgm.mp3");
-      const bgmResponse = await axios({
-        method: "GET",
-        url: bgm_url,
-        responseType: "arraybuffer",
-        timeout: 60000,
-      });
-      fs.writeFileSync(bgmPath, Buffer.from(bgmResponse.data));
-    }
-
-    // 6. 필터 생성
-    console.log(`[${jobId}] Building filter complex...`);
-    const videoY = Math.round((height - videoHeight) / 2);
-    const headerY = Math.round(height * PEANUT_STYLE.header.y_percent / 100);
-    const footerY = Math.round(height * PEANUT_STYLE.footer.y_percent / 100);
-
-    // 자막 필터 생성
-    let subtitleFilters = "";
-    subtitles.forEach((sub) => {
-      const isInterviewer = sub.speaker === "interviewer";
-      const subStyle = isInterviewer ? PEANUT_STYLE.subtitle_interviewer : PEANUT_STYLE.subtitle;
-      const subEngStyle = isInterviewer ? PEANUT_STYLE.subtitle_interviewer_english : PEANUT_STYLE.subtitle_english;
-      const baseSubY = Math.round(height * subStyle.y_percent / 100);
-      const baseEngY = Math.round(height * subEngStyle.y_percent / 100);
-      const lineHeight = subStyle.font_size + 8;
-      const engLineHeight = subEngStyle.font_size + 5;
-
-      // 한글 자막
-      const korLines = splitSubtitleLines(sub.text || "", MAX_CHARS_PER_LINE);
-      if (korLines.length > 0) {
-        const korStartY = korLines.length > 1 ? baseSubY - ((korLines.length - 1) * lineHeight / 2) : baseSubY;
-
-        korLines.forEach((line, idx) => {
-          let escapedLine = escapeText(line);
-          if (idx === 0 && isInterviewer) {
-            escapedLine = `Q\\: ${escapedLine}`;
-          }
-          const lineY = korStartY + (idx * lineHeight);
-          subtitleFilters += `,drawtext=text='${escapedLine}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${subStyle.font_size}:fontcolor=${subStyle.color}:borderw=${subStyle.border_width}:bordercolor=${subStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t,${sub.start},${sub.end})'`;
-        });
-      }
-
-      // 영어 자막
-      if (subtitle_english_enabled && sub.text_english) {
-        const engLines = splitEnglishSubtitleLines(sub.text_english, MAX_CHARS_PER_LINE_ENG);
-        if (engLines.length > 0) {
-          const korLineCount = korLines.length || 1;
-          const engStartY = baseEngY + ((korLineCount - 1) * lineHeight / 2);
-
-          engLines.forEach((line, idx) => {
-            let escapedLine = escapeText(line);
-            if (idx === 0 && isInterviewer) {
-              escapedLine = `Q\\: ${escapedLine}`;
-            }
-            const lineY = engStartY + (idx * engLineHeight);
-            subtitleFilters += `,drawtext=text='${escapedLine}':fontsize=${subEngStyle.font_size}:fontcolor=${subEngStyle.color}:borderw=${subEngStyle.border_width}:bordercolor=${subEngStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t,${sub.start},${sub.end})'`;
-          });
-        }
-      }
-    });
-
-    // 상단 타이틀 필터
-    const titleLines = splitHeaderLines(header_text || "", PEANUT_STYLE.header.max_chars_per_line);
-    const titleLineHeight = PEANUT_STYLE.header.font_size + 10;
-    let headerFilters = "";
-    if (titleLines.length > 0) {
-      titleLines.forEach((line, idx) => {
-        const escapedLine = escapeText(line);
-        const lineY = headerY + (idx * titleLineHeight);
-        headerFilters += `drawtext=text='${escapedLine}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${PEANUT_STYLE.header.font_size}:fontcolor=${PEANUT_STYLE.header.color}:borderw=${PEANUT_STYLE.header.border_width}:bordercolor=${PEANUT_STYLE.header.border_color}:x=(w-text_w)/2:y=${lineY},`;
-      });
-    }
-
-    const escapedChannel = escapeText(footer_text || "땅콩이네");
-
-    // BGM 처리
-    let bgmInput = "";
-    let bgmFilter = "";
-    let audioMap = "-map 1:a";
-
-    if (bgmPath) {
-      bgmInput = `-i "${bgmPath}"`;
-      bgmFilter = `;[1:a]volume=1[va];[2:a]volume=${bgm_volume},afade=t=out:st=${totalDuration - 2}:d=2[ba];[va][ba]amix=inputs=2:duration=first[aout]`;
-      audioMap = `-map "[aout]"`;
-    }
-
-    // 최종 필터
-    const filterComplex = `
-      color=black:s=${width}x${height}:d=${totalDuration}[bg];
-      [1:v]scale=${width}:${videoHeight}:force_original_aspect_ratio=decrease,pad=${width}:${videoHeight}:(ow-iw)/2:(oh-ih)/2:black[video];
-      [bg][video]overlay=0:${videoY}[combined];
-      [combined]${headerFilters}drawtext=text='${escapedChannel}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${PEANUT_STYLE.footer.font_size}:fontcolor=${PEANUT_STYLE.footer.color}:borderw=${PEANUT_STYLE.footer.border_width}:bordercolor=${PEANUT_STYLE.footer.border_color}:x=(w-text_w)/2:y=${footerY}${subtitleFilters}[out]${bgmFilter}
-    `.replace(/\n/g, "").replace(/\s+/g, " ").trim();
-
-    // 7. 최종 렌더링
-    console.log(`[${jobId}] Running final FFmpeg render...`);
-    const outputFilePath = path.join(jobDir, "final_output.mp4");
-
-    const ffmpegCmd = `ffmpeg -y \
-      -f lavfi -i "color=black:s=${width}x${height}:d=${totalDuration}" \
-      -i "${concatenatedPath}" ${bgmInput} \
-      -filter_complex "${filterComplex}" \
-      -map "[out]" ${audioMap} \
-      -c:v libx264 -preset slow -crf 18 \
-      -c:a aac -b:a 192k \
-      -shortest \
-      "${outputFilePath}"`;
-
-    await execAsync(ffmpegCmd, { maxBuffer: 1024 * 1024 * 100 });
-
-    // 8. GCS 업로드
-    console.log(`[${jobId}] Uploading to GCS: ${output_bucket}/${output_path}`);
-    const bucket = storage.bucket(output_bucket);
-    await bucket.upload(outputFilePath, {
-      destination: output_path,
-      metadata: { contentType: "video/mp4" },
-    });
-
-    const publicUrl = `https://storage.googleapis.com/${output_bucket}/${output_path}`;
-
-    // 9. 정리
-    fs.rmSync(jobDir, { recursive: true, force: true });
-
-    console.log(`[${jobId}] Puppy render complete: ${publicUrl}`);
-
-    res.json({
-      success: true,
-      job_id: jobId,
-      url: publicUrl,
-      folder_name: folder_name,
-      total_duration: totalDuration,
-      stats: {
-        video_count: videos.length,
-        has_bgm: !!bgm_url,
-        has_header: !!header_text,
-        has_footer: !!footer_text,
-        has_subtitles: subtitle_enabled,
-        has_english_subtitles: subtitle_english_enabled,
-        subtitle_count: subtitles.length,
-      },
-    });
-
-  } catch (error) {
-    console.error(`[${jobId}] Error:`, error.message);
-    if (fs.existsSync(jobDir)) {
-      fs.rmSync(jobDir, { recursive: true, force: true });
-    }
-    res.status(500).json({ error: error.message, job_id: jobId });
-  }
-});
-
-// =====================
-// 보리 스타일 렌더링 API (새 레이아웃)
-// 상단: 질문(한글+영어), 중앙: 영상 60%, 하단: 답변(한글+영어), 맨아래: 채널명
-// =====================
-app.post("/render/bori", async (req, res) => {
-  const jobId = uuidv4();
-  const jobDir = path.join(TEMP_DIR, jobId);
-
-  try {
-    fs.mkdirSync(jobDir, { recursive: true });
-
-    const {
-      videos,
-      bgm_url,
-      bgm_volume = 0.2,
       channel_name = "땅콩이네",
       width = 1080,
       height = 1920,
@@ -638,7 +361,12 @@ app.post("/render/bori", async (req, res) => {
       return res.status(400).json({ error: "No videos provided" });
     }
 
-    console.log(`[${jobId}] Starting Bori style render: ${videos.length} videos`);
+    // 레이아웃 모드 자동 감지: question 필드가 있으면 QA 모드
+    const hasQuestionField = videos.some(v => v.question);
+    const layoutMode = hasQuestionField ? "qa" : "story";
+    const STYLE = hasQuestionField ? BORI_STYLE : PEANUT_STYLE;
+
+    console.log(`[${jobId}] Starting render: ${videos.length} videos, mode: ${layoutMode}`);
     console.log(`[${jobId}] Output: ${output_bucket}/${output_path}`);
 
     // 1. 영상 다운로드 및 길이 측정 (병렬)
@@ -672,33 +400,45 @@ app.post("/render/bori", async (req, res) => {
     const totalDuration = downloadedVideos.reduce((sum, v) => sum + v.duration, 0);
     console.log(`[${jobId}] Total duration: ${totalDuration.toFixed(2)}s`);
 
-    // 2. 씬별 자막 데이터 생성 (질문/답변 분리)
+    // 2. 씬별 텍스트 데이터 생성
     const sceneTexts = [];
     let currentTime = 0;
 
     for (const { duration, video, index } of downloadedVideos) {
-      // 질문 텍스트 (인터뷰어/상단)
-      const question = video.question || video.dialogue?.interviewer || "";
-      const questionEnglish = video.question_english || video.dialogue?.interviewer_english || "";
+      const isPerformance = video.is_performance && !video.narration && !video.answer;
 
-      // 답변 텍스트 (주인공/하단)
-      const answer = video.answer || video.dialogue?.script || video.dialogue?.["땅콩"] || video.narration || "";
-      const answerEnglish = video.answer_english || video.dialogue?.script_english || video.narration_english || "";
+      if (layoutMode === "qa") {
+        // QA 모드: question → 상단, answer → 하단
+        sceneTexts.push({
+          start: currentTime + 0.2,
+          end: currentTime + duration - 0.2,
+          top_text: video.question || "",
+          top_text_english: video.question_english || "",
+          bottom_text: video.answer || video.narration || "",
+          bottom_text_english: video.answer_english || video.narration_english || "",
+          is_performance: isPerformance,
+        });
+      } else {
+        // Story 모드: header_text → 상단(고정은 별도처리), narration → 하단
+        const narration = video.dialogue?.script || video.dialogue?.["땅콩"] || video.narration || "";
+        const narrationEnglish = video.dialogue?.script_english || video.narration_english || "";
 
-      sceneTexts.push({
-        start: currentTime + 0.2,
-        end: currentTime + duration - 0.2,
-        question,
-        question_english: questionEnglish,
-        answer,
-        answer_english: answerEnglish,
-        scene_index: video.index || (index + 1),
-      });
+        if (narration && !isPerformance) {
+          sceneTexts.push({
+            start: currentTime + 0.2,
+            end: currentTime + duration - 0.2,
+            top_text: null, // Story 모드에서는 상단 고정
+            bottom_text: narration,
+            bottom_text_english: narrationEnglish,
+            is_performance: false,
+          });
+        }
+      }
 
       currentTime += duration;
     }
 
-    // 3. 영상 정규화 (60% 높이)
+    // 3. 영상 정규화 (BORI_STYLE 레이아웃 통일)
     console.log(`[${jobId}] Normalizing videos...`);
     const videoHeight = Math.round(height * BORI_STYLE.video_height_percent / 100);
 
@@ -739,18 +479,356 @@ app.post("/render/bori", async (req, res) => {
       fs.writeFileSync(bgmPath, Buffer.from(bgmResponse.data));
     }
 
-    // 6. 필터 생성 (보리 스타일)
-    console.log(`[${jobId}] Building Bori style filter complex...`);
+    // 6. 필터 생성 (동적 레이아웃)
+    console.log(`[${jobId}] Building filter complex (${layoutMode} mode)...`);
     const videoY = Math.round((height - videoHeight) / 2);
 
-    // Y 좌표 계산
+    let textFilters = "";
+    const escapedChannel = escapeText(channel_name);
+
+    if (layoutMode === "qa") {
+      // QA 모드: 상단 질문(씬마다), 하단 답변(씬마다)
+      const questionY = Math.round(height * BORI_STYLE.question.y_percent / 100);
+      const questionEngY = Math.round(height * BORI_STYLE.question_english.y_percent / 100);
+      const answerY = Math.round(height * BORI_STYLE.answer.y_percent / 100);
+      const answerEngY = Math.round(height * BORI_STYLE.answer_english.y_percent / 100);
+      const channelY = Math.round(height * BORI_STYLE.channel.y_percent / 100);
+
+      sceneTexts.forEach((scene) => {
+        if (scene.is_performance) return;
+
+        // 상단: 질문 (한글)
+        if (scene.top_text) {
+          const qLines = splitSubtitleLines(scene.top_text, BORI_STYLE.question.max_chars_per_line);
+          const qLineHeight = BORI_STYLE.question.font_size + 6;
+          qLines.forEach((line, idx) => {
+            const escapedLine = escapeText(line);
+            const lineY = questionY + (idx * qLineHeight);
+            textFilters += `,drawtext=text='${escapedLine}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${BORI_STYLE.question.font_size}:fontcolor=${BORI_STYLE.question.color}:borderw=${BORI_STYLE.question.border_width}:bordercolor=${BORI_STYLE.question.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t,${scene.start},${scene.end})'`;
+          });
+        }
+
+        // 상단: 질문 (영어)
+        if (scene.top_text_english) {
+          const qEngLines = splitEnglishSubtitleLines(scene.top_text_english, BORI_STYLE.question_english.max_chars_per_line);
+          const qEngLineHeight = BORI_STYLE.question_english.font_size + 4;
+          const qKorLineCount = scene.top_text ? splitSubtitleLines(scene.top_text, BORI_STYLE.question.max_chars_per_line).length : 0;
+          const qEngStartY = questionEngY + (qKorLineCount > 1 ? (qKorLineCount - 1) * (BORI_STYLE.question.font_size + 6) : 0);
+
+          qEngLines.forEach((line, idx) => {
+            const escapedLine = escapeText(line);
+            const lineY = qEngStartY + (idx * qEngLineHeight);
+            textFilters += `,drawtext=text='${escapedLine}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothic.ttf:fontsize=${BORI_STYLE.question_english.font_size}:fontcolor=${BORI_STYLE.question_english.color}:borderw=${BORI_STYLE.question_english.border_width}:bordercolor=${BORI_STYLE.question_english.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t,${scene.start},${scene.end})'`;
+          });
+        }
+
+        // 하단: 답변 (한글)
+        if (scene.bottom_text) {
+          const aLines = splitSubtitleLines(scene.bottom_text, BORI_STYLE.answer.max_chars_per_line);
+          const aLineHeight = BORI_STYLE.answer.font_size + 6;
+          aLines.forEach((line, idx) => {
+            const escapedLine = escapeText(line);
+            const lineY = answerY + (idx * aLineHeight);
+            textFilters += `,drawtext=text='${escapedLine}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${BORI_STYLE.answer.font_size}:fontcolor=${BORI_STYLE.answer.color}:borderw=${BORI_STYLE.answer.border_width}:bordercolor=${BORI_STYLE.answer.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t,${scene.start},${scene.end})'`;
+          });
+        }
+
+        // 하단: 답변 (영어)
+        if (scene.bottom_text_english) {
+          const aEngLines = splitEnglishSubtitleLines(scene.bottom_text_english, BORI_STYLE.answer_english.max_chars_per_line);
+          const aEngLineHeight = BORI_STYLE.answer_english.font_size + 4;
+          const aKorLineCount = scene.bottom_text ? splitSubtitleLines(scene.bottom_text, BORI_STYLE.answer.max_chars_per_line).length : 0;
+          const aEngStartY = answerEngY + (aKorLineCount > 1 ? (aKorLineCount - 1) * (BORI_STYLE.answer.font_size + 6) : 0);
+
+          aEngLines.forEach((line, idx) => {
+            const escapedLine = escapeText(line);
+            const lineY = aEngStartY + (idx * aEngLineHeight);
+            textFilters += `,drawtext=text='${escapedLine}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothic.ttf:fontsize=${BORI_STYLE.answer_english.font_size}:fontcolor=${BORI_STYLE.answer_english.color}:borderw=${BORI_STYLE.answer_english.border_width}:bordercolor=${BORI_STYLE.answer_english.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t,${scene.start},${scene.end})'`;
+          });
+        }
+      });
+
+      // 채널명 (항상 표시)
+      const channelFilter = `drawtext=text='${escapedChannel}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${BORI_STYLE.channel.font_size}:fontcolor=${BORI_STYLE.channel.color}:borderw=${BORI_STYLE.channel.border_width}:bordercolor=${BORI_STYLE.channel.border_color}:x=(w-text_w)/2:y=${channelY}`;
+
+      // 최종 필터 조합
+      var baseFilters = channelFilter;
+
+    } else {
+      // Story 모드: 상단 타이틀(고정), 하단 나레이션(씬마다) - BORI_STYLE 사용
+      const questionY = Math.round(height * BORI_STYLE.question.y_percent / 100);
+      const answerY = Math.round(height * BORI_STYLE.answer.y_percent / 100);
+      const channelY = Math.round(height * BORI_STYLE.channel.y_percent / 100);
+
+      // 상단 타이틀 (고정)
+      let headerFilters = "";
+      if (header_text) {
+        const titleLines = splitSubtitleLines(header_text, BORI_STYLE.question.max_chars_per_line);
+        const titleLineHeight = BORI_STYLE.question.font_size + 6;
+        titleLines.forEach((line, idx) => {
+          const escapedLine = escapeText(line);
+          const lineY = questionY + (idx * titleLineHeight);
+          headerFilters += `drawtext=text='${escapedLine}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${BORI_STYLE.question.font_size}:fontcolor=${BORI_STYLE.question.color}:borderw=${BORI_STYLE.question.border_width}:bordercolor=${BORI_STYLE.question.border_color}:x=(w-text_w)/2:y=${lineY},`;
+        });
+      }
+
+      // 하단 나레이션 (씬마다)
+      sceneTexts.forEach((scene) => {
+        if (scene.bottom_text) {
+          const subLines = splitSubtitleLines(scene.bottom_text, BORI_STYLE.answer.max_chars_per_line);
+          const lineHeight = BORI_STYLE.answer.font_size + 6;
+          subLines.forEach((line, idx) => {
+            const escapedLine = escapeText(line);
+            const lineY = answerY + (idx * lineHeight);
+            textFilters += `,drawtext=text='${escapedLine}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${BORI_STYLE.answer.font_size}:fontcolor=${BORI_STYLE.answer.color}:borderw=${BORI_STYLE.answer.border_width}:bordercolor=${BORI_STYLE.answer.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t,${scene.start},${scene.end})'`;
+          });
+        }
+      });
+
+      // 채널명
+      var baseFilters = `${headerFilters}drawtext=text='${escapedChannel}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${BORI_STYLE.channel.font_size}:fontcolor=${BORI_STYLE.channel.color}:borderw=${BORI_STYLE.channel.border_width}:bordercolor=${BORI_STYLE.channel.border_color}:x=(w-text_w)/2:y=${channelY}`;
+    }
+
+    // BGM 처리
+    let bgmInput = "";
+    let bgmFilter = "";
+    let audioMap = "-map 1:a";
+
+    if (bgmPath) {
+      bgmInput = `-i "${bgmPath}"`;
+      bgmFilter = `;[1:a]volume=1[va];[2:a]volume=${bgm_volume},afade=t=out:st=${totalDuration - 2}:d=2[ba];[va][ba]amix=inputs=2:duration=first[aout]`;
+      audioMap = `-map "[aout]"`;
+    }
+
+    // 최종 필터
+    const filterComplex = `
+      color=black:s=${width}x${height}:d=${totalDuration}[bg];
+      [1:v]scale=${width}:${videoHeight}:force_original_aspect_ratio=decrease,pad=${width}:${videoHeight}:(ow-iw)/2:(oh-ih)/2:black[video];
+      [bg][video]overlay=0:${videoY}[combined];
+      [combined]${baseFilters}${textFilters}[out]${bgmFilter}
+    `.replace(/\n/g, "").replace(/\s+/g, " ").trim();
+
+    // 7. 최종 렌더링
+    console.log(`[${jobId}] Running final FFmpeg render...`);
+    const outputFilePath = path.join(jobDir, "final_output.mp4");
+
+    const ffmpegCmd = `ffmpeg -y \
+      -f lavfi -i "color=black:s=${width}x${height}:d=${totalDuration}" \
+      -i "${concatenatedPath}" ${bgmInput} \
+      -filter_complex "${filterComplex}" \
+      -map "[out]" ${audioMap} \
+      -c:v libx264 -preset slow -crf 18 \
+      -c:a aac -b:a 192k \
+      -shortest \
+      "${outputFilePath}"`;
+
+    await execAsync(ffmpegCmd, { maxBuffer: 1024 * 1024 * 100 });
+
+    // 8. GCS 업로드
+    console.log(`[${jobId}] Uploading to GCS: ${output_bucket}/${output_path}`);
+    const bucket = storage.bucket(output_bucket);
+    await bucket.upload(outputFilePath, {
+      destination: output_path,
+      metadata: { contentType: "video/mp4" },
+    });
+
+    const publicUrl = `https://storage.googleapis.com/${output_bucket}/${output_path}`;
+
+    // 9. 정리
+    fs.rmSync(jobDir, { recursive: true, force: true });
+
+    console.log(`[${jobId}] Render complete: ${publicUrl}`);
+
+    res.json({
+      success: true,
+      job_id: jobId,
+      url: publicUrl,
+      folder_name: folder_name,
+      total_duration: totalDuration,
+      layout_mode: layoutMode,
+      stats: {
+        video_count: videos.length,
+        has_bgm: !!bgm_url,
+        scene_text_count: sceneTexts.length,
+      },
+    });
+
+  } catch (error) {
+    console.error(`[${jobId}] Error:`, error.message);
+    if (fs.existsSync(jobDir)) {
+      fs.rmSync(jobDir, { recursive: true, force: true });
+    }
+    res.status(500).json({ error: error.message, job_id: jobId });
+  }
+});
+
+// =====================
+// Ken Burns 렌더링 API
+// 이미지 → Ken Burns 효과 영상 → 자막 합성
+// =====================
+const KEN_BURNS_EFFECTS = {
+  zoom_in_center: {
+    name: "Zoom In (Center)",
+    filter: (frames) => `zoompan=z='min(zoom+0.002,1.3)':d=${frames}:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1080x1920:fps=30`
+  },
+  zoom_out_center: {
+    name: "Zoom Out (Center)",
+    filter: (frames) => `zoompan=z='if(lte(zoom,1.0),1.3,max(1.001,zoom-0.002))':d=${frames}:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1080x1920:fps=30`
+  },
+  pan_down_zoom: {
+    name: "Pan Down + Zoom",
+    filter: (frames) => `zoompan=z='min(zoom+0.001,1.15)':d=${frames}:x='iw/2-(iw/zoom/2)':y='min(ih*0.6,y+2)':s=1080x1920:fps=30`
+  },
+  pan_left_right: {
+    name: "Pan Left to Right",
+    filter: (frames) => `zoompan=z='1.1':d=${frames}:x='min(iw*0.3,x+3)':y='ih/2-(ih/zoom/2)':s=1080x1920:fps=30`
+  },
+  zoom_face: {
+    name: "Zoom to Face (Top 1/3)",
+    filter: (frames) => `zoompan=z='min(zoom+0.002,1.4)':d=${frames}:x='iw/2-(iw/zoom/2)':y='ih/3-(ih/zoom/2)':s=1080x1920:fps=30`
+  }
+};
+
+app.post("/render/ken-burns", async (req, res) => {
+  const jobId = uuidv4();
+  const jobDir = path.join(TEMP_DIR, jobId);
+
+  try {
+    fs.mkdirSync(jobDir, { recursive: true });
+
+    const {
+      scenes,
+      bgm_url,
+      bgm_volume = 0.2,
+      channel_name = "땅콩이네",
+      width = 1080,
+      height = 1920,
+      output_bucket,
+      output_path,
+      folder_name,
+    } = req.body;
+
+    if (!scenes || !scenes.length) {
+      return res.status(400).json({ error: "No scenes provided" });
+    }
+
+    console.log(`[${jobId}] Starting Ken Burns render: ${scenes.length} scenes`);
+    console.log(`[${jobId}] Output: ${output_bucket}/${output_path}`);
+
+    // 1. 이미지 다운로드 및 Ken Burns 영상 생성 (병렬)
+    console.log(`[${jobId}] Processing ${scenes.length} images with Ken Burns effect...`);
+    const sortedScenes = [...scenes].sort((a, b) => a.index - b.index);
+    const effectKeys = Object.keys(KEN_BURNS_EFFECTS);
+
+    const processPromises = sortedScenes.map(async (scene, i) => {
+      const imagePath = path.join(jobDir, `image_${i}.jpg`);
+      const videoPath = path.join(jobDir, `scene_${i}.mp4`);
+
+      // 이미지 다운로드
+      const response = await axios({
+        method: "GET",
+        url: scene.image_url,
+        responseType: "arraybuffer",
+        timeout: 60000,
+      });
+      fs.writeFileSync(imagePath, Buffer.from(response.data));
+
+      // Ken Burns 효과 선택
+      const effectKey = scene.effect || effectKeys[i % effectKeys.length];
+      const effect = KEN_BURNS_EFFECTS[effectKey] || KEN_BURNS_EFFECTS.zoom_in_center;
+      const duration = scene.duration || 6;
+      const frames = duration * 30;
+
+      // Ken Burns 영상 생성
+      const kenBurnsFilter = effect.filter(frames);
+      await execAsync(`ffmpeg -y -loop 1 -i "${imagePath}" \
+        -vf "scale=4000:-1,${kenBurnsFilter}" \
+        -t ${duration} -c:v libx264 -preset fast -pix_fmt yuv420p \
+        "${videoPath}"`, { maxBuffer: 1024 * 1024 * 100 });
+
+      return {
+        index: i,
+        videoPath,
+        duration,
+        scene,
+        effect: effectKey
+      };
+    });
+
+    const processedScenes = await Promise.all(processPromises);
+    processedScenes.sort((a, b) => a.index - b.index);
+
+    const totalDuration = processedScenes.reduce((sum, s) => sum + s.duration, 0);
+    console.log(`[${jobId}] Total duration: ${totalDuration.toFixed(2)}s`);
+
+    // 2. 씬별 자막 데이터 생성
+    const sceneTexts = [];
+    let currentTime = 0;
+
+    for (const { duration, scene, index } of processedScenes) {
+      sceneTexts.push({
+        start: currentTime + 0.2,
+        end: currentTime + duration - 0.2,
+        question: scene.question || "",
+        question_english: scene.question_english || "",
+        answer: scene.answer || "",
+        answer_english: scene.answer_english || "",
+        scene_index: scene.index || (index + 1),
+      });
+      currentTime += duration;
+    }
+
+    // 3. 영상 정규화 (세로 비율 맞춤)
+    console.log(`[${jobId}] Normalizing videos...`);
+    const videoHeight = Math.round(height * BORI_STYLE.video_height_percent / 100);
+
+    const normalizePromises = processedScenes.map(async ({ index, videoPath }) => {
+      const normalizedPath = path.join(jobDir, `normalized_${index}.mp4`);
+      await execAsync(`ffmpeg -y -i "${videoPath}" \
+        -vf "scale=${width}:${videoHeight}:force_original_aspect_ratio=decrease,pad=${width}:${videoHeight}:(ow-iw)/2:(oh-ih)/2:black,setsar=1" \
+        -c:v libx264 -preset fast -crf 18 \
+        -an \
+        -r 30 \
+        "${normalizedPath}"`, { maxBuffer: 1024 * 1024 * 50 });
+      return { index, normalizedPath };
+    });
+
+    const normalizedVideos = await Promise.all(normalizePromises);
+    normalizedVideos.sort((a, b) => a.index - b.index);
+
+    // 4. 영상 연결
+    console.log(`[${jobId}] Concatenating videos...`);
+    const concatListPath = path.join(jobDir, "concat.txt");
+    const concatContent = normalizedVideos.map(v => `file '${v.normalizedPath}'`).join("\n");
+    fs.writeFileSync(concatListPath, concatContent);
+
+    const concatenatedPath = path.join(jobDir, "concatenated.mp4");
+    await execAsync(`ffmpeg -y -f concat -safe 0 -i "${concatListPath}" -c copy "${concatenatedPath}"`, { maxBuffer: 1024 * 1024 * 50 });
+
+    // 5. BGM 다운로드 (선택)
+    let bgmPath = null;
+    if (bgm_url) {
+      console.log(`[${jobId}] Downloading BGM...`);
+      bgmPath = path.join(jobDir, "bgm.mp3");
+      const bgmResponse = await axios({
+        method: "GET",
+        url: bgm_url,
+        responseType: "arraybuffer",
+        timeout: 60000,
+      });
+      fs.writeFileSync(bgmPath, Buffer.from(bgmResponse.data));
+    }
+
+    // 6. 필터 생성 (Bori 스타일 자막)
+    console.log(`[${jobId}] Building Ken Burns filter complex...`);
+    const videoY = Math.round((height - videoHeight) / 2);
+
     const questionY = Math.round(height * BORI_STYLE.question.y_percent / 100);
     const questionEngY = Math.round(height * BORI_STYLE.question_english.y_percent / 100);
     const answerY = Math.round(height * BORI_STYLE.answer.y_percent / 100);
     const answerEngY = Math.round(height * BORI_STYLE.answer_english.y_percent / 100);
     const channelY = Math.round(height * BORI_STYLE.channel.y_percent / 100);
 
-    // 자막 필터 생성
     let textFilters = "";
 
     sceneTexts.forEach((scene) => {
@@ -812,11 +890,11 @@ app.post("/render/bori", async (req, res) => {
     // BGM 처리
     let bgmInput = "";
     let bgmFilter = "";
-    let audioMap = "-map 1:a";
+    let audioMap = "";
 
     if (bgmPath) {
       bgmInput = `-i "${bgmPath}"`;
-      bgmFilter = `;[1:a]volume=1[va];[2:a]volume=${bgm_volume},afade=t=out:st=${totalDuration - 2}:d=2[ba];[va][ba]amix=inputs=2:duration=first[aout]`;
+      bgmFilter = `;[2:a]volume=${bgm_volume},afade=t=out:st=${totalDuration - 2}:d=2[aout]`;
       audioMap = `-map "[aout]"`;
     }
 
@@ -829,18 +907,12 @@ app.post("/render/bori", async (req, res) => {
     `.replace(/\n/g, "").replace(/\s+/g, " ").trim();
 
     // 7. 최종 렌더링
-    console.log(`[${jobId}] Running final FFmpeg render (Bori style)...`);
+    console.log(`[${jobId}] Running final FFmpeg render (Ken Burns)...`);
     const outputFilePath = path.join(jobDir, "final_output.mp4");
 
-    const ffmpegCmd = `ffmpeg -y \
-      -f lavfi -i "color=black:s=${width}x${height}:d=${totalDuration}" \
-      -i "${concatenatedPath}" ${bgmInput} \
-      -filter_complex "${filterComplex}" \
-      -map "[out]" ${audioMap} \
-      -c:v libx264 -preset slow -crf 18 \
-      -c:a aac -b:a 192k \
-      -shortest \
-      "${outputFilePath}"`;
+    const ffmpegCmd = bgmPath
+      ? `ffmpeg -y -f lavfi -i "color=black:s=${width}x${height}:d=${totalDuration}" -i "${concatenatedPath}" ${bgmInput} -filter_complex "${filterComplex}" -map "[out]" ${audioMap} -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k -shortest "${outputFilePath}"`
+      : `ffmpeg -y -f lavfi -i "color=black:s=${width}x${height}:d=${totalDuration}" -i "${concatenatedPath}" -filter_complex "${filterComplex}" -map "[out]" -c:v libx264 -preset slow -crf 18 "${outputFilePath}"`;
 
     await execAsync(ffmpegCmd, { maxBuffer: 1024 * 1024 * 100 });
 
@@ -857,7 +929,7 @@ app.post("/render/bori", async (req, res) => {
     // 9. 정리
     fs.rmSync(jobDir, { recursive: true, force: true });
 
-    console.log(`[${jobId}] Bori style render complete: ${publicUrl}`);
+    console.log(`[${jobId}] Ken Burns render complete: ${publicUrl}`);
 
     res.json({
       success: true,
@@ -865,11 +937,11 @@ app.post("/render/bori", async (req, res) => {
       url: publicUrl,
       folder_name: folder_name,
       total_duration: totalDuration,
-      render_style: "bori",
+      render_style: "ken_burns",
       stats: {
-        video_count: videos.length,
+        scene_count: scenes.length,
         has_bgm: !!bgm_url,
-        scene_count: sceneTexts.length,
+        effects_used: processedScenes.map(s => s.effect),
       },
     });
 
@@ -958,8 +1030,8 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`  GET  /version - FFmpeg version`);
   console.log(`  GET  /fonts - Available Korean fonts`);
   console.log(`  POST /render - Basic video concatenation`);
-  console.log(`  POST /render/puppy - Puppy style (header + subtitle + footer)`);
-  console.log(`  POST /render/bori - Bori style (question + answer + channel)`);
+  console.log(`  POST /render/puppy - Video render (auto-detect: story/QA mode)`);
+  console.log(`  POST /render/ken-burns - Ken Burns (image -> video + subtitles)`);
 });
 SERVEREOF
 

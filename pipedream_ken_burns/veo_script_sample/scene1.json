@@ -1,0 +1,67 @@
+{
+  "video": 1,
+  "title": "할로윈 호박 인터뷰 - 도입",
+  "duration": "8 seconds",
+  "resolution": "8K",
+
+  "prompt": "8K cinematic interview video. Use the provided reference image as the exact visual base for the entire 8 seconds. A golden-brown fluffy Pomeranian wearing orange pumpkin costume with jack-o-lantern face design and green stem hat sits facing camera. Halloween photo booth background with orange, black, brown, gold, green balloon arch. White backdrop. Black spider web floor mat. Small white ghost decorations. Warm festive lighting. The dog appearance must stay identical to reference image from 0:00 to 0:08. When dog speaks from 4-8 seconds, keep the same dog face, same fur color, same costume, same green stem hat, same background. Only add subtle mouth opening and closing movements for lip sync. Do not regenerate or change the dog image when speech begins. Maintain visual continuity throughout. No text overlays. No subtitles. No captions. No watermarks.",
+
+  "dialogue": {
+    "timing": {
+      "0.0_to_1.0_sec": "Silence, dog waiting",
+      "1.0_to_4.0_sec": "Interviewer audio, dog mouth closed",
+      "4.0_to_8.0_sec": "Ddangkong audio, subtle mouth movement only"
+    },
+    "interviewer": "땅콩 씨, 올해 할로윈 의상 컨셉이 호박이라고 들었는데요. 소감 한 말씀 부탁드립니다.",
+    "ddangkong": "네... 솔직히요, 저는 드라큘라 하고 싶었거든요? 근데 엄마가 이게 더 귀엽다고...",
+    "audio_only": true
+  },
+
+  "voice_settings": {
+    "interviewer": {
+      "type": "Korean female news anchor, 30s, professional friendly tone",
+      "consistent_across": "Video 1, 2, 3"
+    },
+    "ddangkong": {
+      "type": "Korean baby girl, 2-3 years old toddler voice, cute and slightly disappointed",
+      "consistent_across": "Video 1, 2, 3"
+    }
+  },
+
+  "visual_continuity": {
+    "instruction": "Same visual appearance for all 8 seconds",
+    "0.0_to_4.0_sec": {
+      "base": "Reference image exactly",
+      "dog": "Same as reference",
+      "mouth": "Closed"
+    },
+    "4.0_to_8.0_sec": {
+      "base": "Same reference image, do not change",
+      "dog": "Same fur color, same face, same costume, same hat as 0-4 seconds",
+      "mouth": "Subtle open and close for lip sync only",
+      "change_only": "Mouth movement",
+      "keep_same": "Everything else identical to reference image"
+    }
+  },
+
+  "lip_sync_style": {
+    "type": "Subtle talking photo style",
+    "method": "Minimal mouth animation on static image",
+    "mouth_movement": "Small natural opening and closing matching Korean syllables",
+    "face": "Keep same expression, only mouth area moves slightly",
+    "do_not": "Do not regenerate dog image, do not change dog appearance"
+  },
+
+  "consistency_check": {
+    "fur_color": "Golden-brown must stay same at 0:00, 4:00, and 8:00",
+    "costume": "Orange pumpkin must be visible at 0:00, 4:00, and 8:00",
+    "hat": "Green stem hat must be visible at 0:00, 4:00, and 8:00",
+    "background": "Balloon arch must look same at 0:00, 4:00, and 8:00"
+  },
+
+  "output": {
+    "format": "Clean video only",
+    "text_overlays": false,
+    "subtitles": false
+  }
+}

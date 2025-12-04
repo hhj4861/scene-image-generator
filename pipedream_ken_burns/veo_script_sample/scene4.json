@@ -1,0 +1,90 @@
+{
+  "video": 4,
+  "title": "땅콩이의 초밥 먹방 리뷰",
+  "duration": "8 seconds",
+  "resolution": "8K",
+
+  "prompt": "8K cinematic video. Same Pomeranian dog from previous videos wearing light blue floral bandana sits at table in Japanese restaurant. Empty plates visible. Dog looks satisfied after eating, speaks to camera with precise mouth movements matching each Korean syllable, then bursts into uncontrollable cute laughter at the end. Same dog appearance as Video 1, 2, 3. Warm lighting. No text. No subtitles. No watermarks.",
+
+  "dialogue": {
+    "script": "스시 리뷰 결과요? 음... 저는 소고기가 더 좋아요",
+    "ending": "Bursts into uncontrollable giggling laughter",
+    "audio_only": true
+  },
+
+  "lip_sync_timing": {
+    "0.0_to_1.5_sec": {
+      "audio": "Silence",
+      "mouth": "Closed, relaxed",
+      "expression": "Satisfied, content after meal"
+    },
+    "1.5_to_2.0_sec": {
+      "text": "스시",
+      "mouth": "스: lips slightly apart with teeth close, 시: lips stretch wide",
+      "expression": "Starting to speak"
+    },
+    "2.0_to_2.8_sec": {
+      "text": "리뷰 결과요?",
+      "mouth": "리: lips wide, 뷰: lips round forward, 결: mouth open then close, 과: open wide, 요: lips round with question rise",
+      "expression": "Questioning tone, slight head tilt"
+    },
+    "2.8_to_3.3_sec": {
+      "text": "음...",
+      "mouth": "Lips pressed together, closed, humming",
+      "expression": "Thinking pause, eyes look up"
+    },
+    "3.3_to_3.6_sec": {
+      "text": "저는",
+      "mouth": "저: mouth open medium, 는: closes with tongue touch",
+      "expression": "About to give opinion"
+    },
+    "3.6_to_4.4_sec": {
+      "text": "소고기가",
+      "mouth": "소: lips round small O shape, 고: open then close, 기: lips stretch, 가: mouth open wide",
+      "expression": "Confident"
+    },
+    "4.4_to_5.2_sec": {
+      "text": "더 좋아요",
+      "mouth": "더: mouth open, 좋: lips round then open, 아: wide open, 요: round closing",
+      "expression": "Honest, pleased, starting to smile"
+    },
+    "5.2_to_8.0_sec": {
+      "text": "(웃음)",
+      "audio": "Uncontrollable cute baby giggling, continuous laughter",
+      "mouth": "Rapid open-close-open pattern, big smile, teeth showing, can't stop laughing",
+      "expression": "Eyes squint tight, whole face laughing, cracking up at own joke, losing it completely"
+    }
+  },
+
+  "voice_settings": {
+    "ddangkong": {
+      "type": "Korean child female voice",
+      "tone": "Thoughtful at 음, honest during review",
+      "laugh_style": "Uncontrollable baby giggling burst, can't stop laughing, losing composure, infectious cute laughter",
+      "laugh_duration": "2.8 seconds of continuous giggling",
+      "consistent_across": "Video 1, 2, 3, 4"
+    }
+  },
+
+  "korean_mouth_shapes": {
+    "소": "Lips form small round O shape",
+    "고": "Mouth opens with back tongue, then closes",
+    "기": "Lips stretch sideways, teeth slightly visible",
+    "가": "Mouth opens wide, jaw drops",
+    "더": "Tongue touches roof, mouth medium open",
+    "좋": "Lips round then quickly open",
+    "아": "Mouth wide open, relaxed",
+    "요": "Lips round forward, closing"
+  },
+
+  "visual": {
+    "dog": "Same as reference image throughout",
+    "background": "Japanese restaurant, same as Video 1, 2, 3",
+    "final_expression": "Laughing so hard, eyes closed, mouth wide open, pure joy"
+  },
+
+  "output": {
+    "format": "Video only",
+    "text_overlays": false
+  }
+}
