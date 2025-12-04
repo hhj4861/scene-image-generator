@@ -5,10 +5,10 @@ export default defineComponent({
   description: "FFmpeg VM으로 최종 영상 합성 - 땅콩이 템플릿 (상단 타이틀 + 하단 채널명 + 자막)",
 
   props: {
-    video_generator_output: {
+    viral_title_output: {
       type: "string",
-      label: "Video Generator Output (JSON)",
-      description: "{{JSON.stringify(steps.Puppy_Viral_Title.$return_value)}}",
+      label: "Viral Title Output (JSON)",
+      description: "{{JSON.stringify(steps.Puppy_Viral_Title_V2.$return_value)}}",
     },
     script_generator_output: {
       type: "string",
@@ -53,8 +53,7 @@ export default defineComponent({
     footer_text: {
       type: "string",
       label: "Footer Text (하단 채널명)",
-      description: "채널/시리즈명 (예: 땅콩이네)",
-      default: "땅콩이네",
+      description: "채널/시리즈명 - 비워두면 AI 생성 푸터 사용 (예: 땅콩NEWS📺)",
       optional: true,
     },
     subtitle_enabled: {
@@ -65,13 +64,7 @@ export default defineComponent({
     subtitle_english_enabled: {
       type: "boolean",
       label: "Enable English Subtitles",
-      description: "한글 자막 아래 영어 자막 표시",
-      default: true,
-    },
-    header_bilingual: {
-      type: "boolean",
-      label: "Show Bilingual Header (Korean + English)",
-      description: "상단 타이틀에 한글과 영문 모두 표시",
+      description: "한글 자막 아래 영어 자막 표시 (header_text_english가 있으면 상단 영어 타이틀도 자동 표시)",
       default: true,
     },
     video_width: {
@@ -100,8 +93,8 @@ export default defineComponent({
     // =====================
     // 1. 입력 파싱
     // =====================
-    const videoOutput = typeof this.video_generator_output === "string"
-      ? JSON.parse(this.video_generator_output) : this.video_generator_output;
+    const viralTitleOutput = typeof this.viral_title_output === "string"
+      ? JSON.parse(this.viral_title_output) : this.viral_title_output;
     const scriptOutput = this.script_generator_output
       ? (typeof this.script_generator_output === "string"
           ? JSON.parse(this.script_generator_output) : this.script_generator_output)
@@ -115,8 +108,8 @@ export default defineComponent({
           ? JSON.parse(this.tts_generator_output) : this.tts_generator_output)
       : null;
 
-    const videos = videoOutput.videos || [];
-    const folderName = videoOutput.folder_name || scriptOutput?.folder_name || `render_${Date.now()}`;
+    const videos = viralTitleOutput.videos || [];
+    const folderName = viralTitleOutput.folder_name || scriptOutput?.folder_name || `render_${Date.now()}`;
 
     if (!videos.length) throw new Error("No videos provided");
 
@@ -129,8 +122,8 @@ export default defineComponent({
     // =====================
     // ★★★ AI 생성 바이럴 타이틀 우선 사용 ★★★
     // 우선순위: 수동 지정 > AI 생성 > Topic/Script 폴백 > 기본값
-    const generatedTitles = videoOutput?.generated_titles || {};
-    const youtubeMetadata = videoOutput?.youtube_metadata || {};
+    const generatedTitles = viralTitleOutput?.generated_titles || {};
+    const youtubeMetadata = viralTitleOutput?.youtube_metadata || {};
 
     const headerTextKorean = this.header_text
       || generatedTitles.header_korean
@@ -141,9 +134,12 @@ export default defineComponent({
       || generatedTitles.header_english
       || scriptOutput?.title?.english
       || "";
+    // ★★★ AI 생성 푸터 우선 사용 (수동 입력 없으면) ★★★
     const footerText = this.footer_text
       || generatedTitles.footer
-      || "땅콩이네";
+      || `${viralTitleOutput?.title_generation_info?.main_character || "땅콩"}이네`;
+
+    $.export("footer_source", this.footer_text ? "manual" : (generatedTitles.footer ? "ai_generated" : "default"));
 
     $.export("titles", {
       korean: headerTextKorean,
@@ -151,6 +147,11 @@ export default defineComponent({
       footer: footerText,
       source: generatedTitles.header_korean ? "ai_generated" : "manual_or_fallback"
     });
+
+    // ★★★ 디버깅: 실제 전송될 값 확인 ★★★
+    $.export("debug_generated_titles", generatedTitles);
+    $.export("debug_subtitle_english", this.subtitle_english_enabled);
+    $.export("debug_sample_video_english", sortedVideos[0]?.narration_english || sortedVideos[0]?.dialogue?.script_english || "NO_ENGLISH");
 
     // =====================
     // 3. FFmpeg VM API 호출
@@ -162,11 +163,17 @@ export default defineComponent({
         url: v.url,
         index: v.index,
         duration: v.duration,
-        dialogue: v.dialogue,
+        // ★★★ dialogue 객체: script(한글), script_english(영어), interviewer(인터뷰어) ★★★
+        dialogue: {
+          ...(v.dialogue || {}),
+          script: v.dialogue?.script || v.narration || "",
+          script_english: v.dialogue?.script_english || v.narration_english || "",
+          interviewer: v.dialogue?.interviewer || "",
+        },
         narration: v.narration,
         // ★★★ 한글 자막용 (영어 캐릭터도 한글 자막 표시) ★★★
         narration_korean: v.narration_korean || v.narration,
-        narration_english: v.narration_english,
+        narration_english: v.narration_english || v.dialogue?.script_english || "",
         spoken_language: v.spoken_language || "korean",  // 캐릭터 언어
         is_interview_question: v.is_interview_question,
         scene_type: v.scene_type,
@@ -177,20 +184,29 @@ export default defineComponent({
       })),
       bgm_url: this.bgm_url || null,
       bgm_volume: parseFloat(this.bgm_volume) || 0.2,
-      // ★★★ 한글/영어 헤더 분리 전송 ★★★
+      // ★★★ 한글/영어 헤더 (영어가 있으면 자동으로 한글 아래 표시) ★★★
       header_text: headerTextKorean,
       header_text_english: headerTextEnglish,
       footer_text: footerText,
-      // ★★★ 자막 및 타이틀 설정 ★★★
+      // ★★★ 자막 설정 ★★★
       subtitle_enabled: this.subtitle_enabled,
       subtitle_english_enabled: this.subtitle_english_enabled,
-      header_bilingual: this.header_bilingual,  // 상단에 한글+영어 타이틀 동시 표시
       width: this.video_width,
       height: this.video_height,
       output_bucket: this.gcs_bucket_name,
       output_path: `${folderName}/final_shorts.mp4`,
       folder_name: folderName,
     };
+
+    // ★★★ 디버깅: VM에 전송되는 핵심 값들 ★★★
+    $.export("debug_request", {
+      header_text: requestPayload.header_text,
+      header_text_english: requestPayload.header_text_english,
+      footer_text: requestPayload.footer_text,
+      subtitle_enabled: requestPayload.subtitle_enabled,
+      subtitle_english_enabled: requestPayload.subtitle_english_enabled,
+      sample_video_narration_english: requestPayload.videos[0]?.narration_english || "NONE",
+    });
 
     try {
       const response = await axios($, {
@@ -217,6 +233,7 @@ export default defineComponent({
           video_count: sortedVideos.length,
           has_bgm: !!this.bgm_url,
           has_header: !!headerTextKorean,
+          has_header_english: !!headerTextEnglish,
           has_footer: !!footerText,
           has_subtitles: this.subtitle_enabled,
           has_english_subtitles: this.subtitle_english_enabled,

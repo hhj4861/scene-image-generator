@@ -427,8 +427,9 @@ export default defineComponent({
         },
       });
 
-      const taskStatus = statusResponse.status || statusResponse.state;
-      $.export("poll_status", taskStatus);
+      const taskStatus = statusResponse.status || statusResponse.state || "unknown";
+      // ★ 직렬화 가능한 문자열로 변환하여 export (UNSERIALIZABLE_EXPORT 방지)
+      $.export("poll_status", String(taskStatus));
 
       if (taskStatus === "complete" || taskStatus === "completed" || taskStatus === "succeeded") {
         result = statusResponse;

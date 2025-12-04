@@ -40,11 +40,27 @@ export default defineComponent({
       optional: true,
     },
 
-    // ★★★ FFmpeg 출력 (youtube_metadata 포함) ★★★
+    // ★★★ FFmpeg 출력 (viral_title의 youtube_metadata 포함) ★★★
     ffmpeg_output: {
       type: "string",
       label: "FFmpeg Output (JSON)",
       description: "{{JSON.stringify(steps.Puppy_FFmpeg.$return_value)}}",
+      optional: true,
+    },
+
+    // ★★★ Viral Title V2 출력 (직접 연결 - FFmpeg 우회 시 사용) ★★★
+    viral_title_output: {
+      type: "string",
+      label: "Viral Title Output (JSON)",
+      description: "{{JSON.stringify(steps.Puppy_Viral_Title_V2.$return_value)}}",
+      optional: true,
+    },
+
+    // ★★★ 썸네일 생성기 출력 ★★★
+    thumbnail_output: {
+      type: "string",
+      label: "Thumbnail Generator Output (JSON)",
+      description: "{{JSON.stringify(steps.Puppy_Thumbnail_Generator.$return_value)}}",
       optional: true,
     },
 
@@ -150,24 +166,59 @@ export default defineComponent({
     // 0. 입력값 검증 및 FFmpeg 출력 파싱
     // =====================
 
-    // ★★★ FFmpeg 출력에서 youtube_metadata 추출 ★★★
+    // ★★★ Viral Title V2 / FFmpeg 출력에서 youtube_metadata 추출 ★★★
     let ffmpegData = null;
+    let viralTitleData = null;
     let youtubeMetadata = null;
     let generatedTitles = null;
 
+    // 1. Viral Title V2 출력 파싱 (우선)
+    if (this.viral_title_output && this.viral_title_output !== 'undefined' && this.viral_title_output !== 'null') {
+      try {
+        viralTitleData = typeof this.viral_title_output === 'string'
+          ? JSON.parse(this.viral_title_output) : this.viral_title_output;
+        youtubeMetadata = viralTitleData.youtube_metadata || null;
+        generatedTitles = viralTitleData.generated_titles || null;
+        $.export("data_source", "Viral Title V2");
+      } catch (e) {
+        $.export("viral_title_parse_error", e.message);
+      }
+    }
+
+    // 2. FFmpeg 출력 파싱 (Viral Title 데이터가 없으면)
     if (this.ffmpeg_output && this.ffmpeg_output !== 'undefined' && this.ffmpeg_output !== 'null') {
       try {
         ffmpegData = typeof this.ffmpeg_output === 'string'
           ? JSON.parse(this.ffmpeg_output) : this.ffmpeg_output;
-        youtubeMetadata = ffmpegData.youtube_metadata || null;
-        generatedTitles = ffmpegData.generated_titles || null;
-        $.export("ffmpeg_data_source", "Parsed from FFmpeg output");
+
+        // Viral Title에서 못 가져왔으면 FFmpeg에서 가져오기
+        if (!youtubeMetadata) {
+          youtubeMetadata = ffmpegData.youtube_metadata || null;
+          generatedTitles = ffmpegData.generated_titles || null;
+          $.export("data_source", "FFmpeg output");
+        }
       } catch (e) {
         $.export("ffmpeg_parse_error", e.message);
       }
     }
 
     $.export("has_youtube_metadata", !!youtubeMetadata);
+    $.export("has_generated_titles", !!generatedTitles);
+
+    // 3. 썸네일 출력 파싱
+    let thumbnailData = null;
+    let thumbnailUrl = null;
+
+    if (this.thumbnail_output && this.thumbnail_output !== 'undefined' && this.thumbnail_output !== 'null') {
+      try {
+        thumbnailData = typeof this.thumbnail_output === 'string'
+          ? JSON.parse(this.thumbnail_output) : this.thumbnail_output;
+        thumbnailUrl = thumbnailData.thumbnail_url || thumbnailData.thumbnail?.url || null;
+        $.export("has_thumbnail", !!thumbnailUrl);
+      } catch (e) {
+        $.export("thumbnail_parse_error", e.message);
+      }
+    }
 
     // video_url: FFmpeg 출력 우선, 그 다음 직접 입력
     let videoUrl = ffmpegData?.url || this.video_url;
@@ -275,27 +326,55 @@ export default defineComponent({
     let optimizedMetadata;
 
     // =====================
-    // ★★★ AI 생성 youtube_metadata 우선 사용 ★★★
+    // ★★★ AI 생성 youtube_metadata 우선 사용 (Viral Title V2) ★★★
     // =====================
-    if (youtubeMetadata && youtubeMetadata.title) {
-      $.export("status", "Using AI-generated youtube_metadata from Viral Title Generator...");
+    if (youtubeMetadata || generatedTitles) {
+      $.export("status", "Using AI-generated metadata from Viral Title V2...");
 
-      // youtube_metadata에서 직접 사용
-      const metaTitle = youtubeMetadata.title || generatedTitles?.header_korean || "Video";
-      const metaDescription = youtubeMetadata.description || "";
-      const metaHashtags = youtubeMetadata.hashtags || [];
-      const metaHashtagsString = youtubeMetadata.hashtags_string || metaHashtags.join(' ');
+      // ★★★ 타이틀: 바이럴 한글 제목 사용 ★★★
+      const headerKorean = generatedTitles?.header_korean || "Video";
+      const headerEnglish = generatedTitles?.header_english || "";
+      const footerText = generatedTitles?.footer || channelHashtag;
 
-      // #Shorts 해시태그 추가
+      // 유튜브 제목: 바이럴 한글 제목 + #Shorts
+      const metaTitle = youtubeMetadata?.title || `[레전드] ${headerKorean} | ${footerText}`;
       const titleWithShorts = metaTitle.includes("#Shorts") ? metaTitle : `${metaTitle} #Shorts`;
 
-      // ★ 풍자 콘텐츠일 때 면책 문구 추가
-      const satireDisclaimer = this.is_satire
-        ? "\n\n⚠️ 본 영상은 실제 사건을 바탕으로 한 풍자/패러디 콘텐츠입니다."
-        : "";
+      // ★★★ 설명: 한글 + 영어 모두 포함 ★★★
+      const metaDescriptionKorean = youtubeMetadata?.description || `${headerKorean} 🐕`;
+      const metaHashtags = youtubeMetadata?.hashtags || [`#${channelHashtag}`, "#강아지", "#shorts"];
+      const metaHashtagsString = youtubeMetadata?.hashtags_string || metaHashtags.join(' ');
 
-      // 설명 조합: AI 생성 설명 + 해시태그 + 채널명 + 면책문구
-      const fullDescription = `${metaDescription}\n\n${metaHashtagsString}\n\n🐕 ${channelHashtag}${satireDisclaimer}`;
+      // ★ 풍자 콘텐츠일 때 면책 문구
+      const satireDisclaimerKo = this.is_satire ? "\n⚠️ 본 영상은 실제 사건을 바탕으로 한 풍자/패러디 콘텐츠입니다." : "";
+      const satireDisclaimerEn = this.is_satire ? "\n⚠️ This video is a satire/parody based on real events." : "";
+
+      // ★★★ 한글/영어 통합 설명 생성 ★★★
+      const fullDescription = `${metaDescriptionKorean}
+
+${metaHashtagsString}
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🇰🇷 한국어 | Korean
+━━━━━━━━━━━━━━━━━━━━━━━
+📺 ${headerKorean}
+🐕 채널: ${footerText}
+
+👍 재미있으셨다면 좋아요와 구독 부탁드려요!
+💬 댓글로 여러분의 의견을 남겨주세요!${satireDisclaimerKo}
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🇺🇸 English
+━━━━━━━━━━━━━━━━━━━━━━━
+📺 ${headerEnglish || headerKorean}
+🐕 Channel: ${footerText}
+
+👍 If you enjoyed, please like and subscribe!
+💬 Leave your comments below!${satireDisclaimerEn}
+
+━━━━━━━━━━━━━━━━━━━━━━━
+#Shorts #강아지 #puppy #dog #cute #viral
+`;
 
       // 태그 추출 (# 제거)
       const tagsFromHashtags = metaHashtags.map(h => h.replace('#', ''));
@@ -306,18 +385,21 @@ export default defineComponent({
         tags: [...new Set([
           ...tagsFromHashtags,
           ...viralKeywords.slice(0, 5),
-          channelHashtag,
-          'shorts', 'viral',
+          channelHashtag.replace(/[^\w가-힣]/g, ''),  // 이모지 제거
+          headerKorean.replace(/[^\w가-힣\s]/g, '').substring(0, 20),  // 제목에서 태그 추출
+          'shorts', 'viral', 'puppy', 'dog',
           ...(this.is_satire ? ['풍자', '패러디', 'satire', 'parody'] : [])
-        ])],
-        seo_score: "AI Generated",
-        predicted_performance: "AI Generated",
-        source: "youtube_metadata",
+        ])].filter(t => t && t.length > 1),
+        seo_score: "AI Generated (Viral Title V2)",
+        predicted_performance: "High (Viral Style)",
+        source: "viral_title_v2",
       };
 
-      $.export("optimization_mode", "AI Generated (Viral Title)");
-      $.export("youtube_metadata_used", {
-        title: metaTitle,
+      $.export("optimization_mode", "Viral Title V2");
+      $.export("titles_used", {
+        korean: headerKorean,
+        english: headerEnglish,
+        footer: footerText,
         hashtags_count: metaHashtags.length,
       });
     }
@@ -589,10 +671,56 @@ Return ONLY valid JSON.`;
     const videoId = uploadResponse.data.id;
     const youtubeUrl = `https://www.youtube.com/shorts/${videoId}`;
 
-    $.export("$summary", `Uploaded to YouTube (${channelName}): ${youtubeUrl}`);
+    $.export("video_upload_success", true);
 
     // =====================
-    // 4. 결과 반환
+    // 4. 썸네일 업로드 (있는 경우)
+    // =====================
+    let thumbnailUploaded = false;
+    let thumbnailError = null;
+
+    if (thumbnailUrl) {
+      $.export("status", "Uploading custom thumbnail...");
+
+      try {
+        // 썸네일 다운로드
+        const thumbnailResponse = await axios($, {
+          method: "GET",
+          url: thumbnailUrl,
+          responseType: "arraybuffer",
+        });
+
+        const thumbnailBuffer = Buffer.from(thumbnailResponse);
+        $.export("thumbnail_size", `${(thumbnailBuffer.length / 1024).toFixed(2)} KB`);
+
+        // 썸네일 스트림 생성
+        const { Readable } = await import("stream");
+        const thumbnailStream = new Readable();
+        thumbnailStream.push(thumbnailBuffer);
+        thumbnailStream.push(null);
+
+        // YouTube API로 썸네일 업로드
+        await youtube.thumbnails.set({
+          videoId: videoId,
+          media: {
+            mimeType: "image/png",
+            body: thumbnailStream,
+          },
+        });
+
+        thumbnailUploaded = true;
+        $.export("thumbnail_upload_success", true);
+      } catch (thumbError) {
+        thumbnailError = thumbError.message;
+        $.export("thumbnail_upload_error", thumbError.message);
+        // 썸네일 업로드 실패해도 영상 업로드는 성공한 것으로 처리
+      }
+    }
+
+    $.export("$summary", `Uploaded to YouTube (${channelName}): ${youtubeUrl}${thumbnailUploaded ? " with custom thumbnail" : ""}`);
+
+    // =====================
+    // 5. 결과 반환
     // =====================
     return {
       success: true,
@@ -616,6 +744,12 @@ Return ONLY valid JSON.`;
         thumbnail_suggestion: optimizedMetadata.thumbnail_text_suggestion,
         best_upload_times: optimizedMetadata.best_upload_times,
         optimization_notes: optimizedMetadata.optimization_notes,
+      },
+      // ★★★ 썸네일 정보 ★★★
+      thumbnail: {
+        uploaded: thumbnailUploaded,
+        url: thumbnailUrl || null,
+        error: thumbnailError,
       },
       // ★★★ FFmpeg 데이터 포함 (재사용 가능) ★★★
       ffmpeg_info: ffmpegData ? {

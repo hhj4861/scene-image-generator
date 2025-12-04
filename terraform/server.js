@@ -24,56 +24,66 @@ if (!fs.existsSync(TEMP_DIR)) {
 // =====================
 const PEANUT_STYLE = {
   video_height_percent: 65,
+  // ★★★ 영상 위치: 상단 17.5% ~ 하단 82.5% (65% 중앙) ★★★
+  // 헤더: 영상 바로 위에 배치 - 주황빛 배경 (푸터보다 연한색)
   header: {
-    font_size: 80,
-    color: "0xFFF8DC",
-    border_color: "0x5D4E37",
+    font_size: 68,
+    color: "0xFFFFFF",         // 흰색 텍스트
+    border_color: "0x333333",  // 어두운 테두리
     border_width: 4,
-    y_percent: 5,
-    max_chars_per_line: 12,
+    y_percent: 8,              // 영상에 가깝게
+    max_chars_per_line: 14,
+    bg_color: "0xFF8C00",      // 다크오렌지 배경 (진한 주황)
+    bg_padding: 15,
   },
-  // ★★★ 영어 헤더 (한글보다 작은 폰트) ★★★
+  // 영어 헤더 (한글 바로 아래)
   header_english: {
-    font_size: 48,
+    font_size: 36,
     color: "0xFFFFFF",
-    border_color: "0x5D4E37",
-    border_width: 3,
-    y_offset: 90, // 한글 헤더 아래 오프셋 (픽셀)
+    border_color: "0x333333",
+    border_width: 2,
+    y_offset: 75, // 한글 헤더 아래 오프셋
   },
+  // ★★★ 채널명: 주황/노란색 배경 + 흰색 텍스트 ★★★
   footer: {
-    font_size: 75,
-    color: "0xF4A460",
-    border_color: "0x4A3C2A",
-    border_width: 4,
-    y_percent: 87,
+    font_size: 56,
+    color: "0xFFFFFF",         // 흰색 텍스트
+    border_color: "0x333333",
+    border_width: 2,
+    y_percent: 93,             // 맨 아래
+    bg_color: "0xFFA500",      // 오렌지 배경 (밝은 주황)
+    bg_padding: 18,
   },
+  // 자막 (답변) - 영상 바로 아래 (y=84%) - 노란색
   subtitle: {
-    font_size: 48,
-    color: "0xFFE66D",
+    font_size: 46,
+    color: "0xFFE66D",         // 밝은 노란색
     border_color: "0x333333",
     border_width: 4,
-    y_percent: 75,
+    y_percent: 84,
   },
+  // 영어 자막 (답변 아래)
   subtitle_english: {
-    font_size: 36,
+    font_size: 30,
     color: "0xFFFAF0",
     border_color: "0x333333",
     border_width: 3,
-    y_percent: 80,
+    y_percent: 88,
   },
+  // 인터뷰어 자막 (하늘색)
   subtitle_interviewer: {
-    font_size: 48,
+    font_size: 46,
     color: "0x87CEEB",
     border_color: "0x333333",
     border_width: 4,
-    y_percent: 75,
+    y_percent: 84,
   },
   subtitle_interviewer_english: {
-    font_size: 36,
+    font_size: 30,
     color: "0xFFFAF0",
     border_color: "0x333333",
     border_width: 3,
-    y_percent: 80,
+    y_percent: 88,
   },
 };
 
@@ -92,7 +102,23 @@ const removeEmojis = (text) => {
     .trim();
 };
 
-const escapeText = (text) => {
+// ★★★ 이모지 지원 텍스트 이스케이프 (이모지 유지) ★★★
+const escapeTextWithEmoji = (text) => {
+  if (!text) return "";
+  return text
+    .trim()
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "'\\''")
+    .replace(/:/g, "\\:")
+    .replace(/\[/g, "\\[")
+    .replace(/\]/g, "\\]")
+    .replace(/,/g, "\\,")
+    .replace(/;/g, "\\;");
+};
+
+// ★★★ 이모지 제거 텍스트 이스케이프 (자막용 - 이모지 없음) ★★★
+const escapeText = (text, keepEmoji = false) => {
+  if (keepEmoji) return escapeTextWithEmoji(text);
   const cleanText = removeEmojis(text);
   return cleanText
     .replace(/\\/g, "\\\\")
@@ -431,11 +457,20 @@ app.post("/render/puppy", async (req, res) => {
       }
     });
 
-    // ★★★ 상단 타이틀 필터 (한글 + 영어 2줄) ★★★
+    // ★★★ 상단 타이틀 필터 (한글 + 영어 2줄 + 배경) ★★★
     const titleLinesKorean = splitHeaderLines(header_text || "", PEANUT_STYLE.header.max_chars_per_line);
     const titleLineHeight = PEANUT_STYLE.header.font_size + 10;
     let headerFilters = "";
     let lastKoreanLineY = headerY;
+
+    // ★★★ 헤더 배경 (주황색 박스) - 텍스트 전에 그리기 ★★★
+    if (header_text && PEANUT_STYLE.header.bg_color) {
+      const headerLineCount = titleLinesKorean.length || 1;
+      const headerTotalHeight = headerLineCount * titleLineHeight + (header_text_english ? PEANUT_STYLE.header_english.y_offset : 0);
+      const headerBgHeight = headerTotalHeight + (PEANUT_STYLE.header.bg_padding || 15) * 2;
+      const headerBgY = headerY - (PEANUT_STYLE.header.bg_padding || 15);
+      headerFilters += `drawbox=x=0:y=${headerBgY}:w=${width}:h=${headerBgHeight}:color=${PEANUT_STYLE.header.bg_color}:t=fill,`;
+    }
 
     // 1. 한글 헤더 (큰 폰트)
     if (titleLinesKorean.length > 0) {
@@ -454,7 +489,8 @@ app.post("/render/puppy", async (req, res) => {
       headerFilters += `drawtext=text='${escapedEnglish}':fontsize=${PEANUT_STYLE.header_english.font_size}:fontcolor=${PEANUT_STYLE.header_english.color}:borderw=${PEANUT_STYLE.header_english.border_width}:bordercolor=${PEANUT_STYLE.header_english.border_color}:x=(w-text_w)/2:y=${englishY},`;
     }
 
-    const escapedChannel = escapeText(footer_text || "땅콩이네");
+    // ★★★ 푸터는 이모지 유지 (keepEmoji=true) ★★★
+    const escapedChannel = escapeText(footer_text || "땅콩이네", true);
 
     // BGM 처리
     let bgmInput = "";
@@ -467,12 +503,19 @@ app.post("/render/puppy", async (req, res) => {
       audioMap = `-map "[aout]"`;
     }
 
-    // 최종 필터
+    // ★★★ 푸터 배경 (빨간색 박스) ★★★
+    const footerBgHeight = PEANUT_STYLE.footer.font_size + (PEANUT_STYLE.footer.bg_padding || 20) * 2;
+    const footerBgY = footerY - (PEANUT_STYLE.footer.bg_padding || 20);
+    const footerBgColor = PEANUT_STYLE.footer.bg_color || "0xCC0000";
+    const footerBgFilter = `drawbox=x=0:y=${footerBgY}:w=${width}:h=${footerBgHeight}:color=${footerBgColor}:t=fill,`;
+
+    // ★★★ 푸터 이모지 지원: font= 사용 + fontconfig 활성화 ★★★
+    // fontconfig가 자동으로 Noto Color Emoji로 폴백
     const filterComplex = `
       color=black:s=${width}x${height}:d=${totalDuration}[bg];
       [1:v]scale=${width}:${videoHeight}:force_original_aspect_ratio=decrease,pad=${width}:${videoHeight}:(ow-iw)/2:(oh-ih)/2:black[video];
       [bg][video]overlay=0:${videoY}[combined];
-      [combined]${headerFilters}drawtext=text='${escapedChannel}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${PEANUT_STYLE.footer.font_size}:fontcolor=${PEANUT_STYLE.footer.color}:borderw=${PEANUT_STYLE.footer.border_width}:bordercolor=${PEANUT_STYLE.footer.border_color}:x=(w-text_w)/2:y=${footerY}${subtitleFilters}[out]${bgmFilter}
+      [combined]${headerFilters}${footerBgFilter}drawtext=text='${escapedChannel}':font='NanumGothic Bold':fontsize=${PEANUT_STYLE.footer.font_size}:fontcolor=${PEANUT_STYLE.footer.color}:borderw=${PEANUT_STYLE.footer.border_width}:bordercolor=${PEANUT_STYLE.footer.border_color}:x=(w-text_w)/2:y=${footerY}${subtitleFilters}[out]${bgmFilter}
     `.replace(/\n/g, "").replace(/\s+/g, " ").trim();
 
     // 7. 최종 렌더링

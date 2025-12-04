@@ -110,7 +110,94 @@ export default defineComponent({
     };
 
     // =====================
-    // 4. 퍼포먼스 씬 타입별 비디오 프롬프트 설정 + 악세서리
+    // 4. 액션 키워드 감지 및 매핑 (대사에서 동작 추출)
+    // =====================
+    const actionKeywordMap = {
+      // 춤/댄스
+      "핫팩 댄스": "doing cute hot pack dance, bouncing rhythmically with hot pack",
+      "핫팩댄스": "doing cute hot pack dance, bouncing rhythmically with hot pack",
+      "댄스": "dancing energetically with body moving rhythmically",
+      "춤추": "dancing happily with cute moves",
+      "춤을": "dancing with adorable swaying motions",
+      "춤": "dancing with cute body movements",
+      "흔들흔들": "swaying body side to side playfully",
+      "흔들": "swaying body gently",
+
+      // 뛰기/점프
+      "폴짝폴짝": "hopping repeatedly with joy, bouncing up and down energetically",
+      "폴짝": "hopping cutely, bouncing with excitement",
+      "뛰어다": "running and jumping around playfully",
+      "뛰어": "jumping excitedly with energy",
+      "점프": "jumping up high with enthusiasm",
+      "깡충깡충": "hopping like a bunny, bouncing cutely",
+      "깡충": "bouncing hop, cute jumping motion",
+      "펄쩍": "leaping up suddenly, big jump",
+
+      // 돌기/회전
+      "빙글빙글": "spinning around playfully, twirling in circles",
+      "빙글": "spinning in a circle, cute twirl",
+      "돌아가": "turning around in circles",
+      "돌아": "turning motion, spinning",
+      "회전": "spinning in place, rotating playfully",
+
+      // 꼬리/흔들기
+      "꼬리 흔": "wagging tail happily and energetically",
+      "꼬리를 흔": "wagging tail with excitement",
+      "꼬리가 흔": "tail wagging automatically with joy",
+      "살랑살랑": "swaying tail or body gently, soft wagging",
+
+      // 달리기/이동
+      "달려": "running forward quickly with excitement",
+      "뛰어가": "running towards something eagerly",
+      "달리": "running with speed",
+      "뒹굴뒹굴": "rolling around playfully on the ground",
+      "뒹굴": "rolling over cutely",
+
+      // 앉기/눕기
+      "앉아": "sitting down cutely",
+      "누워": "lying down comfortably",
+      "엎드려": "lying face down, prostrate position",
+      "일어나": "standing up, getting up energetically",
+      "벌떡": "jumping up suddenly, getting up quickly",
+
+      // 손/발 동작
+      "박수": "clapping front paws together cutely",
+      "손 흔들": "waving paw in greeting",
+      "손을 흔들": "waving paw hello or goodbye",
+      "발을 동동": "stomping feet impatiently, tapping paws",
+      "동동": "stomping or tapping feet cutely",
+      "발버둥": "kicking legs playfully, flailing paws",
+
+      // 먹기/냄새
+      "먹": "eating or chewing something",
+      "냄새": "sniffing around curiously",
+      "킁킁": "sniffing with nose twitching",
+
+      // 기타 귀여운 동작
+      "고개를 갸웃": "tilting head cutely to the side",
+      "갸웃": "cute head tilt, curious pose",
+      "하품": "yawning adorably",
+      "기지개": "stretching body, doing a stretch",
+      "부르르": "shaking body, shivering motion",
+      "부들부들": "trembling or shaking slightly",
+    };
+
+    // 대사에서 액션 키워드 감지 함수
+    const detectActionsFromNarration = (narration) => {
+      if (!narration) return [];
+      const detected = [];
+      // 긴 키워드를 먼저 검사 (핫팩 댄스 > 댄스)
+      const sortedKeywords = Object.keys(actionKeywordMap).sort((a, b) => b.length - a.length);
+      for (const keyword of sortedKeywords) {
+        if (narration.includes(keyword)) {
+          detected.push({ keyword, action: actionKeywordMap[keyword] });
+        }
+      }
+      return detected;
+    };
+
+    // =====================
+    // 4-1. 퍼포먼스 씬 타입별 비디오 프롬프트 설정 + 악세서리
     // =====================
     const performanceVideoPrompts = {
       beatbox: {
@@ -182,9 +269,9 @@ export default defineComponent({
     const realDogEmphasis = consistencyInfo.real_dog_emphasis
       || "Real living dog. Actual puppy. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in dog mask. Real fur. Real animal.";
 
-    // 텍스트 제거 문구
+    // 텍스트 제거 문구 (강화)
     const noTextEmphasis = consistencyInfo.no_text_emphasis
-      || "No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks.";
+      || "ABSOLUTE CRITICAL: NO TEXT ON SCREEN. NEVER show text, letters, Korean hangul, Chinese, Japanese characters, English words, garbled/corrupted text artifacts, random symbols, broken characters, subtitles, captions, signs, banners, posters, watermarks, labels, or ANY writing anywhere in frame.";
 
     // =====================
     // 4-2. 퍼포먼스 타입 전역 감지 (script-generator의 consistency 정보 우선 사용)
@@ -327,8 +414,15 @@ export default defineComponent({
       };
       const characterDesc = getCharacterDescription();
 
+      // ★★★ 첫 씬 후킹 최적화 감지 (쇼츠 썸네일 효과) ★★★
+      const isHookScene = seg.is_hook_scene || seg.thumbnail_optimized || idx === 0;
+
       // 8K 시네마틱 프롬프트 생성 (옷/악세서리/배경 포함)
       const generateVeoPrompt = () => {
+        // ★★★ 첫 씬 후킹 강조 문구 ★★★
+        const hookSceneEmphasis = isHookScene
+          ? "EXTREME CLOSE-UP of face, BRIGHT vivid colors, HIGH CONTRAST, sparkling expressive eyes, dynamic attention-grabbing composition. "
+          : "";
         // 캐릭터 외형 프롬프트 조합
         let charPrompt = characterAppearance.base;
         if (characterAppearance.outfit) {
@@ -362,11 +456,11 @@ export default defineComponent({
           const perfCharPrompt = `${characterAppearance.base}, ${globalPerformanceAccessories}`;
 
           if (isPerformanceStart || isPerformanceResume) {
-            // 퍼포먼스 시작/재개: BGM에 맞춰 립싱크 (TTS 없음)
-            return `8K cinematic performance video. ${perfCharPrompt}, ${perfPrompt}. ${performanceStageBackground}. Dog performing alone on stage. Dog's mouth moves rhythmically to the beat. Energetic dynamic camera. Same dog appearance maintained. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles. No microphone in frame. No human hands. No people. Single dog performer only.`;
+            // 퍼포먼스 시작/재개: BGM에 맞춰 립싱크 (TTS 없음) (★ 첫 씬이면 hookSceneEmphasis 적용 ★)
+            return `8K cinematic performance video. ${hookSceneEmphasis}${perfCharPrompt}, ${perfPrompt}. ${performanceStageBackground}. Dog performing alone on stage. Dog's mouth moves rhythmically to the beat. Energetic dynamic camera. Same dog appearance maintained. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles. No microphone in frame. No human hands. No people. Single dog performer only.`;
           } else if (isPerformanceBreak) {
-            // 퍼포먼스 브레이크: 짧은 대사 (기계음 TTS) - 안전 필터 방지용 프롬프트
-            return `8K cinematic performance video. ${perfCharPrompt}, ${perfPrompt}. ${performanceStageBackground}. Dog pauses dramatically alone on stage, looks directly at camera with confident expression, mouth opens slightly then closes. Dramatic freeze pose moment. Same dog appearance maintained. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles. No microphone in frame. No human hands. No people. Single dog performer only.`;
+            // 퍼포먼스 브레이크: 짧은 대사 (기계음 TTS) - 안전 필터 방지용 프롬프트 (★ 첫 씬이면 hookSceneEmphasis 적용 ★)
+            return `8K cinematic performance video. ${hookSceneEmphasis}${perfCharPrompt}, ${perfPrompt}. ${performanceStageBackground}. Dog pauses dramatically alone on stage, looks directly at camera with confident expression, mouth opens slightly then closes. Dramatic freeze pose moment. Same dog appearance maintained. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles. No microphone in frame. No human hands. No people. Single dog performer only.`;
           }
         }
 
@@ -381,28 +475,38 @@ export default defineComponent({
         const isInterviewerSpeaking = isInterviewQuestion && speaker === "interviewer";
 
         if (isInterviewerSpeaking) {
-          // 인터뷰어가 질문: interviewee 캐릭터가 듣는 장면 (lip_sync 없음)
+          // 인터뷰어가 질문: interviewee 캐릭터가 듣는 장면 (lip_sync 없음) (★ 첫 씬이면 hookSceneEmphasis 적용 ★)
+          // ★★★ 인터뷰어가 말할 때 마이크 필수 등장 ★★★
+          const interviewMicPrompt = `Professional broadcast microphone visible in frame pointing toward the ${characterDesc.toLowerCase()}. SIMPLE PLAIN SOLID BLACK microphone (completely clean surface, NO text, NO logos, NO labels, NO writing, NO Korean characters, NO markings whatsoever).`;
           if (isAnimalCharacter) {
-            return `8K cinematic video. ${charPrompt} sitting alone, listening attentively. ${bgPrompt}. ${lightingPrompt}. ${characterDesc} has curious listening expression, head slightly tilted, ears perked up. IMPORTANT: ${characterDesc} mouth must stay COMPLETELY CLOSED throughout entire video. ${characterDesc} is NOT talking. ${characterDesc} is only listening. Natural breathing only. Occasional gentle blinks and subtle head tilts. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles. No microphone. No human hands. No people. Single ${characterDesc.toLowerCase()} only.`;
+            return `8K cinematic interview video. ${hookSceneEmphasis}${charPrompt} sitting, listening attentively to interviewer question. ${bgPrompt}. ${lightingPrompt}. ${interviewMicPrompt} ${characterDesc} has curious listening expression, head slightly tilted, ears perked up. IMPORTANT: ${characterDesc} mouth must stay COMPLETELY CLOSED throughout entire video. ${characterDesc} is NOT talking. ${characterDesc} is only listening. Natural breathing only. Occasional gentle blinks and subtle head tilts. ${realCharEmphasis}. ${noTextEmphasis}. ABSOLUTELY NO TEXT, NO LETTERS, NO CHARACTERS, NO WRITING anywhere in frame. No subtitles. No human hands. No people. Single ${characterDesc.toLowerCase()} only.`;
           } else {
-            return `8K cinematic video. ${charPrompt} sitting, listening attentively. ${bgPrompt}. ${lightingPrompt}. ${characterDesc} has interested listening expression. IMPORTANT: Mouth must stay closed. Only listening with natural posture. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles.`;
+            return `8K cinematic interview video. ${hookSceneEmphasis}${charPrompt} sitting, listening attentively to interviewer question. ${bgPrompt}. ${lightingPrompt}. ${interviewMicPrompt} ${characterDesc} has interested listening expression. IMPORTANT: Mouth must stay closed. Only listening with natural posture. ${realCharEmphasis}. ${noTextEmphasis}. ABSOLUTELY NO TEXT, NO LETTERS, NO CHARACTERS, NO WRITING anywhere in frame. No subtitles.`;
           }
         } else if (isFlashback) {
-          // 회상 장면
-          return `8K cinematic flashback video. ${charPrompt} in recalled scene. ${bgPrompt}. Slightly dreamy/vintage filter effect. ${emotionPrompt} expression. ${lightingPrompt}. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles.`;
+          // ★★★ 회상 장면: 액션 감지하여 동작 프롬프트 추가 ★★★
+          const detectedActions = detectActionsFromNarration(seg.narration);
+          const actionPrompt = detectedActions.length > 0
+            ? ` ${characterDesc} is ${detectedActions.map(a => a.action).join(", ")}.`
+            : "";
+          return `8K cinematic flashback video. ${hookSceneEmphasis}${charPrompt} in recalled scene.${actionPrompt} ${bgPrompt}. Slightly dreamy/vintage filter effect. ${emotionPrompt} expression. ${lightingPrompt}. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles.`;
         } else if (hasNarration) {
-          // 대사 장면
+          // ★★★ 대사 장면: 액션 감지하여 동작 프롬프트 추가 ★★★
+          const detectedActions = detectActionsFromNarration(seg.narration);
+          const actionPrompt = detectedActions.length > 0
+            ? ` IMPORTANT ACTION: ${characterDesc} is ${detectedActions.map(a => a.action).join(", ")} while speaking.`
+            : "";
           if (isAnimalCharacter) {
-            return `8K cinematic video. ${charPrompt} sitting alone facing camera. ${bgPrompt}. ${lightingPrompt}. ${characterDesc} with gentle mouth movements. ${emotionPrompt} expression. Same ${characterDesc.toLowerCase()} appearance maintained throughout. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles. No microphone. No human hands. No people. Single ${characterDesc.toLowerCase()} only.`;
+            return `8K cinematic video. ${hookSceneEmphasis}${charPrompt} facing camera. ${bgPrompt}. ${lightingPrompt}. ${characterDesc} with gentle mouth movements.${actionPrompt} ${emotionPrompt} expression. Same ${characterDesc.toLowerCase()} appearance maintained throughout. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles. No microphone. No human hands. No people. Single ${characterDesc.toLowerCase()} only.`;
           } else {
-            return `8K cinematic video. ${charPrompt} facing camera. ${bgPrompt}. ${lightingPrompt}. ${characterDesc} speaking with natural mouth movements. ${emotionPrompt} expression. Same appearance maintained throughout. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles.`;
+            return `8K cinematic video. ${hookSceneEmphasis}${charPrompt} facing camera. ${bgPrompt}. ${lightingPrompt}. ${characterDesc} speaking with natural mouth movements.${actionPrompt} ${emotionPrompt} expression. Same appearance maintained throughout. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles.`;
           }
         } else {
-          // 리액션/대기 장면
+          // 리액션/대기 장면 (★ 첫 씬이면 hookSceneEmphasis 적용 ★)
           if (isAnimalCharacter) {
-            return `8K cinematic video. ${charPrompt} sitting alone. ${bgPrompt}. ${lightingPrompt}. ${emotionPrompt} expression, natural subtle movements. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles. No microphone. No human hands. No people. Single ${characterDesc.toLowerCase()} only.`;
+            return `8K cinematic video. ${hookSceneEmphasis}${charPrompt} sitting alone. ${bgPrompt}. ${lightingPrompt}. ${emotionPrompt} expression, natural subtle movements. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles. No microphone. No human hands. No people. Single ${characterDesc.toLowerCase()} only.`;
           } else {
-            return `8K cinematic video. ${charPrompt}. ${bgPrompt}. ${lightingPrompt}. ${emotionPrompt} expression, natural subtle movements. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles.`;
+            return `8K cinematic video. ${hookSceneEmphasis}${charPrompt}. ${bgPrompt}. ${lightingPrompt}. ${emotionPrompt} expression, natural subtle movements. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles.`;
           }
         }
       };
@@ -700,6 +804,11 @@ export default defineComponent({
         video_prompt: seg.video_prompt,
         audio_details: seg.audio_details,
         action_cues: seg.action_cues || {},
+        // ★★★ 대사에서 감지된 액션 (동작 프롬프트에 반영됨) ★★★
+        detected_actions: detectActionsFromNarration(seg.narration),
+        // ★★★ 첫 씬 후킹 최적화 플래그 (쇼츠 썸네일 효과) ★★★
+        is_hook_scene: seg.is_hook_scene || idx === 0,  // script-generator에서 전달 또는 첫 씬
+        thumbnail_optimized: seg.thumbnail_optimized || idx === 0,
       };
     });
 
@@ -711,9 +820,23 @@ export default defineComponent({
     );
 
     // =====================
-    // 6. 결과 반환
+    // 6. 액션 감지 통계
     // =====================
-    $.export("$summary", `Video generation info prepared for ${scenes.length} scenes (Veo 3 optimized)`);
+    const scenesWithActions = scenes.filter(s => s.detected_actions && s.detected_actions.length > 0);
+    $.export("action_detection_stats", {
+      total_scenes: scenes.length,
+      scenes_with_actions: scenesWithActions.length,
+      actions_summary: scenesWithActions.map(s => ({
+        scene: s.video,
+        narration_preview: (s.narration || "").substring(0, 50),
+        detected: s.detected_actions.map(a => a.keyword),
+      })),
+    });
+
+    // =====================
+    // 7. 결과 반환
+    // =====================
+    $.export("$summary", `Video generation info prepared for ${scenes.length} scenes (${scenesWithActions.length} with actions detected)`);
 
     return {
       // 메타 정보

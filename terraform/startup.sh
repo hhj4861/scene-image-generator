@@ -12,9 +12,9 @@ apt-get update && apt-get upgrade -y
 echo "Installing FFmpeg..."
 apt-get install -y ffmpeg
 
-# 한글 폰트 설치
-echo "Installing Korean fonts..."
-apt-get install -y fonts-noto-cjk fonts-nanum
+# 한글 폰트 + 이모지 폰트 설치
+echo "Installing Korean fonts and Emoji fonts..."
+apt-get install -y fonts-noto-cjk fonts-nanum fonts-noto-color-emoji
 
 # Node.js 20 LTS 설치
 echo "Installing Node.js..."

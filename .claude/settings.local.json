@@ -81,7 +81,9 @@
       "Bash(GOOGLE_APPLICATION_CREDENTIALS=/Users/admin/Desktop/workSpace/socar/scene-image-generator/google-credentials.json node:*)",
       "Bash(brew list:*)",
       "Bash(/usr/local/bin/gcloud:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "WebFetch(domain:youtube.com)",
+      "Bash(gcloud compute instances list:*)"
     ],
     "deny": [],
     "ask": []

@@ -302,6 +302,64 @@ export default defineComponent({
       return 8;
     };
 
+    // ★★★ 액션 키워드 감지 및 매핑 (대사에서 동작 추출) ★★★
+    const actionKeywordMap = {
+      "핫팩 댄스": "doing cute hot pack dance, bouncing rhythmically with hot pack",
+      "핫팩댄스": "doing cute hot pack dance, bouncing rhythmically with hot pack",
+      "댄스": "dancing energetically with body moving rhythmically",
+      "춤추": "dancing happily with cute moves",
+      "춤을": "dancing with adorable swaying motions",
+      "춤": "dancing with cute body movements",
+      "흔들흔들": "swaying body side to side playfully",
+      "흔들": "swaying body gently",
+      "폴짝폴짝": "hopping repeatedly with joy, bouncing up and down energetically",
+      "폴짝": "hopping cutely, bouncing with excitement",
+      "뛰어다": "running and jumping around playfully",
+      "뛰어": "jumping excitedly with energy",
+      "점프": "jumping up high with enthusiasm",
+      "깡충깡충": "hopping like a bunny, bouncing cutely",
+      "깡충": "bouncing hop, cute jumping motion",
+      "펄쩍": "leaping up suddenly, big jump",
+      "빙글빙글": "spinning around playfully, twirling in circles",
+      "빙글": "spinning in a circle, cute twirl",
+      "돌아가": "turning around in circles",
+      "돌아": "turning motion, spinning",
+      "회전": "spinning in place, rotating playfully",
+      "꼬리 흔": "wagging tail happily and energetically",
+      "꼬리를 흔": "wagging tail with excitement",
+      "꼬리가 흔": "tail wagging automatically with joy",
+      "살랑살랑": "swaying tail or body gently, soft wagging",
+      "달려": "running forward quickly with excitement",
+      "뛰어가": "running towards something eagerly",
+      "달리": "running with speed",
+      "뒹굴뒹굴": "rolling around playfully on the ground",
+      "뒹굴": "rolling over cutely",
+      "앉아": "sitting down cutely",
+      "누워": "lying down comfortably",
+      "일어나": "standing up, getting up energetically",
+      "벌떡": "jumping up suddenly, getting up quickly",
+      "박수": "clapping front paws together cutely",
+      "손 흔들": "waving paw in greeting",
+      "동동": "stomping or tapping feet cutely",
+      "고개를 갸웃": "tilting head cutely to the side",
+      "갸웃": "cute head tilt, curious pose",
+      "하품": "yawning adorably",
+      "기지개": "stretching body, doing a stretch",
+      "부르르": "shaking body, shivering motion",
+    };
+
+    const detectActionsFromNarration = (narration) => {
+      if (!narration) return [];
+      const detected = [];
+      const sortedKeywords = Object.keys(actionKeywordMap).sort((a, b) => b.length - a.length);
+      for (const keyword of sortedKeywords) {
+        if (narration.includes(keyword)) {
+          detected.push({ keyword, action: actionKeywordMap[keyword] });
+        }
+      }
+      return detected;
+    };
+
     const getVeo3Prompt = (scene) => {
       // ★★★ 기본 정보 추출 ★★★
       const narration = scene.dialogue?.script || scene.dialogue?.interviewer || scene.narration || "";
@@ -360,8 +418,16 @@ export default defineComponent({
       };
       const emotionDesc = emotionExpressions[emotion] || "natural expression";
 
+      // ★★★ 첫 씬(Hook Scene) 여부 확인 ★★★
+      const isHookScene = scene.is_hook_scene || scene.thumbnail_optimized || scene.index === 0;
+
       // ★★★ veo_script_sample 형식 기반 기본 프롬프트 ★★★
       let basePrompt = `[CRITICAL: ABSOLUTELY NO TEXT, NO SUBTITLES, NO CAPTIONS, NO WRITTEN CHARACTERS OF ANY KIND VISIBLE IN VIDEO] 8K cinematic ${scriptFormat === "interview" ? "interview " : ""}video. Generate ONLY clean video with ZERO text on screen. Use the provided reference image as the exact visual base for the entire ${duration} seconds.`;
+
+      // ★★★ 첫 씬 Hook 강조 (쇼츠 썸네일 역할) ★★★
+      if (isHookScene) {
+        basePrompt += ` [HOOK SCENE - THUMBNAIL IMPACT] This is the FIRST scene that viewers see - make it visually STRIKING and attention-grabbing! EXTREME CLOSE-UP of face, BRIGHT vibrant colors, HIGH CONTRAST, expressive sparkling eyes, dynamic engaging composition.`;
+      }
 
       // 캐릭터 외형 설명
       basePrompt += ` A ${characterDesc} ${isAnimalCharacter ? "sits facing camera" : "faces camera"}.`;
@@ -510,10 +576,17 @@ VIDEO MUST BE COMPLETELY TEXT-FREE.`;
         const voiceCharacteristics = speakerVoice.characteristics || "babbling cooing speech with slight lisp";
         const laughStyle = speakerVoice.laugh_style || "adorable baby giggling";
 
+        // ★★★ 대사에서 액션 감지 ★★★
+        const detectedActions = detectActionsFromNarration(narration);
+        const actionPrompt = detectedActions.length > 0
+          ? ` IMPORTANT CHARACTER ACTION: ${characterDesc} is ${detectedActions.map(a => a.action).join(", ")} while speaking.`
+          : "";
+
         // ★★★ 캐릭터 타입별 음성 + 립싱크 프롬프트 (puppy-video-generator 데이터 사용) ★★★
         if (isAnimalCharacter) {
           basePrompt += ` DIALOGUE TIMING: 0.0-${silenceEnd}sec silence dog waiting, ${characterSpeechStart}-${characterSpeechEnd}sec ${characterDesc.toLowerCase()} speaks Korean dialogue.`;
           basePrompt += ` VOICE (AUDIO ONLY - NO SUBTITLES): ${voiceType}, ${voiceCharacteristics}, ${voiceTone}: "${safeNarration}".`;
+          basePrompt += actionPrompt; // ★ 감지된 액션 추가
           basePrompt += ` LIP SYNC STYLE: ${lipSyncType}. ${lipSyncMethod}. ${mouthShapesDesc}`;
           if (timingDesc) basePrompt += ` TIMING DETAIL: ${timingDesc}.`;
           basePrompt += ` Mouth MUST move precisely matching each Korean syllable. Continuous mouth movement - NOT static. Visible jaw movement. Face keeps same expression, only mouth area moves. Do NOT regenerate dog image during speech.`;
@@ -521,6 +594,7 @@ VIDEO MUST BE COMPLETELY TEXT-FREE.`;
         } else {
           basePrompt += ` DIALOGUE TIMING: 0.0-${silenceEnd}sec silence, ${characterSpeechStart}-${characterSpeechEnd}sec speaks Korean: "${safeNarration}".`;
           basePrompt += ` VOICE (AUDIO ONLY - NO SUBTITLES): ${voiceType}. LIP SYNC: ${lipSyncType}. ${lipSyncMethod}. ${mouthShapesDesc}`;
+          basePrompt += actionPrompt; // ★ 감지된 액션 추가
           if (timingDesc) basePrompt += ` TIMING: ${timingDesc}.`;
           basePrompt += ` DO NOT show dialogue as text on screen.${voiceEffect}${endingExpression}`;
         }
