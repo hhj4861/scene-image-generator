@@ -2,7 +2,7 @@ import { axios } from "@pipedream/platform";
 
 export default defineComponent({
   name: "Puppy Thumbnail V2",
-  description: "Imagen 4로 바이럴 썸네일 이미지 생성 + GCS 업로드 (V2)",
+  description: "Imagen 4로 바이럴 썸네일 이미지 생성 + GCS 업로드 (V2) - gemini-image-generator.mjs API 형식 적용",
 
   props: {
     viral_title_output: {
@@ -29,12 +29,21 @@ export default defineComponent({
       type: "app",
       app: "google_cloud",
       description: "Google Cloud 연결 (GCS 업로드용)",
-      optional: true,
     },
     gcs_bucket_name: {
       type: "string",
       label: "GCS Bucket Name",
       default: "shorts-videos-storage-mcp-test-457809",
+    },
+    aspect_ratio: {
+      type: "string",
+      label: "Aspect Ratio",
+      options: [
+        { label: "9:16 (Shorts 세로)", value: "9:16" },
+        { label: "16:9 (YouTube 가로)", value: "16:9" },
+        { label: "1:1 (정사각형)", value: "1:1" },
+      ],
+      default: "9:16",
     },
     thumbnail_style: {
       type: "string",
@@ -115,43 +124,49 @@ export default defineComponent({
     $.export("prompt", thumbnailPrompt.substring(0, 500));
 
     // =====================
-    // 4. Imagen API 호출
+    // 4. Imagen API 호출 (gemini-image-generator.mjs 형식 적용)
     // =====================
     let imageBase64 = null;
     let imageUrl = null;
 
-    try {
-      $.export("status", `Generating thumbnail with ${this.imagen_model}...`);
-
-      const imagenResponse = await axios($, {
-        method: "POST",
-        url: IMAGEN_URL,
-        headers: {
-          "x-goog-api-key": this.gemini_api_key,
-          "Content-Type": "application/json",
-        },
-        data: {
-          instances: [{ prompt: thumbnailPrompt }],
-          parameters: {
-            sampleCount: 1,
-            aspectRatio: "9:16",
-            personGeneration: "dont_allow",
+    // 이미지 생성 함수 (재시도 로직 포함)
+    const generateImage = async (prompt, retryCount = 0) => {
+      try {
+        const response = await axios($, {
+          method: "POST",
+          url: IMAGEN_URL,
+          headers: {
+            "x-goog-api-key": this.gemini_api_key,
+            "Content-Type": "application/json",
           },
-        },
-        timeout: 180000,
-      });
-
-      if (imagenResponse.predictions?.[0]?.bytesBase64Encoded) {
-        imageBase64 = imagenResponse.predictions[0].bytesBase64Encoded;
-        $.export("imagen_success", true);
-      } else {
-        $.export("imagen_no_image", "No bytesBase64Encoded in response");
-        $.export("imagen_response_keys", Object.keys(imagenResponse || {}));
+          data: {
+            instances: [{ prompt }],
+            parameters: {
+              sampleCount: 1,
+              aspectRatio: this.aspect_ratio,
+              personGeneration: "allow_adult", // gemini-image-generator.mjs와 동일
+            },
+          },
+          timeout: 180000,
+        });
+        return response.predictions?.[0]?.bytesBase64Encoded || null;
+      } catch (e) {
+        const errorMsg = e.response?.data?.error?.message || e.message;
+        $.export(`imagen_error_attempt_${retryCount + 1}`, errorMsg);
+        return null;
       }
-    } catch (imagenError) {
-      $.export("imagen_error", imagenError.message);
-      $.export("imagen_error_status", imagenError.response?.status);
-      $.export("imagen_error_data", JSON.stringify(imagenError.response?.data || {}).substring(0, 500));
+    };
+
+    $.export("status", `Generating thumbnail with ${this.imagen_model}...`);
+
+    // 1차 시도
+    imageBase64 = await generateImage(thumbnailPrompt);
+
+    // 실패 시 간단한 프롬프트로 재시도
+    if (!imageBase64) {
+      $.export("retry_status", "Retrying with simplified prompt...");
+      const simplifiedPrompt = `${mainCharacterPrompt}, ${selectedStyle.mood}, YouTube thumbnail style, eye-catching, high contrast, professional quality, 8K, photorealistic. Real living dog. No text.`;
+      imageBase64 = await generateImage(simplifiedPrompt, 1);
     }
 
     // 이미지 생성 실패 시
@@ -161,47 +176,46 @@ export default defineComponent({
         ...viralOutput,
         thumbnail: null,
         thumbnail_url: null,
-        thumbnail_error: "Imagen API failed. Check imagen_error export for details.",
+        thumbnail_error: "Imagen API failed after retry. Check imagen_error exports for details.",
       };
     }
 
+    $.export("imagen_success", true);
+
     // =====================
-    // 5. GCS 업로드
+    // 5. GCS 업로드 (gemini-image-generator.mjs 형식 적용)
     // =====================
     const thumbnailFileName = `${folderName}/thumbnail_${Date.now()}.png`;
 
-    if (this.google_cloud) {
-      try {
-        $.export("status", "Uploading to GCS...");
+    try {
+      $.export("status", "Uploading to GCS...");
 
-        const { google } = await import("googleapis");
-        const { Readable } = await import("stream");
+      const { google } = await import("googleapis");
+      const { Readable } = await import("stream");
 
-        const auth = new google.auth.GoogleAuth({
-          credentials: JSON.parse(this.google_cloud.$auth.key_json),
-          scopes: ["https://www.googleapis.com/auth/devstorage.read_write"],
-        });
-        const storage = google.storage({ version: "v1", auth });
+      const auth = new google.auth.GoogleAuth({
+        credentials: JSON.parse(this.google_cloud.$auth.key_json),
+        scopes: ["https://www.googleapis.com/auth/devstorage.read_write"],
+      });
+      const storage = google.storage({ version: "v1", auth });
 
-        const imageBuffer = Buffer.from(imageBase64, "base64");
-        const bufferStream = new Readable();
-        bufferStream.push(imageBuffer);
-        bufferStream.push(null);
+      const imageBuffer = Buffer.from(imageBase64, "base64");
+      const bufferStream = new Readable();
+      bufferStream.push(imageBuffer);
+      bufferStream.push(null);
 
-        await storage.objects.insert({
-          bucket: this.gcs_bucket_name,
-          name: thumbnailFileName,
-          media: { mimeType: "image/png", body: bufferStream },
-          requestBody: { name: thumbnailFileName, contentType: "image/png" },
-        });
+      await storage.objects.insert({
+        bucket: this.gcs_bucket_name,
+        name: thumbnailFileName,
+        media: { mimeType: "image/png", body: bufferStream },
+        requestBody: { name: thumbnailFileName, contentType: "image/png" },
+      });
 
-        imageUrl = `https://storage.googleapis.com/${this.gcs_bucket_name}/${thumbnailFileName}`;
-        $.export("upload_success", true);
-      } catch (uploadError) {
-        $.export("upload_error", uploadError.message);
-      }
-    } else {
-      $.export("upload_skipped", "Google Cloud not connected");
+      imageUrl = `https://storage.googleapis.com/${this.gcs_bucket_name}/${thumbnailFileName}`;
+      $.export("upload_success", true);
+    } catch (uploadError) {
+      $.export("upload_error", uploadError.message);
+      // 업로드 실패해도 base64는 반환
     }
 
     $.export("$summary", `Thumbnail generated: ${headerKorean} (${this.imagen_model})`);

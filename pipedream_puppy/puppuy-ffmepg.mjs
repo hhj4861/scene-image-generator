@@ -214,7 +214,7 @@ export default defineComponent({
         url: `${this.ffmpeg_vm_url}/render/puppy`,
         headers: { "Content-Type": "application/json" },
         data: requestPayload,
-        timeout: 600000, // 10분 타임아웃
+        timeout: 900000, // 15분 타임아웃 (FFmpeg 성능 최적화 후에도 긴 영상 대비)
       });
 
       $.export("$summary", `Rendered ${response.total_duration?.toFixed(1) || "N/A"}s video with ${sortedVideos.length} clips via FFmpeg VM`);

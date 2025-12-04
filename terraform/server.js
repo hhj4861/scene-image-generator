@@ -25,50 +25,48 @@ if (!fs.existsSync(TEMP_DIR)) {
 const PEANUT_STYLE = {
   video_height_percent: 65,
   // ★★★ 영상 위치: 상단 17.5% ~ 하단 82.5% (65% 중앙) ★★★
-  // 헤더: 영상 바로 위에 배치 - 주황빛 배경 (푸터보다 연한색)
+  // 헤더: 영상 바로 위에 배치 - 배경 없이 텍스트 색상만 사용
   header: {
     font_size: 68,
-    color: "0xFFFFFF",         // 흰색 텍스트
+    color: "0xFFD700",         // 골드 (밝은 노란색)
     border_color: "0x333333",  // 어두운 테두리
-    border_width: 4,
-    y_percent: 8,              // 영상에 가깝게
+    border_width: 5,
+    y_percent: 4,              // 상단에 배치
     max_chars_per_line: 14,
-    bg_color: "0xFF8C00",      // 다크오렌지 배경 (진한 주황)
-    bg_padding: 15,
+    // bg_color 제거 - 배경색 없이 텍스트만
   },
   // 영어 헤더 (한글 바로 아래)
   header_english: {
-    font_size: 36,
-    color: "0xFFFFFF",
+    font_size: 32,
+    color: "0xFFFAF0",         // 밝은 흰색
     border_color: "0x333333",
-    border_width: 2,
-    y_offset: 75, // 한글 헤더 아래 오프셋
+    border_width: 3,
+    y_offset: 70, // 한글 헤더 아래 오프셋
   },
-  // ★★★ 채널명: 주황/노란색 배경 + 흰색 텍스트 ★★★
+  // ★★★ 채널명: 배경 없이 텍스트 색상만 사용 ★★★
   footer: {
-    font_size: 56,
-    color: "0xFFFFFF",         // 흰색 텍스트
-    border_color: "0x333333",
-    border_width: 2,
-    y_percent: 93,             // 맨 아래
-    bg_color: "0xFFA500",      // 오렌지 배경 (밝은 주황)
-    bg_padding: 18,
+    font_size: 52,
+    color: "0xFF6B6B",         // 코랄 레드 (밝은 빨간색)
+    border_color: "0x000000",
+    border_width: 4,
+    y_percent: 94,             // 맨 아래
+    // bg_color 제거 - 배경색 없이 텍스트만
   },
-  // 자막 (답변) - 영상 바로 아래 (y=84%) - 노란색
+  // 자막 (답변) - 영상 바로 아래 - 노란색 (충분히 위로 올림)
   subtitle: {
     font_size: 46,
     color: "0xFFE66D",         // 밝은 노란색
     border_color: "0x333333",
     border_width: 4,
-    y_percent: 84,
+    y_percent: 74,             // 84% → 74% (더 위로 올림)
   },
-  // 영어 자막 (답변 아래)
+  // 영어 자막 (답변 아래) - 위치를 더 위로 올림
   subtitle_english: {
-    font_size: 30,
+    font_size: 28,
     color: "0xFFFAF0",
     border_color: "0x333333",
     border_width: 3,
-    y_percent: 88,
+    y_percent: 79,             // 88% → 79% (더 위로 올림)
   },
   // 인터뷰어 자막 (하늘색)
   subtitle_interviewer: {
@@ -76,14 +74,14 @@ const PEANUT_STYLE = {
     color: "0x87CEEB",
     border_color: "0x333333",
     border_width: 4,
-    y_percent: 84,
+    y_percent: 74,             // 84% → 74% (더 위로 올림)
   },
   subtitle_interviewer_english: {
-    font_size: 30,
+    font_size: 28,
     color: "0xFFFAF0",
     border_color: "0x333333",
     border_width: 3,
-    y_percent: 88,
+    y_percent: 79,             // 88% → 79% (더 위로 올림)
   },
 };
 
@@ -365,7 +363,7 @@ app.post("/render/puppy", async (req, res) => {
       currentTime += duration;
     }
 
-    // 3. 영상 정규화
+    // 3. 영상 정규화 (★★★ 성능 최적화: ultrafast + crf 23 ★★★)
     console.log(`[${jobId}] Normalizing videos...`);
     const videoHeight = Math.round(height * PEANUT_STYLE.video_height_percent / 100);
 
@@ -373,8 +371,8 @@ app.post("/render/puppy", async (req, res) => {
       const normalizedPath = path.join(jobDir, `normalized_${index}.mp4`);
       await execAsync(`ffmpeg -y -i "${filePath}" \
         -vf "scale=${width}:${videoHeight}:force_original_aspect_ratio=decrease,pad=${width}:${videoHeight}:(ow-iw)/2:(oh-ih)/2:black,setsar=1" \
-        -c:v libx264 -preset fast -crf 18 \
-        -c:a aac -b:a 192k -ar 44100 -ac 2 \
+        -c:v libx264 -preset ultrafast -crf 23 -threads 0 \
+        -c:a aac -b:a 128k -ar 44100 -ac 2 \
         -r 30 \
         "${normalizedPath}"`, { maxBuffer: 1024 * 1024 * 50 });
       return { index, normalizedPath };
@@ -457,22 +455,13 @@ app.post("/render/puppy", async (req, res) => {
       }
     });
 
-    // ★★★ 상단 타이틀 필터 (한글 + 영어 2줄 + 배경) ★★★
+    // ★★★ 상단 타이틀 필터 (한글 + 영어 2줄, 배경색 없음) ★★★
     const titleLinesKorean = splitHeaderLines(header_text || "", PEANUT_STYLE.header.max_chars_per_line);
     const titleLineHeight = PEANUT_STYLE.header.font_size + 10;
     let headerFilters = "";
     let lastKoreanLineY = headerY;
 
-    // ★★★ 헤더 배경 (주황색 박스) - 텍스트 전에 그리기 ★★★
-    if (header_text && PEANUT_STYLE.header.bg_color) {
-      const headerLineCount = titleLinesKorean.length || 1;
-      const headerTotalHeight = headerLineCount * titleLineHeight + (header_text_english ? PEANUT_STYLE.header_english.y_offset : 0);
-      const headerBgHeight = headerTotalHeight + (PEANUT_STYLE.header.bg_padding || 15) * 2;
-      const headerBgY = headerY - (PEANUT_STYLE.header.bg_padding || 15);
-      headerFilters += `drawbox=x=0:y=${headerBgY}:w=${width}:h=${headerBgHeight}:color=${PEANUT_STYLE.header.bg_color}:t=fill,`;
-    }
-
-    // 1. 한글 헤더 (큰 폰트)
+    // 1. 한글 헤더 (큰 폰트, 텍스트 색상만)
     if (titleLinesKorean.length > 0) {
       titleLinesKorean.forEach((line, idx) => {
         const escapedLine = escapeText(line);
@@ -486,11 +475,11 @@ app.post("/render/puppy", async (req, res) => {
     if (header_text_english) {
       const englishY = lastKoreanLineY + PEANUT_STYLE.header_english.y_offset;
       const escapedEnglish = escapeText(header_text_english);
-      headerFilters += `drawtext=text='${escapedEnglish}':fontsize=${PEANUT_STYLE.header_english.font_size}:fontcolor=${PEANUT_STYLE.header_english.color}:borderw=${PEANUT_STYLE.header_english.border_width}:bordercolor=${PEANUT_STYLE.header_english.border_color}:x=(w-text_w)/2:y=${englishY},`;
+      headerFilters += `drawtext=text='${escapedEnglish}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${PEANUT_STYLE.header_english.font_size}:fontcolor=${PEANUT_STYLE.header_english.color}:borderw=${PEANUT_STYLE.header_english.border_width}:bordercolor=${PEANUT_STYLE.header_english.border_color}:x=(w-text_w)/2:y=${englishY},`;
     }
 
-    // ★★★ 푸터는 이모지 유지 (keepEmoji=true) ★★★
-    const escapedChannel = escapeText(footer_text || "땅콩이네", true);
+    // ★★★ 푸터는 이모지 제거 (깨지는 문제 방지) ★★★
+    const escapedChannel = escapeText(footer_text || "땅콩이네", false);
 
     // BGM 처리
     let bgmInput = "";
@@ -503,32 +492,26 @@ app.post("/render/puppy", async (req, res) => {
       audioMap = `-map "[aout]"`;
     }
 
-    // ★★★ 푸터 배경 (빨간색 박스) ★★★
-    const footerBgHeight = PEANUT_STYLE.footer.font_size + (PEANUT_STYLE.footer.bg_padding || 20) * 2;
-    const footerBgY = footerY - (PEANUT_STYLE.footer.bg_padding || 20);
-    const footerBgColor = PEANUT_STYLE.footer.bg_color || "0xCC0000";
-    const footerBgFilter = `drawbox=x=0:y=${footerBgY}:w=${width}:h=${footerBgHeight}:color=${footerBgColor}:t=fill,`;
-
-    // ★★★ 푸터 이모지 지원: font= 사용 + fontconfig 활성화 ★★★
-    // fontconfig가 자동으로 Noto Color Emoji로 폴백
+    // ★★★ 필터: 배경색 박스 없이 텍스트만 렌더링 ★★★
     const filterComplex = `
       color=black:s=${width}x${height}:d=${totalDuration}[bg];
       [1:v]scale=${width}:${videoHeight}:force_original_aspect_ratio=decrease,pad=${width}:${videoHeight}:(ow-iw)/2:(oh-ih)/2:black[video];
       [bg][video]overlay=0:${videoY}[combined];
-      [combined]${headerFilters}${footerBgFilter}drawtext=text='${escapedChannel}':font='NanumGothic Bold':fontsize=${PEANUT_STYLE.footer.font_size}:fontcolor=${PEANUT_STYLE.footer.color}:borderw=${PEANUT_STYLE.footer.border_width}:bordercolor=${PEANUT_STYLE.footer.border_color}:x=(w-text_w)/2:y=${footerY}${subtitleFilters}[out]${bgmFilter}
+      [combined]${headerFilters}drawtext=text='${escapedChannel}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${PEANUT_STYLE.footer.font_size}:fontcolor=${PEANUT_STYLE.footer.color}:borderw=${PEANUT_STYLE.footer.border_width}:bordercolor=${PEANUT_STYLE.footer.border_color}:x=(w-text_w)/2:y=${footerY}${subtitleFilters}[out]${bgmFilter}
     `.replace(/\n/g, "").replace(/\s+/g, " ").trim();
 
     // 7. 최종 렌더링
     console.log(`[${jobId}] Running final FFmpeg render...`);
     const outputFilePath = path.join(jobDir, "final_output.mp4");
 
+    // ★★★ 성능 최적화: preset veryfast + crf 23 + 멀티스레드 ★★★
     const ffmpegCmd = `ffmpeg -y \
       -f lavfi -i "color=black:s=${width}x${height}:d=${totalDuration}" \
       -i "${concatenatedPath}" ${bgmInput} \
       -filter_complex "${filterComplex}" \
       -map "[out]" ${audioMap} \
-      -c:v libx264 -preset slow -crf 18 \
-      -c:a aac -b:a 192k \
+      -c:v libx264 -preset veryfast -crf 23 -threads 0 \
+      -c:a aac -b:a 128k \
       -shortest \
       "${outputFilePath}"`;
 
