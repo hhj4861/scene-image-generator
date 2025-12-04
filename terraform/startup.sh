@@ -74,7 +74,7 @@ if (!fs.existsSync(TEMP_DIR)) {
 }
 
 // =====================
-// 땅콩이 스타일 설정
+// 땅콩이 스타일 설정 (기존)
 // =====================
 const PEANUT_STYLE = {
   video_height_percent: 65,
@@ -120,6 +120,56 @@ const PEANUT_STYLE = {
     border_color: "0x333333",
     border_width: 3,
     y_percent: 80,
+  },
+};
+
+// =====================
+// 보리 스타일 설정 (새로운 레이아웃)
+// 상단: 질문(한글+영어), 중앙: 영상 60%, 하단: 답변(한글+영어), 맨아래: 채널명
+// =====================
+const BORI_STYLE = {
+  video_height_percent: 60,
+  // 상단 질문 영역
+  question: {
+    font_size: 52,
+    color: "0xFFFFFF",
+    border_color: "0x000000",
+    border_width: 4,
+    y_percent: 3,
+    max_chars_per_line: 18,
+  },
+  question_english: {
+    font_size: 28,
+    color: "0xDDDDDD",
+    border_color: "0x000000",
+    border_width: 2,
+    y_percent: 7,
+    max_chars_per_line: 40,
+  },
+  // 하단 답변 영역
+  answer: {
+    font_size: 48,
+    color: "0xFFE66D",
+    border_color: "0x333333",
+    border_width: 4,
+    y_percent: 76,
+    max_chars_per_line: 18,
+  },
+  answer_english: {
+    font_size: 26,
+    color: "0xFFFAF0",
+    border_color: "0x333333",
+    border_width: 2,
+    y_percent: 81,
+    max_chars_per_line: 42,
+  },
+  // 채널명
+  channel: {
+    font_size: 60,
+    color: "0xFF6B6B",
+    border_color: "0x000000",
+    border_width: 3,
+    y_percent: 90,
   },
 };
 
@@ -561,6 +611,277 @@ app.post("/render/puppy", async (req, res) => {
   }
 });
 
+// =====================
+// 보리 스타일 렌더링 API (새 레이아웃)
+// 상단: 질문(한글+영어), 중앙: 영상 60%, 하단: 답변(한글+영어), 맨아래: 채널명
+// =====================
+app.post("/render/bori", async (req, res) => {
+  const jobId = uuidv4();
+  const jobDir = path.join(TEMP_DIR, jobId);
+
+  try {
+    fs.mkdirSync(jobDir, { recursive: true });
+
+    const {
+      videos,
+      bgm_url,
+      bgm_volume = 0.2,
+      channel_name = "땅콩이네",
+      width = 1080,
+      height = 1920,
+      output_bucket,
+      output_path,
+      folder_name,
+    } = req.body;
+
+    if (!videos || !videos.length) {
+      return res.status(400).json({ error: "No videos provided" });
+    }
+
+    console.log(`[${jobId}] Starting Bori style render: ${videos.length} videos`);
+    console.log(`[${jobId}] Output: ${output_bucket}/${output_path}`);
+
+    // 1. 영상 다운로드 및 길이 측정 (병렬)
+    console.log(`[${jobId}] Downloading ${videos.length} videos...`);
+    const sortedVideos = [...videos].sort((a, b) => a.index - b.index);
+
+    const downloadPromises = sortedVideos.map(async (video, i) => {
+      const filePath = path.join(jobDir, `input_${i}.mp4`);
+      const response = await axios({
+        method: "GET",
+        url: video.url,
+        responseType: "arraybuffer",
+        timeout: 120000,
+      });
+      fs.writeFileSync(filePath, Buffer.from(response.data));
+
+      let duration = video.duration || 6;
+      try {
+        const { stdout } = await execAsync(
+          `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`
+        );
+        duration = parseFloat(stdout.trim());
+      } catch {}
+
+      return { index: i, filePath, duration, video };
+    });
+
+    const downloadedVideos = await Promise.all(downloadPromises);
+    downloadedVideos.sort((a, b) => a.index - b.index);
+
+    const totalDuration = downloadedVideos.reduce((sum, v) => sum + v.duration, 0);
+    console.log(`[${jobId}] Total duration: ${totalDuration.toFixed(2)}s`);
+
+    // 2. 씬별 자막 데이터 생성 (질문/답변 분리)
+    const sceneTexts = [];
+    let currentTime = 0;
+
+    for (const { duration, video, index } of downloadedVideos) {
+      // 질문 텍스트 (인터뷰어/상단)
+      const question = video.question || video.dialogue?.interviewer || "";
+      const questionEnglish = video.question_english || video.dialogue?.interviewer_english || "";
+
+      // 답변 텍스트 (주인공/하단)
+      const answer = video.answer || video.dialogue?.script || video.dialogue?.["땅콩"] || video.narration || "";
+      const answerEnglish = video.answer_english || video.dialogue?.script_english || video.narration_english || "";
+
+      sceneTexts.push({
+        start: currentTime + 0.2,
+        end: currentTime + duration - 0.2,
+        question,
+        question_english: questionEnglish,
+        answer,
+        answer_english: answerEnglish,
+        scene_index: video.index || (index + 1),
+      });
+
+      currentTime += duration;
+    }
+
+    // 3. 영상 정규화 (60% 높이)
+    console.log(`[${jobId}] Normalizing videos...`);
+    const videoHeight = Math.round(height * BORI_STYLE.video_height_percent / 100);
+
+    const normalizePromises = downloadedVideos.map(async ({ index, filePath }) => {
+      const normalizedPath = path.join(jobDir, `normalized_${index}.mp4`);
+      await execAsync(`ffmpeg -y -i "${filePath}" \
+        -vf "scale=${width}:${videoHeight}:force_original_aspect_ratio=decrease,pad=${width}:${videoHeight}:(ow-iw)/2:(oh-ih)/2:black,setsar=1" \
+        -c:v libx264 -preset fast -crf 18 \
+        -c:a aac -b:a 192k -ar 44100 -ac 2 \
+        -r 30 \
+        "${normalizedPath}"`, { maxBuffer: 1024 * 1024 * 50 });
+      return { index, normalizedPath };
+    });
+
+    const normalizedVideos = await Promise.all(normalizePromises);
+    normalizedVideos.sort((a, b) => a.index - b.index);
+
+    // 4. 영상 연결
+    console.log(`[${jobId}] Concatenating videos...`);
+    const concatListPath = path.join(jobDir, "concat.txt");
+    const concatContent = normalizedVideos.map(v => `file '${v.normalizedPath}'`).join("\n");
+    fs.writeFileSync(concatListPath, concatContent);
+
+    const concatenatedPath = path.join(jobDir, "concatenated.mp4");
+    await execAsync(`ffmpeg -y -f concat -safe 0 -i "${concatListPath}" -c copy "${concatenatedPath}"`, { maxBuffer: 1024 * 1024 * 50 });
+
+    // 5. BGM 다운로드 (선택)
+    let bgmPath = null;
+    if (bgm_url) {
+      console.log(`[${jobId}] Downloading BGM...`);
+      bgmPath = path.join(jobDir, "bgm.mp3");
+      const bgmResponse = await axios({
+        method: "GET",
+        url: bgm_url,
+        responseType: "arraybuffer",
+        timeout: 60000,
+      });
+      fs.writeFileSync(bgmPath, Buffer.from(bgmResponse.data));
+    }
+
+    // 6. 필터 생성 (보리 스타일)
+    console.log(`[${jobId}] Building Bori style filter complex...`);
+    const videoY = Math.round((height - videoHeight) / 2);
+
+    // Y 좌표 계산
+    const questionY = Math.round(height * BORI_STYLE.question.y_percent / 100);
+    const questionEngY = Math.round(height * BORI_STYLE.question_english.y_percent / 100);
+    const answerY = Math.round(height * BORI_STYLE.answer.y_percent / 100);
+    const answerEngY = Math.round(height * BORI_STYLE.answer_english.y_percent / 100);
+    const channelY = Math.round(height * BORI_STYLE.channel.y_percent / 100);
+
+    // 자막 필터 생성
+    let textFilters = "";
+
+    sceneTexts.forEach((scene) => {
+      // 상단: 질문 (한글)
+      if (scene.question) {
+        const qLines = splitSubtitleLines(scene.question, BORI_STYLE.question.max_chars_per_line);
+        const qLineHeight = BORI_STYLE.question.font_size + 6;
+        qLines.forEach((line, idx) => {
+          const escapedLine = escapeText(line);
+          const lineY = questionY + (idx * qLineHeight);
+          textFilters += `,drawtext=text='${escapedLine}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${BORI_STYLE.question.font_size}:fontcolor=${BORI_STYLE.question.color}:borderw=${BORI_STYLE.question.border_width}:bordercolor=${BORI_STYLE.question.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t,${scene.start},${scene.end})'`;
+        });
+      }
+
+      // 상단: 질문 (영어)
+      if (scene.question_english) {
+        const qEngLines = splitEnglishSubtitleLines(scene.question_english, BORI_STYLE.question_english.max_chars_per_line);
+        const qEngLineHeight = BORI_STYLE.question_english.font_size + 4;
+        const qKorLineCount = scene.question ? splitSubtitleLines(scene.question, BORI_STYLE.question.max_chars_per_line).length : 0;
+        const qEngStartY = questionEngY + (qKorLineCount > 1 ? (qKorLineCount - 1) * (BORI_STYLE.question.font_size + 6) : 0);
+
+        qEngLines.forEach((line, idx) => {
+          const escapedLine = escapeText(line);
+          const lineY = qEngStartY + (idx * qEngLineHeight);
+          textFilters += `,drawtext=text='${escapedLine}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothic.ttf:fontsize=${BORI_STYLE.question_english.font_size}:fontcolor=${BORI_STYLE.question_english.color}:borderw=${BORI_STYLE.question_english.border_width}:bordercolor=${BORI_STYLE.question_english.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t,${scene.start},${scene.end})'`;
+        });
+      }
+
+      // 하단: 답변 (한글)
+      if (scene.answer) {
+        const aLines = splitSubtitleLines(scene.answer, BORI_STYLE.answer.max_chars_per_line);
+        const aLineHeight = BORI_STYLE.answer.font_size + 6;
+        aLines.forEach((line, idx) => {
+          const escapedLine = escapeText(line);
+          const lineY = answerY + (idx * aLineHeight);
+          textFilters += `,drawtext=text='${escapedLine}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${BORI_STYLE.answer.font_size}:fontcolor=${BORI_STYLE.answer.color}:borderw=${BORI_STYLE.answer.border_width}:bordercolor=${BORI_STYLE.answer.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t,${scene.start},${scene.end})'`;
+        });
+      }
+
+      // 하단: 답변 (영어)
+      if (scene.answer_english) {
+        const aEngLines = splitEnglishSubtitleLines(scene.answer_english, BORI_STYLE.answer_english.max_chars_per_line);
+        const aEngLineHeight = BORI_STYLE.answer_english.font_size + 4;
+        const aKorLineCount = scene.answer ? splitSubtitleLines(scene.answer, BORI_STYLE.answer.max_chars_per_line).length : 0;
+        const aEngStartY = answerEngY + (aKorLineCount > 1 ? (aKorLineCount - 1) * (BORI_STYLE.answer.font_size + 6) : 0);
+
+        aEngLines.forEach((line, idx) => {
+          const escapedLine = escapeText(line);
+          const lineY = aEngStartY + (idx * aEngLineHeight);
+          textFilters += `,drawtext=text='${escapedLine}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothic.ttf:fontsize=${BORI_STYLE.answer_english.font_size}:fontcolor=${BORI_STYLE.answer_english.color}:borderw=${BORI_STYLE.answer_english.border_width}:bordercolor=${BORI_STYLE.answer_english.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t,${scene.start},${scene.end})'`;
+        });
+      }
+    });
+
+    // 채널명 (항상 표시)
+    const escapedChannel = escapeText(channel_name);
+    const channelFilter = `drawtext=text='${escapedChannel}':fontfile=/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf:fontsize=${BORI_STYLE.channel.font_size}:fontcolor=${BORI_STYLE.channel.color}:borderw=${BORI_STYLE.channel.border_width}:bordercolor=${BORI_STYLE.channel.border_color}:x=(w-text_w)/2:y=${channelY}`;
+
+    // BGM 처리
+    let bgmInput = "";
+    let bgmFilter = "";
+    let audioMap = "-map 1:a";
+
+    if (bgmPath) {
+      bgmInput = `-i "${bgmPath}"`;
+      bgmFilter = `;[1:a]volume=1[va];[2:a]volume=${bgm_volume},afade=t=out:st=${totalDuration - 2}:d=2[ba];[va][ba]amix=inputs=2:duration=first[aout]`;
+      audioMap = `-map "[aout]"`;
+    }
+
+    // 최종 필터
+    const filterComplex = `
+      color=black:s=${width}x${height}:d=${totalDuration}[bg];
+      [1:v]scale=${width}:${videoHeight}:force_original_aspect_ratio=decrease,pad=${width}:${videoHeight}:(ow-iw)/2:(oh-ih)/2:black[video];
+      [bg][video]overlay=0:${videoY}[combined];
+      [combined]${channelFilter}${textFilters}[out]${bgmFilter}
+    `.replace(/\n/g, "").replace(/\s+/g, " ").trim();
+
+    // 7. 최종 렌더링
+    console.log(`[${jobId}] Running final FFmpeg render (Bori style)...`);
+    const outputFilePath = path.join(jobDir, "final_output.mp4");
+
+    const ffmpegCmd = `ffmpeg -y \
+      -f lavfi -i "color=black:s=${width}x${height}:d=${totalDuration}" \
+      -i "${concatenatedPath}" ${bgmInput} \
+      -filter_complex "${filterComplex}" \
+      -map "[out]" ${audioMap} \
+      -c:v libx264 -preset slow -crf 18 \
+      -c:a aac -b:a 192k \
+      -shortest \
+      "${outputFilePath}"`;
+
+    await execAsync(ffmpegCmd, { maxBuffer: 1024 * 1024 * 100 });
+
+    // 8. GCS 업로드
+    console.log(`[${jobId}] Uploading to GCS: ${output_bucket}/${output_path}`);
+    const bucket = storage.bucket(output_bucket);
+    await bucket.upload(outputFilePath, {
+      destination: output_path,
+      metadata: { contentType: "video/mp4" },
+    });
+
+    const publicUrl = `https://storage.googleapis.com/${output_bucket}/${output_path}`;
+
+    // 9. 정리
+    fs.rmSync(jobDir, { recursive: true, force: true });
+
+    console.log(`[${jobId}] Bori style render complete: ${publicUrl}`);
+
+    res.json({
+      success: true,
+      job_id: jobId,
+      url: publicUrl,
+      folder_name: folder_name,
+      total_duration: totalDuration,
+      render_style: "bori",
+      stats: {
+        video_count: videos.length,
+        has_bgm: !!bgm_url,
+        scene_count: sceneTexts.length,
+      },
+    });
+
+  } catch (error) {
+    console.error(`[${jobId}] Error:`, error.message);
+    if (fs.existsSync(jobDir)) {
+      fs.rmSync(jobDir, { recursive: true, force: true });
+    }
+    res.status(500).json({ error: error.message, job_id: jobId });
+  }
+});
+
 // 기본 렌더링 API (단순 연결)
 app.post("/render", async (req, res) => {
   const jobId = uuidv4();
@@ -637,7 +958,8 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`  GET  /version - FFmpeg version`);
   console.log(`  GET  /fonts - Available Korean fonts`);
   console.log(`  POST /render - Basic video concatenation`);
-  console.log(`  POST /render/puppy - Puppy style render (subtitles, header, footer, BGM)`);
+  console.log(`  POST /render/puppy - Puppy style (header + subtitle + footer)`);
+  console.log(`  POST /render/bori - Bori style (question + answer + channel)`);
 });
 SERVEREOF
 
