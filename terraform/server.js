@@ -116,11 +116,16 @@ const removeEmojis = (text) => {
         .trim();
 };
 
+const MAX_CHARS_PER_LINE_ENG = 25; // 영어 자막 줄바꿈 기준
+
+// 텍스트 이스케이프 함수 (FFmpeg drawtext용)
 const escapeText = (text, keepEmoji = false) => {
     const cleanText = keepEmoji ? text?.trim() || "" : removeEmojis(text);
+    // 1. 작은따옴표(')를 유니코드 Right Single Quotation Mark(’)로 변경하여 
+    //    Shell 및 FFmpeg 파싱 충돌 원천 차단
     return cleanText
+        .replace(/'/g, "\u2019")
         .replace(/\\/g, "\\\\")
-        .replace(/'/g, "'\\''")
         .replace(/:/g, "\\:")
         .replace(/\[/g, "\\[")
         .replace(/\]/g, "\\]")
