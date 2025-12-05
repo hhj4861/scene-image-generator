@@ -1,57 +1,3 @@
-#!/bin/bash
-set -e
-
-echo "=========================================="
-echo "FFmpeg Render Server Setup Starting..."
-echo "=========================================="
-
-# 시스템 업데이트
-apt-get update && apt-get upgrade -y
-
-# FFmpeg 설치
-echo "Installing FFmpeg..."
-apt-get install -y ffmpeg
-
-# 한글 폰트 + 이모지 폰트 설치
-echo "Installing Korean fonts and Emoji fonts..."
-apt-get install -y fonts-noto-cjk fonts-nanum fonts-noto-color-emoji
-
-# Node.js 20 LTS 설치
-echo "Installing Node.js..."
-curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-apt-get install -y nodejs
-
-# PM2 설치 (프로세스 매니저)
-npm install -g pm2
-
-# 작업 디렉토리 생성
-mkdir -p /opt/ffmpeg-api
-cd /opt/ffmpeg-api
-
-# package.json 생성
-cat > package.json << 'EOF'
-{
-  "name": "ffmpeg-render-api",
-  "version": "2.0.0",
-  "description": "FFmpeg Render API for Pipedream Puppy",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2",
-    "@google-cloud/storage": "^7.7.0",
-    "axios": "^1.6.0",
-    "uuid": "^9.0.0"
-  }
-}
-EOF
-
-# 의존성 설치
-npm install
-
-# API 서버 코드 생성
-cat > server.js << 'SERVEREOF'
 /**
  * FFmpeg Render Server - 성능 최적화 버전
  * 
@@ -119,8 +65,8 @@ const PEANUT_STYLE = {
         y_offset: 70,
     },
     footer: {
-        font_size: 64, // 52 -> 64 (Similar to header)
-        color: "0xFFC000CC", // Darker Amber with ~80% opacity
+        font_size: 52,
+        color: "0xFF6B6B",
         border_color: "0x000000",
         border_width: 4,
         y_percent: 85, // 94% -> 85% (Safe zone)
@@ -156,7 +102,7 @@ const PEANUT_STYLE = {
 };
 
 // =====================
-// 헬퍼 함수들
+// 헬퍼 함수들 (동일)
 // =====================
 const removeEmojis = (text) => {
     if (!text) return "";
@@ -321,7 +267,7 @@ app.post("/render/puppy", async (req, res) => {
         const MAX_CHARS_PER_LINE_ENG = Math.floor(availableWidth / ENG_CHAR_WIDTH);
 
         // =====================
-        // 1. 영상 다운로드 및 길이 측정 (병렬)
+        // 1. 영상 다운로드 및 길이 측정 (병렬) - ★★★ 정규화 없음! ★★★
         // =====================
         console.log(`[${jobId}] [1/4] Downloading ${videos.length} videos...`);
         const downloadStart = Date.now();
@@ -375,13 +321,6 @@ app.post("/render/puppy", async (req, res) => {
             const isInterviewQuestion = video.is_interview_question || video.scene_type === "interview_question";
             const isPerformance = video.is_performance && !narration;
 
-            console.log(`[DEBUG] Scene ${sceneNum}:`, {
-                narration: narration?.substring(0, 20),
-                narrationEnglish: narrationEnglish?.substring(0, 20),
-                hasDialogue: !!video.dialogue,
-                scriptEnglish: video.dialogue?.script_english
-            });
-
             if (narration && !isPerformance && subtitle_enabled) {
                 subtitles.push({
                     start: currentTime + 0.3,
@@ -428,7 +367,8 @@ app.post("/render/puppy", async (req, res) => {
         const inputFiles = downloadedVideos.map(v => `-i "${v.filePath}"`).join(" ");
         const numVideos = downloadedVideos.length;
 
-        // 비디오 scale + setpts
+        // ★★★ 핵심 최적화: filter_complex에서 scale + concat + overlay를 한 번에 ★★★
+        // 각 비디오 scale + setpts
         let videoScaleFilters = "";
         let concatInputs = "";
         let audioConcatInputs = "";
@@ -445,32 +385,8 @@ app.post("/render/puppy", async (req, res) => {
         // 배경 생성 및 비디오 오버레이
         const bgFilter = `color=black:s=${width}x${height}:d=${totalDuration}[bg];[bg][concatv]overlay=0:${videoY}[combined];`;
 
-        // =====================
-        // 텍스트 필터 배열 생성 (콤마 문제 해결)
-        // =====================
-        const drawFilters = [];
-
-        // 1. 헤더 필터
-        const titleLinesKorean = splitHeaderLines(header_text || "", PEANUT_STYLE.header.max_chars_per_line);
-        const titleLineHeight = PEANUT_STYLE.header.font_size + 10;
-        let lastKoreanLineY = headerY;
-
-        if (titleLinesKorean.length > 0) {
-            titleLinesKorean.forEach((line, idx) => {
-                const escapedLine = escapeText(line);
-                const lineY = headerY + (idx * titleLineHeight);
-                lastKoreanLineY = lineY;
-                drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.header.font_size}:fontcolor=${PEANUT_STYLE.header.color}:borderw=${PEANUT_STYLE.header.border_width}:bordercolor=${PEANUT_STYLE.header.border_color}:x=(w-text_w)/2:y=${lineY}`);
-            });
-        }
-
-        if (header_text_english) {
-            const englishY = lastKoreanLineY + PEANUT_STYLE.header_english.y_offset;
-            const escapedEnglish = escapeText(header_text_english);
-            drawFilters.push(`drawtext=text='${escapedEnglish}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.header_english.font_size}:fontcolor=${PEANUT_STYLE.header_english.color}:borderw=${PEANUT_STYLE.header_english.border_width}:bordercolor=${PEANUT_STYLE.header_english.border_color}:x=(w-text_w)/2:y=${englishY}`);
-        }
-
-        // 2. 자막 필터
+        // 자막 필터 생성
+        let subtitleFilters = "";
         subtitles.forEach((sub) => {
             const isInterviewer = sub.speaker === "interviewer";
             const subStyle = isInterviewer ? PEANUT_STYLE.subtitle_interviewer : PEANUT_STYLE.subtitle;
@@ -487,9 +403,7 @@ app.post("/render/puppy", async (req, res) => {
                     let escapedLine = escapeText(line);
                     if (idx === 0 && isInterviewer) escapedLine = `Q\\: ${escapedLine}`;
                     const lineY = korStartY + (idx * lineHeight);
-                    if (subtitle_enabled) {
-                        drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${subStyle.font_size}:fontcolor=${subStyle.color}:borderw=${subStyle.border_width}:bordercolor=${subStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})'`);
-                    }
+                    subtitleFilters += `drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${subStyle.font_size}:fontcolor=${subStyle.color}:borderw=${subStyle.border_width}:bordercolor=${subStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})',`;
                 });
             }
 
@@ -502,16 +416,36 @@ app.post("/render/puppy", async (req, res) => {
                         let escapedLine = escapeText(line);
                         if (idx === 0 && isInterviewer) escapedLine = `Q\\: ${escapedLine}`;
                         const lineY = engStartY + (idx * engLineHeight);
-                        drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${subEngStyle.font_size}:fontcolor=${subEngStyle.color}:borderw=${subEngStyle.border_width}:bordercolor=${subEngStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})'`);
+                        subtitleFilters += `drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${subEngStyle.font_size}:fontcolor=${subEngStyle.color}:borderw=${subEngStyle.border_width}:bordercolor=${subEngStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})',`;
                     });
                 }
             }
         });
 
-        // 3. 푸터 필터 (하단)
+        // 헤더 필터
+        const titleLinesKorean = splitHeaderLines(header_text || "", PEANUT_STYLE.header.max_chars_per_line);
+        const titleLineHeight = PEANUT_STYLE.header.font_size + 10;
+        let headerFilters = "";
+        let lastKoreanLineY = headerY;
+
+        if (titleLinesKorean.length > 0) {
+            titleLinesKorean.forEach((line, idx) => {
+                const escapedLine = escapeText(line);
+                const lineY = headerY + (idx * titleLineHeight);
+                lastKoreanLineY = lineY;
+                headerFilters += `drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.header.font_size}:fontcolor=${PEANUT_STYLE.header.color}:borderw=${PEANUT_STYLE.header.border_width}:bordercolor=${PEANUT_STYLE.header.border_color}:x=(w-text_w)/2:y=${lineY},`;
+            });
+        }
+
+        if (header_text_english) {
+            const englishY = lastKoreanLineY + PEANUT_STYLE.header_english.y_offset;
+            const escapedEnglish = escapeText(header_text_english);
+            headerFilters += `drawtext=text='${escapedEnglish}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.header_english.font_size}:fontcolor=${PEANUT_STYLE.header_english.color}:borderw=${PEANUT_STYLE.header_english.border_width}:bordercolor=${PEANUT_STYLE.header_english.border_color}:x=(w-text_w)/2:y=${englishY},`;
+        }
+
+        // 푸터 필터
         const escapedChannel = escapeText(footer_text || "땅콩이네", false);
-        // Alpha separated, color 6 hex
-        drawFilters.push(`drawtext=text='${escapedChannel}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.footer.font_size}:fontcolor=0xFFC000:alpha=0.8:borderw=${PEANUT_STYLE.footer.border_width}:bordercolor=${PEANUT_STYLE.footer.border_color}:x=(w-text_w)/2:y=${footerY}`);
+        const footerFilter = `drawtext=text='${escapedChannel}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.footer.font_size}:fontcolor=${PEANUT_STYLE.footer.color}:borderw=${PEANUT_STYLE.footer.border_width}:bordercolor=${PEANUT_STYLE.footer.border_color}:x=(w-text_w)/2:y=${footerY}`;
 
         // BGM 처리
         let bgmInput = "";
@@ -523,35 +457,19 @@ app.post("/render/puppy", async (req, res) => {
             audioFilter = `[concata]volume=1[va];[${bgmInputIndex}:a]volume=${bgm_volume},afade=t=out:st=${totalDuration - 2}:d=2[ba];[va][ba]amix=inputs=2:duration=first[aout]`;
         }
 
-        // 전체 filter_complex 구성
-        const textOverlayFilters = drawFilters.length > 0
-            ? `[combined]${drawFilters.join(",")}[outv];`
-            : `[combined]null[outv];`;
-
-        const filterComplex = `${videoScaleFilters}${concatFilter}${bgFilter}${textOverlayFilters}${audioFilter}`;
+        // 전체 filter_complex (한 줄로)
+        const filterComplex = `${videoScaleFilters}${concatFilter}${bgFilter}[combined]${headerFilters}${subtitleFilters}${footerFilter}[outv];${audioFilter}`;
 
         const outputFilePath = path.join(jobDir, "final_output.mp4");
 
         // ★★★ 최적화: ultrafast 프리셋 + threads 0 ★★★
         const ffmpegCmd = `ffmpeg -y ${inputFiles} ${bgmInput} -filter_complex "${filterComplex}" -map "[outv]" -map "[aout]" -c:v libx264 -preset ultrafast -crf 23 -threads 0 -c:a aac -b:a 128k -shortest "${outputFilePath}"`;
 
-        // DEBUG: Log the full command
-        console.log(`[${jobId}] FFmpeg Command Length: ${ffmpegCmd.length}`);
-        console.log(`[${jobId}] FFmpeg Filter Complex:`, filterComplex);
-
-
         // FFmpeg 실행 (더 큰 버퍼)
-        const { stdout, stderr } = await execAsync(ffmpegCmd, { maxBuffer: 1024 * 1024 * 200 });
-        if (stderr) {
-             // 진행 상황 로그가 대부분이겠지만 오류/경고 확인용
-             // 너무 길 수 있으므로 마지막 20줄만? 아니면 전체 로그 파일? 
-             // 일단 전체 출력.
-             console.log(`[${jobId}] FFmpeg Stderr (partial):`, stderr.slice(-1000));
-        }
+        await execAsync(ffmpegCmd, { maxBuffer: 1024 * 1024 * 200 });
 
         const renderTime = ((Date.now() - renderStart) / 1000).toFixed(2);
         console.log(`[${jobId}] ✅ Render complete: ${renderTime}s`);
-
 
         // =====================
         // 5. GCS 업로드
@@ -559,23 +477,17 @@ app.post("/render/puppy", async (req, res) => {
         console.log(`[${jobId}] Uploading to GCS...`);
         const uploadStart = Date.now();
 
-        if (!process.env.SKIP_UPLOAD) {
-            const bucket = storage.bucket(output_bucket);
-            await bucket.upload(outputFilePath, {
-                destination: output_path,
-                metadata: { contentType: "video/mp4" },
-            });
-        } else {
-            console.log(`[${jobId}] Skipping GCS upload (SKIP_UPLOAD set)`);
-        }
+        const bucket = storage.bucket(output_bucket);
+        await bucket.upload(outputFilePath, {
+            destination: output_path,
+            metadata: { contentType: "video/mp4" },
+        });
 
         const uploadTime = ((Date.now() - uploadStart) / 1000).toFixed(2);
         const publicUrl = `https://storage.googleapis.com/${output_bucket}/${output_path}`;
 
         // 정리
-        if (!process.env.SKIP_UPLOAD) {
-            fs.rmSync(jobDir, { recursive: true, force: true });
-        }
+        fs.rmSync(jobDir, { recursive: true, force: true });
 
         const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
         console.log(`[${jobId}] 🎉 TOTAL TIME: ${totalTime}s (Download: ${downloadTime}s, Render: ${renderTime}s, Upload: ${uploadTime}s)`);
@@ -622,14 +534,3 @@ app.listen(PORT, "0.0.0.0", () => {
     console.log(`  GET  /fonts - Available Korean fonts`);
     console.log(`  POST /render/puppy - Puppy style render (OPTIMIZED)`);
 });
-SERVEREOF
-
-# PM2로 서버 시작
-pm2 start server.js --name ffmpeg-api
-pm2 save
-pm2 startup systemd -u root --hp /root
-
-echo "=========================================="
-echo "FFmpeg Render Server Setup Complete!"
-echo "API available at http://$(curl -s ifconfig.me):3000"
-echo "=========================================="
