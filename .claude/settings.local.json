@@ -80,7 +80,13 @@
       "Bash(terraform taint:*)",
       "Bash(GOOGLE_APPLICATION_CREDENTIALS=/Users/admin/Desktop/workSpace/socar/scene-image-generator/google-credentials.json node:*)",
       "Bash(brew list:*)",
-      "Bash(/usr/local/bin/gcloud:*)"
+      "Bash(/usr/local/bin/gcloud:*)",
+      "Bash(pip3 install:*)",
+      "Bash(/Users/admin/Library/Python/3.9/bin/yt-dlp:*)",
+      "Bash(/opt/homebrew/bin/ffprobe:*)",
+      "Bash(/opt/homebrew/bin/ffmpeg:*)",
+      "Bash(export PATH=\"/Users/admin/.nvm/versions/node/v16.18.1/bin:$PATH\")",
+      "Bash(export NODE_TLS_REJECT_UNAUTHORIZED=0)"
     ],
     "deny": [],
     "ask": []
