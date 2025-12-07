@@ -7,8 +7,8 @@ export default defineComponent({
   props: {
     script_generator_output: {
       type: "string",
-      label: "Script Generator Output (JSON)",
-      description: "{{JSON.stringify(steps.Puppy_Script_Generator.$return_value)}}",
+      label: "Script Source (Generator or Editor)",
+      description: "Puppy Script Generator 또는 Script Editor의 출력값({{steps.Puppy_Script_Editor.$return_value}} or {{steps.Puppy_Script_Generator.$return_value}})",
     },
     gemini_api_key: {
       type: "string",

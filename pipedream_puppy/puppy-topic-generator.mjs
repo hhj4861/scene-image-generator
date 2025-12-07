@@ -112,24 +112,39 @@ export default defineComponent({
       default: "interview",
     },
 
-    // Gemini API 설정
+    // LLM 설정
     gemini_api_key: {
       type: "string",
       label: "Gemini API Key",
-      description: "Google AI Studio API Key (https://aistudio.google.com)",
+      description: "Gemini 모델 사용 시 필수 (https://aistudio.google.com)",
+      secret: true,
+      optional: true,
+    },
+    llm_model: {
+      type: "string",
+      label: "LLM Model",
+      description: "토픽 생성에 사용할 모델을 선택하세요.",
+      options: [
+        { label: "Gemini 2.0 Flash", value: "gemini-2.0-flash" },
+        { label: "Claude 4.5 Sonnet (Preview)", value: "claude-sonnet-4-5-2025092" },
+        { label: "Claude 3.5 Sonnet (Stable)", value: "claude-3-5-sonnet-20240620" },
+        { label: "GPT-4o", value: "gpt-4o" },
+      ],
+      default: "gemini-2.0-flash",
+    },
+    anthropic_api_key: {
+      type: "string",
+      label: "Anthropic API Key",
+      description: "Claude 모델 사용 시 필수",
+      optional: true,
       secret: true,
     },
-    gemini_model: {
+    openai_api_key: {
       type: "string",
-      label: "Gemini Model",
-      description: "사용할 Gemini 모델",
-      options: [
-        { label: "Gemini 2.5 Pro Preview", value: "gemini-2.5-pro-preview-05-06" },
-        { label: "Gemini 2.0 Flash (Fast)", value: "gemini-2.0-flash-exp" },
-        { label: "Gemini 1.5 Pro", value: "gemini-1.5-pro" },
-        { label: "Gemini 1.5 Flash", value: "gemini-1.5-flash" },
-      ],
-      default: "gemini-2.0-flash-exp",
+      label: "OpenAI API Key",
+      description: "GPT 모델 사용 시 필수",
+      optional: true,
+      secret: true,
     },
 
     // 생성 개수
@@ -185,6 +200,75 @@ export default defineComponent({
 
   async run({ $ }) {
     const HISTORY_FILE = "_puppy_topic_history.json";
+
+    // ==========================================
+    // Unified LLM Caller
+    // ==========================================
+    const callLLM = async (prompt, temperature = 0.9) => {
+      const model = this.llm_model === "custom" ? this.custom_llm_model : this.llm_model;
+      if (!model) throw new Error("Custom model ID is missing.");
+
+      // 1. Gemini
+      if (model.startsWith("gemini")) {
+        // Fallback for missing key if using default
+        const apiKey = this.gemini_api_key;
+        if (!apiKey) throw new Error("Gemini API Key is missing.");
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+        const resp = await axios($, {
+          url,
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+          data: {
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature, maxOutputTokens: 8192 }
+          }
+        });
+        return resp.candidates[0].content.parts[0].text;
+      }
+
+      // 2. Claude
+      if (model.startsWith("claude")) {
+        if (!this.anthropic_api_key) throw new Error("Anthropic API Key is missing.");
+        const resp = await axios($, {
+          url: "https://api.anthropic.com/v1/messages",
+          method: "POST",
+          headers: {
+            "x-api-key": this.anthropic_api_key,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json"
+          },
+          data: {
+            model: model,
+            max_tokens: 8192,
+            temperature: temperature,
+            messages: [{ role: "user", content: prompt }]
+          }
+        });
+        return resp.content[0].text;
+      }
+
+      // 3. GPT
+      if (model.startsWith("gpt")) {
+        if (!this.openai_api_key) throw new Error("OpenAI API Key is missing.");
+        const resp = await axios($, {
+          url: "https://api.openai.com/v1/chat/completions",
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${this.openai_api_key}`,
+            "Content-Type": "application/json"
+          },
+          data: {
+            model: model,
+            messages: [{ role: "user", content: prompt }],
+            temperature: temperature
+          }
+        });
+        return resp.choices[0].message.content;
+      }
+
+      throw new Error(`Unsupported model: ${model}`);
+    };
 
     // =====================
     // 1. 날짜/시간/계절 기반 동적 요소 생성
@@ -1030,50 +1114,30 @@ Be CREATIVE and match the ${currentConfig.name} content type perfectly!
 Tone: ${currentConfig.tone}
 Mood: ${currentConfig.mood}`;
 
-    // =====================
-    // 3. Gemini API 호출
-    // =====================
-    const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${this.gemini_model}:generateContent`;
-
-    const aiResponse = await axios($, {
-      url: GEMINI_API_URL,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": this.gemini_api_key,
-      },
-      data: {
-        contents: [
-          {
-            parts: [{ text: prompt }],
-          },
-        ],
-        generationConfig: {
-          temperature: 1.0,
-          maxOutputTokens: 8192,
-        },
-      },
-    });
-
     let result;
     try {
-      let responseContent = aiResponse.candidates[0].content.parts[0].text.trim();
+      // ★★★ AI GENERATION STAGE using callLLM ★★★
+      $.export("status", `Generating topics using ${this.llm_model}...`);
 
-      if (responseContent.startsWith("```json")) {
-        responseContent = responseContent.replace(/^```json\s*/, "").replace(/\s*```$/, "");
-      } else if (responseContent.startsWith("```")) {
-        responseContent = responseContent.replace(/^```\s*/, "").replace(/\s*```$/, "");
+      const responseText = await callLLM(prompt, 0.9);
+      const responseContent = responseText.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+
+      try {
+        result = JSON.parse(responseContent);
+      } catch (parseError) {
+        // JSON 파싱 실패 시, 부분적인 수정을 시도
+        console.warn("JSON Parse Error, attempting basic cleanup...");
+        const jsonMatch = responseContent.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          result = JSON.parse(jsonMatch[0]);
+        } else {
+          throw parseError;
+        }
       }
 
-      const jsonMatch = responseContent.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        responseContent = jsonMatch[0];
-      }
-
-      result = JSON.parse(responseContent);
     } catch (error) {
-      $.export("parse_error", error.message);
-      throw new Error(`Failed to parse Gemini response: ${error.message}`);
+      $.export("generation_error", error.message);
+      throw new Error(`Failed to generate topic with ${this.llm_model}: ${error.message}`);
     }
 
     // =====================
@@ -1102,14 +1166,14 @@ Mood: ${currentConfig.mood}`;
         // viral_potential이 가장 높은 것 선택
         selectedIdea = uniqueIdeas.reduce((best, current) =>
           (current.viral_potential > best.viral_potential) ? current : best
-        , uniqueIdeas[0]);
+          , uniqueIdeas[0]);
       }
     } else {
       // 모든 아이디어가 유사하면 가장 viral_potential이 높은 것 선택 (경고와 함께)
       $.export("warning", "AI judged all generated ideas as similar to previous stories. Selecting best available.");
       selectedIdea = result.ideas.reduce((best, current) =>
         (current.viral_potential > best.viral_potential) ? current : best
-      , result.ideas[0]);
+        , result.ideas[0]);
     }
 
     // =====================

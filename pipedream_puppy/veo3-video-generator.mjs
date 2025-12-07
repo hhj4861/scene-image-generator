@@ -64,6 +64,12 @@ export default defineComponent({
       description: "특정 씬만 생성. 예: '0,2,4' 또는 '1-5' 또는 '0,3-6,9'. 비워두면 전체 생성.",
       optional: true,
     },
+    manual_image_folder: {
+      type: "string",
+      label: "Manual Image Folder (GCS Path) - Optional",
+      description: "이미지 생성 결과를 무시하고, 특정 GCS 폴더의 이미지를 사용하려면 입력하세요. (예: folder_name 또는 gs://bucket/folder_name). 파일명 순서대로 씬에 매핑됩니다.",
+      optional: true,
+    },
   },
 
   async run({ steps, $ }) {
@@ -80,18 +86,92 @@ export default defineComponent({
       ? this.video_generator_output.substring(0, 500)
       : JSON.stringify(this.video_generator_output).substring(0, 500));
 
-    // images_data가 비어있거나 없는 경우 체크
-    if (!this.images_data) {
-      throw new Error("images_data is empty or undefined. Check if Image Generator step ran successfully and the step name matches.");
+    // =====================
+    // 1-A. 수동 이미지 폴더 확인
+    // =====================
+    let manualImages = [];
+    if (this.manual_image_folder) {
+      const { google } = await import("googleapis");
+      const auth = new google.auth.GoogleAuth({
+        credentials: JSON.parse(this.google_cloud.$auth.key_json),
+        scopes: ["https://www.googleapis.com/auth/cloud-platform"],
+      });
+      const storage = google.storage({ version: "v1", auth });
+
+      let bucketName = this.gcs_bucket_name;
+
+      // ★★★ Smart Bucket Defaulting ★★★
+      // If the current bucket is the default VIDEO output bucket (`shorts-videos...`), 
+      // but we are looking for source IMAGES, default to the known IMAGE source bucket (`scene-image...`).
+      // The user can still override this by including a bucket name in the path (e.g. "my-bucket/folder").
+      if (bucketName === "shorts-videos-storage-mcp-test-457809") {
+        bucketName = "scene-image-generator-storage-mcp-test-457809";
+        $.export("status", `Defaulting manual image source to: ${bucketName}`);
+      }
+
+      let prefix = this.manual_image_folder;
+      if (prefix.startsWith("gs://")) {
+        const parts = prefix.replace("gs://", "").split("/");
+        bucketName = parts[0];
+        prefix = parts.slice(1).join("/");
+      } else {
+        // gs:// 없이 BucketName/Folder/Path 형식으로 입력했을 경우 처리 ("storage" 키워드 포함 시 버킷으로 간주)
+        const parts = prefix.split("/");
+        if (parts.length > 1) {
+          const firstPart = parts[0];
+          // 1. 현재 설정된 버킷명과 동일한 경우 (중복 입력)
+          if (firstPart === this.gcs_bucket_name) {
+            prefix = parts.slice(1).join("/");
+          }
+          // 2. 다른 버킷명인 경우 (프로젝트 규칙: "storage" 포함 가정)
+          else if (firstPart.includes("storage") || firstPart.endsWith("457809")) {
+            bucketName = firstPart;
+            prefix = parts.slice(1).join("/");
+            $.export("implicit_bucket_detected", bucketName);
+          }
+        }
+      }
+      if (!prefix.endsWith("/")) prefix += "/";
+
+      $.export("status", `Listing images from ${bucketName}/${prefix}...`);
+
+      try {
+        const res = await storage.objects.list({ bucket: bucketName, prefix: prefix });
+        const files = res.data.items || [];
+        const imageFiles = files
+          .filter(f => f.name.match(/\.(png|jpg|jpeg)$/i))
+          .sort((a, b) => a.name.localeCompare(b.name));
+
+        if (imageFiles.length > 0) {
+          manualImages = imageFiles.map((f, idx) => ({
+            index: idx + 1,
+            url: `https://storage.googleapis.com/${bucketName}/${f.name}`,
+            filename: f.name.split('/').pop()
+          }));
+          $.export("manual_images_found", manualImages.length);
+        } else {
+          console.warn("No images found in manual folder.");
+        }
+      } catch (e) {
+        throw new Error(`Manual image listing failed: ${e.message}`);
+      }
     }
 
-    let imagesData;
-    try {
-      imagesData = typeof this.images_data === "string"
-        ? JSON.parse(this.images_data)
-        : this.images_data;
-    } catch (e) {
-      throw new Error(`Failed to parse images_data: ${e.message}. Raw: ${String(this.images_data).substring(0, 200)}`);
+    // =====================
+    // 1-B. Parsing Logic
+    // =====================
+    // images_data가 비어있어도 manual_image_folder가 있으면 통과
+    if (!this.images_data && !manualImages.length) {
+      throw new Error("images_data is empty AND no manual images found.");
+    }
+
+    let imagesData = {};
+    if (this.images_data) {
+      try {
+        imagesData = typeof this.images_data === "string" ? JSON.parse(this.images_data) : this.images_data;
+      } catch (e) {
+        if (!manualImages.length) throw new Error(`Failed to parse images_data: ${e.message}`);
+      }
     }
 
     let videoGenData;
@@ -103,13 +183,9 @@ export default defineComponent({
       throw new Error(`Failed to parse video_generator_output: ${e.message}`);
     }
 
-    // ★★★ 디버깅: 파싱된 데이터 구조 확인 ★★★
-    $.export("debug_imagesData_keys", Object.keys(imagesData || {}));
-    $.export("debug_videoGenData_keys", Object.keys(videoGenData || {}));
-
-    // Image Generator 출력에서 씬 이미지 정보
-    const imageScenes = imagesData.scenes || [];
-    const folderName = imagesData.folder_name || videoGenData.folder_name;
+    // Image Scenes 결정 (수동 우선)
+    const imageScenes = manualImages.length > 0 ? manualImages : (imagesData.scenes || []);
+    const folderName = imagesData.folder_name || videoGenData.folder_name || (this.manual_image_folder ? this.manual_image_folder.replace(/\/$/, '') : "unknown_folder");
 
     // Puppy Video Generator 출력에서 비디오 생성 정보
     const videoScenes = videoGenData.scenes || [];
@@ -260,6 +336,32 @@ export default defineComponent({
 
     $.export("matched_scenes", filteredScenes.length);
 
+    // ★★★ 씬 자동 분할 (duration 기반 - puppy-video-generator에서 음절 기반으로 계산됨) ★★★
+    // duration_seconds > 8 이면 분할 필요 (Veo 3 최대 8초)
+    // duration_seconds 9-12 → 2분할, 13+ → 3분할
+    let processedScenes = [];
+    let splitCount = 0;
+    for (const scene of filteredScenes) {
+      const duration = scene.duration_seconds || scene.duration || 6;
+
+      if (duration > 8) {
+        // Duration이 너무 길면 분할 필요
+        const splitResult = splitScene(scene);
+        processedScenes.push(...splitResult);
+        splitCount++;
+        $.export(`auto_split_scene_${scene.index}`, `Duration: ${duration}초 > 8초 → Split into ${splitResult.length} parts`);
+      } else {
+        processedScenes.push(scene);
+      }
+    }
+
+    if (splitCount > 0) {
+      $.export("scenes_split_info", `${splitCount} scenes split (total: ${processedScenes.length} videos)`);
+    }
+
+    // Use processedScenes instead of filteredScenes for remaining processing
+    filteredScenes = processedScenes;
+
     // =====================
     // 2. API 설정
     // =====================
@@ -300,6 +402,94 @@ export default defineComponent({
       if (calculatedDuration <= 4) return 4;
       if (calculatedDuration <= 6) return 6;
       return 8;
+    };
+
+    // ★★★ 씬 분할 기능 (대사 길이에 따라 2개 또는 3개로 동적 분할) ★★★
+    // Veo 3는 4, 6, 8초만 지원. 4초 = 안정적인 립싱크
+    // 20음절/4초 = 5음절/초 기준
+    // 40음절 이상 → 2분할, 55음절 이상 → 3분할
+
+    const shouldSplitScene = (narration) => {
+      if (!narration) return false;
+      const syllableCount = narration.replace(/[^가-힣a-zA-Z0-9]/g, "").length;
+      return syllableCount > 20; // 20음절 이상 = 4초 이상 → 분할 검토
+    };
+
+    const splitScene = (scene) => {
+      const fullNarration = scene.dialogue?.script || scene.narration || "";
+      const syllableCount = fullNarration.replace(/[^가-힣a-zA-Z0-9]/g, "").length;
+      const isInterviewQuestion = scene.scene_details?.is_interview_question || false;
+      const syllablesPerSecond = isInterviewQuestion ? 6 : 5;
+
+      // 분할 수 결정: 4초당 20음절 기준
+      // 20-40음절 = 1개, 40-55음절 = 2개, 55+음절 = 3개
+      let numParts = 1;
+      if (syllableCount > 55) numParts = 3;
+      else if (syllableCount > 40) numParts = 2;
+
+      if (numParts === 1) {
+        return [scene]; // No split needed
+      }
+
+      // Find split points
+      const findSplitPoint = (text, targetPos) => {
+        let point = text.indexOf('!', targetPos - 15);
+        if (point === -1 || point > targetPos + 15) point = text.indexOf('.', targetPos - 15);
+        if (point === -1 || point > targetPos + 15) point = text.indexOf(',', targetPos - 10);
+        if (point === -1 || point > targetPos + 15) point = text.indexOf(' ', targetPos);
+        if (point === -1) point = targetPos;
+        return point;
+      };
+
+      const createScenePart = (narration, partLetter, originalScene) => {
+        const scenePart = JSON.parse(JSON.stringify(originalScene));
+        scenePart.narration = narration;
+        scenePart.narration_korean = narration;
+        if (scenePart.dialogue) {
+          scenePart.dialogue.script = narration;
+          scenePart.dialogue[originalScene.scene_details?.character_name || "땅콩"] = narration;
+        }
+        scenePart._split_part = partLetter;
+        scenePart._original_index = originalScene.index;
+
+        // Calculate duration for this part (4초 단위)
+        const partSyllables = narration.replace(/[^가-힣a-zA-Z0-9]/g, "").length;
+        scenePart.duration = 4; // 안정적인 립싱크를 위해 4초 고정
+        scenePart.duration_seconds = 4;
+
+        return scenePart;
+      };
+
+      if (numParts === 2) {
+        const midPoint = Math.floor(fullNarration.length / 2);
+        const splitPoint = findSplitPoint(fullNarration, midPoint);
+
+        const narrationA = fullNarration.substring(0, splitPoint + 1).trim();
+        const narrationB = fullNarration.substring(splitPoint + 1).trim();
+
+        const sceneA = createScenePart(narrationA, 'a', scene);
+        const sceneB = createScenePart(narrationB, 'b', scene);
+
+        $.export(`split_scene_${scene.index}`, `Scene ${scene.index} split into 2: A="${narrationA.substring(0, 25)}..." B="${narrationB.substring(0, 25)}..."`);
+        return [sceneA, sceneB];
+      }
+
+      // 3 parts
+      const third1 = Math.floor(fullNarration.length / 3);
+      const third2 = Math.floor(fullNarration.length * 2 / 3);
+      const split1 = findSplitPoint(fullNarration, third1);
+      const split2 = findSplitPoint(fullNarration, third2);
+
+      const narrationA = fullNarration.substring(0, split1 + 1).trim();
+      const narrationB = fullNarration.substring(split1 + 1, split2 + 1).trim();
+      const narrationC = fullNarration.substring(split2 + 1).trim();
+
+      const sceneA = createScenePart(narrationA, 'a', scene);
+      const sceneB = createScenePart(narrationB, 'b', scene);
+      const sceneC = createScenePart(narrationC, 'c', scene);
+
+      $.export(`split_scene_${scene.index}`, `Scene ${scene.index} split into 3: A="${narrationA.substring(0, 20)}..." B="${narrationB.substring(0, 20)}..." C="${narrationC.substring(0, 20)}..."`);
+      return [sceneA, sceneB, sceneC];
     };
 
     // ★★★ 액션 키워드 감지 및 매핑 (대사에서 동작 추출) ★★★
@@ -346,6 +536,23 @@ export default defineComponent({
       "하품": "yawning adorably",
       "기지개": "stretching body, doing a stretch",
       "부르르": "shaking body, shivering motion",
+      "신나서": "standing on hind legs with front paws raised high in celebration, cheering pose like saying ole",
+      "신나": "jumping up with front paws raised high, ecstatic celebration",
+      "올레": "raising front paws high in victory, celebrating enthusiastically",
+      "만세": "standing on hind legs with both paws up, hooray pose",
+      "아싸": "pumping fist (or paw) in the air, celebrating success",
+      "야호": "jumping with paws up in the air, shouting with joy",
+      // ★ 웃음 모션 추가 ★
+      "웃음": "laughing out loud with mouth wide open, whole body shaking with laughter",
+      "하하하": "laughing out loud with mouth open, whole body shaking with laughter",
+      "하하": "laughing happily, open mouth smile",
+      "호호호": "giggling cutely with paw covering mouth, refined laughter",
+      "흐흐": "smirking slyly with slight grin, mischievous giggle",
+      "흐흐흐": "smirking slyly with slight grin, playful mischievous giggle",
+      "크크": "suppressed laughter, closed mouth smile",
+      "끼끼": "high-pitched excited giggling, whole body shaking",
+      "푸하하": "bursting out laughing, explosive laughter",
+      "키득키득": "quiet giggling, shoulders bouncing with suppressed laughter",
     };
 
     const detectActionsFromNarration = (narration) => {
@@ -358,6 +565,51 @@ export default defineComponent({
         }
       }
       return detected;
+    };
+
+    // ★★★ 음절별 립싱크 타이밍 계산 함수 (NEW) ★★★
+    const buildSyllableLipSyncTiming = (narration, duration, mouthShapes = {}) => {
+      if (!narration) return "";
+
+      // 한글 음절만 추출
+      const koreanChars = narration.replace(/[^가-힣]/g, "").split("");
+      const syllableCount = koreanChars.length;
+      if (syllableCount === 0) return "";
+
+      // 초당 음절 수 계산 (보통 5-7 음절/초, 느린 말투는 4-5)
+      const syllablesPerSecond = Math.max(3, Math.min(7, syllableCount / (duration - 0.5)));
+      const timePerSyllable = 1 / syllablesPerSecond;
+
+      // 시간 구간별로 그룹화 (0.5초 단위)
+      const segments = [];
+      let currentTime = 0.5; // 0.5초는 침묵
+      const segmentDuration = 0.5;
+
+      for (let segStart = 0.5; segStart < duration; segStart += segmentDuration) {
+        const segEnd = Math.min(segStart + segmentDuration, duration);
+        const syllablesInSeg = Math.floor((segEnd - segStart) * syllablesPerSecond);
+        const startIdx = Math.floor((segStart - 0.5) * syllablesPerSecond);
+        const endIdx = Math.min(startIdx + syllablesInSeg, syllableCount);
+
+        const segChars = koreanChars.slice(startIdx, endIdx).join("");
+        if (segChars) {
+          // 해당 음절들의 입모양 설명 추출
+          const mouthDescs = [];
+          for (const char of segChars.slice(0, 4)) { // 최대 4개
+            if (mouthShapes[char]) {
+              mouthDescs.push(`"${char}"=${mouthShapes[char]}`);
+            }
+          }
+          segments.push(`${segStart.toFixed(1)}-${segEnd.toFixed(1)}s: "${segChars}" (${mouthDescs.join(", ") || "mouth moves matching syllables"})`);
+        }
+      }
+
+      // 마지막에 웃음/감탄 표현이 있으면 추가
+      if (/흐흐+|하하+|웃음/i.test(narration)) {
+        segments.push(`${(duration - 1).toFixed(1)}-${duration}s: LAUGHING expression - mouth wide open, joyful giggling`);
+      }
+
+      return segments.join(". ");
     };
 
     const getVeo3Prompt = (scene) => {
@@ -434,7 +686,7 @@ export default defineComponent({
 
       // ★★★ 시각적 연속성 (veo_script_sample visual_continuity 형식) ★★★
       basePrompt += ` The ${isAnimalCharacter ? "dog" : "character"} appearance must stay IDENTICAL to reference image from 0:00 to 0:0${duration}.`;
-      basePrompt += ` VISUAL CONTINUITY: Same ${isAnimalCharacter ? "fur color, same face, same" : ""} appearance at 0:00, ${Math.floor(duration/2)}:00, and ${duration}:00.`;
+      basePrompt += ` VISUAL CONTINUITY: Same ${isAnimalCharacter ? "fur color, same face, same" : ""} appearance at 0:00, ${Math.floor(duration / 2)}:00, and ${duration}:00.`;
 
       // ★★★ 캐릭터 타입에 따른 일관성 프롬프트 (consistency_check 형식) ★★★
       if (isAnimalCharacter) {
@@ -562,9 +814,9 @@ VIDEO MUST BE COMPLETELY TEXT-FREE.`;
         const lipSyncTiming = scene.lip_sync_timing || {};
         const timingDesc = Object.keys(lipSyncTiming).length > 0
           ? Object.entries(lipSyncTiming).map(([time, info]) => {
-              if (typeof info === "object") return `${time}: ${info.mouth || info.text || ""}`;
-              return `${time}: ${info}`;
-            }).join(". ")
+            if (typeof info === "object") return `${time}: ${info.mouth || info.text || ""}`;
+            return `${time}: ${info}`;
+          }).join(". ")
           : "";
 
         // ★★★ puppy-video-generator에서 전달된 voice_settings 사용 ★★★
@@ -583,13 +835,21 @@ VIDEO MUST BE COMPLETELY TEXT-FREE.`;
           : "";
 
         // ★★★ 캐릭터 타입별 음성 + 립싱크 프롬프트 (puppy-video-generator 데이터 사용) ★★★
+        // ★★★ NEW: 음절별 립싱크 타이밍 생성 ★★★
+        const syllableTiming = buildSyllableLipSyncTiming(narration, duration, mouthShapes);
+
         if (isAnimalCharacter) {
           basePrompt += ` DIALOGUE TIMING: 0.0-${silenceEnd}sec silence dog waiting, ${characterSpeechStart}-${characterSpeechEnd}sec ${characterDesc.toLowerCase()} speaks Korean dialogue.`;
           basePrompt += ` VOICE (AUDIO ONLY - NO SUBTITLES): ${voiceType}, ${voiceCharacteristics}, ${voiceTone}: "${safeNarration}".`;
           basePrompt += actionPrompt; // ★ 감지된 액션 추가
           basePrompt += ` LIP SYNC STYLE: ${lipSyncType}. ${lipSyncMethod}. ${mouthShapesDesc}`;
-          if (timingDesc) basePrompt += ` TIMING DETAIL: ${timingDesc}.`;
-          basePrompt += ` Mouth MUST move precisely matching each Korean syllable. Continuous mouth movement - NOT static. Visible jaw movement. Face keeps same expression, only mouth area moves. Do NOT regenerate dog image during speech.`;
+          // ★★★ NEW: 음절별 상세 타이밍 추가 ★★★
+          if (syllableTiming) {
+            basePrompt += ` SYLLABLE-BY-SYLLABLE LIP SYNC TIMING: ${syllableTiming}.`;
+          } else if (timingDesc) {
+            basePrompt += ` TIMING DETAIL: ${timingDesc}.`;
+          }
+          basePrompt += ` CRITICAL: Dog's mouth MUST move continuously throughout speech, matching each Korean syllable precisely. Open-close-open pattern for continuous talking. Visible jaw movement. NOT static face. Do NOT regenerate dog image during speech.`;
           basePrompt += ` IMPORTANT: NO barking. NO woof sounds. Only super cute low-pitched baby Korean speech. ${emotionTone} expression. DO NOT show dialogue as text on screen.${voiceEffect}${endingExpression}`;
         } else {
           basePrompt += ` DIALOGUE TIMING: 0.0-${silenceEnd}sec silence, ${characterSpeechStart}-${characterSpeechEnd}sec speaks Korean: "${safeNarration}".`;
@@ -872,7 +1132,7 @@ VIDEO MUST BE COMPLETELY TEXT-FREE.`;
               const filename = `scene_${String(index).padStart(3, "0")}.mp4`;
               const objectName = `${folderName}/${filename}`;
 
-              const bufferStream = new Readable({ read() {} });
+              const bufferStream = new Readable({ read() { } });
               bufferStream.push(videoBuffer);
               bufferStream.push(null);
 

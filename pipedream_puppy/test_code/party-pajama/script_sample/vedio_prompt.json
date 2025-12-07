@@ -1,0 +1,1242 @@
+{
+  "input_info": {
+    "segments_count": 6,
+    "characters_count": 2,
+    "script_format": "mixed",
+    "content_type": "comic",
+    "has_consistency_info": true
+  },
+  "consistency_used": {
+    "background": "cozy living room with cute cushions, decorative lights, small plants",
+    "lighting": "bright",
+    "main_prompt": "Create a Pomeranian dog with golden cream and brown fur, fluffy texture, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+    "has_performance": false,
+    "performance_type": "beatbox",
+    "accessories": ""
+  },
+  "action_detection_stats": {
+    "total_scenes": 6,
+    "scenes_with_actions": 1,
+    "actions_summary": [
+      {
+        "scene": 3,
+        "narration_preview": "댄스도 하고 깡충깡충 뛰었어요!",
+        "detected": [
+          "깡충깡충",
+          "댄스",
+          "깡충"
+        ]
+      }
+    ]
+  },
+  "$summary": "Video generation info prepared for 6 scenes (1 with actions detected)",
+  "$return_value": {
+    "folder_name": "20251206_443c162e_Peanut_s_Special_Paj",
+    "total_scenes": 6,
+    "script_format": "mixed",
+    "content_type": "comic",
+    "resolution": "8K",
+    "format": "Clean video only",
+    "text_overlays": false,
+    "subtitles": false,
+    "watermarks": false,
+    "overall_style": "photorealistic",
+    "character_prompts": {
+      "main": "Create a Pomeranian dog with golden cream and brown fur, fluffy texture, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+      "sub1": "middle-aged woman with warm gentle expression"
+    },
+    "characters": {
+      "main": {
+        "name": "땅콩",
+        "role": "main",
+        "image_url": "https://storage.googleapis.com/scene-image-generator-storage-mcp-test-457809/origin/%E1%84%85%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%84%E1%85%A1%E1%86%BC%E1%84%8F%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5.jpeg",
+        "character_type": "animal",
+        "species": "dog",
+        "breed": "Pomeranian",
+        "estimated_age": "adult",
+        "personality": "cute",
+        "voice_type": "baby_girl",
+        "image_prompt": "Create a Pomeranian dog with golden cream and brown fur, fluffy texture, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+        "distinctive_features": [
+          "fluffy fur",
+          "small size"
+        ],
+        "accessories": [
+          "pink bow tie"
+        ],
+        "fur_color": "golden cream with brown ears",
+        "fur_texture": "fluffy",
+        "eye_color": "dark brown"
+      },
+      "sub1": {
+        "name": "할미",
+        "role": "sub1",
+        "character_type": "human",
+        "gender": "female",
+        "estimated_age_range": "50s",
+        "voice_type": "elderly_female",
+        "image_prompt": "middle-aged woman with warm gentle expression"
+      }
+    },
+    "voice_settings": {
+      "main": {
+        "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+        "tone": "super cute, innocent, soft cooing, sometimes whiny or excited",
+        "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+        "laugh_style": "Adorable baby giggling, soft cooing laughter, infectious cute chuckling",
+        "consistent_across": "All videos"
+      },
+      "interviewer": {
+        "type": "Korean female news anchor, 30s, professional friendly tone",
+        "characteristics": "clear, warm, professional",
+        "consistent_across": "All videos"
+      },
+      "sub1": {
+        "type": "Warm elderly woman voice, loving grandmother tone",
+        "consistent_across": "All videos"
+      }
+    },
+    "interview_background": null,
+    "scenes": [
+      {
+        "video": 1,
+        "title": "땅콩이의 특별한 파자마 파티 - Scene 1",
+        "duration": "6 seconds",
+        "duration_seconds": 6,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "8K cinematic video. EXTREME CLOSE-UP of face, BRIGHT vivid colors, HIGH CONTRAST, sparkling expressive eyes, dynamic attention-grabbing composition. Create a Pomeranian dog with golden cream and brown fur, fluffy texture, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie., with pink bow tie facing camera. cozy living room with cute cushions, decorative lights, small plants. bright. Dog with gentle mouth movements. excited expression. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_6_sec": "땅콩 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "땅콩": "여러분! 오늘 엄청난 일이 있었어요!",
+          "script": "여러분! 오늘 엄청난 일이 있었어요!",
+          "script_english": "Guys! Something amazing happened today!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩": {
+            "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+            "tone": "excited",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+            "emotion": "excited",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 6 seconds",
+          "0.0_to_3_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "3_to_6_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same golden cream with brown ears, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a Pomeranian dog with golden cream and brown fur, fluffy texture, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "golden cream with brown ears",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [
+            "pink bow tie"
+          ],
+          "props": [],
+          "distinctive_features": [
+            "fluffy fur",
+            "small size"
+          ]
+        },
+        "scene_environment": {
+          "background": "cozy living room with cute cushions, decorative lights, small plants",
+          "location": "indoor",
+          "lighting": "bright",
+          "weather": "none",
+          "mood": "exciting",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "interview_question",
+          "speaker": "main",
+          "character_name": "땅콩",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "cozy living room with cute cushions, decorative lights, small plants",
+          "lighting": "bright",
+          "weather": "none",
+          "mood": "exciting",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "excited",
+          "transition": "none",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "golden cream with brown ears must stay same at all times",
+          "background": "cozy living room with cute cushions, decorative lights, small plants must look same throughout",
+          "accessories": "pink bow tie must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "excited, preparing to speak"
+          },
+          "0.5_to_6_sec": {
+            "text": "여러분! 오늘 엄청난 일이 있었어요!",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "none"
+          }
+        },
+        "mouth_shapes": {
+          "여": "mouth medium open rounded",
+          "러": "mouth medium open rounded",
+          "분": "lips push forward round",
+          "오": "lips form round O",
+          "늘": "lips stretch wide teeth close",
+          "엄": "mouth medium open rounded",
+          "청": "mouth medium open rounded",
+          "난": "mouth wide open jaw drops",
+          "일": "lips stretch sideways teeth visible",
+          "이": "lips stretch sideways teeth visible",
+          "있": "lips stretch sideways teeth visible",
+          "었": "mouth medium open rounded",
+          "어": "mouth medium open rounded",
+          "요": "lips form round O"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean female news anchor, 30s, professional friendly tone",
+          "voice_effect": null,
+          "dog_lip_sync": false
+        },
+        "index": 1,
+        "segment_number": 1,
+        "start": 0,
+        "end": 6,
+        "narration": "여러분! 오늘 엄청난 일이 있었어요!",
+        "narration_korean": "여러분! 오늘 엄청난 일이 있었어요!",
+        "narration_english": "Guys! Something amazing happened today!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "EXTREME CLOSE-UP of Peanut's face filling 70% of frame, WIDE EYES with sparkling excitement, mouth slightly open in amazement, ears perked up high, BRIGHT studio lighting, vibrant colorful background, HIGH CONTRAST, attention-grabbing composition",
+        "video_prompt": {
+          "character_action": "excitedly wagging tail",
+          "lip_sync": "no",
+          "facial_expression": "expressive with sparkling eyes, bright and excited",
+          "body_movement": "ears perked up, slight head tilt",
+          "camera_movement": "zoom_in",
+          "is_interviewer_speaking": true,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl",
+          "voice_type": "cute_toddler_girl",
+          "speaking_speed": "slow and cute",
+          "sound_effects": [],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "excited",
+          "ambient_sound": "soft indoor chatter",
+          "background_music_mood": "cute"
+        },
+        "action_cues": {},
+        "detected_actions": [],
+        "is_hook_scene": true,
+        "thumbnail_optimized": true
+      },
+      {
+        "video": 2,
+        "title": "땅콩이의 특별한 파자마 파티 - Scene 2",
+        "duration": "4 seconds",
+        "duration_seconds": 4,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "8K cinematic video. Create a Pomeranian dog with golden cream and brown fur, fluffy texture, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie., with pink bow tie facing camera. cozy living room with cute cushions, decorative lights, small plants. bright. Dog with gentle mouth movements. happy expression. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_4_sec": "땅콩 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "땅콩": "오늘 밤에 파자마 파티를 했다구요!",
+          "script": "오늘 밤에 파자마 파티를 했다구요!",
+          "script_english": "We had a pajama party tonight!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩": {
+            "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+            "tone": "proud",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+            "emotion": "happy",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 4 seconds",
+          "0.0_to_2_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "2_to_4_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same golden cream with brown ears, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a Pomeranian dog with golden cream and brown fur, fluffy texture, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "golden cream with brown ears",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [
+            "pink bow tie"
+          ],
+          "props": [],
+          "distinctive_features": [
+            "fluffy fur",
+            "small size"
+          ]
+        },
+        "scene_environment": {
+          "background": "cozy living room with cute cushions, decorative lights, small plants",
+          "location": "indoor",
+          "lighting": "bright",
+          "weather": "none",
+          "mood": "joyful",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "interview_answer",
+          "speaker": "main",
+          "character_name": "땅콩",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "cozy living room with cute cushions, decorative lights, small plants",
+          "lighting": "bright",
+          "weather": "none",
+          "mood": "joyful",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "happy",
+          "transition": "none",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "golden cream with brown ears must stay same at all times",
+          "background": "cozy living room with cute cushions, decorative lights, small plants must look same throughout",
+          "accessories": "pink bow tie must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "happy, preparing to speak"
+          },
+          "0.5_to_4_sec": {
+            "text": "오늘 밤에 파자마 파티를 했다구요!",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "none"
+          }
+        },
+        "mouth_shapes": {
+          "오": "lips form round O",
+          "늘": "lips stretch wide teeth close",
+          "밤": "mouth wide open jaw drops",
+          "에": "mouth open stretched",
+          "파": "mouth wide open jaw drops",
+          "자": "mouth wide open jaw drops",
+          "마": "mouth wide open jaw drops",
+          "티": "lips stretch sideways teeth visible",
+          "를": "lips stretch wide teeth close",
+          "했": "mouth open lips stretched",
+          "다": "mouth wide open jaw drops",
+          "구": "lips push forward round",
+          "요": "lips form round O"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 2,
+        "segment_number": 2,
+        "start": 6,
+        "end": 10,
+        "narration": "오늘 밤에 파자마 파티를 했다구요!",
+        "narration_korean": "오늘 밤에 파자마 파티를 했다구요!",
+        "narration_english": "We had a pajama party tonight!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "Peanut in a cute pajama, looking proud, with a small party hat, in a cozy living room setting",
+        "video_prompt": {
+          "character_action": "showing off pajama",
+          "lip_sync": "yes",
+          "facial_expression": "proud and happy",
+          "body_movement": "turning around to show off",
+          "camera_movement": "dynamic",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl",
+          "voice_type": "cute_toddler_girl",
+          "speaking_speed": "slow and cute",
+          "sound_effects": [],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "proud",
+          "ambient_sound": "party chatter",
+          "background_music_mood": "cute"
+        },
+        "action_cues": {},
+        "detected_actions": [],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 3,
+        "title": "땅콩이의 특별한 파자마 파티 - Scene 3",
+        "duration": "6 seconds",
+        "duration_seconds": 6,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "8K cinematic flashback video. Create a Pomeranian dog with golden cream and brown fur, fluffy texture, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie., with pink bow tie in recalled scene. Dog is hopping like a bunny, bouncing cutely, dancing energetically with body moving rhythmically, bouncing hop, cute jumping motion. cozy living room with cute cushions, decorative lights, small plants. Slightly dreamy/vintage filter effect. joyful expression. bright. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_6_sec": "땅콩 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "땅콩": "댄스도 하고 깡충깡충 뛰었어요!",
+          "script": "댄스도 하고 깡충깡충 뛰었어요!",
+          "script_english": "We danced and jumped around!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩": {
+            "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+            "tone": "none",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+            "emotion": "joyful",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 6 seconds",
+          "0.0_to_3_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "3_to_6_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same golden cream with brown ears, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a Pomeranian dog with golden cream and brown fur, fluffy texture, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "golden cream with brown ears",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [
+            "pink bow tie"
+          ],
+          "props": [],
+          "distinctive_features": [
+            "fluffy fur",
+            "small size"
+          ]
+        },
+        "scene_environment": {
+          "background": "cozy living room with cute cushions, decorative lights, small plants",
+          "location": "indoor",
+          "lighting": "bright",
+          "weather": "none",
+          "mood": "playful",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "flashback",
+          "speaker": "main",
+          "character_name": "땅콩",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "cozy living room with cute cushions, decorative lights, small plants",
+          "lighting": "bright",
+          "weather": "none",
+          "mood": "playful",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": true,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "joyful",
+          "transition": "none",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "golden cream with brown ears must stay same at all times",
+          "background": "cozy living room with cute cushions, decorative lights, small plants must look same throughout",
+          "accessories": "pink bow tie must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "joyful, preparing to speak"
+          },
+          "0.5_to_6_sec": {
+            "text": "댄스도 하고 깡충깡충 뛰었어요!",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "none"
+          }
+        },
+        "mouth_shapes": {
+          "댄": "mouth open lips stretched",
+          "스": "lips stretch wide teeth close",
+          "도": "lips form round O",
+          "하": "mouth wide open jaw drops",
+          "고": "lips form round O",
+          "깡": "mouth wide open jaw drops",
+          "충": "lips push forward round",
+          "뛰": "lips push forward round",
+          "었": "mouth medium open rounded",
+          "어": "mouth medium open rounded",
+          "요": "lips form round O"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 3,
+        "segment_number": 3,
+        "start": 10,
+        "end": 16,
+        "narration": "댄스도 하고 깡충깡충 뛰었어요!",
+        "narration_korean": "댄스도 하고 깡충깡충 뛰었어요!",
+        "narration_english": "We danced and jumped around!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "Peanut dancing joyfully with other dogs in cute pajamas, indoors, vibrant lighting, fluffy pillows around",
+        "video_prompt": {
+          "character_action": "dancing and jumping",
+          "lip_sync": "yes",
+          "facial_expression": "joyful",
+          "body_movement": "hopping around",
+          "camera_movement": "tracking",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "none",
+          "voice_type": "cute_toddler_girl",
+          "speaking_speed": "slow and cute",
+          "sound_effects": [],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "none",
+          "ambient_sound": "happy dog barks",
+          "background_music_mood": "funny"
+        },
+        "action_cues": {},
+        "detected_actions": [
+          {
+            "keyword": "깡충깡충",
+            "action": "hopping like a bunny, bouncing cutely"
+          },
+          {
+            "keyword": "댄스",
+            "action": "dancing energetically with body moving rhythmically"
+          },
+          {
+            "keyword": "깡충",
+            "action": "bouncing hop, cute jumping motion"
+          }
+        ],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 4,
+        "title": "땅콩이의 특별한 파자마 파티 - Scene 4",
+        "duration": "4 seconds",
+        "duration_seconds": 4,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "8K cinematic video. middle-aged woman with warm gentle expression facing camera. cozy living room with cute cushions, decorative lights, small plants. bright. 50s female person speaking with natural mouth movements. curious expression. Same appearance maintained throughout. Real person. Natural appearance. NOT animated. NOT cartoon.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_4_sec": "할미 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "할미": "땅콩, 그 옷 좀 이상하지 않니?",
+          "script": "땅콩, 그 옷 좀 이상하지 않니?",
+          "script_english": "Peanut, isn't that outfit a bit strange?",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "할미": {
+            "type": "warm gentle elderly woman voice, loving grandmother tone",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 4 seconds",
+          "0.0_to_2_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "2_to_4_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same fur color, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "middle-aged woman with warm gentle expression",
+          "species": "dog",
+          "breed": "unknown",
+          "fur_color": "",
+          "fur_texture": "",
+          "outfit": "",
+          "accessories": [],
+          "props": [],
+          "distinctive_features": []
+        },
+        "scene_environment": {
+          "background": "cozy living room with cute cushions, decorative lights, small plants",
+          "location": "indoor",
+          "lighting": "bright",
+          "weather": "none",
+          "mood": "curious",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "reaction",
+          "speaker": "sub1",
+          "character_name": "할미",
+          "character_type": "human",
+          "is_animal_character": false,
+          "character_description": "50s female person",
+          "location": "indoor",
+          "background": "cozy living room with cute cushions, decorative lights, small plants",
+          "lighting": "bright",
+          "weather": "none",
+          "mood": "curious",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "curious",
+          "transition": "none",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "Fur color must stay consistent",
+          "background": "cozy living room with cute cushions, decorative lights, small plants must look same throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "curious, preparing to speak"
+          },
+          "0.5_to_4_sec": {
+            "text": "땅콩, 그 옷 좀 이상하지 않니?",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "none"
+          }
+        },
+        "mouth_shapes": {
+          "땅": "mouth wide open jaw drops",
+          "콩": "lips form round O",
+          "그": "lips stretch wide teeth close",
+          "옷": "lips form round O",
+          "좀": "lips form round O",
+          "이": "lips stretch sideways teeth visible",
+          "상": "mouth wide open jaw drops",
+          "하": "mouth wide open jaw drops",
+          "지": "lips stretch sideways teeth visible",
+          "않": "mouth wide open jaw drops",
+          "니": "lips stretch sideways teeth visible"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 4,
+        "segment_number": 4,
+        "start": 16,
+        "end": 20,
+        "narration": "땅콩, 그 옷 좀 이상하지 않니?",
+        "narration_korean": "땅콩, 그 옷 좀 이상하지 않니?",
+        "narration_english": "Peanut, isn't that outfit a bit strange?",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "Halmi with a gentle smile, questioning look, pointing at Peanut's outfit",
+        "video_prompt": {
+          "character_action": "pointing at outfit",
+          "lip_sync": "yes",
+          "facial_expression": "curiously inspecting",
+          "body_movement": "slight head tilt",
+          "camera_movement": "static",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "elderly_female",
+          "voice_type": "elderly_female",
+          "speaking_speed": "natural",
+          "sound_effects": [],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "curious",
+          "ambient_sound": "soft indoor chatter",
+          "background_music_mood": "funny"
+        },
+        "action_cues": {},
+        "detected_actions": [],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 5,
+        "title": "땅콩이의 특별한 파자마 파티 - Scene 5",
+        "duration": "6 seconds",
+        "duration_seconds": 6,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "8K cinematic video. Create a Pomeranian dog with golden cream and brown fur, fluffy texture, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie., with pink bow tie facing camera. cozy living room with cute cushions, decorative lights, small plants. bright. Dog with gentle mouth movements. shocked expression. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_6_sec": "땅콩 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "땅콩": "헉! 알고 보니 주인 속옷이었어요!",
+          "script": "헉! 알고 보니 주인 속옷이었어요!",
+          "script_english": "Gasp! It was my owner's underwear!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩": {
+            "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+            "tone": "shocked",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+            "emotion": "shocked",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 6 seconds",
+          "0.0_to_3_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "3_to_6_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same golden cream with brown ears, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a Pomeranian dog with golden cream and brown fur, fluffy texture, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "golden cream with brown ears",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [
+            "pink bow tie"
+          ],
+          "props": [],
+          "distinctive_features": [
+            "fluffy fur",
+            "small size"
+          ]
+        },
+        "scene_environment": {
+          "background": "cozy living room with cute cushions, decorative lights, small plants",
+          "location": "indoor",
+          "lighting": "bright",
+          "weather": "none",
+          "mood": "surprised",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "reaction",
+          "speaker": "main",
+          "character_name": "땅콩",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "cozy living room with cute cushions, decorative lights, small plants",
+          "lighting": "bright",
+          "weather": "none",
+          "mood": "surprised",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "shocked",
+          "transition": "none",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "golden cream with brown ears must stay same at all times",
+          "background": "cozy living room with cute cushions, decorative lights, small plants must look same throughout",
+          "accessories": "pink bow tie must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "shocked, preparing to speak"
+          },
+          "0.5_to_6_sec": {
+            "text": "헉! 알고 보니 주인 속옷이었어요!",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "none"
+          }
+        },
+        "mouth_shapes": {
+          "헉": "mouth medium open rounded",
+          "알": "mouth wide open jaw drops",
+          "고": "lips form round O",
+          "보": "lips form round O",
+          "니": "lips stretch sideways teeth visible",
+          "주": "lips push forward round",
+          "인": "lips stretch sideways teeth visible",
+          "속": "lips form round O",
+          "옷": "lips form round O",
+          "이": "lips stretch sideways teeth visible",
+          "었": "mouth medium open rounded",
+          "어": "mouth medium open rounded",
+          "요": "lips form round O"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 5,
+        "segment_number": 5,
+        "start": 20,
+        "end": 26,
+        "narration": "헉! 알고 보니 주인 속옷이었어요!",
+        "narration_korean": "헉! 알고 보니 주인 속옷이었어요!",
+        "narration_english": "Gasp! It was my owner's underwear!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "Peanut realizing in shock, eyes wide, bow tie slightly askew, humorous expression",
+        "video_prompt": {
+          "character_action": "looking shocked",
+          "lip_sync": "yes",
+          "facial_expression": "shocked and wide-eyed",
+          "body_movement": "stopping in mid-action",
+          "camera_movement": "zoom_out",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl",
+          "voice_type": "cute_toddler_girl",
+          "speaking_speed": "slow and cute",
+          "sound_effects": [],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "shocked",
+          "ambient_sound": "dramatic pause",
+          "background_music_mood": "funny"
+        },
+        "action_cues": {},
+        "detected_actions": [],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 6,
+        "title": "땅콩이의 특별한 파자마 파티 - Scene 6",
+        "duration": "6 seconds",
+        "duration_seconds": 6,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "8K cinematic video. Create a Pomeranian dog with golden cream and brown fur, fluffy texture, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie., with pink bow tie facing camera. cozy living room with cute cushions, decorative lights, small plants. bright. Dog with gentle mouth movements. happy expression. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_6_sec": "땅콩 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "땅콩": "주인 이런 취향이였어? 흐흐흐흐흐흐~",
+          "script": "주인 이런 취향이였어? 흐흐흐흐흐흐~",
+          "script_english": "Is this really my owner's taste? Hehehehe~",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩": {
+            "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+            "tone": "laughing",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+            "emotion": "happy",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 6 seconds",
+          "0.0_to_3_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "3_to_6_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same golden cream with brown ears, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a Pomeranian dog with golden cream and brown fur, fluffy texture, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "golden cream with brown ears",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [
+            "pink bow tie"
+          ],
+          "props": [],
+          "distinctive_features": [
+            "fluffy fur",
+            "small size"
+          ]
+        },
+        "scene_environment": {
+          "background": "cozy living room with cute cushions, decorative lights, small plants",
+          "location": "indoor",
+          "lighting": "bright",
+          "weather": "none",
+          "mood": "happy",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "outro",
+          "speaker": "main",
+          "character_name": "땅콩",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "cozy living room with cute cushions, decorative lights, small plants",
+          "lighting": "bright",
+          "weather": "none",
+          "mood": "happy",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "happy",
+          "transition": "none",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "golden cream with brown ears must stay same at all times",
+          "background": "cozy living room with cute cushions, decorative lights, small plants must look same throughout",
+          "accessories": "pink bow tie must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "happy, preparing to speak"
+          },
+          "0.5_to_6_sec": {
+            "text": "주인 이런 취향이였어? 흐흐흐흐흐흐~",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "none"
+          }
+        },
+        "mouth_shapes": {
+          "주": "lips push forward round",
+          "인": "lips stretch sideways teeth visible",
+          "이": "lips stretch sideways teeth visible",
+          "런": "mouth medium open rounded",
+          "취": "lips push forward round",
+          "향": "mouth wide open jaw drops",
+          "였": "mouth medium open rounded",
+          "어": "mouth medium open rounded",
+          "흐": "lips stretch wide teeth close"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 6,
+        "segment_number": 6,
+        "start": 26,
+        "end": 32,
+        "narration": "주인 이런 취향이였어? 흐흐흐흐흐흐~",
+        "narration_korean": "주인 이런 취향이였어? 흐흐흐흐흐흐~",
+        "narration_english": "Is this really my owner's taste? Hehehehe~",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "Peanut bursting into adorable laughter, wearing the 'pajama,' cozy room setting",
+        "video_prompt": {
+          "character_action": "laughing cutely, then bursting into cute laughter",
+          "lip_sync": "yes",
+          "facial_expression": "bursting into adorable laughter, eyes squinting with pure joy, mouth wide open laughing happily, infectious giggling expression",
+          "body_movement": "wagging tail, ears perked up",
+          "camera_movement": "dynamic",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl",
+          "voice_type": "cute_toddler_girl",
+          "speaking_speed": "slow and cute",
+          "sound_effects": [],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "laughing",
+          "ambient_sound": "soft laughter",
+          "background_music_mood": "funny"
+        },
+        "action_cues": {},
+        "detected_actions": [],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      }
+    ],
+    "total_duration_seconds": 32,
+    "script_reference": {
+      "title": {
+        "japanese": "",
+        "korean": "땅콩이의 특별한 파자마 파티",
+        "english": "Peanut's Special Pajama Party"
+      },
+      "topic": "특별한 파자마 파티에서 생긴 일"
+    }
+  }
+}

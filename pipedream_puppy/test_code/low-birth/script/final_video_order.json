@@ -1,0 +1,90 @@
+{
+    "scenes_updated": true,
+    "generated_at": "2025-12-06T17:25:00+09:00",
+    "notes": "Updated for subtitle generation with Scene 3 split and Scene 5/6 changes",
+    "video_order": [
+        {
+            "index": 0,
+            "file": "scene_0.mp4",
+            "duration_seconds": 4,
+            "speaker": "main",
+            "character_name": "땅콩",
+            "narration_korean": "여러분! 제가 드디어 저출산 문제 \n 해결책을 찾았어요! (신나서)",
+            "narration_english": "Everyone! I finally found a solution to \n the low birth rate problem!"
+        },
+        {
+            "index": 1,
+            "file": "scene_1.mp4",
+            "duration_seconds": 6,
+            "speaker": "main",
+            "character_name": "땅콩",
+            "narration_korean": "결혼과 출산을 장려하는 \n 핫팩 댄스를 추는거에요! \n 핫팩 댄스! 핫팩 댄스! (신나서)",
+            "narration_english": "We should do a hot pack dance \n to encourage marriage and childbirth! \n Hot pack dance! Hot pack dance!"
+        },
+        {
+            "index": 2,
+            "file": "scene_2.mp4",
+            "duration_seconds": 4,
+            "speaker": "sub1",
+            "character_name": "할비",
+            "narration_korean": "음... 좋은 아이디어인데... 땅콩아, 혹시 다른 방법은 없을까?",
+            "narration_english": "Hmm... that's a good idea... \n Do you have any other ideas, TangKong?"
+        },
+        {
+            "index": "3a",
+            "file": "scene_3a.mp4",
+            "duration_seconds": 4,
+            "speaker": "main",
+            "character_name": "땅콩",
+            "narration_korean": "여러분, 이제부터 정부는 \n '댕댕이 육아 지원금'을 지급해야 합니다!",
+            "narration_english": "From now on, the government must provide \n'Doggy Childcare Support Funds'!",
+            "is_split": true,
+            "original_index": 3
+        },
+        {
+            "index": "3b",
+            "file": "scene_3b.mp4",
+            "duration_seconds": 4,
+            "speaker": "main",
+            "character_name": "땅콩",
+            "narration_korean": "GDP 대비 5%를 투입하여, \n 출산 가정에 \n 맞춤형 멍멍이 로봇을 제공하고,",
+            "narration_english": "Invest 5% of GDP \n to provide customized \n puppy robots to families,",
+            "is_split": true,
+            "original_index": 3
+        },
+        {
+            "index": "3c",
+            "file": "scene_3c.mp4",
+            "duration_seconds": 4,
+            "speaker": "main",
+            "character_name": "땅콩",
+            "narration_korean": "펫-프렌들리 인프라 구축에 \n힘써야 합니다! (전문가 톤)",
+            "narration_english": "and strive to build pet-friendly infrastructure! (Expert tone)",
+            "is_split": true,
+            "original_index": 3
+        },
+        {
+            "index": 4,
+            "file": "scene_4.mp4",
+            "duration_seconds": 6,
+            "speaker": "sub1",
+            "character_name": "할비",
+            "narration_korean": "오~ 좋은데? 땅콩이 똑똑한데! 하지만... 넌 이미... \n 중성화를 했잖아...? ㅋㅋ",
+            "narration_english": "Oh~ That's good? TangKong is smart! \n But... you're already... neutered, aren't you? lol",
+            "notes": "Dog reacts: proud (0-4s) then surprised (4-6s)"
+        },
+        {
+            "index": 5,
+            "file": "scene_5.mp4",
+            "duration_seconds": 4,
+            "speaker": "main",
+            "character_name": "땅콩",
+            "narration_korean": "(망했다는 느낌) 으... 으아아아아아! 할비 미워!",
+            "narration_english": "(Feeling ruined) Ugh... Uwaaaaa! I hate Grandfather!",
+            "image_used": "scene_006.png",
+            "notes": "Final scene - ends with crying/upset expression"
+        }
+    ],
+    "total_videos": 9,
+    "total_duration_seconds": 36
+}

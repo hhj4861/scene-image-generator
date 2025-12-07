@@ -8,8 +8,8 @@ export default defineComponent({
     // Script Generator 출력
     script_generator_output: {
       type: "string",
-      label: "Script Generator Output (JSON)",
-      description: "{{JSON.stringify(steps.Puppy_Script_Generator.$return_value)}}",
+      label: "Script Source (Generator or Editor)",
+      description: "Puppy Script Generator 또는 Script Editor의 출력값({{steps.Puppy_Script_Editor.$return_value}} or {{steps.Puppy_Script_Generator.$return_value}})",
     },
 
     // ElevenLabs 설정
@@ -195,7 +195,7 @@ export default defineComponent({
         const objectName = `${folderName}/${filename}`;
 
         // GCS 업로드
-        const bufferStream = new Readable({ read() {} });
+        const bufferStream = new Readable({ read() { } });
         bufferStream.push(audioBuffer);
         bufferStream.push(null);
 

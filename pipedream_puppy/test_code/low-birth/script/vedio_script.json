@@ -1,0 +1,1345 @@
+{
+  "input_info": {
+    "segments_count": 7,
+    "characters_count": 2,
+    "script_format": "mixed",
+    "content_type": "comic",
+    "has_consistency_info": true
+  },
+  "consistency_used": {
+    "background": "Comfortable living room with sofa, table, plants, and cushions",
+    "lighting": "bright studio lighting, Bright studio lighting",
+    "main_prompt": "Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+    "has_performance": false,
+    "performance_type": "beatbox",
+    "accessories": ""
+  },
+  "action_detection_stats": {
+    "total_scenes": 7,
+    "scenes_with_actions": 2,
+    "actions_summary": [
+      {
+        "scene": 2,
+        "narration_preview": "결혼과 출산을 장려하는 핫팩 댄스를 추는거에요! 핫팩 댄스! 핫팩 댄스! (신나서)",
+        "detected": [
+          "핫팩 댄스",
+          "댄스"
+        ]
+      },
+      {
+        "scene": 4,
+        "narration_preview": "여러분, 이제부터 정부는 '댕댕이 육아 지원금'을 지급해야 합니다! GDP 대비 5%를 투",
+        "detected": [
+          "춤"
+        ]
+      }
+    ]
+  },
+  "$summary": "Video generation info prepared for 7 scenes (2 with actions detected)",
+  "$return_value": {
+    "folder_name": "20251206_47a77d4c_Dog_s_outrageous_sol",
+    "total_scenes": 7,
+    "script_format": "mixed",
+    "content_type": "comic",
+    "resolution": "8K",
+    "format": "Clean video only",
+    "text_overlays": false,
+    "subtitles": false,
+    "watermarks": false,
+    "overall_style": "photorealistic",
+    "character_prompts": {
+      "main": "Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+      "sub1": "Create a portrait of a middle-aged Asian man in his 50s. He has short, neatly styled black hair, dark brown almond-shaped eyes, and wrinkles around his eyes. He is smiling warmly. He is wearing a black suit jacket over a black turtleneck sweater and black framed glasses. The background is a soft, neutral color."
+    },
+    "characters": {
+      "main": {
+        "name": "땅콩",
+        "role": "main",
+        "image_url": "https://storage.googleapis.com/scene-image-generator-storage-mcp-test-457809/origin/%E1%84%85%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%84%E1%85%A1%E1%86%BC%E1%84%8F%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5.jpeg",
+        "character_type": "animal",
+        "species": "dog",
+        "breed": "Pomeranian",
+        "estimated_age": "adult",
+        "personality": "cute",
+        "voice_type": "baby_girl",
+        "image_prompt": "Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+        "distinctive_features": [
+          "fluffy fur",
+          "small size"
+        ],
+        "accessories": [
+          "pink bow tie"
+        ],
+        "fur_color": "golden cream with brown ears",
+        "fur_texture": "fluffy",
+        "eye_color": "dark brown"
+      },
+      "sub1": {
+        "name": "할비",
+        "role": "sub1",
+        "image_url": "https://storage.googleapis.com/scene-image-generator-storage-mcp-test-457809/origin/%E1%84%92%E1%85%A1%E1%86%AF%E1%84%8B%E1%85%A1%E1%84%87%E1%85%A5%E1%84%8C%E1%85%B5%E1%84%89%E1%85%A2%E1%86%B7%E1%84%91%E1%85%B3%E1%86%AF.png",
+        "character_type": "human",
+        "gender": "male",
+        "estimated_age_range": "50s",
+        "personality": "warm, friendly",
+        "voice_type": "adult_male",
+        "image_prompt": "Create a portrait of a middle-aged Asian man in his 50s. He has short, neatly styled black hair, dark brown almond-shaped eyes, and wrinkles around his eyes. He is smiling warmly. He is wearing a black suit jacket over a black turtleneck sweater and black framed glasses. The background is a soft, neutral color.",
+        "accessories": [
+          "black framed glasses"
+        ],
+        "clothing": "black suit jacket, black turtleneck sweater",
+        "eye_color": "dark brown"
+      }
+    },
+    "voice_settings": {
+      "main": {
+        "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+        "tone": "super cute, innocent, soft cooing, sometimes whiny or excited",
+        "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+        "laugh_style": "Adorable baby giggling, soft cooing laughter, infectious cute chuckling",
+        "consistent_across": "All videos"
+      },
+      "interviewer": {
+        "type": "Korean female news anchor, 30s, professional friendly tone",
+        "characteristics": "clear, warm, professional",
+        "consistent_across": "All videos"
+      },
+      "sub1": {
+        "type": "Adult female voice, warm and caring",
+        "consistent_across": "All videos"
+      }
+    },
+    "interview_background": null,
+    "scenes": [
+      {
+        "video": 1,
+        "title": "강아지가 제시하는 기상천외한 저출산 해결책 - Scene 1",
+        "duration": "4 seconds",
+        "duration_seconds": 4,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "8K cinematic video. EXTREME CLOSE-UP of face, BRIGHT vivid colors, HIGH CONTRAST, sparkling expressive eyes, dynamic attention-grabbing composition. Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie., with pink bow tie facing camera. Comfortable living room with sofa, table, plants, and cushions. bright studio lighting, Bright studio lighting. Dog with gentle mouth movements. excited expression. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_4_sec": "땅콩 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "땅콩": "여러분! 제가 드디어 저출산 문제 해결책을 찾았어요! (신나서)",
+          "script": "여러분! 제가 드디어 저출산 문제 해결책을 찾았어요! (신나서)",
+          "script_english": "Everyone! I finally found a solution to the low birth rate problem!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩": {
+            "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+            "tone": "Excited",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+            "emotion": "excited",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 4 seconds",
+          "0.0_to_2_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "2_to_4_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same golden cream with brown ears, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "golden cream with brown ears",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [
+            "pink bow tie"
+          ],
+          "props": [],
+          "distinctive_features": [
+            "fluffy fur",
+            "small size"
+          ]
+        },
+        "scene_environment": {
+          "background": "Comfortable living room with sofa, table, plants, and cushions",
+          "location": "indoor",
+          "lighting": "bright studio lighting, Bright studio lighting",
+          "weather": "none",
+          "mood": "Excited and hopeful",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "interview_answer",
+          "speaker": "main",
+          "character_name": "땅콩",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "Comfortable living room with sofa, table, plants, and cushions",
+          "lighting": "bright studio lighting, Bright studio lighting",
+          "weather": "none",
+          "mood": "Excited and hopeful",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "excited",
+          "transition": "Excited to confident",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "golden cream with brown ears must stay same at all times",
+          "background": "Comfortable living room with sofa, table, plants, and cushions must look same throughout",
+          "accessories": "pink bow tie must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "excited, preparing to speak"
+          },
+          "0.5_to_4_sec": {
+            "text": "여러분! 제가 드디어 저출산 문제 해결책을 찾았어요! (신나서)",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "Excited to confident"
+          }
+        },
+        "mouth_shapes": {
+          "여": "mouth medium open rounded",
+          "러": "mouth medium open rounded",
+          "분": "lips push forward round",
+          "제": "mouth open stretched",
+          "가": "mouth wide open jaw drops",
+          "드": "lips stretch wide teeth close",
+          "디": "lips stretch sideways teeth visible",
+          "어": "mouth medium open rounded",
+          "저": "mouth medium open rounded",
+          "출": "lips push forward round",
+          "산": "mouth wide open jaw drops",
+          "문": "lips push forward round",
+          "해": "mouth open lips stretched",
+          "결": "mouth medium open rounded",
+          "책": "mouth open lips stretched",
+          "을": "lips stretch wide teeth close",
+          "찾": "mouth wide open jaw drops",
+          "았": "mouth wide open jaw drops",
+          "요": "lips form round O",
+          "신": "lips stretch sideways teeth visible",
+          "나": "mouth wide open jaw drops",
+          "서": "mouth medium open rounded"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 1,
+        "segment_number": 1,
+        "start": 0,
+        "end": 4,
+        "narration": "여러분! 제가 드디어 저출산 문제 해결책을 찾았어요! (신나서)",
+        "narration_korean": "여러분! 제가 드디어 저출산 문제 해결책을 찾았어요! (신나서)",
+        "narration_english": "Everyone! I finally found a solution to the low birth rate problem!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "EXTREME CLOSE-UP of Pomeranian dog's face, WIDE EYES with sparkling excitement, mouth slightly open in amazement, ears perked up high, BRIGHT studio lighting, vibrant colorful background, HIGH CONTRAST, attention-grabbing composition",
+        "video_prompt": {
+          "character_action": "Head tilted slightly, tail wagging subtly",
+          "lip_sync": "yes",
+          "facial_expression": "expressive with sparkling eyes, Excited and eager",
+          "body_movement": "Slight head bobbing",
+          "camera_movement": "zoom_in",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl, high-pitched and enthusiastic",
+          "voice_type": "cute_toddler_girl",
+          "speaking_speed": "slow and cute",
+          "sound_effects": [],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "Excited",
+          "ambient_sound": "Gentle hum of central heating",
+          "background_music_mood": "Upbeat and cheerful"
+        },
+        "action_cues": {},
+        "detected_actions": [],
+        "is_hook_scene": true,
+        "thumbnail_optimized": true
+      },
+      {
+        "video": 2,
+        "title": "강아지가 제시하는 기상천외한 저출산 해결책 - Scene 2",
+        "duration": "6 seconds",
+        "duration_seconds": 6,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "8K cinematic video. Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie., with pink bow tie facing camera. Comfortable living room with sofa, table, plants, and cushions. bright studio lighting, Bright studio lighting. Dog with gentle mouth movements. IMPORTANT ACTION: Dog is doing cute hot pack dance, bouncing rhythmically with hot pack, dancing energetically with body moving rhythmically while speaking. excited expression. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_6_sec": "땅콩 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "땅콩": "결혼과 출산을 장려하는 핫팩 댄스를 추는거에요! 핫팩 댄스! 핫팩 댄스! (신나서)",
+          "script": "결혼과 출산을 장려하는 핫팩 댄스를 추는거에요! 핫팩 댄스! 핫팩 댄스! (신나서)",
+          "script_english": "We should do a hot pack dance to encourage marriage and childbirth! Hot pack dance! Hot pack dance!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩": {
+            "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+            "tone": "Enthusiastic",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+            "emotion": "excited",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 6 seconds",
+          "0.0_to_3_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "3_to_6_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same golden cream with brown ears, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "golden cream with brown ears",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [
+            "pink bow tie"
+          ],
+          "props": [],
+          "distinctive_features": [
+            "fluffy fur",
+            "small size"
+          ]
+        },
+        "scene_environment": {
+          "background": "Comfortable living room with sofa, table, plants, and cushions",
+          "location": "indoor",
+          "lighting": "bright studio lighting, Bright studio lighting",
+          "weather": "none",
+          "mood": "Funny and energetic",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "interview_answer",
+          "speaker": "main",
+          "character_name": "땅콩",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "Comfortable living room with sofa, table, plants, and cushions",
+          "lighting": "bright studio lighting, Bright studio lighting",
+          "weather": "none",
+          "mood": "Funny and energetic",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "excited",
+          "transition": "Confident",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "golden cream with brown ears must stay same at all times",
+          "background": "Comfortable living room with sofa, table, plants, and cushions must look same throughout",
+          "accessories": "pink bow tie must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "excited, preparing to speak"
+          },
+          "0.5_to_6_sec": {
+            "text": "결혼과 출산을 장려하는 핫팩 댄스를 추는거에요! 핫팩 댄스! 핫팩 댄스! (신나서)",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "Confident"
+          }
+        },
+        "mouth_shapes": {
+          "결": "mouth medium open rounded",
+          "혼": "lips form round O",
+          "과": "lips round then wide",
+          "출": "lips push forward round",
+          "산": "mouth wide open jaw drops",
+          "을": "lips stretch wide teeth close",
+          "장": "mouth wide open jaw drops",
+          "려": "mouth medium open rounded",
+          "하": "mouth wide open jaw drops",
+          "는": "lips stretch wide teeth close",
+          "핫": "mouth wide open jaw drops",
+          "팩": "mouth open lips stretched",
+          "댄": "mouth open lips stretched",
+          "스": "lips stretch wide teeth close",
+          "를": "lips stretch wide teeth close",
+          "추": "lips push forward round",
+          "거": "mouth medium open rounded",
+          "에": "mouth open stretched",
+          "요": "lips form round O",
+          "신": "lips stretch sideways teeth visible",
+          "나": "mouth wide open jaw drops",
+          "서": "mouth medium open rounded"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 2,
+        "segment_number": 2,
+        "start": 4,
+        "end": 10,
+        "narration": "결혼과 출산을 장려하는 핫팩 댄스를 추는거에요! 핫팩 댄스! 핫팩 댄스! (신나서)",
+        "narration_korean": "결혼과 출산을 장려하는 핫팩 댄스를 추는거에요! 핫팩 댄스! 핫팩 댄스! (신나서)",
+        "narration_english": "We should do a hot pack dance to encourage marriage and childbirth! Hot pack dance! Hot pack dance!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "Pomeranian dog holding a small hot pack, standing on hind legs, looking at the camera with a determined expression, living room background",
+        "video_prompt": {
+          "character_action": "Holding a hot pack and doing a silly dance with small paw movements",
+          "lip_sync": "yes",
+          "facial_expression": "Determined, enthusiastic",
+          "body_movement": "Waving the hot pack around",
+          "camera_movement": "dynamic",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl, energetic and playful",
+          "voice_type": "cute_toddler_girl",
+          "speaking_speed": "slow and cute",
+          "sound_effects": [
+            "Small whooshing sounds during the dance"
+          ],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "Enthusiastic",
+          "ambient_sound": "Gentle hum of central heating",
+          "background_music_mood": "Funny and playful"
+        },
+        "action_cues": {},
+        "detected_actions": [
+          {
+            "keyword": "핫팩 댄스",
+            "action": "doing cute hot pack dance, bouncing rhythmically with hot pack"
+          },
+          {
+            "keyword": "댄스",
+            "action": "dancing energetically with body moving rhythmically"
+          }
+        ],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 3,
+        "title": "강아지가 제시하는 기상천외한 저출산 해결책 - Scene 3",
+        "duration": "4 seconds",
+        "duration_seconds": 4,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "8K cinematic video. Create a portrait of a middle-aged Asian man in his 50s. He has short, neatly styled black hair, dark brown almond-shaped eyes, and wrinkles around his eyes. He is smiling warmly. He is wearing a black suit jacket over a black turtleneck sweater and black framed glasses. The background is a soft, neutral color., wearing black suit jacket, black turtleneck sweater, with black framed glasses facing camera. Comfortable living room with sofa, table, plants, and cushions. bright studio lighting, Bright studio lighting. 50s male person speaking with natural mouth movements. curious expression. Same appearance maintained throughout. Real person. Natural appearance. NOT animated. NOT cartoon.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_4_sec": "할비 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "할비": "음... 좋은 아이디어인데... 땅콩아, 혹시 다른 방법은 없을까?",
+          "script": "음... 좋은 아이디어인데... 땅콩아, 혹시 다른 방법은 없을까?",
+          "script_english": "Hmm... that's a good idea... Do you have any other ideas, TangKong?",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "할비": {
+            "type": "warm gentle elderly woman voice, loving grandmother tone",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 4 seconds",
+          "0.0_to_2_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "2_to_4_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same fur color, same face, same black suit jacket, black turtleneck sweater",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a portrait of a middle-aged Asian man in his 50s. He has short, neatly styled black hair, dark brown almond-shaped eyes, and wrinkles around his eyes. He is smiling warmly. He is wearing a black suit jacket over a black turtleneck sweater and black framed glasses. The background is a soft, neutral color.",
+          "species": "dog",
+          "breed": "unknown",
+          "fur_color": "",
+          "fur_texture": "",
+          "outfit": "black suit jacket, black turtleneck sweater",
+          "accessories": [
+            "black framed glasses"
+          ],
+          "props": [],
+          "distinctive_features": []
+        },
+        "scene_environment": {
+          "background": "Comfortable living room with sofa, table, plants, and cushions",
+          "location": "indoor",
+          "lighting": "bright studio lighting, Bright studio lighting",
+          "weather": "none",
+          "mood": "Thoughtful and encouraging",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "interview_question",
+          "speaker": "sub1",
+          "character_name": "할비",
+          "character_type": "human",
+          "is_animal_character": false,
+          "character_description": "50s male person",
+          "location": "indoor",
+          "background": "Comfortable living room with sofa, table, plants, and cushions",
+          "lighting": "bright studio lighting, Bright studio lighting",
+          "weather": "none",
+          "mood": "Thoughtful and encouraging",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "curious",
+          "transition": "Curious to thoughtful",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "Fur color must stay consistent",
+          "background": "Comfortable living room with sofa, table, plants, and cushions must look same throughout",
+          "costume": "black suit jacket, black turtleneck sweater must be visible throughout",
+          "accessories": "black framed glasses must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "curious, preparing to speak"
+          },
+          "0.5_to_4_sec": {
+            "text": "음... 좋은 아이디어인데... 땅콩아, 혹시 다른 방법은 없을까?",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "Curious to thoughtful"
+          }
+        },
+        "mouth_shapes": {
+          "음": "lips stretch wide teeth close",
+          "좋": "lips form round O",
+          "은": "lips stretch wide teeth close",
+          "아": "mouth wide open jaw drops",
+          "이": "lips stretch sideways teeth visible",
+          "디": "lips stretch sideways teeth visible",
+          "어": "mouth medium open rounded",
+          "인": "lips stretch sideways teeth visible",
+          "데": "mouth open stretched",
+          "땅": "mouth wide open jaw drops",
+          "콩": "lips form round O",
+          "혹": "lips form round O",
+          "시": "lips stretch sideways teeth visible",
+          "다": "mouth wide open jaw drops",
+          "른": "lips stretch wide teeth close",
+          "방": "mouth wide open jaw drops",
+          "법": "mouth medium open rounded",
+          "없": "mouth medium open rounded",
+          "을": "lips stretch wide teeth close",
+          "까": "mouth wide open jaw drops"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean female news anchor, 30s, professional friendly tone",
+          "voice_effect": null,
+          "dog_lip_sync": false
+        },
+        "index": 3,
+        "segment_number": 3,
+        "start": 10,
+        "end": 14,
+        "narration": "음... 좋은 아이디어인데... 땅콩아, 혹시 다른 방법은 없을까?",
+        "narration_korean": "음... 좋은 아이디어인데... 땅콩아, 혹시 다른 방법은 없을까?",
+        "narration_english": "Hmm... that's a good idea... Do you have any other ideas, TangKong?",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "Middle-aged Asian man smiling warmly, wearing a black suit jacket and turtleneck, looking at the Pomeranian dog with a curious expression, living room background",
+        "video_prompt": {
+          "character_action": "Tilting head slightly, stroking his chin thoughtfully",
+          "lip_sync": "no",
+          "facial_expression": "Curious and thoughtful",
+          "body_movement": "Slight hand gesture",
+          "camera_movement": "static",
+          "is_interviewer_speaking": true,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "adult_male, warm and gentle",
+          "voice_type": "adult_male",
+          "speaking_speed": "natural",
+          "sound_effects": [],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "Encouraging",
+          "ambient_sound": "Quiet background ambience",
+          "background_music_mood": "Calm and reflective"
+        },
+        "action_cues": {},
+        "detected_actions": [],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 4,
+        "title": "강아지가 제시하는 기상천외한 저출산 해결책 - Scene 4",
+        "duration": "6 seconds",
+        "duration_seconds": 6,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "8K cinematic video. Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie., with pink bow tie facing camera. Comfortable living room with sofa, table, plants, and cushions. bright studio lighting, Bright studio lighting. Dog with gentle mouth movements. IMPORTANT ACTION: Dog is dancing with cute body movements while speaking. confident expression. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_6_sec": "땅콩 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "땅콩": "여러분, 이제부터 정부는 '댕댕이 육아 지원금'을 지급해야 합니다! GDP 대비 5%를 투입하여, 출산 가정에 맞춤형 멍멍이 로봇을 제공하고, 펫-프렌들리 인프라 구축에 힘써야 합니다! (전문가 톤)",
+          "script": "여러분, 이제부터 정부는 '댕댕이 육아 지원금'을 지급해야 합니다! GDP 대비 5%를 투입하여, 출산 가정에 맞춤형 멍멍이 로봇을 제공하고, 펫-프렌들리 인프라 구축에 힘써야 합니다! (전문가 톤)",
+          "script_english": "From now on, the government must provide 'Doggy Childcare Support Funds'! Invest 5% of GDP to provide customized puppy robots to families with newborns and strive to build pet-friendly infrastructure!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩": {
+            "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+            "tone": "Confident",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+            "emotion": "confident",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 6 seconds",
+          "0.0_to_3_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "3_to_6_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same golden cream with brown ears, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "golden cream with brown ears",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [
+            "pink bow tie"
+          ],
+          "props": [],
+          "distinctive_features": [
+            "fluffy fur",
+            "small size"
+          ]
+        },
+        "scene_environment": {
+          "background": "Comfortable living room with sofa, table, plants, and cushions",
+          "location": "indoor",
+          "lighting": "bright studio lighting, Bright studio lighting",
+          "weather": "none",
+          "mood": "Serious and professional",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "interview_answer",
+          "speaker": "main",
+          "character_name": "땅콩",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "Comfortable living room with sofa, table, plants, and cushions",
+          "lighting": "bright studio lighting, Bright studio lighting",
+          "weather": "none",
+          "mood": "Serious and professional",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "confident",
+          "transition": "Confident to surprised",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "golden cream with brown ears must stay same at all times",
+          "background": "Comfortable living room with sofa, table, plants, and cushions must look same throughout",
+          "accessories": "pink bow tie must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "confident, preparing to speak"
+          },
+          "0.5_to_6_sec": {
+            "text": "여러분, 이제부터 정부는 '댕댕이 육아 지원금'을 지급해야 합니다! GDP 대비 5%를 투입하여, 출산 가정에 맞춤형 멍멍이 로봇을 제공하고, 펫-프렌들리 인프라 구축에 힘써야 합니다! (전문가 톤)",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "Confident to surprised"
+          }
+        },
+        "mouth_shapes": {
+          "여": "mouth medium open rounded",
+          "러": "mouth medium open rounded",
+          "분": "lips push forward round",
+          "이": "lips stretch sideways teeth visible",
+          "제": "mouth open stretched",
+          "부": "lips push forward round",
+          "터": "mouth medium open rounded",
+          "정": "mouth medium open rounded",
+          "는": "lips stretch wide teeth close",
+          "댕": "mouth open lips stretched",
+          "육": "lips push forward round",
+          "아": "mouth wide open jaw drops",
+          "지": "lips stretch sideways teeth visible",
+          "원": "lips forward then open",
+          "금": "lips stretch wide teeth close",
+          "을": "lips stretch wide teeth close",
+          "급": "lips stretch wide teeth close",
+          "해": "mouth open lips stretched",
+          "야": "mouth wide open jaw drops",
+          "합": "mouth wide open jaw drops",
+          "니": "lips stretch sideways teeth visible",
+          "다": "mouth wide open jaw drops",
+          "대": "mouth open lips stretched",
+          "비": "lips stretch sideways teeth visible",
+          "를": "lips stretch wide teeth close",
+          "투": "lips push forward round",
+          "입": "lips stretch sideways teeth visible",
+          "하": "mouth wide open jaw drops",
+          "출": "lips push forward round",
+          "산": "mouth wide open jaw drops",
+          "가": "mouth wide open jaw drops",
+          "에": "mouth open stretched",
+          "맞": "mouth wide open jaw drops",
+          "춤": "lips push forward round",
+          "형": "mouth medium open rounded",
+          "멍": "mouth medium open rounded",
+          "로": "lips form round O",
+          "봇": "lips form round O",
+          "공": "lips form round O",
+          "고": "lips form round O",
+          "펫": "mouth open stretched",
+          "프": "lips stretch wide teeth close",
+          "렌": "mouth open stretched",
+          "들": "lips stretch wide teeth close",
+          "리": "lips stretch sideways teeth visible",
+          "인": "lips stretch sideways teeth visible",
+          "라": "mouth wide open jaw drops",
+          "구": "lips push forward round",
+          "축": "lips push forward round",
+          "힘": "lips stretch sideways teeth visible",
+          "써": "mouth medium open rounded",
+          "전": "mouth medium open rounded",
+          "문": "lips push forward round",
+          "톤": "lips form round O"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 4,
+        "segment_number": 4,
+        "start": 14,
+        "end": 20,
+        "narration": "여러분, 이제부터 정부는 '댕댕이 육아 지원금'을 지급해야 합니다! GDP 대비 5%를 투입하여, 출산 가정에 맞춤형 멍멍이 로봇을 제공하고, 펫-프렌들리 인프라 구축에 힘써야 합니다! (전문가 톤)",
+        "narration_korean": "여러분, 이제부터 정부는 '댕댕이 육아 지원금'을 지급해야 합니다! GDP 대비 5%를 투입하여, 출산 가정에 맞춤형 멍멍이 로봇을 제공하고, 펫-프렌들리 인프라 구축에 힘써야 합니다! (전문가 톤)",
+        "narration_english": "From now on, the government must provide 'Doggy Childcare Support Funds'! Invest 5% of GDP to provide customized puppy robots to families with newborns and strive to build pet-friendly infrastructure!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "Pomeranian dog wearing glasses, sitting at a desk with a microphone, looking like a professional speaker, living room background",
+        "video_prompt": {
+          "character_action": "Sitting upright, gesturing with paws",
+          "lip_sync": "yes",
+          "facial_expression": "Serious and professional",
+          "body_movement": "Nodding confidently",
+          "camera_movement": "dynamic",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl, confident and professional",
+          "voice_type": "cute_toddler_girl",
+          "speaking_speed": "slow and cute",
+          "sound_effects": [],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "Confident",
+          "ambient_sound": "Gentle hum of central heating",
+          "background_music_mood": "Funny and upbeat"
+        },
+        "action_cues": {},
+        "detected_actions": [
+          {
+            "keyword": "춤",
+            "action": "dancing with cute body movements"
+          }
+        ],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 5,
+        "title": "강아지가 제시하는 기상천외한 저출산 해결책 - Scene 5",
+        "duration": "4 seconds",
+        "duration_seconds": 4,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "8K cinematic video. Create a portrait of a middle-aged Asian man in his 50s. He has short, neatly styled black hair, dark brown almond-shaped eyes, and wrinkles around his eyes. He is smiling warmly. He is wearing a black suit jacket over a black turtleneck sweater and black framed glasses. The background is a soft, neutral color., wearing black suit jacket, black turtleneck sweater, with black framed glasses facing camera. Comfortable living room with sofa, table, plants, and cushions. bright studio lighting, Bright studio lighting. 50s male person speaking with natural mouth movements. surprised expression. Same appearance maintained throughout. Real person. Natural appearance. NOT animated. NOT cartoon.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_4_sec": "할비 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "할비": "(코믹하게) 오~ 좋은데? 땅콩이 똑똑한데? 하지만... 넌 이미... 중성화를 했잖아...? (웃음)",
+          "script": "(코믹하게) 오~ 좋은데? 땅콩이 똑똑한데? 하지만... 넌 이미... 중성화를 했잖아...? (웃음)",
+          "script_english": "(Comically) Oh~ That's good? TangKong is smart? But... you're already... neutered, aren't you...? (laughter)",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "할비": {
+            "type": "warm gentle elderly woman voice, loving grandmother tone",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 4 seconds",
+          "0.0_to_2_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "2_to_4_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same fur color, same face, same black suit jacket, black turtleneck sweater",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a portrait of a middle-aged Asian man in his 50s. He has short, neatly styled black hair, dark brown almond-shaped eyes, and wrinkles around his eyes. He is smiling warmly. He is wearing a black suit jacket over a black turtleneck sweater and black framed glasses. The background is a soft, neutral color.",
+          "species": "dog",
+          "breed": "unknown",
+          "fur_color": "",
+          "fur_texture": "",
+          "outfit": "black suit jacket, black turtleneck sweater",
+          "accessories": [
+            "black framed glasses"
+          ],
+          "props": [],
+          "distinctive_features": []
+        },
+        "scene_environment": {
+          "background": "Comfortable living room with sofa, table, plants, and cushions",
+          "location": "indoor",
+          "lighting": "bright studio lighting, Bright studio lighting",
+          "weather": "none",
+          "mood": "Awkward and hesitant",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "interview_question",
+          "speaker": "sub1",
+          "character_name": "할비",
+          "character_type": "human",
+          "is_animal_character": false,
+          "character_description": "50s male person",
+          "location": "indoor",
+          "background": "Comfortable living room with sofa, table, plants, and cushions",
+          "lighting": "bright studio lighting, Bright studio lighting",
+          "weather": "none",
+          "mood": "Awkward and hesitant",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "surprised",
+          "transition": "Surprised to embarrassed",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "Fur color must stay consistent",
+          "background": "Comfortable living room with sofa, table, plants, and cushions must look same throughout",
+          "costume": "black suit jacket, black turtleneck sweater must be visible throughout",
+          "accessories": "black framed glasses must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "surprised, preparing to speak"
+          },
+          "0.5_to_4_sec": {
+            "text": "(코믹하게) 오~ 좋은데? 땅콩이 똑똑한데? 하지만... 넌 이미... 중성화를 했잖아...? (웃음)",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "Surprised to embarrassed"
+          }
+        },
+        "mouth_shapes": {
+          "코": "lips form round O",
+          "믹": "lips stretch sideways teeth visible",
+          "하": "mouth wide open jaw drops",
+          "게": "mouth open stretched",
+          "오": "lips form round O",
+          "좋": "lips form round O",
+          "은": "lips stretch wide teeth close",
+          "데": "mouth open stretched",
+          "땅": "mouth wide open jaw drops",
+          "콩": "lips form round O",
+          "이": "lips stretch sideways teeth visible",
+          "똑": "lips form round O",
+          "한": "mouth wide open jaw drops",
+          "지": "lips stretch sideways teeth visible",
+          "만": "mouth wide open jaw drops",
+          "넌": "mouth medium open rounded",
+          "미": "lips stretch sideways teeth visible",
+          "중": "lips push forward round",
+          "성": "mouth medium open rounded",
+          "화": "lips round then wide",
+          "를": "lips stretch wide teeth close",
+          "했": "mouth open lips stretched",
+          "잖": "mouth wide open jaw drops",
+          "아": "mouth wide open jaw drops",
+          "웃": "lips push forward round",
+          "음": "lips stretch wide teeth close"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean female news anchor, 30s, professional friendly tone",
+          "voice_effect": null,
+          "dog_lip_sync": false
+        },
+        "index": 5,
+        "segment_number": 5,
+        "start": 20,
+        "end": 24,
+        "narration": "(코믹하게) 오~ 좋은데? 땅콩이 똑똑한데? 하지만... 넌 이미... 중성화를 했잖아...? (웃음)",
+        "narration_korean": "(코믹하게) 오~ 좋은데? 땅콩이 똑똑한데? 하지만... 넌 이미... 중성화를 했잖아...? (웃음)",
+        "narration_english": "(Comically) Oh~ That's good? TangKong is smart? But... you're already... neutered, aren't you...? (laughter)",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "Middle-aged Asian man looking at the Pomeranian dog with a slightly awkward expression, living room background",
+        "video_prompt": {
+          "character_action": "Looking down slightly, scratching his head",
+          "lip_sync": "no",
+          "facial_expression": "Awkward, slightly embarrassed",
+          "body_movement": "Shifting his weight",
+          "camera_movement": "static",
+          "is_interviewer_speaking": true,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "adult_male, slightly hesitant and gentle",
+          "voice_type": "adult_male",
+          "speaking_speed": "natural",
+          "sound_effects": [
+            "laughter"
+          ],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "Awkward",
+          "ambient_sound": "Quiet background ambience",
+          "background_music_mood": "Slightly awkward and subdued"
+        },
+        "action_cues": {},
+        "detected_actions": [],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 6,
+        "title": "강아지가 제시하는 기상천외한 저출산 해결책 - Scene 6",
+        "duration": "4 seconds",
+        "duration_seconds": 4,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "8K cinematic video. Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie., with pink bow tie facing camera. Comfortable living room with sofa, table, plants, and cushions. bright studio lighting, Bright studio lighting. Dog with gentle mouth movements. surprised expression. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_4_sec": "땅콩 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "땅콩": "(망했다는 느낌) 으... 으아아아아아! 할비 미워!",
+          "script": "(망했다는 느낌) 으... 으아아아아아! 할비 미워!",
+          "script_english": "(Feeling ruined) Ugh... Uwaaaaa! I hate Halbi!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩": {
+            "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+            "tone": "Shocked",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+            "emotion": "surprised",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 4 seconds",
+          "0.0_to_2_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "2_to_4_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same golden cream with brown ears, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "golden cream with brown ears",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [
+            "pink bow tie"
+          ],
+          "props": [],
+          "distinctive_features": [
+            "fluffy fur",
+            "small size"
+          ]
+        },
+        "scene_environment": {
+          "background": "Comfortable living room with sofa, table, plants, and cushions",
+          "location": "indoor",
+          "lighting": "bright studio lighting, Bright studio lighting",
+          "weather": "none",
+          "mood": "Shocked and surprised",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "reaction",
+          "speaker": "main",
+          "character_name": "땅콩",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "Comfortable living room with sofa, table, plants, and cushions",
+          "lighting": "bright studio lighting, Bright studio lighting",
+          "weather": "none",
+          "mood": "Shocked and surprised",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "surprised",
+          "transition": "Embarrassed",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "golden cream with brown ears must stay same at all times",
+          "background": "Comfortable living room with sofa, table, plants, and cushions must look same throughout",
+          "accessories": "pink bow tie must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "surprised, preparing to speak"
+          },
+          "0.5_to_4_sec": {
+            "text": "(망했다는 느낌) 으... 으아아아아아! 할비 미워!",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "Embarrassed"
+          }
+        },
+        "mouth_shapes": {
+          "망": "mouth wide open jaw drops",
+          "했": "mouth open lips stretched",
+          "다": "mouth wide open jaw drops",
+          "는": "lips stretch wide teeth close",
+          "느": "lips stretch wide teeth close",
+          "낌": "lips stretch sideways teeth visible",
+          "으": "lips stretch wide teeth close",
+          "아": "mouth wide open jaw drops",
+          "할": "mouth wide open jaw drops",
+          "비": "lips stretch sideways teeth visible",
+          "미": "lips stretch sideways teeth visible",
+          "워": "lips forward then open"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 6,
+        "segment_number": 6,
+        "start": 24,
+        "end": 28,
+        "narration": "(망했다는 느낌) 으... 으아아아아아! 할비 미워!",
+        "narration_korean": "(망했다는 느낌) 으... 으아아아아아! 할비 미워!",
+        "narration_english": "(Feeling ruined) Ugh... Uwaaaaa! I hate Halbi!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "Pomeranian dog with wide eyes and a shocked expression, mouth slightly open, living room background",
+        "video_prompt": {
+          "character_action": "Eyes widening, ears perking up",
+          "lip_sync": "yes",
+          "facial_expression": "Shocked, surprised",
+          "body_movement": "Freezing in place",
+          "camera_movement": "zoom_in",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl, high-pitched and shocked",
+          "voice_type": "cute_toddler_girl",
+          "speaking_speed": "slow and cute",
+          "sound_effects": [
+            "Short, sharp intake of breath"
+          ],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "Shocked",
+          "ambient_sound": "Gentle hum of central heating",
+          "background_music_mood": "Sudden silence"
+        },
+        "action_cues": {},
+        "detected_actions": [],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      }
+    ],
+    "total_duration_seconds": 28,
+    "script_reference": {
+      "title": {
+        "japanese": "",
+        "korean": "강아지가 제시하는 기상천외한 저출산 해결책",
+        "english": "Dog's outrageous solution to low birth rate"
+      },
+      "topic": "강아지가 제시하는 기상천외한 저출산 해결책"
+    }
+  }
+}

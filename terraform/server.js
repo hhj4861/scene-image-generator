@@ -72,32 +72,32 @@ const PEANUT_STYLE = {
         y_percent: 85, // 94% -> 85% (Safe zone)
     },
     subtitle: {
-        font_size: 46,
+        font_size: 38, // 46 -> 38 (Reduced for long text)
         color: "0xFFE66D",
         border_color: "0x333333",
         border_width: 4,
-        y_percent: 65, // 74% -> 65% (Moved up slightly)
+        y_percent: 70, // 68% -> 70% (User request)
     },
     subtitle_english: {
-        font_size: 28,
+        font_size: 22, // 28 -> 22 (Reduced for long text)
         color: "0xFFFAF0",
         border_color: "0x333333",
         border_width: 3,
-        y_percent: 70, // 79% -> 70%
+        y_percent: 76, // 74% -> 76% (User request)
     },
     subtitle_interviewer: {
-        font_size: 46,
+        font_size: 38, // 46 -> 38
         color: "0x87CEEB",
         border_color: "0x333333",
         border_width: 4,
-        y_percent: 65,
+        y_percent: 70, // User request
     },
     subtitle_interviewer_english: {
-        font_size: 28,
+        font_size: 22, // 28 -> 22
         color: "0xFFFAF0",
         border_color: "0x333333",
         border_width: 3,
-        y_percent: 70,
+        y_percent: 76, // User request
     },
 };
 
@@ -179,35 +179,84 @@ const escapeText = (text, keepEmoji = false) => {
 const cleanSubtitleText = (text) => {
     if (!text) return "";
     let cleaned = text.replace(/콩파민[!！]?/g, "").trim();
-    cleaned = cleaned.replace(/\s+/g, " ");
+    cleaned = cleaned.replace(/[ \t]+/g, " ");  // Preserve newlines, only collapse spaces
     cleaned = cleaned.replace(/\.{2,}\s*/g, "... ");
     return cleaned;
+};
+
+// =====================
+// 동적 폰트 크기 계산 (자막이 화면에 맞도록)
+// =====================
+const calculateDynamicFontSize = (text, baseFontSize, screenWidth, maxLines = 3) => {
+    if (!text) return { fontSize: baseFontSize, needsReduction: false };
+
+    const cleaned = cleanSubtitleText(text);
+    const textLength = cleaned.length;
+
+    // 기본 설정: 한글 기준 폰트 크기 대비 글자 너비 비율 (약 0.6~0.8)
+    const charWidthRatio = 0.7;
+    const availableWidth = screenWidth * 0.85; // 화면의 85% 사용
+
+    // 한 줄에 들어갈 수 있는 글자 수
+    const charsPerLine = Math.floor(availableWidth / (baseFontSize * charWidthRatio));
+    const neededLines = Math.ceil(textLength / charsPerLine);
+
+    // 최대 줄 수를 초과하면 폰트 크기 축소
+    if (neededLines > maxLines) {
+        // 필요한 축소 비율 계산
+        const reductionRatio = Math.sqrt(maxLines / neededLines);
+        const newFontSize = Math.max(Math.floor(baseFontSize * reductionRatio), 24); // 최소 24px
+        return { fontSize: newFontSize, needsReduction: true, originalLines: neededLines };
+    }
+
+    return { fontSize: baseFontSize, needsReduction: false };
 };
 
 const splitSubtitleLines = (text, maxCharsPerLine) => {
     const cleaned = cleanSubtitleText(text);
     if (!cleaned) return [];
-    if (cleaned.length <= maxCharsPerLine) return [cleaned];
 
-    const neededLines = Math.ceil(cleaned.length / maxCharsPerLine);
-    const targetCharsPerLine = Math.ceil(cleaned.length / neededLines);
-    const lines = [];
-    let remaining = cleaned;
+    // ★★★ 먼저 명시적 개행(\n)으로 분할 ★★★
+    const explicitLines = cleaned.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
-    for (let i = 0; i < neededLines && remaining.length > 0; i++) {
-        if (remaining.length <= targetCharsPerLine || i === neededLines - 1) {
-            lines.push(remaining.trim());
-            break;
+    const allLines = [];
+    for (const line of explicitLines) {
+        // 각 줄이 maxCharsPerLine 이하면 그대로 추가
+        if (line.length <= maxCharsPerLine) {
+            allLines.push(line);
+            continue;
         }
-        let splitIdx = remaining.lastIndexOf(" ", targetCharsPerLine);
-        if (splitIdx === -1 || splitIdx < targetCharsPerLine * 0.5) {
-            splitIdx = remaining.indexOf(" ", targetCharsPerLine);
+
+        // 긴 줄은 추가 분할
+        const MAX_LINES = 3;
+        const neededLines = Math.min(Math.ceil(line.length / maxCharsPerLine), MAX_LINES);
+        const targetCharsPerLine = Math.ceil(line.length / neededLines);
+        let remaining = line;
+
+        for (let i = 0; i < neededLines && remaining.length > 0; i++) {
+            if (remaining.length <= targetCharsPerLine || i === neededLines - 1) {
+                allLines.push(remaining.trim());
+                break;
+            }
+
+            let splitIdx = remaining.lastIndexOf(" ", targetCharsPerLine);
+            if (splitIdx === -1 || splitIdx < targetCharsPerLine * 0.3) {
+                const commaIdx = remaining.lastIndexOf(",", targetCharsPerLine);
+                const periodIdx = remaining.lastIndexOf(".", targetCharsPerLine);
+                splitIdx = Math.max(commaIdx, periodIdx);
+                if (splitIdx === -1 || splitIdx < targetCharsPerLine * 0.3) {
+                    splitIdx = targetCharsPerLine;
+                } else {
+                    splitIdx += 1;
+                }
+            }
+
+            allLines.push(remaining.substring(0, splitIdx).trim());
+            remaining = remaining.substring(splitIdx).trim();
         }
-        if (splitIdx === -1) splitIdx = targetCharsPerLine;
-        lines.push(remaining.substring(0, splitIdx).trim());
-        remaining = remaining.substring(splitIdx).trim();
     }
-    return lines.filter((l) => l.length > 0);
+
+    return allLines.filter((l) => l.length > 0);
 };
 
 const splitHeaderLines = (text, maxChars = 12) => {
@@ -228,27 +277,36 @@ const splitHeaderLines = (text, maxChars = 12) => {
 const splitEnglishSubtitleLines = (text, maxCharsPerLine) => {
     if (!text) return [];
     const cleaned = text.trim();
-    if (cleaned.length <= maxCharsPerLine) return [cleaned];
 
-    const neededLines = Math.ceil(cleaned.length / maxCharsPerLine);
-    const targetCharsPerLine = Math.ceil(cleaned.length / neededLines);
-    const lines = [];
-    let remaining = cleaned;
+    // ★★★ 먼저 명시적 개행(\n)으로 분할 ★★★
+    const explicitLines = cleaned.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
-    for (let i = 0; i < neededLines && remaining.length > 0; i++) {
-        if (remaining.length <= targetCharsPerLine || i === neededLines - 1) {
-            lines.push(remaining.trim());
-            break;
+    const allLines = [];
+    for (const line of explicitLines) {
+        if (line.length <= maxCharsPerLine) {
+            allLines.push(line);
+            continue;
         }
-        let splitIdx = remaining.lastIndexOf(" ", targetCharsPerLine);
-        if (splitIdx === -1 || splitIdx < targetCharsPerLine * 0.5) {
-            splitIdx = remaining.indexOf(" ", targetCharsPerLine);
+
+        const neededLines = Math.ceil(line.length / maxCharsPerLine);
+        const targetCharsPerLine = Math.ceil(line.length / neededLines);
+        let remaining = line;
+
+        for (let i = 0; i < neededLines && remaining.length > 0; i++) {
+            if (remaining.length <= targetCharsPerLine || i === neededLines - 1) {
+                allLines.push(remaining.trim());
+                break;
+            }
+            let splitIdx = remaining.lastIndexOf(" ", targetCharsPerLine);
+            if (splitIdx === -1 || splitIdx < targetCharsPerLine * 0.5) {
+                splitIdx = remaining.indexOf(" ", targetCharsPerLine);
+            }
+            if (splitIdx === -1) splitIdx = targetCharsPerLine;
+            allLines.push(remaining.substring(0, splitIdx).trim());
+            remaining = remaining.substring(splitIdx).trim();
         }
-        if (splitIdx === -1) splitIdx = targetCharsPerLine;
-        lines.push(remaining.substring(0, splitIdx).trim());
-        remaining = remaining.substring(splitIdx).trim();
     }
-    return lines.filter((l) => l.length > 0);
+    return allLines.filter((l) => l.length > 0);
 };
 
 // Health check
@@ -576,10 +634,10 @@ app.post("/render/puppy", async (req, res) => {
 
         console.log(`[${jobId}] 🚀 Starting OPTIMIZED Puppy render: ${videos.length} videos`);
 
-        const SUBTITLE_WIDTH_PERCENT = 70;
+        const SUBTITLE_WIDTH_PERCENT = 90; // 70% -> 90% for more subtitle space
         const availableWidth = Math.round(width * SUBTITLE_WIDTH_PERCENT / 100);
-        const KOR_CHAR_WIDTH = 50;
-        const ENG_CHAR_WIDTH = 20;
+        const KOR_CHAR_WIDTH = 40; // 50 -> 40 for smaller char width
+        const ENG_CHAR_WIDTH = 18; // 20 -> 18 for smaller char width
         const MAX_CHARS_PER_LINE = Math.floor(availableWidth / KOR_CHAR_WIDTH);
         const MAX_CHARS_PER_LINE_ENG = Math.floor(availableWidth / ENG_CHAR_WIDTH);
 
@@ -744,10 +802,21 @@ app.post("/render/puppy", async (req, res) => {
             const subEngStyle = isInterviewer ? PEANUT_STYLE.subtitle_interviewer_english : PEANUT_STYLE.subtitle_english;
             const baseSubY = Math.round(height * subStyle.y_percent / 100);
             const baseEngY = Math.round(height * subEngStyle.y_percent / 100);
-            const lineHeight = subStyle.font_size + 8;
-            const engLineHeight = subEngStyle.font_size + 5;
 
-            const korLines = splitSubtitleLines(sub.text || "", MAX_CHARS_PER_LINE);
+            // ★★★ 동적 폰트 크기 계산 (자막이 화면에 맞도록) ★★★
+            const korDynamicFont = calculateDynamicFontSize(sub.text, subStyle.font_size, width, 5);
+            const engDynamicFont = calculateDynamicFontSize(sub.text_english, subEngStyle.font_size, width, 3);
+
+            const korFontSize = korDynamicFont.fontSize;
+            const engFontSize = engDynamicFont.fontSize;
+            const lineHeight = korFontSize + 8;
+            const engLineHeight = engFontSize + 5;
+
+            // 동적 폰트 크기에 맞게 MAX_CHARS_PER_LINE 재계산
+            const dynamicMaxChars = Math.floor((width * 0.85) / (korFontSize * 0.7));
+            const dynamicMaxCharsEng = Math.floor((width * 0.85) / (engFontSize * 0.4));
+
+            const korLines = splitSubtitleLines(sub.text || "", dynamicMaxChars);
             if (korLines.length > 0) {
                 const korStartY = korLines.length > 1 ? baseSubY - ((korLines.length - 1) * lineHeight / 2) : baseSubY;
                 korLines.forEach((line, idx) => {
@@ -755,14 +824,14 @@ app.post("/render/puppy", async (req, res) => {
                     if (idx === 0 && isInterviewer) escapedLine = `Q\\: ${escapedLine}`;
                     const lineY = korStartY + (idx * lineHeight);
                     if (subtitle_enabled) {
-                        drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${subStyle.font_size}:fontcolor=${subStyle.color}:borderw=${subStyle.border_width}:bordercolor=${subStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})'`);
+                        drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${korFontSize}:fontcolor=${subStyle.color}:borderw=${subStyle.border_width}:bordercolor=${subStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})'`);
                     }
                 });
             }
 
             if (subtitle_english_enabled && sub.text_english) {
-                const engLines = splitEnglishSubtitleLines(sub.text_english, MAX_CHARS_PER_LINE_ENG);
-                console.log(`[DEBUG_ENG_GEN] Scene ${sub.scene_index} English lines: ${JSON.stringify(engLines)}`);
+                const engLines = splitEnglishSubtitleLines(sub.text_english, dynamicMaxCharsEng);
+                console.log(`[DEBUG_ENG_GEN] Scene ${sub.scene_index} English lines: ${JSON.stringify(engLines)}, fontSize: ${engFontSize}`);
 
                 if (engLines.length > 0) {
                     const korLineCount = korLines.length || 1;
@@ -771,7 +840,7 @@ app.post("/render/puppy", async (req, res) => {
                         let escapedLine = escapeText(line);
                         if (idx === 0 && isInterviewer) escapedLine = `Q\\: ${escapedLine}`;
                         const lineY = engStartY + (idx * engLineHeight);
-                        const filter = `drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${subEngStyle.font_size}:fontcolor=${subEngStyle.color}:borderw=${subEngStyle.border_width}:bordercolor=${subEngStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})'`;
+                        const filter = `drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${engFontSize}:fontcolor=${subEngStyle.color}:borderw=${subEngStyle.border_width}:bordercolor=${subEngStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})'`;
                         console.log(`[DEBUG_FILTER_ENG] ${filter}`);
                         drawFilters.push(filter);
                     });

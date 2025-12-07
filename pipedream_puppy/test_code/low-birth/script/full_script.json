@@ -1,0 +1,606 @@
+{
+  "status": "Processing AI Edit Instruction with gemini-2.0-flash...",
+  "ai_edit_applied": true,
+  "$summary": "Script Finalized: 0 scenes, 34s",
+  "$return_value": {
+    "folder_name": "20251206_47a77d4c_Dog_s_outrageous_sol",
+    "language": "korean",
+    "script_text": "땅콩이가 저출산 해결책을 제시하지만, 이미 중성화 수술을 받은 사실을 깨닫고 당황하는 이야기",
+    "total_duration_seconds": 34,
+    "title": {
+      "japanese": "",
+      "korean": "강아지가 제시하는 기상천외한 저출산 해결책",
+      "english": "Dog's outrageous solution to low birth rate"
+    },
+    "content_type": "comic",
+    "content_type_config": {
+      "name": "코믹",
+      "emoji": "😂",
+      "description": "웃긴 상황과 반전으로 가득한 개그",
+      "tone": "funny, absurd, unexpected",
+      "mood": "hilarious and light-hearted",
+      "recommended_script_format": "mixed",
+      "themes": [
+        "반전 개그",
+        "상황 코미디",
+        "몰래카메라",
+        "실패 모음",
+        "리액션"
+      ],
+      "emotion_range": [
+        "신남",
+        "당황",
+        "멘붕",
+        "웃음"
+      ],
+      "example_topics": [
+        "로봇청소기와의 전쟁",
+        "목욕 탈출 대작전",
+        "간식 도둑 추격전"
+      ],
+      "primary_performance_type": null
+    },
+    "content_type_info": {
+      "tone": "funny, absurd, unexpected",
+      "mood": "hilarious and light-hearted",
+      "main_theme": "저출산 문제를 강아지 시점에서 재치있게 풀어내기",
+      "key_element": "중성화의 반전 결말"
+    },
+    "topic_info": {
+      "topic": "강아지가 제시하는 기상천외한 저출산 해결책",
+      "content_type": "comic",
+      "is_satire": false,
+      "original_topic": "저출산에 대한 생각",
+      "keyword_hint": "저출산을 해결하기 위한 방법 제시,하지만 이미 중성화 수술해서 해결하지 못함.",
+      "satire_info": null,
+      "story_context": {
+        "story_summary": "프렌치 불도그 강아지가 저출산 문제를 해결하기 위한 아이디어를 제시하다가 이미 중성화 수술을 받은 사실을 깨닫고 당황하는 반전 스토리.",
+        "hook": "첫 장면에서 강아지가 작은 마이크를 잡고 '저출산 문제 해결책을 찾았습니다!'라고 외친다.",
+        "narration_style": "신남",
+        "emotional_journey": "기대감 → 자신감 → 당황",
+        "viral_elements": [
+          "반전",
+          "귀여움"
+        ],
+        "script_format": "mixed"
+      },
+      "daily_context": {
+        "date": "2025-12-6",
+        "season": "겨울",
+        "season_jp": "冬",
+        "day_of_week": "토요일",
+        "time_of_day": "아침",
+        "special_days": [],
+        "random_theme": "츤데레"
+      },
+      "script_format": "mixed"
+    },
+    "consistency": {
+      "main_character_prompt": "Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+      "main_character_image_url": "https://storage.googleapis.com/scene-image-generator-storage-mcp-test-457809/origin/%E1%84%85%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%84%E1%85%A1%E1%86%BC%E1%84%8F%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5.jpeg",
+      "consistent_background": "Comfortable living room with sofa, table, plants, and cushions",
+      "consistent_lighting": "bright studio lighting, Bright studio lighting",
+      "performance_stage_background": "dark concert stage with purple and blue neon lights, colorful spotlights from above, subtle smoke effects at the bottom",
+      "has_performance": false,
+      "performance_type": "beatbox",
+      "performance_accessories": "",
+      "real_dog_emphasis": "Real living dog. Actual puppy. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in dog mask. Real fur. Real animal.",
+      "no_text_emphasis": "No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements."
+    },
+    "characters": {
+      "main": {
+        "name": "땅콩",
+        "role": "main",
+        "image_url": "https://storage.googleapis.com/scene-image-generator-storage-mcp-test-457809/origin/%E1%84%85%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%84%E1%85%A1%E1%86%BC%E1%84%8F%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5.jpeg",
+        "character_type": "animal",
+        "species": "dog",
+        "breed": "Pomeranian",
+        "estimated_age": "adult",
+        "personality": "cute",
+        "voice_type": "baby_girl",
+        "image_prompt": "Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+        "distinctive_features": [
+          "fluffy fur",
+          "small size"
+        ],
+        "accessories": [
+          "pink bow tie"
+        ],
+        "fur_color": "golden cream with brown ears",
+        "fur_texture": "fluffy",
+        "eye_color": "dark brown"
+      },
+      "sub1": {
+        "name": "할비",
+        "role": "sub1",
+        "image_url": "https://storage.googleapis.com/scene-image-generator-storage-mcp-test-457809/origin/%E1%84%92%E1%85%A1%E1%86%AF%E1%84%8B%E1%85%A1%E1%84%87%E1%85%A5%E1%84%8C%E1%85%B5%E1%84%89%E1%85%A2%E1%86%B7%E1%84%91%E1%85%B3%E1%86%AF.png",
+        "character_type": "human",
+        "gender": "male",
+        "estimated_age_range": "50s",
+        "personality": "warm, friendly",
+        "voice_type": "adult_male",
+        "image_prompt": "Create a portrait of a middle-aged Asian man in his 50s. He has short, neatly styled black hair, dark brown almond-shaped eyes, and wrinkles around his eyes. He is smiling warmly. He is wearing a black suit jacket over a black turtleneck sweater and black framed glasses. The background is a soft, neutral color.",
+        "accessories": [
+          "black framed glasses"
+        ],
+        "clothing": "black suit jacket, black turtleneck sweater",
+        "eye_color": "dark brown"
+      }
+    },
+    "bgm": {
+      "mood": "cute",
+      "duration": 34,
+      "is_performance": false
+    },
+    "script": {
+      "title": {
+        "japanese": "",
+        "korean": "강아지가 제시하는 기상천외한 저출산 해결책",
+        "english": "Dog's outrageous solution to low birth rate"
+      },
+      "full_script": "땅콩이가 저출산 해결책을 제시하지만, 이미 중성화 수술을 받은 사실을 깨닫고 당황하는 이야기",
+      "location_setting": "편안하고 아늑한 거실, 소파와 테이블, 식물과 쿠션으로 꾸며져 있다.",
+      "script_segments": [
+        {
+          "segment_number": 1,
+          "duration": 4,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "여러분! 제가 드디어 저출산 문제 해결책을 찾았어요! (신나서)",
+          "narration_korean": "여러분! 제가 드디어 저출산 문제 해결책을 찾았어요! (신나서)",
+          "narration_english": "Everyone! I finally found a solution to the low birth rate problem!",
+          "scene_type": "interview_answer",
+          "image_prompt": "EXTREME CLOSE-UP of Pomeranian dog's face, WIDE EYES with sparkling excitement, mouth slightly open in amazement, ears perked up high, BRIGHT studio lighting, vibrant colorful background, HIGH CONTRAST, attention-grabbing composition",
+          "video_prompt": {
+            "character_action": "Head tilted slightly, tail wagging subtly",
+            "lip_sync": "yes",
+            "facial_expression": "expressive with sparkling eyes, Excited and eager",
+            "body_movement": "Slight head bobbing",
+            "camera_movement": "zoom_in",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "indoor",
+            "background": "Comfortable living room with sofa, table, plants, and cushions",
+            "weather": "none",
+            "lighting": "bright studio lighting, Bright studio lighting",
+            "mood": "Excited and hopeful",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl, high-pitched and enthusiastic",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Excited",
+            "ambient_sound": "Gentle hum of central heating",
+            "background_music_mood": "Upbeat and cheerful"
+          },
+          "emotion": "excited",
+          "emotion_transition": "Excited to confident",
+          "index": 1,
+          "start_time": 0,
+          "end_time": 4,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true,
+          "is_hook_scene": true,
+          "thumbnail_optimized": true
+        },
+        {
+          "segment_number": 2,
+          "duration": 6,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "결혼과 출산을 장려하는 핫팩 댄스를 추는거에요! 핫팩 댄스! 핫팩 댄스! (신나서)",
+          "narration_korean": "결혼과 출산을 장려하는 핫팩 댄스를 추는거에요! 핫팩 댄스! 핫팩 댄스! (신나서)",
+          "narration_english": "We should do a hot pack dance to encourage marriage and childbirth! Hot pack dance! Hot pack dance!",
+          "scene_type": "interview_answer",
+          "image_prompt": "Pomeranian dog holding a small hot pack, standing on hind legs, looking at the camera with a determined expression, living room background",
+          "video_prompt": {
+            "character_action": "Holding a hot pack and doing a silly dance with small paw movements",
+            "lip_sync": "yes",
+            "facial_expression": "Determined, enthusiastic",
+            "body_movement": "Waving the hot pack around",
+            "camera_movement": "dynamic",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "indoor",
+            "background": "Comfortable living room with sofa, table, plants, and cushions",
+            "weather": "none",
+            "lighting": "Bright studio lighting",
+            "mood": "Funny and energetic",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl, energetic and playful",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [
+              "Small whooshing sounds during the dance"
+            ],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Enthusiastic",
+            "ambient_sound": "Gentle hum of central heating",
+            "background_music_mood": "Funny and playful"
+          },
+          "emotion": "excited",
+          "emotion_transition": "Confident",
+          "index": 2,
+          "start_time": 4,
+          "end_time": 10,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        {
+          "segment_number": 3,
+          "duration": 4,
+          "speaker": "sub1",
+          "character_name": "할비",
+          "narration": "음... 좋은 아이디어인데... 땅콩아, 혹시 다른 방법은 없을까?",
+          "narration_korean": "음... 좋은 아이디어인데... 땅콩아, 혹시 다른 방법은 없을까?",
+          "narration_english": "Hmm... that's a good idea... Do you have any other ideas, TangKong?",
+          "scene_type": "interview_question",
+          "image_prompt": "Middle-aged Asian man smiling warmly, wearing a black suit jacket and turtleneck, looking at the Pomeranian dog with a curious expression, living room background",
+          "video_prompt": {
+            "character_action": "Tilting head slightly, stroking his chin thoughtfully",
+            "lip_sync": "no",
+            "facial_expression": "Curious and thoughtful",
+            "body_movement": "Slight hand gesture",
+            "camera_movement": "static",
+            "is_interviewer_speaking": true,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "indoor",
+            "background": "Comfortable living room with sofa, table, plants, and cushions",
+            "weather": "none",
+            "lighting": "Soft, warm lighting",
+            "mood": "Thoughtful and encouraging",
+            "characters_in_scene": [
+              "할비",
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "adult_male, warm and gentle",
+            "voice_type": "adult_male",
+            "speaking_speed": "natural",
+            "sound_effects": [],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Encouraging",
+            "ambient_sound": "Quiet background ambience",
+            "background_music_mood": "Calm and reflective"
+          },
+          "emotion": "curious",
+          "emotion_transition": "Curious to thoughtful",
+          "index": 3,
+          "start_time": 10,
+          "end_time": 14,
+          "spoken_language": "korean",
+          "voice_type": "adult_male",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean female news anchor, 30s, professional friendly tone",
+          "voice_effect": null,
+          "dog_lip_sync": false
+        },
+        {
+          "segment_number": 4,
+          "duration": 6,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "여러분, 이제부터 정부는 '댕댕이 육아 지원금'을 지급해야 합니다! GDP 대비 5%를 투입하여, 출산 가정에 맞춤형 멍멍이 로봇을 제공하고, 펫-프렌들리 인프라 구축에 힘써야 합니다! (전문가 톤)",
+          "narration_korean": "여러분, 이제부터 정부는 '댕댕이 육아 지원금'을 지급해야 합니다! GDP 대비 5%를 투입하여, 출산 가정에 맞춤형 멍멍이 로봇을 제공하고, 펫-프렌들리 인프라 구축에 힘써야 합니다! (전문가 톤)",
+          "narration_english": "From now on, the government must provide 'Doggy Childcare Support Funds'! Invest 5% of GDP to provide customized puppy robots to families with newborns and strive to build pet-friendly infrastructure!",
+          "scene_type": "interview_answer",
+          "image_prompt": "Pomeranian dog wearing glasses, sitting at a desk with a microphone, looking like a professional speaker, living room background",
+          "video_prompt": {
+            "character_action": "Sitting upright, gesturing with paws",
+            "lip_sync": "yes",
+            "facial_expression": "Serious and professional",
+            "body_movement": "Nodding confidently",
+            "camera_movement": "dynamic",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "indoor",
+            "background": "Comfortable living room with sofa, table, plants, and cushions",
+            "weather": "none",
+            "lighting": "Bright studio lighting",
+            "mood": "Serious and professional",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl, confident and professional",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Confident",
+            "ambient_sound": "Gentle hum of central heating",
+            "background_music_mood": "Funny and upbeat"
+          },
+          "emotion": "confident",
+          "emotion_transition": "Confident to surprised",
+          "index": 4,
+          "start_time": 14,
+          "end_time": 20,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        {
+          "segment_number": 5,
+          "duration": 4,
+          "speaker": "sub1",
+          "character_name": "할비",
+          "narration": "(코믹하게) 오~ 좋은데? 땅콩이 똑똑한데? 하지만... 넌 이미... 중성화를 했잖아...? (웃음)",
+          "narration_korean": "(코믹하게) 오~ 좋은데? 땅콩이 똑똑한데? 하지만... 넌 이미... 중성화를 했잖아...? (웃음)",
+          "narration_english": "(Comically) Oh~ That's good? TangKong is smart? But... you're already... neutered, aren't you...? (laughter)",
+          "scene_type": "interview_question",
+          "image_prompt": "Middle-aged Asian man looking at the Pomeranian dog with a slightly awkward expression, living room background",
+          "video_prompt": {
+            "character_action": "Looking down slightly, scratching his head",
+            "lip_sync": "no",
+            "facial_expression": "Awkward, slightly embarrassed",
+            "body_movement": "Shifting his weight",
+            "camera_movement": "static",
+            "is_interviewer_speaking": true,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "indoor",
+            "background": "Comfortable living room with sofa, table, plants, and cushions",
+            "weather": "none",
+            "lighting": "Soft, warm lighting",
+            "mood": "Awkward and hesitant",
+            "characters_in_scene": [
+              "할비",
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "adult_male, slightly hesitant and gentle",
+            "voice_type": "adult_male",
+            "speaking_speed": "natural",
+            "sound_effects": [
+              "laughter"
+            ],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Awkward",
+            "ambient_sound": "Quiet background ambience",
+            "background_music_mood": "Slightly awkward and subdued"
+          },
+          "emotion": "surprised",
+          "emotion_transition": "Surprised to embarrassed",
+          "index": 5,
+          "start_time": 20,
+          "end_time": 24,
+          "spoken_language": "korean",
+          "voice_type": "adult_male",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean female news anchor, 30s, professional friendly tone",
+          "voice_effect": null,
+          "dog_lip_sync": false
+        },
+        {
+          "segment_number": 6,
+          "duration": 4,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "(망했다는 느낌) 으... 으아아아아아! 할비 미워!",
+          "narration_korean": "(망했다는 느낌) 으... 으아아아아아! 할비 미워!",
+          "narration_english": "(Feeling ruined) Ugh... Uwaaaaa! I hate Halbi!",
+          "scene_type": "reaction",
+          "image_prompt": "Pomeranian dog with wide eyes and a shocked expression, mouth slightly open, living room background",
+          "video_prompt": {
+            "character_action": "Eyes widening, ears perking up",
+            "lip_sync": "yes",
+            "facial_expression": "Shocked, surprised",
+            "body_movement": "Freezing in place",
+            "camera_movement": "zoom_in",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "indoor",
+            "background": "Comfortable living room with sofa, table, plants, and cushions",
+            "weather": "none",
+            "lighting": "Bright studio lighting",
+            "mood": "Shocked and surprised",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl, high-pitched and shocked",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [
+              "Short, sharp intake of breath"
+            ],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Shocked",
+            "ambient_sound": "Gentle hum of central heating",
+            "background_music_mood": "Sudden silence"
+          },
+          "emotion": "surprised",
+          "emotion_transition": "Embarrassed",
+          "index": 6,
+          "start_time": 24,
+          "end_time": 28,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        {
+          "segment_number": 7,
+          "duration": 6,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "할비 미워! 하지만... 괜찮아, 구독자분들은 나처럼 귀여운 애기를 갖고 싶을꺼에요 흐흐흐흐흐흐~ (웃음)",
+          "narration_korean": "할비 미워! 하지만... 괜찮아, 구독자분들은 나처럼 귀여운 애기를 갖고 싶을꺼에요 흐흐흐흐흐흐~ (웃음)",
+          "narration_english": "I hate Halbi! But... it's okay, subscribers will want a cute baby like me hehehehe~ (laughter)",
+          "scene_type": "interview_answer",
+          "image_prompt": "Pomeranian dog covering its face with its paws, then bursting into laughter, living room background",
+          "video_prompt": {
+            "character_action": "Covering face with paws, then bursting into laughter, then bursting into cute laughter",
+            "lip_sync": "yes",
+            "facial_expression": "bursting into adorable laughter, eyes squinting with pure joy, mouth wide open laughing happily, infectious giggling expression",
+            "body_movement": "Shaking slightly with laughter",
+            "camera_movement": "zoom_out",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "indoor",
+            "background": "Comfortable living room with sofa, table, plants, and cushions",
+            "weather": "none",
+            "lighting": "Bright studio lighting",
+            "mood": "Humorous and self-deprecating",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl, embarrassed then giggling",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [
+              "Giggles"
+            ],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Humorous",
+            "ambient_sound": "Gentle hum of central heating",
+            "background_music_mood": "Funny and light-hearted"
+          },
+          "emotion": "happy",
+          "emotion_transition": "Embarrassment to happy laughter",
+          "index": 7,
+          "start_time": 28,
+          "end_time": 34,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true,
+          "is_outro_scene": true,
+          "has_laughter": true
+        }
+      ],
+      "music_mood": "cute",
+      "overall_style": "photorealistic",
+      "total_duration": 34
+    },
+    "total_duration": 34
+  }
+}

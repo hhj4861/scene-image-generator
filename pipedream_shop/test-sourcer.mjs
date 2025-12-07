@@ -3,7 +3,7 @@ import axios from 'axios';
 import { fileURLToPath } from 'url';
 
 // API Key provided by user
-const API_KEY = "toM7DO42zQupiXC0Ebijnj/NJyOGWKBmxhXYvkWKSfOkinSgL3KZTRPFMw==";
+const API_KEY = process.env.TIKHUB_API_KEY || "YOUR_TIKHUB_API_KEY";
 const KEYWORD = "化妆品"; // Cosmetics in Chinese
 
 async function fetchDouyinVideos() {

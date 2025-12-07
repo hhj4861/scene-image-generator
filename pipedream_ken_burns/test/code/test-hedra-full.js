@@ -8,8 +8,8 @@ import fs from "fs";
 import FormData from "form-data";
 
 // API 설정
-const HEDRA_API_KEY = "sk_hedra_Wol7WbVDfGY89wBxcoHJm7pUVSA1ikTujy6p_VKJEax42knl1i85g-4xW9VhpgG1";
-const ELEVENLABS_API_KEY = "968a045e9d971eb754eee1c9240997c0aadc64353399943d6201eb543bbea203";
+const HEDRA_API_KEY = process.env.HEDRA_API_KEY || "YOUR_HEDRA_API_KEY";
+const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY || "YOUR_ELEVENLABS_API_KEY";
 const HEDRA_API_BASE = "https://api.hedra.com/web-app/public";
 
 // 테스트 이미지 (보리 영상에서 추출)

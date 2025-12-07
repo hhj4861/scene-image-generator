@@ -534,3 +534,4 @@ app.listen(PORT, "0.0.0.0", () => {
     console.log(`  GET  /fonts - Available Korean fonts`);
     console.log(`  POST /render/puppy - Puppy style render (OPTIMIZED)`);
 });
+

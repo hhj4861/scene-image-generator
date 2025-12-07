@@ -12,8 +12,8 @@ export default defineComponent({
     },
     script_generator_output: {
       type: "string",
-      label: "Script Generator Output (JSON)",
-      description: "{{JSON.stringify(steps.Puppy_Script_Generator.$return_value)}}",
+      label: "Script Source (Generator or Editor)",
+      description: "Puppy Script Generator 또는 Script Editor의 출력값({{steps.Puppy_Script_Editor.$return_value}} or {{steps.Puppy_Script_Generator.$return_value}})",
       optional: true,
     },
     topic_generator_output: {
@@ -97,15 +97,15 @@ export default defineComponent({
       ? JSON.parse(this.viral_title_output) : this.viral_title_output;
     const scriptOutput = this.script_generator_output
       ? (typeof this.script_generator_output === "string"
-          ? JSON.parse(this.script_generator_output) : this.script_generator_output)
+        ? JSON.parse(this.script_generator_output) : this.script_generator_output)
       : null;
     const topicOutput = this.topic_generator_output
       ? (typeof this.topic_generator_output === "string"
-          ? JSON.parse(this.topic_generator_output) : this.topic_generator_output)
+        ? JSON.parse(this.topic_generator_output) : this.topic_generator_output)
       : null;
     const ttsOutput = this.tts_generator_output
       ? (typeof this.tts_generator_output === "string"
-          ? JSON.parse(this.tts_generator_output) : this.tts_generator_output)
+        ? JSON.parse(this.tts_generator_output) : this.tts_generator_output)
       : null;
 
     const videos = viralTitleOutput.videos || [];

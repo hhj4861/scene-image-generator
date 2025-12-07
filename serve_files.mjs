@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = 8081;
-const DIR = path.join(__dirname, 'pipedream_puppy/output');
+const DIR = __dirname; // Serve from project root
 
 const server = http.createServer((req, res) => {
     const filePath = path.join(DIR, req.url);

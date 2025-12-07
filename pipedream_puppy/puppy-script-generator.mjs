@@ -18,12 +18,124 @@ export default defineComponent({
     sub_character3_language: { type: "string", label: "Sub Character 3 Spoken Language", description: "조연3이 말하는 언어", options: [{ label: "한국어 (Korean)", value: "korean" }, { label: "영어 (English)", value: "english" }], default: "korean", optional: true },
     gemini_api_key: { type: "string", label: "Gemini API Key", secret: true },
     language: { type: "string", label: "Script Language", options: [{ label: "Japanese", value: "japanese" }, { label: "Korean", value: "korean" }, { label: "English", value: "english" }], default: "korean" },
+    script_guide: {
+      type: "string",
+      label: "Script Guide (Optional)",
+      description: "대본의 대략적인 흐름, 포함하고 싶은 대사, 혹은 특별한 요청사항을 자유롭게 적어주세요. AI가 이 내용을 최대한 반영하여 대본을 작성합니다.",
+      optional: true,
+    },
+    manual_script_json: {
+      type: "string",
+      label: "Manual Script Override (JSON)",
+      description: "AI 생성을 건너뛰고 직접 수정한 JSON을 사용할 경우 입력하세요.",
+      optional: true,
+    },
+    llm_model: {
+      type: "string",
+      label: "LLM Model",
+      description: "스크립트 생성에 사용할 모델을 선택하세요.",
+      options: [
+        { label: "Gemini 2.0 Flash", value: "gemini-2.0-flash" },
+        { label: "Claude 4.5 Sonnet (Preview)", value: "claude-sonnet-4-5-2025092" },
+        { label: "Claude 3.5 Sonnet (Stable)", value: "claude-3-5-sonnet-20240620" },
+        { label: "GPT-4o", value: "gpt-4o" },
+        { label: "Custom Model (Direct Input)", value: "custom" },
+      ],
+      default: "gemini-2.0-flash",
+    },
+    custom_llm_model: {
+      type: "string",
+      label: "Custom LLM Model ID",
+      description: "'LLM Model'을 'Custom'으로 선택했을 때 사용할 모델 ID를 직접 입력하세요.",
+      optional: true,
+    },
+    anthropic_api_key: {
+      type: "string",
+      label: "Anthropic API Key",
+      description: "Claude 모델 사용 시 필수",
+      optional: true,
+      secret: true,
+    },
+    openai_api_key: {
+      type: "string",
+      label: "OpenAI API Key",
+      description: "GPT 모델 사용 시 필수",
+      optional: true,
+      secret: true,
+    },
   },
   async run({ $ }) {
-    const GEMINI_MODEL = "gemini-2.0-flash";
-    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+    // ==========================================
+    // Unified LLM Caller
+    // ==========================================
+    const callLLM = async (prompt, temperature = 0.7, jsonMode = false) => {
+      const model = this.llm_model === "custom" ? this.custom_llm_model : this.llm_model;
+      if (!model) throw new Error("Custom model ID is missing.");
+
+      // 1. Gemini
+      if (model.startsWith("gemini")) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+        const resp = await axios($, {
+          url,
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": this.gemini_api_key },
+          data: {
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature, maxOutputTokens: 8192 }
+          }
+        });
+        return resp.candidates[0].content.parts[0].text;
+      }
+
+      // 2. Claude (Anthropic)
+      if (model.startsWith("claude")) {
+        if (!this.anthropic_api_key) throw new Error("Anthropic API Key is missing.");
+        const resp = await axios($, {
+          url: "https://api.anthropic.com/v1/messages",
+          method: "POST",
+          headers: {
+            "x-api-key": this.anthropic_api_key,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json"
+          },
+          data: {
+            model: model, // e.g. "claude-3-5-sonnet-latest"
+            max_tokens: 8192,
+            temperature: temperature,
+            messages: [{ role: "user", content: prompt }]
+          }
+        });
+        return resp.content[0].text;
+      }
+
+      // 3. GPT (OpenAI)
+      if (model.startsWith("gpt")) {
+        if (!this.openai_api_key) throw new Error("OpenAI API Key is missing.");
+        const resp = await axios($, {
+          url: "https://api.openai.com/v1/chat/completions",
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${this.openai_api_key}`,
+            "Content-Type": "application/json"
+          },
+          data: {
+            model: model, // e.g. "gpt-4o"
+            messages: [{ role: "user", content: prompt }],
+            temperature: temperature,
+            ...(jsonMode ? { response_format: { type: "json_object" } } : {})
+          }
+        });
+        return resp.choices[0].message.content;
+      }
+
+      throw new Error(`Unsupported model: ${model}`);
+    };
+
+    // Default constant for vision (Gemini only for now)
+    const GEMINI_VISION_MODEL = "gemini-2.0-flash";
+    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_VISION_MODEL}:generateContent`;
     let topicData = null;
-    if (this.topic_generator_output) { try { topicData = typeof this.topic_generator_output === "string" ? JSON.parse(this.topic_generator_output) : this.topic_generator_output; } catch (e) {} }
+    if (this.topic_generator_output) { try { topicData = typeof this.topic_generator_output === "string" ? JSON.parse(this.topic_generator_output) : this.topic_generator_output; } catch (e) { } }
     const effectiveTopic = topicData?.topic || "귀여운 강아지의 일상";
     const dailyContext = topicData?.daily_context;
     const contentType = topicData?.content_type || "satire";
@@ -114,10 +226,11 @@ IMPORTANT: Look at the image carefully and return ONLY the JSON, no markdown cod
 ${characterDescriptions}
 ${Object.entries(characters).map(([key, char]) => `- ${char.name}: ${char.analysis.image_generation_prompt || ""} (모든씬동일외형)`).join("\n")}
 TOPIC: ${effectiveTopic}${dailyContext ? ` | CONTEXT: ${dailyContext.season}, ${dailyContext.day_of_week}` : ""}
+${this.script_guide ? `★★★ USER SCRIPT GUIDE (IMPORTANT!) ★★★\nUser Request: "${this.script_guide}"\n⚠️ The AI MUST prioritize this guide! Reflect this request in the plot, dialogue, or character actions.` : ""}
 ★★★ 배경 ★★★
-${hasCustomBackground ? `🎯 USER BACKGROUND: "${backgroundPrompt}" - 모든씬에 반드시 포함!` : backgroundAiGenerated ? `🤖 AI BACKGROUND: ${backgroundAiGenerated.location||"auto"}, ${backgroundAiGenerated.style||"auto"}, ${backgroundAiGenerated.lighting||"auto"}` : `🤖 AUTO: ${contentType}에 맞는 배경 자동생성, 일관성유지`}
+${hasCustomBackground ? `🎯 USER BACKGROUND: "${backgroundPrompt}" - 모든씬에 반드시 포함!` : backgroundAiGenerated ? `🤖 AI BACKGROUND: ${backgroundAiGenerated.location || "auto"}, ${backgroundAiGenerated.style || "auto"}, ${backgroundAiGenerated.lighting || "auto"}` : `🤖 AUTO: ${contentType}에 맞는 배경 자동생성, 일관성유지`}
 ${generateContentTypeSection()}
-${storyContext.story_summary ? `★★★ 스토리 ★★★ 요약:${storyContext.story_summary} | 후킹:${storyContext.hook||"N/A"} | 스타일:${storyContext.narration_style||"N/A"} | 감정:${storyContext.emotional_journey||"N/A"} | 바이럴:${storyContext.viral_elements?.join(",")||"N/A"}` : ""}
+${storyContext.story_summary ? `★★★ 스토리 ★★★ 요약:${storyContext.story_summary} | 후킹:${storyContext.hook || "N/A"} | 스타일:${storyContext.narration_style || "N/A"} | 감정:${storyContext.emotional_journey || "N/A"} | 바이럴:${storyContext.viral_elements?.join(",") || "N/A"}` : ""}
 ${generateScriptFormatSection()}
 ★★★ 🎬 첫 씬 = 쇼츠 썸네일! (CRITICAL FOR SHORTS!) ★★★
 ⚠️ 쇼츠 피드에서 첫 1-2초가 시청 결정! 첫 씬이 "영상 썸네일" 역할!
@@ -189,20 +302,33 @@ ${lang.instruction}
 - 예시: "그래서 ${characters.main.name}은 행복했어요~ 흐흐흐흐흐흐~", "다음에 또 만나요~ 흐흐흐흐흐흐!", "구독 안 하면 간식 안 줌! 흐흐흐흐흐흐~"
 📌 마지막 씬 구성: speaker: "main" / narration: "[마무리 대사] 흐흐흐흐흐흐~" / emotion: "happy" / video_prompt.facial_expression: "bursting into adorable laughter"
 ⚠️ 면책 문구 씬은 생성하지 마세요! (시스템에서 자동 추가됨)`;
-    const scriptResponse = await axios($, { url: GEMINI_URL, method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": this.gemini_api_key }, data: { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.8, maxOutputTokens: 8192 } } });
     let script;
-    try {
-      let content = scriptResponse.candidates[0].content.parts[0].text.trim();
-      content = content.replace(/```json\s*/g, "").replace(/```\s*/g, "");
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      let jsonStr = jsonMatch ? jsonMatch[0] : content;
-      jsonStr = jsonStr.replace(/[\x00-\x1F\x7F]/g, " ").replace(/,\s*}/g, "}").replace(/,\s*]/g, "]");
-      script = JSON.parse(jsonStr);
-    } catch (e) {
-      const rawContent = scriptResponse.candidates?.[0]?.content?.parts?.[0]?.text || "";
-      $.export("parse_error_content_preview", rawContent.substring(0, 500));
-      $.export("parse_error_content_end", rawContent.substring(Math.max(0, rawContent.length - 500)));
-      throw new Error(`Script parse error: ${e.message}. Content length: ${rawContent.length}`);
+    if (this.manual_script_json && this.manual_script_json.trim().length > 10) {
+      // ★★★ MANUAL OVERRIDE MODE ★★★
+      $.export("status", "Using Manual Script Override...");
+      try {
+        script = JSON.parse(this.manual_script_json);
+        $.export("manual_override_active", true);
+      } catch (e) {
+        throw new Error(`Manual Script JSON parse error: ${e.message}`);
+      }
+    } else {
+      // ★★★ AI GENERATION MODE ★★★
+      $.export("status", `Generating script using ${this.llm_model}...`);
+
+      const responseText = await callLLM(prompt, 0.8, true);
+
+      try {
+        let content = responseText.trim();
+        content = content.replace(/```json\s*/g, "").replace(/```\s*/g, "");
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        let jsonStr = jsonMatch ? jsonMatch[0] : content;
+        jsonStr = jsonStr.replace(/[\x00-\x1F\x7F]/g, " ").replace(/,\s*}/g, "}").replace(/,\s*]/g, "]");
+        script = JSON.parse(jsonStr);
+      } catch (e) {
+        $.export("parse_error_content_preview", responseText.substring(0, 500));
+        throw new Error(`Script parse error: ${e.message}`);
+      }
     }
     const isEnglishText = (text) => { if (!text?.trim() || text.length < 5) return false; const cleaned = text.replace(/\([^)]*[\uAC00-\uD7AF]+[^)]*\)/g, "").trim(); const ko = (cleaned.match(/[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/g) || []).length; const en = (cleaned.match(/[a-zA-Z]/g) || []).length; return en > ko * 2 && en > 10; };
     const segmentsNeedingTranslation = (script.script_segments || []).map((seg, i) => ({ index: i, narration: seg.narration || "" })).filter(s => isEnglishText(s.narration) && (!script.script_segments[s.index].narration_korean || isEnglishText(script.script_segments[s.index].narration_korean)));
@@ -210,9 +336,18 @@ ${lang.instruction}
       $.export("translation_needed", `${segmentsNeedingTranslation.length} segments need Korean translation`);
       try {
         const translationPrompt = `Translate these English sentences to Korean. Keep any Korean text in parentheses as-is. Return ONLY a JSON array of translations in the same order.\nSentences to translate:\n${segmentsNeedingTranslation.map((s, idx) => `${idx + 1}. "${s.narration}"`).join("\n")}\nExample output format: ["한글 번역 1", "한글 번역 2", ...]\nReturn ONLY the JSON array, no markdown, no explanation.`;
-        const translationResponse = await axios($, { url: GEMINI_URL, method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": this.gemini_api_key }, data: { contents: [{ parts: [{ text: translationPrompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 2000 } } });
+
+        const responseText = await callLLM(translationPrompt, 0.3, true);
+
         let translations = [];
-        try { let content = translationResponse.candidates[0].content.parts[0].text.trim(); content = content.replace(/```json\s*/g, "").replace(/```\s*/g, ""); translations = JSON.parse(content); } catch (e) { $.export("translation_parse_error", e.message); }
+        try {
+          let content = responseText.trim();
+          content = content.replace(/```json\s*/g, "").replace(/```\s*/g, "");
+          translations = JSON.parse(content);
+        } catch (e) {
+          $.export("translation_parse_error", e.message);
+        }
+
         if (translations.length > 0) { for (let i = 0; i < segmentsNeedingTranslation.length && i < translations.length; i++) { const segIdx = segmentsNeedingTranslation[i].index; script.script_segments[segIdx].narration_korean = translations[i]; script.script_segments[segIdx].spoken_language = "english"; } $.export("translations_applied", translations.length); }
       } catch (e) { $.export("translation_error", e.message); }
     }

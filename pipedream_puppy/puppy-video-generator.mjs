@@ -7,12 +7,70 @@ export default defineComponent({
   props: {
     script_generator_output: {
       type: "string",
-      label: "Script Generator Output (JSON)",
-      description: "{{JSON.stringify(steps.Puppy_Script_Generator.$return_value)}}",
+      label: "Script Source (Generator or Editor)",
+      description: "Puppy Script Generator 또는 Script Editor의 출력값({{steps.Puppy_Script_Editor.$return_value}} or {{steps.Puppy_Script_Generator.$return_value}})",
+    },
+    manual_image_folder: {
+      type: "string",
+      label: "Manual Image Folder (GCS Path) - Optional",
+      description: "이미지 생성 결과를 무시하고, 특정 GCS 폴더의 이미지를 사용하려면 입력하세요. (예: folder_name 또는 gs://bucket/folder_name)",
+      optional: true,
     },
   },
 
   async run({ $ }) {
+    const { google } = await import("googleapis");
+
+    // =====================
+    // 0. GCS 인증 및 수동 이미지 확인
+    // =====================
+    let manualImages = null;
+    if (this.manual_image_folder) {
+      $.export("status", "Checking Manual Image Folder...");
+      const auth = new google.auth.GoogleAuth({
+        credentials: JSON.parse(this.google_cloud.$auth.key_json),
+        scopes: ["https://www.googleapis.com/auth/cloud-platform"],
+      });
+      const storage = google.storage({ version: "v1", auth });
+
+      // 폴더 경로 정규화 (gs:// 제거, 버킷 분리 등)
+      let bucketName = this.gcs_bucket_name;
+      let prefix = this.manual_image_folder;
+
+      if (prefix.startsWith("gs://")) {
+        const parts = prefix.replace("gs://", "").split("/");
+        bucketName = parts[0];
+        prefix = parts.slice(1).join("/");
+      }
+      if (!prefix.endsWith("/")) prefix += "/";
+
+      try {
+        const res = await storage.objects.list({
+          bucket: bucketName,
+          prefix: prefix,
+        });
+
+        const files = res.data.items || [];
+        // 이미지 파일만 필터링하고 이름순 정렬
+        const imageFiles = files
+          .filter(f => f.name.match(/\.(png|jpg|jpeg)$/i))
+          .sort((a, b) => a.name.localeCompare(b.name));
+
+        if (imageFiles.length > 0) {
+          $.export("status", `Found ${imageFiles.length} manual images.`);
+          manualImages = imageFiles.map((f, idx) => ({
+            index: idx + 1,
+            url: `https://storage.googleapis.com/${bucketName}/${f.name}`,
+            filename: f.name.split('/').pop()
+          }));
+        } else {
+          console.warn("No images found in manual folder:", prefix);
+        }
+      } catch (e) {
+        throw new Error(`Failed to list manual images: ${e.message}`);
+      }
+    }
+
     // =====================
     // 1. Script Generator 결과 파싱
     // =====================
@@ -539,9 +597,30 @@ export default defineComponent({
         return timing;
       };
 
-      // ★★★ Veo3 제한: 씬당 최대 8초 ★★★
+      // ★★★ Veo3 제한: 씬당 최대 8초, 최소 4초 ★★★
       const VEO3_MAX_DURATION = 8;
-      const sceneDuration = Math.min(seg.duration || 5, VEO3_MAX_DURATION);
+      const VEO3_MIN_DURATION = 4;
+
+      // ★★★ 음절 기반 duration 계산 (5음절/초 기준) ★★★
+      const calculateSyllableDuration = (text, isInterviewer = false) => {
+        if (!text) return VEO3_MIN_DURATION;
+        // 한국어 음절 수 계산 (공백, 특수문자 제외)
+        const syllableCount = text.replace(/[^가-힣a-zA-Z0-9]/g, "").length;
+        // 인터뷰어는 더 빠르게 말함 (6음절/초), 강아지는 느림 (5음절/초)
+        const syllablesPerSecond = isInterviewer ? 6 : 5;
+        const calculatedDuration = Math.ceil(syllableCount / syllablesPerSecond);
+        // Veo 3 지원 duration: 4, 6, 8초
+        if (calculatedDuration <= 4) return 4;
+        if (calculatedDuration <= 6) return 6;
+        return 8;
+      };
+
+      // duration 결정: 음절 기반 계산 우선, 없으면 기본값 사용
+      const narrationText = seg.narration || "";
+      const syllableBasedDuration = hasNarration
+        ? calculateSyllableDuration(narrationText, isInterviewQuestion)
+        : (seg.duration || 5);
+      const sceneDuration = Math.min(syllableBasedDuration, VEO3_MAX_DURATION);
 
       // ★★★ veo_script_sample JSON 형식에 맞춘 출력 ★★★
       // 대화 타이밍 생성 (veo_script_sample 형식)
@@ -634,12 +713,12 @@ export default defineComponent({
         // ★★★ 시각적 연속성 (veo_script_sample 형식) ★★★
         visual_continuity: {
           instruction: `Same visual appearance for all ${sceneDuration} seconds`,
-          [`0.0_to_${Math.floor(sceneDuration/2)}_sec`]: {
+          [`0.0_to_${Math.floor(sceneDuration / 2)}_sec`]: {
             base: "Reference image exactly",
             dog: "Same as reference",
             mouth: isInterviewerSpeaking ? "Closed" : (hasNarration ? "Subtle lip sync" : "Closed"),
           },
-          [`${Math.floor(sceneDuration/2)}_to_${sceneDuration}_sec`]: {
+          [`${Math.floor(sceneDuration / 2)}_to_${sceneDuration}_sec`]: {
             base: "Same reference image, do not change",
             dog: `Same ${characterAppearance.fur_color || 'fur color'}, same face, same ${characterAppearance.outfit || 'appearance'}`,
             mouth: hasNarration && !isInterviewerSpeaking ? "Subtle open and close for lip sync only" : "Closed",
@@ -753,8 +832,8 @@ export default defineComponent({
           lip_sync_to: (isPerformanceStart || isPerformanceResume) ? "bgm" : "tts",
           narration: isPerformanceBreak ? (seg.narration || "콩파민!") : null,
           note: isPerformanceStart ? "BGM 시작, 강아지 입이 BGM에 맞춰 움직임" :
-                isPerformanceBreak ? "BGM 멈춤, 기계음으로 짧은 단어 외침" :
-                isPerformanceResume ? "BGM 재개, 강아지 립싱크 계속" : null,
+            isPerformanceBreak ? "BGM 멈춤, 기계음으로 짧은 단어 외침" :
+              isPerformanceResume ? "BGM 재개, 강아지 립싱크 계속" : null,
         } : null,
 
         // 감정 정보
