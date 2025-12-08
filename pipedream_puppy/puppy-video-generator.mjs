@@ -238,6 +238,15 @@ export default defineComponent({
       "기지개": "stretching body, doing a stretch",
       "부르르": "shaking body, shivering motion",
       "부들부들": "trembling or shaking slightly",
+
+      // 똥꼬스키 (Butt Scooting)
+      "똥꼬스키": "scooting butt on floor, dragging bottom across ground using front legs, sliding forward comically with butt on floor",
+      "엉덩이 스키": "skiing on butt across floor playfully, scooting bottom on ground like skiing, legs spread forward while butt drags",
+      "엉덩이스키": "skiing on butt across floor playfully, scooting bottom on ground like skiing, legs spread forward while butt drags",
+      "엉덩이 끌": "dragging butt across floor, bottom pressed to ground while front legs pull forward",
+      "바닥 끌": "scooting on floor with butt down, rear end sliding on ground",
+      "스키 타": "scooting butt playfully like skiing, butt on floor with legs spread, sliding forward comically",
+      "미끄러": "sliding on floor, body sliding motion on ground",
     };
 
     // 대사에서 액션 키워드 감지 함수
@@ -475,7 +484,7 @@ export default defineComponent({
       // ★★★ 첫 씬 후킹 최적화 감지 (쇼츠 썸네일 효과) ★★★
       const isHookScene = seg.is_hook_scene || seg.thumbnail_optimized || idx === 0;
 
-      // 8K 시네마틱 프롬프트 생성 (옷/악세서리/배경 포함)
+      // 1080p 시네마틱 프롬프트 생성 (옷/악세서리/배경 포함)
       const generateVeoPrompt = () => {
         // ★★★ 첫 씬 후킹 강조 문구 ★★★
         const hookSceneEmphasis = isHookScene
@@ -502,8 +511,16 @@ export default defineComponent({
           bgPrompt += `. ${sceneEnvironment.special_effects}`;
         }
 
-        const emotionPrompt = seg.emotion || "neutral";
+        // ★★★ 표정: video_prompt.facial_expression 우선, 없으면 emotion 사용 ★★★
+        const facialExpression = seg.video_prompt?.facial_expression || "";
+        const emotionPrompt = facialExpression || seg.emotion || "neutral";
         const lightingPrompt = consistentLighting;
+
+        // ★★★ 카메라 무브먼트 ★★★
+        const cameraMovement = seg.video_prompt?.camera_movement || "static";
+        const cameraPrompt = cameraMovement !== "static"
+          ? ` ${cameraMovement} camera movement.`
+          : "";
 
         // ★★★ 퍼포먼스 씬 처리 (전역 악세서리 + 일관된 스테이지 배경) ★★★
         if (isAnyPerformance && performancePhase) {
@@ -515,10 +532,10 @@ export default defineComponent({
 
           if (isPerformanceStart || isPerformanceResume) {
             // 퍼포먼스 시작/재개: BGM에 맞춰 립싱크 (TTS 없음) (★ 첫 씬이면 hookSceneEmphasis 적용 ★)
-            return `8K cinematic performance video. ${hookSceneEmphasis}${perfCharPrompt}, ${perfPrompt}. ${performanceStageBackground}. Dog performing alone on stage. Dog's mouth moves rhythmically to the beat. Energetic dynamic camera. Same dog appearance maintained. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles. No microphone in frame. No human hands. No people. Single dog performer only.`;
+            return `1080p cinematic performance video. ${hookSceneEmphasis}${perfCharPrompt}, ${perfPrompt}. ${performanceStageBackground}. Dog performing alone on stage. Dog's mouth moves rhythmically to the beat. Energetic dynamic camera. Same dog appearance maintained. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles. No microphone in frame. No human hands. No people. Single dog performer only.`;
           } else if (isPerformanceBreak) {
             // 퍼포먼스 브레이크: 짧은 대사 (기계음 TTS) - 안전 필터 방지용 프롬프트 (★ 첫 씬이면 hookSceneEmphasis 적용 ★)
-            return `8K cinematic performance video. ${hookSceneEmphasis}${perfCharPrompt}, ${perfPrompt}. ${performanceStageBackground}. Dog pauses dramatically alone on stage, looks directly at camera with confident expression, mouth opens slightly then closes. Dramatic freeze pose moment. Same dog appearance maintained. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles. No microphone in frame. No human hands. No people. Single dog performer only.`;
+            return `1080p cinematic performance video. ${hookSceneEmphasis}${perfCharPrompt}, ${perfPrompt}. ${performanceStageBackground}. Dog pauses dramatically alone on stage, looks directly at camera with confident expression, mouth opens slightly then closes. Dramatic freeze pose moment. Same dog appearance maintained. ${realDogEmphasis}. ${noTextEmphasis}. No subtitles. No microphone in frame. No human hands. No people. Single dog performer only.`;
           }
         }
 
@@ -534,37 +551,63 @@ export default defineComponent({
 
         if (isInterviewerSpeaking) {
           // 인터뷰어가 질문: interviewee 캐릭터가 듣는 장면 (lip_sync 없음) (★ 첫 씬이면 hookSceneEmphasis 적용 ★)
-          // ★★★ 인터뷰어가 말할 때 마이크 필수 등장 ★★★
+          // ★★★ 인터뷰어가 말할 때 마이크 필수 등장 + 고개 끄덕임 ★★★
           const interviewMicPrompt = `Professional broadcast microphone visible in frame pointing toward the ${characterDesc.toLowerCase()}. SIMPLE PLAIN SOLID BLACK microphone (completely clean surface, NO text, NO logos, NO labels, NO writing, NO Korean characters, NO markings whatsoever).`;
+          const noddingAction = "gently nodding head while listening, occasional slow nods showing understanding and agreement";
           if (isAnimalCharacter) {
-            return `8K cinematic interview video. ${hookSceneEmphasis}${charPrompt} sitting, listening attentively to interviewer question. ${bgPrompt}. ${lightingPrompt}. ${interviewMicPrompt} ${characterDesc} has curious listening expression, head slightly tilted, ears perked up. IMPORTANT: ${characterDesc} mouth must stay COMPLETELY CLOSED throughout entire video. ${characterDesc} is NOT talking. ${characterDesc} is only listening. Natural breathing only. Occasional gentle blinks and subtle head tilts. ${realCharEmphasis}. ${noTextEmphasis}. ABSOLUTELY NO TEXT, NO LETTERS, NO CHARACTERS, NO WRITING anywhere in frame. No subtitles. No human hands. No people. Single ${characterDesc.toLowerCase()} only.`;
+            return `1080p cinematic interview video. ${hookSceneEmphasis}${charPrompt} sitting, listening attentively to interviewer question. ${bgPrompt}. ${lightingPrompt}. ${interviewMicPrompt} ${characterDesc} has curious listening expression, ${noddingAction}, head slightly tilted, ears perked up. IMPORTANT: ${characterDesc} mouth must stay COMPLETELY CLOSED throughout entire video. ${characterDesc} is NOT talking. ${characterDesc} is only listening. Natural breathing only. Occasional gentle blinks and subtle head nods. ${realCharEmphasis}. ${noTextEmphasis}. ABSOLUTELY NO TEXT, NO LETTERS, NO CHARACTERS, NO WRITING anywhere in frame. No subtitles. No human hands. No people. Single ${characterDesc.toLowerCase()} only.`;
           } else {
-            return `8K cinematic interview video. ${hookSceneEmphasis}${charPrompt} sitting, listening attentively to interviewer question. ${bgPrompt}. ${lightingPrompt}. ${interviewMicPrompt} ${characterDesc} has interested listening expression. IMPORTANT: Mouth must stay closed. Only listening with natural posture. ${realCharEmphasis}. ${noTextEmphasis}. ABSOLUTELY NO TEXT, NO LETTERS, NO CHARACTERS, NO WRITING anywhere in frame. No subtitles.`;
+            return `1080p cinematic interview video. ${hookSceneEmphasis}${charPrompt} sitting, listening attentively to interviewer question. ${bgPrompt}. ${lightingPrompt}. ${interviewMicPrompt} ${characterDesc} has interested listening expression, ${noddingAction}. IMPORTANT: Mouth must stay closed. Only listening with natural posture. ${realCharEmphasis}. ${noTextEmphasis}. ABSOLUTELY NO TEXT, NO LETTERS, NO CHARACTERS, NO WRITING anywhere in frame. No subtitles.`;
           }
         } else if (isFlashback) {
-          // ★★★ 회상 장면: 액션 감지하여 동작 프롬프트 추가 ★★★
+          // ★★★ 회상 장면: 먼 곳 바라보기 + video_prompt + 대사 키워드 동작 병합 ★★★
           const detectedActions = detectActionsFromNarration(seg.narration);
-          const actionPrompt = detectedActions.length > 0
-            ? ` ${characterDesc} is ${detectedActions.map(a => a.action).join(", ")}.`
+          const videoPromptAction = seg.video_prompt?.character_action || "";
+          const videoPromptBody = seg.video_prompt?.body_movement || "";
+          const gazingAction = "gazing into the distance with nostalgic expression, looking far away reminiscing";
+          const hasExistingAction = videoPromptAction || videoPromptBody || detectedActions.length > 0;
+          const allActions = [
+            videoPromptAction,
+            videoPromptBody,
+            ...detectedActions.map(a => a.action),
+            hasExistingAction ? "" : gazingAction
+          ].filter(Boolean).join(", ");
+          const actionPrompt = allActions
+            ? ` ${characterDesc} is ${allActions}.`
             : "";
-          return `8K cinematic flashback video. ${hookSceneEmphasis}${charPrompt} in recalled scene.${actionPrompt} ${bgPrompt}. Slightly dreamy/vintage filter effect. ${emotionPrompt} expression. ${lightingPrompt}. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles.`;
+          return `1080p cinematic flashback video. ${hookSceneEmphasis}${charPrompt} in recalled scene.${actionPrompt} ${bgPrompt}. Slightly dreamy/vintage filter effect. ${emotionPrompt} expression.${cameraPrompt} ${lightingPrompt}. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles.`;
         } else if (hasNarration) {
-          // ★★★ 대사 장면: 액션 감지하여 동작 프롬프트 추가 ★★★
+          // ★★★ 대사 장면: video_prompt + 대사 키워드 동작 병합 ★★★
           const detectedActions = detectActionsFromNarration(seg.narration);
-          const actionPrompt = detectedActions.length > 0
-            ? ` IMPORTANT ACTION: ${characterDesc} is ${detectedActions.map(a => a.action).join(", ")} while speaking.`
+          const videoPromptAction = seg.video_prompt?.character_action || "";
+          const videoPromptBody = seg.video_prompt?.body_movement || "";
+          const allActions = [
+            videoPromptAction,
+            videoPromptBody,
+            ...detectedActions.map(a => a.action)
+          ].filter(Boolean).join(", ");
+          const actionPrompt = allActions
+            ? ` IMPORTANT ACTION: ${characterDesc} is ${allActions} while speaking.`
             : "";
           if (isAnimalCharacter) {
-            return `8K cinematic video. ${hookSceneEmphasis}${charPrompt} facing camera. ${bgPrompt}. ${lightingPrompt}. ${characterDesc} with gentle mouth movements.${actionPrompt} ${emotionPrompt} expression. Same ${characterDesc.toLowerCase()} appearance maintained throughout. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles. No microphone. No human hands. No people. Single ${characterDesc.toLowerCase()} only.`;
+            return `1080p cinematic video. ${hookSceneEmphasis}${charPrompt} facing camera. ${bgPrompt}. ${lightingPrompt}. ${characterDesc} with gentle mouth movements.${actionPrompt} ${emotionPrompt} expression.${cameraPrompt} Same ${characterDesc.toLowerCase()} appearance maintained throughout. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles. No microphone. No human hands. No people. Single ${characterDesc.toLowerCase()} only.`;
           } else {
-            return `8K cinematic video. ${hookSceneEmphasis}${charPrompt} facing camera. ${bgPrompt}. ${lightingPrompt}. ${characterDesc} speaking with natural mouth movements.${actionPrompt} ${emotionPrompt} expression. Same appearance maintained throughout. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles.`;
+            return `1080p cinematic video. ${hookSceneEmphasis}${charPrompt} facing camera. ${bgPrompt}. ${lightingPrompt}. ${characterDesc} speaking with natural mouth movements.${actionPrompt} ${emotionPrompt} expression.${cameraPrompt} Same appearance maintained throughout. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles.`;
           }
         } else {
-          // 리액션/대기 장면 (★ 첫 씬이면 hookSceneEmphasis 적용 ★)
+          // ★★★ 리액션/대기 장면 (대사 없음): 먼 곳 바라보기 + video_prompt 동작 반영 ★★★
+          const videoPromptAction = seg.video_prompt?.character_action || "";
+          const videoPromptBody = seg.video_prompt?.body_movement || "";
+          const gazingAction = "gazing into the distance with thoughtful expression, looking far away nostalgically";
+          const defaultAction = videoPromptAction || videoPromptBody ? "" : gazingAction;
+          const allActions = [videoPromptAction, videoPromptBody, defaultAction].filter(Boolean).join(", ");
+          const actionPrompt = allActions
+            ? ` ${characterDesc} is ${allActions}.`
+            : "";
           if (isAnimalCharacter) {
-            return `8K cinematic video. ${hookSceneEmphasis}${charPrompt} sitting alone. ${bgPrompt}. ${lightingPrompt}. ${emotionPrompt} expression, natural subtle movements. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles. No microphone. No human hands. No people. Single ${characterDesc.toLowerCase()} only.`;
+            return `1080p cinematic video. ${hookSceneEmphasis}${charPrompt} sitting alone. ${bgPrompt}. ${lightingPrompt}.${actionPrompt} ${emotionPrompt} expression.${cameraPrompt} natural subtle movements. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles. No microphone. No human hands. No people. Single ${characterDesc.toLowerCase()} only.`;
           } else {
-            return `8K cinematic video. ${hookSceneEmphasis}${charPrompt}. ${bgPrompt}. ${lightingPrompt}. ${emotionPrompt} expression, natural subtle movements. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles.`;
+            return `1080p cinematic video. ${hookSceneEmphasis}${charPrompt}. ${bgPrompt}. ${lightingPrompt}.${actionPrompt} ${emotionPrompt} expression.${cameraPrompt} natural subtle movements. ${realCharEmphasis}. ${noTextEmphasis}. No subtitles.`;
           }
         }
       };
@@ -675,7 +718,7 @@ export default defineComponent({
         duration: `${sceneDuration} seconds`,
         duration_seconds: sceneDuration,
         veo3_compliant: sceneDuration <= VEO3_MAX_DURATION,
-        resolution: "8K",
+        resolution: "1080p",
 
         // ★★★ Veo 3 프롬프트 (핵심!) ★★★
         prompt: generateVeoPrompt(),
@@ -925,7 +968,7 @@ export default defineComponent({
       content_type: contentType,
 
       // 전역 설정
-      resolution: "8K",
+      resolution: "1080p",
       format: "Clean video only",
       text_overlays: false,
       subtitles: false,

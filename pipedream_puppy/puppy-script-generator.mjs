@@ -241,9 +241,8 @@ ${generateScriptFormatSection()}
 3. **밝고 선명한 화면**: 어둡거나 흐린 배경 금지, 밝은 조명 필수
 4. **움직임**: 정적인 장면 금지! 표정 변화나 작은 동작 필수
 5. **감정 극대화**: 첫 씬 emotion은 "excited", "surprised", "shocked" 등 강한 감정
-📌 첫 씬 image_prompt 예시: "MEDIUM SHOT of [character], upper body visible, subject centered with generous headroom, WIDE EYES with sparkling excitement, mouth slightly open in amazement, ears perked up high, BRIGHT studio lighting, vibrant colorful background, HIGH CONTRAST, attention-grabbing composition"
-📌 감정 씬 예시: "MEDIUM CLOSE-UP, face and upper chest visible, [emotion] expression, leave space above head and around face, do not crop ears"
-📌 일반 씬 예시: "MEDIUM SHOT, upper body visible, subject centered with headroom and breathing room"
+📌 첫 씬 image_prompt 예시: "MEDIUM SHOT of [character], upper body visible, WIDE EYES with sparkling excitement, mouth slightly open in amazement, ears perked up high, BRIGHT studio lighting, vibrant colorful background, HIGH CONTRAST, attention-grabbing composition"
+📌 나머지 씬: 스크립트 내용에 맞게 자유롭게 구성 (CLOSE-UP, WIDE SHOT, FULL SHOT 등 상황에 맞게 선택)
 ★★★ SCRIPT RULES ★★★
 ${scriptFormat === 'interview' ? `인터뷰형식: 주인공(${characters.main.name})카메라대답80%이상 / 인터뷰어질문=자막(speaker:interviewer) / 조연=flashback에서만 / speaker:"main","interviewer","sub1","sub2" / scene_type:"interview_question","interview_answer","flashback","reaction"` : `주인공(${characters.main.name})60-70%, 조연30-40% / speaker:"main","sub1","sub2","sub3","interviewer"`}
 ★★★ 🎬 회상 씬 분리 규칙 (FLASHBACK SPLIT - 매우 중요!) ★★★
@@ -397,31 +396,8 @@ ${lang.instruction}
         const audioDetails = seg.audio_details || {};
         const defaultAudioDetails = (isPerformanceStart || isPerformanceResume) ? { voice_style: "no voice - BGM only", voice_type: "none", speaking_speed: "none", sound_effects: [], background_sound: "", bgm_featured: true, bgm_volume: 0.8, performance_phase: isPerformanceStart ? "start" : "resume", bgm_style: perfDefaults?.bgm_style || "beatbox rhythmic", tts_enabled: false } : isPerformanceBreak ? { voice_style: "robotic voice effect", voice_type: "robotic", voice_effect: "robotic", speaking_speed: "fast", sound_effects: ["record scratch", "bass drop"], background_sound: "", bgm_featured: false, bgm_volume: 0, performance_phase: "break", tts_enabled: true } : (isPerformance && perfDefaults) ? { voice_style: "no voice - BGM only", voice_type: "none", speaking_speed: "none", sound_effects: [], background_sound: "", bgm_featured: true, bgm_volume: 0.8, performance_type: performanceType, bgm_style: perfDefaults.bgm_style, tts_enabled: false } : { voice_style: voiceStyleMap[speaker] || "natural voice", voice_type: speakerToVoice[speaker] || "adult", speaking_speed: speaker === "main" ? "slow and cute" : "natural", sound_effects: [], background_sound: "", bgm_featured: false, bgm_volume: 0.3, tts_enabled: true };
         const basePrompt = character.analysis?.image_generation_prompt || "cute adorable puppy";
-        // ★★★ 감정/씬 유형에 따른 동적 Shot Type + Crop-Safe 가이드 ★★★
-        // 다양한 구도를 허용하되, 모든 shot에 여백 가이드 추가
-        const emotion = seg.emotion?.toLowerCase() || "happy";
-        const strongEmotions = ["excited", "surprised", "shocked", "angry", "crying", "laughing"];
-        const isEmotionalScene = strongEmotions.includes(emotion);
-
-        // Shot Type 결정: 감정 강한 씬 = MEDIUM, 일반 = WIDE/MEDIUM 혼합
-        const getFramingGuide = () => {
-          if (isAnyPerformance) {
-            return "MEDIUM SHOT, upper body and face visible, subject centered with headroom, leave empty space above head and around body";
-          }
-          if (isEmotionalScene) {
-            return "MEDIUM CLOSE-UP, face and upper chest visible, subject centered, leave generous space above head (headroom) and sides, do not crop ears or top of head";
-          }
-          if (isInterviewQuestion) {
-            return "WIDE SHOT, full scene visible, subject centered with generous margins all around";
-          }
-          // 일반 씬: MEDIUM SHOT (가장 범용적)
-          return "MEDIUM SHOT, upper body visible, subject centered in frame with headroom and breathing room on sides, do not crop head or ears";
-        };
-        const framingGuide = getFramingGuide();
-
-        // ★★★ AI 생성 image_prompt에도 항상 framingGuide 추가 ★★★
-        const rawImagePrompt = seg.image_prompt || (isAnyPerformance ? `${basePrompt}, ${perfDefaults?.image_prompt_suffix || "doing performance, stage lighting, energetic pose"}` : `${basePrompt}, ${isInterviewQuestion ? "curious listening" : seg.emotion || "happy"} expression`);
-        const imagePrompt = (rawImagePrompt.includes("SHOT") || rawImagePrompt.includes("CROP")) ? rawImagePrompt : `${rawImagePrompt}. ${framingGuide}`;
+        // ★★★ AI가 생성한 image_prompt를 그대로 사용 (스크립트 우선) ★★★
+        const imagePrompt = seg.image_prompt || (isAnyPerformance ? `${basePrompt}, ${perfDefaults?.image_prompt_suffix || "doing performance, stage lighting, energetic pose"}` : `${basePrompt}, ${isInterviewQuestion ? "curious listening" : seg.emotion || "happy"} expression`);
         const performancePhase = isPerformanceStart ? "start" : isPerformanceBreak ? "break" : isPerformanceResume ? "resume" : isPerformance ? "main" : null;
         const ttsEnabled = isPerformanceBreak ? true : (isPerformanceStart || isPerformanceResume || isPerformance) ? false : hasNarration;
         const ttsVoice = isPerformanceBreak ? "Korean baby girl with robotic effect" : (isPerformanceStart || isPerformanceResume || isPerformance) ? null : isInterviewQuestion ? "Korean female news anchor, 30s, professional friendly tone" : "Korean baby girl, 2-3 years old toddler voice";
@@ -437,20 +413,15 @@ ${lang.instruction}
       script.total_duration = time;
       if (script.script_segments && script.script_segments.length > 0) {
         const firstScene = script.script_segments[0];
-        // ★★★ 첫 씬: CLOSE-UP → MEDIUM SHOT (crop 안전 + 표정 강조) ★★★
-        // CLOSE-UP은 너무 꽉 차서 crop하면 잘림 → MEDIUM SHOT으로 변경 (표정은 보이면서 여백 확보)
+        // ★★★ 첫 씬: MEDIUM SHOT 유지 (Hook Scene) ★★★
         if (firstScene.image_prompt) {
-          // CLOSE-UP만 MEDIUM SHOT으로 교체 (MEDIUM은 유지)
+          // CLOSE-UP만 MEDIUM SHOT으로 교체
           firstScene.image_prompt = firstScene.image_prompt
             .replace(/CLOSE-UP/gi, "MEDIUM SHOT")
             .replace(/close up/gi, "medium shot");
           // Shot 가이드가 없으면 MEDIUM SHOT 추가
           if (!firstScene.image_prompt.includes("SHOT")) {
-            firstScene.image_prompt = `HOOK SHOT: MEDIUM SHOT, upper body visible, subject centered with generous headroom. ${firstScene.image_prompt}. Attention-grabbing composition, BRIGHT lighting, HIGH CONTRAST`;
-          }
-          // headroom 가이드가 없으면 추가
-          if (!firstScene.image_prompt.includes("headroom") && !firstScene.image_prompt.includes("margin")) {
-            firstScene.image_prompt += ", leave generous headroom above head, do not crop ears";
+            firstScene.image_prompt = `MEDIUM SHOT, upper body visible. ${firstScene.image_prompt}. Attention-grabbing composition, BRIGHT lighting`;
           }
         }
         const weakEmotions = ["neutral", "calm", "relaxed", "normal"];

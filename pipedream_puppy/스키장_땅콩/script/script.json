@@ -1,0 +1,799 @@
+{
+  "status": "Processing AI Edit Instruction with gemini-2.0-flash...",
+  "ai_edit_applied": true,
+  "$summary": "Script Finalized: 0 scenes, 58s, 8 subtitles",
+  "$return_value": {
+    "folder_name": "20251208_fe47c3ad_The_End_of_a_Ski_Res",
+    "language": "korean",
+    "script_text": "스키장에서 스노우보드를 타려던 땅콩이가 엉덩이로 미끄러져 내려오면서 뜻밖의 인싸견이 된다. 엉덩이 스키의 달인이 된 땅콩이는 공원 인기스타로 등극하지만, 사실은 스노우보드 실패였다는 반전.",
+    "total_duration_seconds": 58,
+    "title": {
+      "japanese": "",
+      "korean": "스키장 인싸견의 최후",
+      "english": "The End of a Ski Resort Influencer Dog"
+    },
+    "content_type": "comic",
+    "content_type_config": {
+      "name": "코믹",
+      "emoji": "😂",
+      "description": "웃긴 상황과 반전으로 가득한 개그",
+      "tone": "funny, absurd, unexpected",
+      "mood": "hilarious and light-hearted",
+      "recommended_script_format": "mixed",
+      "themes": [
+        "반전 개그",
+        "상황 코미디",
+        "몰래카메라",
+        "실패 모음",
+        "리액션"
+      ],
+      "emotion_range": [
+        "신남",
+        "당황",
+        "멘붕",
+        "웃음"
+      ],
+      "example_topics": [
+        "로봇청소기와의 전쟁",
+        "목욕 탈출 대작전",
+        "간식 도둑 추격전"
+      ],
+      "primary_performance_type": null
+    },
+    "content_type_info": {
+      "tone": "funny, absurd, unexpected",
+      "mood": "hilarious and light-hearted",
+      "main_theme": "스키장에서 스노우보드를 타려다 엉덩이로 미끄러져 내려오는 강아지의 코믹한 반전",
+      "key_element": "엉덩이 스키, 뜻밖의 인싸 등극"
+    },
+    "topic_info": {
+      "topic": "스키장 인싸견의 최후",
+      "content_type": "comic",
+      "is_satire": false,
+      "original_topic": "강아지가 스키장 가면 생기는 일 ",
+      "keyword_hint": "스키장 배경, 보드타려다가 엉덩이로 내려오는 강아지 ",
+      "satire_info": null,
+      "story_context": {
+        "story_summary": "스키장에서 스노우보드를 타려던 골든 리트리버가 엉덩이로 미끄러져 내려오면서 뜻밖의 인싸견이 된다. 엉덩이 스키의 달인이 된 강아지는 공원 인기스타로 등극하지만, 사실은 스노우보드 실패였다는 반전.",
+        "hook": "(강아지 시점) \"나는 오늘 스키장 인싸견이 될 것이다!\"",
+        "narration_style": "신남",
+        "emotional_journey": "설렘 → 당황 → 체념 → 즐거움",
+        "viral_elements": [
+          "반전",
+          "공감",
+          "귀여움",
+          "예상치 못한 웃음"
+        ],
+        "script_format": "interview"
+      },
+      "daily_context": {
+        "date": "2025-12-8",
+        "season": "겨울",
+        "season_jp": "冬",
+        "day_of_week": "월요일",
+        "time_of_day": "점심",
+        "special_days": [],
+        "random_theme": "질투"
+      },
+      "script_format": "interview"
+    },
+    "consistency": {
+      "main_character_prompt": "Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+      "main_character_image_url": "https://storage.googleapis.com/scene-image-generator-storage-mcp-test-457809/origin/%E1%84%85%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%84%E1%85%A1%E1%86%BC%E1%84%8F%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5.jpeg",
+      "consistent_background": "Snowy park, ski resort in the background",
+      "consistent_lighting": "bright studio lighting, Bright sunlight",
+      "performance_stage_background": "dark concert stage with purple and blue neon lights, colorful spotlights from above, subtle smoke effects at the bottom",
+      "has_performance": false,
+      "performance_type": "beatbox",
+      "performance_accessories": "",
+      "real_dog_emphasis": "Real living dog. Actual puppy. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in dog mask. Real fur. Real animal.",
+      "no_text_emphasis": "No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements."
+    },
+    "characters": {
+      "main": {
+        "name": "땅콩",
+        "role": "main",
+        "image_url": "https://storage.googleapis.com/scene-image-generator-storage-mcp-test-457809/origin/%E1%84%85%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%84%E1%85%A1%E1%86%BC%E1%84%8F%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5.jpeg",
+        "character_type": "animal",
+        "species": "dog",
+        "breed": "Pomeranian",
+        "estimated_age": "adult",
+        "personality": "cute",
+        "voice_type": "baby_girl",
+        "image_prompt": "Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
+        "distinctive_features": [
+          "fluffy fur",
+          "small black nose"
+        ],
+        "accessories": [
+          "pink bow tie"
+        ],
+        "fur_color": "golden cream with brown ears",
+        "fur_texture": "fluffy",
+        "eye_color": "dark brown"
+      },
+      "sub1": {
+        "name": "할미",
+        "role": "sub1",
+        "character_type": "human",
+        "gender": "female",
+        "estimated_age_range": "50s",
+        "voice_type": "elderly_female",
+        "image_prompt": "middle-aged woman with warm gentle expression"
+      },
+      "interviewer": {
+        "name": "인터뷰어",
+        "role": "interviewer",
+        "image_url": null,
+        "character_type": "human",
+        "gender": "female",
+        "estimated_age_range": "30s",
+        "voice_type": "news_anchor_female",
+        "image_prompt": "off-screen interviewer (voice only)"
+      }
+    },
+    "bgm": {
+      "mood": "cute",
+      "duration": 54,
+      "is_performance": false
+    },
+    "timed_subtitles": [
+      {
+        "start_time": "00:00.00",
+        "end_time": "00:04.00",
+        "text_ko": "사람들이 알아보고 사진찍어서 부끄럽개...",
+        "text_en": "I'm embarrassed because people recognize me and take pictures...",
+        "speaker": "main",
+        "color": "white"
+      },
+      {
+        "start_time": "00:04.00",
+        "end_time": "00:10.00",
+        "text_ko": "땅콩 씨, 스키장에 가게 된 계기가 무엇인가요?",
+        "text_en": "Mr. TtangKong, what made you go to the ski resort?",
+        "speaker": "interviewer",
+        "color": "silver"
+      },
+      {
+        "start_time": "00:10.00",
+        "end_time": "00:18.00",
+        "text_ko": "추워서 가기 싫었는데 주인이랑 할미가 가자고 조르지 모에요 ㅎㅎㅎㅎ",
+        "text_en": "I didn't want to go because it was cold, but my owner and grandma kept asking me to go hehehehe",
+        "speaker": "main",
+        "color": "white"
+      },
+      {
+        "start_time": "00:18.00",
+        "end_time": "00:26.00",
+        "text_ko": "그리고 예전에 할미랑 썰매도 타다가 보드도 타면서 재밌게 놀았었어요",
+        "text_en": "And in the past, I had fun playing with my grandma, riding sleds and snowboards",
+        "speaker": "main",
+        "color": "gold"
+      },
+      {
+        "start_time": "00:32.00",
+        "end_time": "00:38.00",
+        "text_ko": "그리고 나서 혼자타는데...결국 엉덩이스키로 내려왔지 모에요",
+        "text_en": "And then I rode alone... in the end, I came down with butt skiing",
+        "speaker": "main",
+        "color": "white"
+      },
+      {
+        "start_time": "00:38.00",
+        "end_time": "00:42.00",
+        "text_ko": "그런데, 그게 인싸가 된 비결이라는데요?",
+        "text_en": "But, that's how you became popular, isn't it?",
+        "speaker": "interviewer",
+        "color": "silver"
+      },
+      {
+        "start_time": "00:42.00",
+        "end_time": "00:50.00",
+        "text_ko": "맞아요! 엉덩이 스키는 생각보다 재밌더라구요! 사람들이 막 사진 찍고...",
+        "text_en": "That's right! Butt-skiing is more fun than I thought! People were taking pictures and...",
+        "speaker": "main",
+        "color": "gold"
+      },
+      {
+        "start_time": "00:50.00",
+        "end_time": "00:58.00",
+        "text_ko": "스노우보드는 실패했지만, 엉덩이가 시원해졌으니 괜찮아요! 흐흐흐흐흐흐~",
+        "text_en": "Even though snowboarding failed, my butt is cool, so it's okay! Hehehehehe~",
+        "speaker": "main",
+        "color": "gold"
+      }
+    ],
+    "script": {
+      "title": {
+        "japanese": "",
+        "korean": "스키장 인싸견의 최후",
+        "english": "The End of a Ski Resort Influencer Dog"
+      },
+      "full_script": "스키장에서 스노우보드를 타려던 땅콩이가 엉덩이로 미끄러져 내려오면서 뜻밖의 인싸견이 된다. 엉덩이 스키의 달인이 된 땅콩이는 공원 인기스타로 등극하지만, 사실은 스노우보드 실패였다는 반전.",
+      "location_setting": "따뜻한 햇살이 내리쬐는 공원. 새하얀 눈이 소복이 쌓여 있고, 멀리 스키장 슬로프가 보인다. 몇몇 사람들이 스키와 보드를 즐기고 있다.",
+      "script_segments": [
+        {
+          "segment_number": 1,
+          "duration": 4,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "사람들이 알아보고 사진찍어서 부끄럽개...",
+          "narration_korean": "사람들이 알아보고 사진찍어서 부끄럽개...",
+          "narration_english": "I'm embarrassed because people recognize me and take pictures...",
+          "scene_type": "interview_answer",
+          "image_prompt": "Pomeranian dog looking shy and embarrassed, surrounded by people taking pictures, snowy park in the background, ski resort visible in the distance. wearing pink bow tie.",
+          "video_prompt": {
+            "character_action": "Looking shy and embarrassed, covering face with paws",
+            "lip_sync": "yes",
+            "facial_expression": "Embarrassed, shy",
+            "body_movement": "Covering face with paws",
+            "camera_movement": "zoom_in",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "outdoor",
+            "background": "Snowy park, ski resort in the background",
+            "weather": "sunny",
+            "lighting": "bright studio lighting, Bright sunlight",
+            "mood": "Embarrassed",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Embarrassed",
+            "ambient_sound": "Gentle breeze, distant ski resort sounds",
+            "background_music_mood": "Upbeat, energetic"
+          },
+          "emotion": "embarrassed",
+          "emotion_transition": "Embarrassment",
+          "index": 1,
+          "start_time": 0,
+          "end_time": 4,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true,
+          "is_hook_scene": true,
+          "thumbnail_optimized": true
+        },
+        {
+          "segment_number": 2,
+          "duration": 6,
+          "speaker": "interviewer",
+          "character_name": "인터뷰어",
+          "narration": "땅콩 씨, 스키장에 가게 된 계기가 무엇인가요?",
+          "narration_korean": "땅콩 씨, 스키장에 가게 된 계기가 무엇인가요?",
+          "narration_english": "Mr. TtangKong, what made you go to the ski resort?",
+          "scene_type": "interview_question",
+          "image_prompt": "Pomeranian dog looking attentively to the side, snowy park in the background, ski resort visible in the distance.",
+          "video_prompt": {
+            "character_action": "Listening attentively",
+            "lip_sync": "no",
+            "facial_expression": "Curious",
+            "body_movement": "Head tilted slightly",
+            "camera_movement": "static",
+            "is_interviewer_speaking": true,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "outdoor",
+            "background": "Snowy park, ski resort in the background",
+            "weather": "sunny",
+            "lighting": "Bright sunlight",
+            "mood": "Curious",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "Korean female news anchor, 30s, professional friendly tone, 존대말 사용",
+            "voice_type": "news_anchor_female",
+            "speaking_speed": "natural",
+            "sound_effects": [],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Inquisitive, friendly",
+            "ambient_sound": "Gentle breeze, distant ski resort sounds",
+            "background_music_mood": "Neutral, informative"
+          },
+          "emotion": "curious",
+          "emotion_transition": "Curiosity",
+          "index": 2,
+          "start_time": 4,
+          "end_time": 10,
+          "spoken_language": "korean",
+          "voice_type": "news_anchor_female",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean female news anchor, 30s, professional friendly tone",
+          "voice_effect": null,
+          "dog_lip_sync": false
+        },
+        {
+          "segment_number": 3,
+          "duration": 8,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "추워서 가기 싫었는데 주인이랑 할미가 가자고 조르지 모에요 ㅎㅎㅎㅎ",
+          "narration_korean": "추워서 가기 싫었는데 주인이랑 할미가 가자고 조르지 모에요 ㅎㅎㅎㅎ",
+          "narration_english": "I didn't want to go because it was cold, but my owner and grandma kept asking me to go hehehehe",
+          "scene_type": "interview_answer",
+          "image_prompt": "Pomeranian dog looking reluctant and annoyed, snowy park in the background, ski resort visible in the distance.",
+          "video_prompt": {
+            "character_action": "Looking reluctant and annoyed, furrowing brow",
+            "lip_sync": "yes",
+            "facial_expression": "Annoyed, reluctant",
+            "body_movement": "None",
+            "camera_movement": "zoom_in",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "outdoor",
+            "background": "Snowy park, ski resort in the background",
+            "weather": "sunny",
+            "lighting": "Bright sunlight",
+            "mood": "Annoyed",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Annoyed",
+            "ambient_sound": "Gentle breeze, distant ski resort sounds",
+            "background_music_mood": "Dreamy, whimsical"
+          },
+          "emotion": "unhappy",
+          "emotion_transition": "Annoyance",
+          "index": 3,
+          "start_time": 10,
+          "end_time": 18,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        {
+          "segment_number": 4,
+          "duration": 8,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "그리고 예전에 할미랑 썰매도 타다가 보드도 타면서 재밌게 놀았었어요",
+          "narration_korean": "그리고 예전에 할미랑 썰매도 타다가 보드도 타면서 재밌게 놀았었어요",
+          "narration_english": "And in the past, I had fun playing with my grandma, riding sleds and snowboards",
+          "scene_type": "interview_answer",
+          "image_prompt": "Pomeranian dog with a happy expression, snowy park in the background, ski resort visible in the distance.",
+          "video_prompt": {
+            "character_action": "Looking happy and nostalgic",
+            "lip_sync": "yes",
+            "facial_expression": "Happy",
+            "body_movement": "Slight head shake",
+            "camera_movement": "static",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "outdoor",
+            "background": "Snowy park, ski resort in the background",
+            "weather": "sunny",
+            "lighting": "Bright Sunlight",
+            "mood": "Happy",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Happy",
+            "ambient_sound": "Gentle breeze, distant ski resort sounds",
+            "background_music_mood": "Slightly melancholic"
+          },
+          "emotion": "happy",
+          "emotion_transition": "Happiness",
+          "index": 4,
+          "start_time": 18,
+          "end_time": 26,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        {
+          "segment_number": 5,
+          "duration": 6,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "",
+          "narration_korean": "",
+          "narration_english": "",
+          "scene_type": "flashback",
+          "image_prompt": "Halmi pushing Pomeranian dog on a snowboard from behind, snowy ski slope in the background.",
+          "video_prompt": {
+            "character_action": "Halmi pushing Pomeranian dog on a snowboard from behind",
+            "lip_sync": "no",
+            "facial_expression": "Straining, worried",
+            "body_movement": "Wobbling, arms flailing",
+            "camera_movement": "tracking",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": null,
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "outdoor",
+            "background": "Snowy ski slope",
+            "weather": "sunny",
+            "lighting": "Bright Sunlight",
+            "mood": "Frustrated",
+            "characters_in_scene": [
+              "땅콩",
+              "할미"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [
+              "Snow crunching, faint ski lift sounds"
+            ],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "",
+            "ambient_sound": "Ski resort sounds",
+            "background_music_mood": "None"
+          },
+          "emotion": "scared",
+          "emotion_transition": "Fear",
+          "index": 5,
+          "start_time": 26,
+          "end_time": 32,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": false,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": false
+        },
+        {
+          "segment_number": 6,
+          "duration": 6,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "그리고 나서 혼자타는데...결국 엉덩이스키로 내려왔지 모에요",
+          "narration_korean": "그리고 나서 혼자타는데...결국 엉덩이스키로 내려왔지 모에요",
+          "narration_english": "And then I rode alone... in the end, I came down with butt skiing",
+          "scene_type": "interview_answer",
+          "image_prompt": "Pomeranian dog looking slightly defeated but also amused, snowy park in the background, ski resort visible in the distance.",
+          "video_prompt": {
+            "character_action": "scooting butt on floor, dragging bottom across ground using front legs, sliding forward comically",
+            "lip_sync": "yes",
+            "facial_expression": "Amused, slightly defeated",
+            "body_movement": "sitting with hind legs extended forward, using front paws to pull body forward while butt drags on floor",
+            "camera_movement": "tracking",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "outdoor",
+            "background": "Snowy park, ski resort in the background",
+            "weather": "sunny",
+            "lighting": "Bright Sunlight",
+            "mood": "Amused",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Amused, slightly defeated",
+            "ambient_sound": "Gentle breeze, distant ski resort sounds",
+            "background_music_mood": "Playful"
+          },
+          "emotion": "amused",
+          "emotion_transition": "Acceptance",
+          "index": 6,
+          "start_time": 32,
+          "end_time": 38,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        {
+          "segment_number": 7,
+          "duration": 4,
+          "speaker": "interviewer",
+          "character_name": "인터뷰어",
+          "narration": "그런데, 그게 인싸가 된 비결이라는데요?",
+          "narration_korean": "그런데, 그게 인싸가 된 비결이라는데요?",
+          "narration_english": "But, that's how you became popular, isn't it?",
+          "scene_type": "interview_question",
+          "image_prompt": "Pomeranian dog looking questioningly to the side, snowy park in the background, ski resort visible in the distance.",
+          "video_prompt": {
+            "character_action": "Listening attentively",
+            "lip_sync": "no",
+            "facial_expression": "Curious",
+            "body_movement": "Head tilted",
+            "camera_movement": "static",
+            "is_interviewer_speaking": true,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "outdoor",
+            "background": "Snowy park, ski resort in the background",
+            "weather": "sunny",
+            "lighting": "Bright Sunlight",
+            "mood": "Curious",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "Korean female news anchor, 30s, professional friendly tone, 존대말 사용",
+            "voice_type": "news_anchor_female",
+            "speaking_speed": "natural",
+            "sound_effects": [],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Inquisitive, friendly",
+            "ambient_sound": "Gentle breeze, distant ski resort sounds",
+            "background_music_mood": "Neutral, informative"
+          },
+          "emotion": "curious",
+          "emotion_transition": "Curiosity",
+          "index": 7,
+          "start_time": 38,
+          "end_time": 42,
+          "spoken_language": "korean",
+          "voice_type": "news_anchor_female",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean female news anchor, 30s, professional friendly tone",
+          "voice_effect": null,
+          "dog_lip_sync": false
+        },
+        {
+          "segment_number": 8,
+          "duration": 8,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "맞아요! 엉덩이 스키는 생각보다 재밌더라구요! 사람들이 막 사진 찍고...",
+          "narration_korean": "맞아요! 엉덩이 스키는 생각보다 재밌더라구요! 사람들이 막 사진 찍고...",
+          "narration_english": "That's right! Butt-skiing is more fun than I thought! People were taking pictures and...",
+          "scene_type": "interview_answer",
+          "image_prompt": "Pomeranian dog looking excited, snowy park in the background, ski resort visible in the distance., doing butt skiing on floor, playful scooting pose, legs spread like skiing, sliding forward comically",
+          "video_prompt": {
+            "character_action": "Wagging tail, looking excited, skiing on butt across floor playfully, scooting bottom on ground like skiing",
+            "lip_sync": "yes",
+            "facial_expression": "Excited, happy",
+            "body_movement": "Tail wagging",
+            "camera_movement": "zoom_in",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "outdoor",
+            "background": "Snowy park, ski resort in the background",
+            "weather": "sunny",
+            "lighting": "Bright Sunlight",
+            "mood": "Excited",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Excited, happy",
+            "ambient_sound": "Gentle breeze, distant ski resort sounds",
+            "background_music_mood": "Upbeat, happy"
+          },
+          "emotion": "happy",
+          "emotion_transition": "Happiness",
+          "index": 8,
+          "start_time": 42,
+          "end_time": 50,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true,
+          "image_prompt_updated": true
+        },
+        {
+          "segment_number": 9,
+          "duration": 8,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "스노우보드는 실패했지만, 엉덩이가 시원해졌으니 괜찮아요! 흐흐흐흐흐흐~",
+          "narration_korean": "스노우보드는 실패했지만, 엉덩이가 시원해졌으니 괜찮아요! 흐흐흐흐흐흐~",
+          "narration_english": "Even though snowboarding failed, my butt is cool, so it's okay! Hehehehehe~",
+          "scene_type": "interview_answer",
+          "image_prompt": "Pomeranian dog bursting into adorable laughter, snowy park in the background, ski resort visible in the distance.",
+          "video_prompt": {
+            "character_action": "Bursting into adorable laughter, then bursting into cute laughter",
+            "lip_sync": "yes",
+            "facial_expression": "bursting into adorable laughter, eyes squinting with pure joy, mouth wide open laughing happily, infectious giggling expression",
+            "body_movement": "Shaking with laughter",
+            "camera_movement": "zoom_out",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "outdoor",
+            "background": "Snowy park, ski resort in the background",
+            "weather": "sunny",
+            "lighting": "Bright Sunlight",
+            "mood": "Happy",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [
+              "Gentle laughter"
+            ],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Happy, laughing",
+            "ambient_sound": "Gentle breeze, distant ski resort sounds",
+            "background_music_mood": "Cute, funny"
+          },
+          "emotion": "happy",
+          "emotion_transition": "Happiness",
+          "index": 9,
+          "start_time": 50,
+          "end_time": 58,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true,
+          "is_outro_scene": true,
+          "has_laughter": true
+        }
+      ],
+      "music_mood": "cute",
+      "overall_style": "photorealistic",
+      "total_duration": 58
+    },
+    "total_duration": 58
+  }
+}

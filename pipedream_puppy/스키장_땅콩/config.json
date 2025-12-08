@@ -1,0 +1,17 @@
+{
+  "project_name": "스키장 땅콩",
+  "default_character": {
+    "name": "땅콩",
+    "breed": "Pomeranian",
+    "fur_color": "golden cream with brown ears",
+    "accessories": ["ski goggles on head", "cow-print ski suit/jacket"]
+  },
+  "default_background": "Snowy ski resort",
+  "default_voice": {
+    "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+    "characteristics": "very slow speech, babbling pronunciation, cute baby talk"
+  },
+  "interviewer_voice": {
+    "type": "Korean female news anchor, 30s, professional friendly tone"
+  }
+}

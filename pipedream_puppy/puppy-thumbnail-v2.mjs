@@ -119,7 +119,7 @@ export default defineComponent({
     // =====================
     // 3. 썸네일 프롬프트 생성
     // =====================
-    const thumbnailPrompt = `${mainCharacterPrompt}, ${selectedStyle.mood}, ${selectedStyle.style}, ${selectedStyle.colors}, YouTube thumbnail style, eye-catching, high contrast, clean background, professional quality, 8K, photorealistic, ultra detailed. Real living dog. Actual puppy. NOT a mascot. NOT a costume. NOT a plush toy. Real fur. Real animal. No text. No signs. No banners. No letters. No words. No writing. Clean image without any text elements.`;
+    const thumbnailPrompt = `${mainCharacterPrompt}, ${selectedStyle.mood}, ${selectedStyle.style}, ${selectedStyle.colors}, YouTube thumbnail style, eye-catching, high contrast, clean background, professional quality, 1080p, photorealistic, ultra detailed. Real living dog. Actual puppy. NOT a mascot. NOT a costume. NOT a plush toy. Real fur. Real animal. No text. No signs. No banners. No letters. No words. No writing. Clean image without any text elements.`;
 
     $.export("prompt", thumbnailPrompt.substring(0, 500));
 
@@ -165,7 +165,7 @@ export default defineComponent({
     // 실패 시 간단한 프롬프트로 재시도
     if (!imageBase64) {
       $.export("retry_status", "Retrying with simplified prompt...");
-      const simplifiedPrompt = `${mainCharacterPrompt}, ${selectedStyle.mood}, YouTube thumbnail style, eye-catching, high contrast, professional quality, 8K, photorealistic. Real living dog. No text.`;
+      const simplifiedPrompt = `${mainCharacterPrompt}, ${selectedStyle.mood}, YouTube thumbnail style, eye-catching, high contrast, professional quality, 1080p, photorealistic. Real living dog. No text.`;
       imageBase64 = await generateImage(simplifiedPrompt, 1);
     }
 

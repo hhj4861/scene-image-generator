@@ -224,7 +224,7 @@ export default defineComponent({
         veo3_prompt: videoScene.prompt || "",
         title: videoScene.title || `Scene ${imgIndex}`,
         duration: videoScene.duration_seconds || img.duration || 6,
-        resolution: videoScene.resolution || "8K",
+        resolution: videoScene.resolution || "1080p",
 
         // 대화 정보 (veo_script_sample 형식)
         dialogue: videoScene.dialogue || {
@@ -679,7 +679,7 @@ export default defineComponent({
       const isHookScene = scene.is_hook_scene || scene.thumbnail_optimized || scene.index === 0;
 
       // ★★★ veo_script_sample 형식 기반 기본 프롬프트 ★★★
-      let basePrompt = `[CRITICAL: ABSOLUTELY NO TEXT, NO SUBTITLES, NO CAPTIONS, NO WRITTEN CHARACTERS OF ANY KIND VISIBLE IN VIDEO] 8K cinematic ${scriptFormat === "interview" ? "interview " : ""}video. Generate ONLY clean video with ZERO text on screen. Use the provided reference image as the exact visual base for the entire ${duration} seconds.`;
+      let basePrompt = `[CRITICAL: ABSOLUTELY NO TEXT, NO SUBTITLES, NO CAPTIONS, NO WRITTEN CHARACTERS OF ANY KIND VISIBLE IN VIDEO] 1080p cinematic ${scriptFormat === "interview" ? "interview " : ""}video. Generate ONLY clean video with ZERO text on screen. Use the provided reference image as the exact visual base for the entire ${duration} seconds.`;
 
       // ★★★ 첫 씬 Hook 강조 (쇼츠 썸네일 역할) ★★★
       if (isHookScene) {
@@ -1252,7 +1252,7 @@ VIDEO MUST BE COMPLETELY TEXT-FREE.`;
       // ★★★ 바이럴 타이틀은 별도 단계(Puppy_Viral_Title_Generator)에서 생성됨 ★★★
 
       // veo_script_sample 글로벌 설정
-      resolution: "8K",
+      resolution: "1080p",
       format: "Clean video only",
       overall_style: overallStyle,
       voice_settings: globalVoiceSettings,

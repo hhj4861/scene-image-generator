@@ -1073,7 +1073,7 @@ Create ${sceneCount} segments with complete visual details!`;
       // ★ Image Generator용
       image_generation: {
         // 전역 설정
-        resolution: "8K",
+        resolution: "1080p",
         format: "Clean image only",
         text_overlays: false,
         watermarks: false,
@@ -1168,7 +1168,7 @@ Create ${sceneCount} segments with complete visual details!`;
               prompt += `. Scene includes ${sceneEnvironment.props_in_scene.join(", ")}`;
             }
             prompt += `. ${sceneEnvironment.lighting}`;
-            prompt += `. 8K photorealistic. No text. No watermarks.`;
+            prompt += `. 1080p photorealistic. No text. No watermarks.`;
             return prompt;
           };
 
@@ -1236,7 +1236,7 @@ Create ${sceneCount} segments with complete visual details!`;
       // ★ Video Generator용 (Veo 3 최적화 - veo_script_sample 형식)
       video_generation: {
         // 전역 설정
-        resolution: "8K",
+        resolution: "1080p",
         format: "Clean video only",
         text_overlays: false,
         subtitles: false,
@@ -1316,7 +1316,7 @@ Create ${sceneCount} segments with complete visual details!`;
             special_effects: seg.video_prompt?.special_effects || "",
           };
 
-          // 8K 시네마틱 프롬프트 생성 (옷/악세서리/배경 포함)
+          // 1080p 시네마틱 프롬프트 생성 (옷/악세서리/배경 포함)
           const generateVeoPrompt = () => {
             // 캐릭터 외형 프롬프트 조합
             let charPrompt = characterAppearance.base;
@@ -1344,16 +1344,16 @@ Create ${sceneCount} segments with complete visual details!`;
 
             if (isInterviewQuestion) {
               // 인터뷰 질문: 강아지가 듣는 장면 (lip_sync 없음, 인터뷰어 음성만 재생)
-              return `8K cinematic interview video. ${charPrompt} sits facing camera, listening attentively. ${bgPrompt}. ${lightingPrompt}. Dog has curious listening expression, head slightly tilted, ears perked up, mouth CLOSED. Occasionally blinks and makes small subtle nods. No talking. No mouth movement. No text. No subtitles. No watermarks.`;
+              return `1080p cinematic interview video. ${charPrompt} sits facing camera, listening attentively. ${bgPrompt}. ${lightingPrompt}. Dog has curious listening expression, head slightly tilted, ears perked up, mouth CLOSED. Occasionally blinks and makes small subtle nods. No talking. No mouth movement. No text. No subtitles. No watermarks.`;
             } else if (isFlashback) {
               // 회상 장면
-              return `8K cinematic flashback video. ${charPrompt} in recalled scene. ${bgPrompt}. Slightly dreamy/vintage filter effect. ${emotionPrompt} expression. ${lightingPrompt}. No text. No subtitles. No watermarks.`;
+              return `1080p cinematic flashback video. ${charPrompt} in recalled scene. ${bgPrompt}. Slightly dreamy/vintage filter effect. ${emotionPrompt} expression. ${lightingPrompt}. No text. No subtitles. No watermarks.`;
             } else if (hasNarration) {
               // 대사 장면
-              return `8K cinematic video. ${charPrompt} sits facing camera. ${bgPrompt}. ${lightingPrompt}. Dog speaks to camera with precise mouth movements matching each Korean syllable. ${emotionPrompt} expression. Same dog appearance maintained throughout. No text. No subtitles. No watermarks.`;
+              return `1080p cinematic video. ${charPrompt} sits facing camera. ${bgPrompt}. ${lightingPrompt}. Dog speaks to camera with precise mouth movements matching each Korean syllable. ${emotionPrompt} expression. Same dog appearance maintained throughout. No text. No subtitles. No watermarks.`;
             } else {
               // 리액션/대기 장면
-              return `8K cinematic video. ${charPrompt}. ${bgPrompt}. ${lightingPrompt}. ${emotionPrompt} expression, natural subtle movements. No text. No subtitles. No watermarks.`;
+              return `1080p cinematic video. ${charPrompt}. ${bgPrompt}. ${lightingPrompt}. ${emotionPrompt} expression, natural subtle movements. No text. No subtitles. No watermarks.`;
             }
           };
 
@@ -1389,9 +1389,9 @@ Create ${sceneCount} segments with complete visual details!`;
             video: idx + 1,
             title: `${script.title?.korean || effectiveTopic} - Scene ${idx + 1}`,
             duration: `${seg.duration || 5} seconds`,
-            resolution: "8K",
+            resolution: "1080p",
 
-            // Veo 3 프롬프트 (8K, 자막 없음 명시)
+            // Veo 3 프롬프트 (1080p, 자막 없음 명시)
             prompt: generateVeoPrompt(),
 
             // 대화 정보
