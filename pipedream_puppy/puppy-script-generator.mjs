@@ -490,13 +490,27 @@ ${lang.instruction}
       const secs = (seconds % 60).toFixed(2);
       return `${mins.toString().padStart(2, '0')}:${secs.padStart(5, '0')}`;
     };
+    // ★★★ 자막 특수문자 처리 함수 (FFmpeg drawtext 호환) ★★★
+    const cleanSubtitleText = (text) => {
+      if (!text) return "";
+      return text
+        .replace(/\$/g, "달러")       // $ → 달러 (FFmpeg에서 $가 누락되는 문제 해결)
+        .replace(/\|/g, " - ")        // | → 하이픈으로 대체 (FFmpeg 필터 구분자 충돌 방지)
+        .replace(/%/g, "퍼센트")      // % → 퍼센트 (FFmpeg drawtext에서 %는 특수문자)
+        .replace(/&/g, "앤드")        // & → 앤드
+        .replace(/#/g, "")            // # 제거
+        .replace(/\*/g, "")           // * 제거
+        .replace(/<[^>]*>/g, "")      // HTML 태그 제거
+        .replace(/\s+/g, " ")         // 연속 공백 제거
+        .trim();
+    };
     const timedSubtitles = (script.script_segments || [])
       .filter(seg => seg.has_narration && seg.narration_korean?.trim())
       .map(seg => ({
         start_time: secondsToTimeStr(seg.start_time || 0),
         end_time: secondsToTimeStr(seg.end_time || (seg.start_time || 0) + (seg.duration || 4)),
-        text_ko: seg.narration_korean || seg.narration || "",
-        text_en: seg.narration_english || "",
+        text_ko: cleanSubtitleText(seg.narration_korean || seg.narration || ""),
+        text_en: cleanSubtitleText(seg.narration_english || ""),
         speaker: seg.speaker || "main",
         color: seg.scene_type === "interview_question" ? "silver" : (seg.emotion === "excited" || seg.emotion === "happy" ? "gold" : "white")
       }));

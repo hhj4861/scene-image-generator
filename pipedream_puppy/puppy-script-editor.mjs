@@ -283,9 +283,41 @@ Output Format: JSON only, no markdown.`;
             }
 
             console.log(`Reassembled Script: Total Duration ${currentTime}s`);
+
+            // ★★★ timed_subtitles 재생성 (스크립트 수정 후 시간 동기화) ★★★
+            const secondsToTimeStr = (seconds) => {
+              const mins = Math.floor(seconds / 60);
+              const secs = (seconds % 60).toFixed(2);
+              return `${mins.toString().padStart(2, '0')}:${secs.padStart(5, '0')}`;
+            };
+            // ★★★ 자막 특수문자 처리 함수 (FFmpeg drawtext 호환) ★★★
+            const cleanSubtitleText = (text) => {
+              if (!text) return "";
+              return text
+                .replace(/\$/g, "달러")       // $ → 달러 (FFmpeg에서 $가 누락되는 문제 해결)
+                .replace(/\|/g, " - ")        // | → 하이픈으로 대체 (FFmpeg 필터 구분자 충돌 방지)
+                .replace(/%/g, "퍼센트")      // % → 퍼센트 (FFmpeg drawtext에서 %는 특수문자)
+                .replace(/&/g, "앤드")        // & → 앤드
+                .replace(/#/g, "")            // # 제거
+                .replace(/\*/g, "")           // * 제거
+                .replace(/<[^>]*>/g, "")      // HTML 태그 제거
+                .replace(/\s+/g, " ")         // 연속 공백 제거
+                .trim();
+            };
+            finalScript.timed_subtitles = segments
+              .filter(seg => seg.has_narration && (seg.narration_korean?.trim() || seg.narration?.trim()))
+              .map(seg => ({
+                start_time: secondsToTimeStr(seg.start_time || 0),
+                end_time: secondsToTimeStr(seg.end_time || (seg.start_time || 0) + (seg.duration || 4)),
+                text_ko: cleanSubtitleText(seg.narration_korean || seg.narration || ""),
+                text_en: cleanSubtitleText(seg.narration_english || ""),
+                speaker: seg.speaker || "main",
+                color: seg.scene_type === "interview_question" ? "silver" : (seg.emotion === "excited" || seg.emotion === "happy" ? "gold" : "white")
+              }));
+            console.log(`Regenerated timed_subtitles: ${finalScript.timed_subtitles.length} entries`);
         }
 
-        $.export("$summary", `Script Finalized: ${finalScript.script_segments?.length || 0} scenes, ${finalScript.total_duration}s`);
+        $.export("$summary", `Script Finalized: ${finalScript.script_segments?.length || 0} scenes, ${finalScript.total_duration}s, ${finalScript.timed_subtitles?.length || 0} subtitles`);
 
         return finalScript;
     }
