@@ -344,9 +344,9 @@ Output Format: JSON only, no markdown.`;
                 '구르': { action: 'rolling on ground', body: 'rolling motion on back', camera: 'tracking' },
                 '뒹굴': { action: 'rolling around playfully', body: 'playful rolling on ground', camera: 'tracking' },
                 // ★★★ 똥꼬스키 (Butt Scooting) ★★★
-                '똥꼬스키': { action: 'scooting butt on floor, dragging bottom across ground using front legs', body: 'sitting with hind legs extended forward, using front paws to pull body forward while butt drags on floor', camera: 'tracking', image: 'scooting on floor with butt dragging, front paws pulling forward, comical sliding pose' },
-                '엉덩이 끌': { action: 'dragging butt across floor', body: 'bottom pressed to ground, front legs pulling forward', camera: 'tracking', image: 'dragging bottom on floor, front legs walking forward' },
-                '엉덩이 스키': { action: 'skiing on butt across floor playfully, scooting bottom on ground like skiing', body: 'sitting with butt on floor, hind legs spread forward, using front paws to glide forward in skiing motion', camera: 'dynamic', image: 'doing butt skiing on floor, playful scooting pose, legs spread like skiing, sliding forward comically' },
+                '똥꼬스키': { action: 'Dragging its rear end across the floor while paddling with front legs, Pulling itself forward with front paws, butt glued to the ground' },
+                '엉덩이 끌': { action: 'Dragging its rear end across the floor while paddling with front legs, Pulling itself forward with front paws, butt glued to the ground' },
+                '엉덩이 스키': { action: 'Dragging its rear end across the floor while paddling with front legs, Pulling itself forward with front paws, butt glued to the ground' },
                 '바닥 끌': { action: 'scooting on floor with butt down', body: 'rear end sliding on ground, front paws walking forward', camera: 'tracking', image: 'sliding on floor with bottom down' },
                 '스키 타': { action: 'scooting butt playfully like skiing', body: 'butt on floor, legs spread, sliding forward comically', camera: 'dynamic', image: 'skiing pose on floor, butt sliding, playful motion' },
                 '미끄러': { action: 'sliding on floor', body: 'body sliding motion on ground', camera: 'tracking', image: 'sliding motion on floor' },

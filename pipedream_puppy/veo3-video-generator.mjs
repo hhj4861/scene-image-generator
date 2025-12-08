@@ -632,27 +632,11 @@ export default defineComponent({
       const characterType = speakerCharacter.character_type || "animal";
       const isAnimalCharacter = characterType === "animal";
 
-      // 캐릭터 상세 설명 (veo_script_sample 형식: 털 색상, 질감, 액세서리 상세)
-      const getCharacterDescription = () => {
-        const char = speakerCharacter;
-        if (isAnimalCharacter) {
-          const breed = char.breed || "dog";
-          const furColor = char.fur_color || char.color || "fluffy";
-          const furTexture = char.fur_texture || "fluffy";
-          const accessories = char.accessories?.length ? char.accessories.join(", ") : "";
-          const costume = char.costume || "";
-          let desc = `${furColor} ${furTexture} ${breed}`;
-          if (costume) desc += ` wearing ${costume}`;
-          else if (accessories) desc += ` wearing ${accessories}`;
-          return desc.trim();
-        } else {
-          const age = char.estimated_age_range || "";
-          const gender = char.gender || "";
-          const clothing = char.clothing || "";
-          return `${age} ${gender} person${clothing ? ` wearing ${clothing}` : ""}`.trim();
-        }
-      };
-      const characterDesc = getCharacterDescription();
+      // 캐릭터 설명 - 이미지 기반 생성이므로 외형 설명 제거
+      // Veo 3는 참조 이미지를 기반으로 생성하므로 프롬프트에 캐릭터 외형을 명시하면 충돌 가능
+      const characterDesc = isAnimalCharacter
+        ? "The dog in the reference image"
+        : "The person in the reference image";
 
       // ★★★ 타이밍 계산 (veo_script_sample 형식: 0-1초 침묵, 1-X초 인터뷰어, X-끝 캐릭터) ★★★
       const silenceEnd = 1.0;
@@ -686,19 +670,15 @@ export default defineComponent({
         basePrompt += ` [HOOK SCENE - THUMBNAIL IMPACT] This is the FIRST scene that viewers see - make it visually STRIKING and attention-grabbing! EXTREME CLOSE-UP of face, BRIGHT vibrant colors, HIGH CONTRAST, expressive sparkling eyes, dynamic engaging composition.`;
       }
 
-      // 캐릭터 외형 설명
-      basePrompt += ` A ${characterDesc} ${isAnimalCharacter ? "sits facing camera" : "faces camera"}.`;
+      // 캐릭터 설명 - 이미지 기반으로 생성하므로 외형 설명 최소화
+      basePrompt += ` ${characterDesc} ${isAnimalCharacter ? "sits facing camera" : "faces camera"}.`;
 
-      // ★★★ 시각적 연속성 (veo_script_sample visual_continuity 형식) ★★★
+      // ★★★ 시각적 연속성 - 참조 이미지 기반 ★★★
       basePrompt += ` The ${isAnimalCharacter ? "dog" : "character"} appearance must stay IDENTICAL to reference image from 0:00 to 0:0${duration}.`;
-      basePrompt += ` VISUAL CONTINUITY: Same ${isAnimalCharacter ? "fur color, same face, same" : ""} appearance at 0:00, ${Math.floor(duration / 2)}:00, and ${duration}:00.`;
+      basePrompt += ` VISUAL CONTINUITY: Same appearance as reference image at 0:00, ${Math.floor(duration / 2)}:00, and ${duration}:00.`;
 
-      // ★★★ 캐릭터 타입에 따른 일관성 프롬프트 (consistency_check 형식) ★★★
-      if (isAnimalCharacter) {
-        basePrompt += ` CONSISTENCY CHECK: ${characterDesc.split(" ")[0]} fur color must stay same throughout. No morphing. No distortion. No warping of face or body.`;
-      } else {
-        basePrompt += ` CONSISTENCY CHECK: Same clothing, same face throughout. No morphing. No distortion.`;
-      }
+      // ★★★ 일관성 체크 - 참조 이미지 기반 ★★★
+      basePrompt += ` CONSISTENCY CHECK: Appearance must match reference image exactly throughout. No morphing. No distortion. No warping of face or body.`;
 
       // ★★★ 깨진 한글/텍스트 제거 강조 (모든 씬에 적용) ★★★
       const noTextEmphasis = `ABSOLUTE CRITICAL RULE - NO TEXT ON SCREEN:

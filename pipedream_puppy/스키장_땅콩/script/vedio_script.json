@@ -1221,7 +1221,7 @@
         "has_narration": true,
         "image_prompt": "Pomeranian dog looking slightly defeated but also amused, snowy park in the background, ski resort visible in the distance.",
         "video_prompt": {
-          "character_action": "Dog sits with butt touching the snowy ground, then uses ONLY front two paws to walk forward while keeping butt planted on snow, creating a scooting motion",
+          "character_action": "Dragging its rear end across the floor while paddling with front legs, Pulling itself forward with front paws, butt glued to the ground",
           "lip_sync": "yes",
           "facial_expression": "Amused, slightly defeated",
           "body_movement": "SITTING POSITION with butt on ground, hind legs stretched forward in front of body, front paws walking/pulling body forward, butt slides along snowy surface - like a dog scratching its bottom on the floor",
@@ -1230,20 +1230,7 @@
           "lip_sync_to": "tts",
           "is_performance": false,
           "performance_type": null,
-          "performance_phase": null,
-          "detailed_action_steps": [
-            "1. Dog is in sitting position with butt touching snow",
-            "2. Hind legs are extended forward (not standing)",
-            "3. Front paws move alternately to pull body forward",
-            "4. Butt drags/slides on the snowy ground throughout",
-            "5. Motion looks like dog scooting to scratch its bottom"
-          ],
-          "forbidden_actions": [
-            "DO NOT stand up on four legs",
-            "DO NOT walk normally",
-            "DO NOT wear skis or any ski equipment",
-            "DO NOT remove goggles or ski suit"
-          ]
+          "performance_phase": null
         },
         "audio_details": {
           "voice_style": "baby_girl",
@@ -1259,16 +1246,7 @@
           "background_music_mood": "Playful"
         },
         "action_cues": {},
-        "detected_actions": [
-          {
-            "keyword": "엉덩이스키",
-            "action": "Dog SCOOTING on bottom - sitting position with butt on snowy ground, hind legs extended forward, using front paws to pull body forward while butt drags on snow. Like a dog scratching its bottom on the floor. NO standing, NO walking normally, NO skis on feet.",
-            "pose": "SITTING with butt on ground, NOT standing on four legs",
-            "leg_position": "Hind legs extended FORWARD in front of body, front legs walking",
-            "movement": "Scooting forward by pulling with front paws while butt slides on snow",
-            "reference": "Like when a dog drags its butt across carpet to scratch"
-          }
-        ],
+        "detected_actions": [],
         "is_hook_scene": false,
         "thumbnail_optimized": false
       },
@@ -1616,7 +1594,7 @@
         "has_narration": true,
         "image_prompt": "Pomeranian dog looking excited, snowy park in the background, ski resort visible in the distance., doing butt skiing on floor, playful scooting pose, legs spread like skiing, sliding forward comically",
         "video_prompt": {
-          "character_action": "Wagging tail, looking excited, skiing on butt across floor playfully, scooting bottom on ground like skiing",
+          "character_action": "Dragging its rear end across the floor while paddling with front legs, Pulling itself forward with front paws, butt glued to the ground",
           "lip_sync": "yes",
           "facial_expression": "Excited, happy",
           "body_movement": "Tail wagging",
@@ -1644,7 +1622,7 @@
         "detected_actions": [
           {
             "keyword": "엉덩이 스키",
-            "action": "dragging butt on snowy ground while walking forward with front legs only, hind legs lifted off ground, bottom scraping along the snow like a dog scooting, NOT wearing any skis, NO skis on feet, NO ski equipment"
+            "action": "Dragging its rear end across the floor while paddling with front legs, Pulling itself forward with front paws, butt glued to the ground"
           }
         ],
         "is_hook_scene": false,

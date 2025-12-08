@@ -171,19 +171,24 @@ function buildVeoScript(scene) {
   const duration = scene.duration_seconds || 6;
   const emotion = scene.emotion?.primary || sceneDetails.mood || "happy";
 
-  // 캐릭터 외형
-  const charAppearance = scene.character_appearance || {};
-  const mainChar = characters.main || {};
-  const furColor = charAppearance.fur_color || mainChar.fur_color || "golden cream with brown ears";
-  const breed = charAppearance.breed || mainChar.breed || "Pomeranian";
-  const accessories = charAppearance.accessories || mainChar.accessories || ["ski goggles", "colorful ski suit"];
-  const characterDesc = `adorable ${furColor} fluffy ${breed} puppy wearing ${accessories.join(", ")}`;
+  // 캐릭터 외형 - 이미지 기반 생성이므로 외형 설명 제거
+  // Veo 3는 참조 이미지를 기반으로 생성하므로 프롬프트에 캐릭터 외형을 명시하면 충돌 가능
+  const characterDesc = "The dog in the reference image";
 
-  // 특수 동작 (detected_actions에서 추출)
-  const specialActions = detectedActions.map(a => a.action).join(", ");
+  // 특수 동작 (detected_actions에서 추출) - 중복 제거 및 강조
+  const specialActions = detectedActions.map(a => a.action);
   const characterAction = videoPrompt.character_action || "";
   const bodyMovement = videoPrompt.body_movement || "";
-  const actionDescription = [characterAction, bodyMovement, specialActions].filter(Boolean).join(". ");
+
+  // 중복 제거: characterAction과 동일한 specialActions 제거
+  const uniqueActions = new Set();
+  if (characterAction) uniqueActions.add(characterAction);
+  if (bodyMovement) uniqueActions.add(bodyMovement);
+  specialActions.forEach(action => {
+    // characterAction과 다른 경우만 추가
+    if (action !== characterAction) uniqueActions.add(action);
+  });
+  const actionDescription = Array.from(uniqueActions).join(". ");
 
   // 립싱크 여부 판단
   const isInterviewQuestion = sceneDetails.scene_type === "interview_question" || lipSyncStyle.dog_speaks === false;
@@ -192,14 +197,49 @@ function buildVeoScript(scene) {
   // ★ 프롬프트 생성 (씬 타입별 분기)
   let basePrompt;
   if (isInterviewQuestion && hasNarration) {
-    // 인터뷰어 질문 씬 - 강아지 입 완전히 닫힘
-    basePrompt = `1080p cinematic video. A ${characterDesc} is ONLY LISTENING to off-screen interviewer voice in a snowy ski resort setting. CRITICAL: Dog mouth MUST stay COMPLETELY CLOSED throughout entire ${duration} seconds. NO lip movement. NO mouth opening. NO jaw movement. The dog shows gentle head nods, ear twitches, and curious listening expression while keeping mouth firmly closed. Use the provided reference image as the exact visual base. The dog appearance must stay identical to reference image. No text overlays. No subtitles. No captions. No watermarks.`;
+    // 인터뷰어 질문 씬 - 강아지 입 완전히 닫힘 (강화된 버전)
+    basePrompt = `1080p cinematic video. ${characterDesc} is ONLY LISTENING to off-screen interviewer voice.
+
+[CRITICAL MOUTH INSTRUCTION - READ CAREFULLY]
+- Dog mouth MUST be COMPLETELY FROZEN and STATIC for entire ${duration} seconds
+- ZERO mouth movement allowed - not even slight opening
+- Lips must stay SEALED together like a photograph
+- NO lip sync, NO talking animation, NO jaw movement whatsoever
+- Mouth position: CLOSED, STILL, FROZEN from 0:00 to ${duration}:00
+- DO NOT animate the mouth area at all
+- Treat mouth as if it's painted on - completely motionless
+
+[ALLOWED MOVEMENTS - ONLY THESE]
+- Gentle head nods (slow, subtle)
+- Ear twitches (occasional)
+- Eye blinks (natural)
+- Curious head tilt
+- Tail wag (if visible)
+
+[FORBIDDEN - NEVER DO THESE]
+- Any mouth opening
+- Any lip movement
+- Any jaw motion
+- Any tongue visibility
+- Any talking expression
+
+The dog shows curious listening expression while keeping mouth FIRMLY SEALED. Use the provided reference image as the exact visual base. The dog appearance must stay identical to reference image. No text overlays. No subtitles. No captions. No watermarks.`;
   } else if (dogSpeaks) {
-    // 강아지 대답 씬 - 립싱크
-    basePrompt = `1080p cinematic video. A ${characterDesc} speaking in Korean in a snowy ski resort setting. The DOG speaks directly to camera with Korean baby infant voice, 2-3 years old, low-pitched adorable tone. NO interviewer. NO adult voice. NO off-screen voice. ONLY the baby puppy voice speaks.${actionDescription ? ` IMPORTANT ACTION: ${actionDescription}.` : ""} Use the provided reference image as the exact visual base for the entire ${duration} seconds. The dog appearance must stay identical to reference image. No text overlays. No subtitles. No captions. No watermarks.`;
+    // 강아지 대답 씬 - 립싱크 + 동작 강조
+    const actionEmphasis = actionDescription ? `
+
+[CRITICAL ACTION REQUIREMENT - MUST PERFORM]
+The dog MUST perform this specific action throughout the entire video:
+- ${actionDescription}
+- This action is the MAIN FOCUS of this scene
+- The dog should be actively doing this movement while speaking
+- Do NOT show the dog just sitting still - it must be moving as described above
+
+` : "";
+    basePrompt = `1080p cinematic video. ${characterDesc} speaking in Korean with expressive body language.${actionEmphasis}The DOG speaks directly to camera with Korean baby infant voice, 2-3 years old, low-pitched adorable tone. NO interviewer. NO adult voice. NO off-screen voice. ONLY the baby puppy voice speaks. Use the provided reference image as the exact visual base for the entire ${duration} seconds. The dog appearance must stay identical to reference image. No text overlays. No subtitles. No captions. No watermarks.`;
   } else {
     // 기타 씬 (플래시백 등)
-    basePrompt = `1080p cinematic video. Use the provided reference image as the exact visual base for the entire ${duration} seconds. A ${characterDesc} in a snowy ski resort setting.${actionDescription ? ` IMPORTANT ACTION: ${actionDescription}.` : ""} The dog appearance must stay identical to reference image from 0:00 to ${duration}:00. No text overlays. No subtitles. No captions. No watermarks.`;
+    basePrompt = `1080p cinematic video. Use the provided reference image as the exact visual base for the entire ${duration} seconds. ${characterDesc}.${actionDescription ? ` IMPORTANT ACTION: ${actionDescription}.` : ""} The dog appearance must stay identical to reference image from 0:00 to ${duration}:00. No text overlays. No subtitles. No captions. No watermarks.`;
   }
 
   // ★ JSON 구조 생성
@@ -233,11 +273,11 @@ function buildVeoScript(scene) {
       dog_speaks: dogSpeaks
     },
 
-    // 일관성 체크
+    // 일관성 체크 - 참조 이미지 기반
     consistency_check: {
-      fur_color: consistencyCheck.fur_color || `${furColor} must stay same at all times`,
-      accessories: consistencyCheck.accessories || `${accessories.join(", ")} must be visible throughout`,
-      background: "Ski resort background must look same throughout"
+      appearance: "Dog appearance must match reference image exactly throughout",
+      fur_color: "Fur color must stay same as reference image at all times",
+      background: "Background must look same throughout"
     },
 
     // 동작
@@ -279,31 +319,38 @@ function buildVeoScript(scene) {
   // =====================================================
 
   if (isInterviewQuestion && hasNarration) {
-    // ★ 인터뷰어 질문 씬 - 강아지 입 닫힘
+    // ★ 인터뷰어 질문 씬 - 강아지 입 닫힘 (강화된 버전)
     veoScript.dialogue.timing = {
-      [`0.0_to_${duration}_sec`]: "Interviewer audio plays, dog mouth stays COMPLETELY CLOSED"
+      [`0.0_to_${duration}_sec`]: "Interviewer audio plays, dog mouth FROZEN COMPLETELY - ZERO movement"
     };
     veoScript.dialogue.interviewer = narration;
-    veoScript.dialogue.ddangkong_action = "Listening with closed mouth, gentle head nods only";
+    veoScript.dialogue.ddangkong_action = "ONLY listening - mouth SEALED, head nods allowed";
+    veoScript.dialogue.mouth_instruction = "CRITICAL: Dog mouth must be STATIC like a photograph - no animation";
 
     veoScript.voice_settings.interviewer = {
       type: "Korean female news anchor, 30s, professional friendly tone",
-      audio_required: true
+      audio_required: true,
+      dog_mouth_during_audio: "FROZEN - absolutely no movement"
     };
 
     veoScript.lip_sync_style = {
-      type: "NO LIP SYNC - Dog is listening",
-      method: "Dog mouth stays COMPLETELY CLOSED",
+      type: "ABSOLUTELY NO LIP SYNC - FROZEN MOUTH",
+      method: "Dog mouth FROZEN like a still image - ZERO animation",
       dog_speaks: false,
-      mouth_state: "CLOSED",
+      mouth_state: "FROZEN_CLOSED",
+      mouth_animation: "DISABLED",
+      lip_sync_enabled: false,
+      critical_instruction: "Treat mouth as painted on - completely motionless for entire duration",
       allowed_movements: ["head_nod", "head_tilt", "ear_twitch", "eye_blink", "tail_wag"],
-      forbidden_movements: ["mouth_open", "lip_movement", "jaw_movement", "tongue_visible"]
+      strictly_forbidden: ["mouth_open", "lip_movement", "jaw_movement", "tongue_visible", "talking_expression", "any_mouth_animation"]
     };
 
     veoScript.visual_continuity[`0.0_to_${duration}_sec`] = {
-      dog: "Same as reference image, mouth CLOSED entire time",
-      mouth: "CLOSED - lips together, no opening at all",
-      expression: interviewQuestionInfo.interviewee_expression || "curious, attentive, listening intently"
+      dog: "Same as reference image - FROZEN mouth position",
+      mouth: "SEALED SHUT - lips pressed together, no gap, no opening, no movement",
+      mouth_animation: "NONE - treat as static photograph",
+      expression: interviewQuestionInfo.interviewee_expression || "curious, attentive, listening intently",
+      critical: "Mouth must look exactly the same at 0:00, 2:00, and 4:00 - no change"
     };
 
   } else if (dogSpeaks) {
