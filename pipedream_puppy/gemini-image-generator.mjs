@@ -513,7 +513,7 @@ export default defineComponent({
         const characterEmphasis = isAnimal
           ? realDogEmphasis
           : "Real person. Natural human appearance. Realistic human.";
-        const fallbackPrompt = `${fallbackBase}${fallbackAccessories}, ${seg.emotion || "happy"} expression, clean simple background, ${stylePrefix}, ${styleSuffix}. ${characterEmphasis}. ${noTextEmphasis}`;
+        const fallbackPrompt = `${fallbackBase}${fallbackAccessories}, ${seg.emotion || "happy"} expression, clean simple background, ${stylePrefix}, ${styleSuffix}. ${characterEmphasis}. ${noTextEmphasis}.`;
         base64 = await generateImage(fallbackPrompt);
         if (base64) {
           $.export(`fallback_scene_${idx + 1}`, `Used simplified fallback prompt for ${isSubCharacter ? "sub character" : "main character"}`);

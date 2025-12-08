@@ -52,8 +52,14 @@ export default defineComponent({
     },
     footer_text: {
       type: "string",
-      label: "Footer Text (하단 채널명)",
+      label: "Footer Text (하단 채널명 - 한글)",
       description: "채널/시리즈명 - 비워두면 AI 생성 푸터 사용 (예: 땅콩NEWS📺)",
+      optional: true,
+    },
+    footer_text_english: {
+      type: "string",
+      label: "Footer Text English (하단 채널명 - 영어)",
+      description: "영문 푸터 (예: Subscribe for more!)",
       optional: true,
     },
     subtitle_enabled: {
@@ -138,6 +144,9 @@ export default defineComponent({
     const footerText = this.footer_text
       || generatedTitles.footer
       || `${viralTitleOutput?.title_generation_info?.main_character || "땅콩"}이네`;
+    const footerTextEnglish = this.footer_text_english
+      || generatedTitles.footer_english
+      || "";
 
     $.export("footer_source", this.footer_text ? "manual" : (generatedTitles.footer ? "ai_generated" : "default"));
 
@@ -145,6 +154,7 @@ export default defineComponent({
       korean: headerTextKorean,
       english: headerTextEnglish,
       footer: footerText,
+      footer_english: footerTextEnglish,
       source: generatedTitles.header_korean ? "ai_generated" : "manual_or_fallback"
     });
 
@@ -188,6 +198,7 @@ export default defineComponent({
       header_text: headerTextKorean,
       header_text_english: headerTextEnglish,
       footer_text: footerText,
+      footer_text_english: footerTextEnglish,
       // ★★★ 자막 설정 ★★★
       subtitle_enabled: this.subtitle_enabled,
       subtitle_english_enabled: this.subtitle_english_enabled,
@@ -203,6 +214,7 @@ export default defineComponent({
       header_text: requestPayload.header_text,
       header_text_english: requestPayload.header_text_english,
       footer_text: requestPayload.footer_text,
+      footer_text_english: requestPayload.footer_text_english,
       subtitle_enabled: requestPayload.subtitle_enabled,
       subtitle_english_enabled: requestPayload.subtitle_english_enabled,
       sample_video_narration_english: requestPayload.videos[0]?.narration_english || "NONE",
@@ -235,6 +247,7 @@ export default defineComponent({
           has_header: !!headerTextKorean,
           has_header_english: !!headerTextEnglish,
           has_footer: !!footerText,
+          has_footer_english: !!footerTextEnglish,
           has_subtitles: this.subtitle_enabled,
           has_english_subtitles: this.subtitle_english_enabled,
           titles_source: generatedTitles.header_korean ? "ai_generated" : "manual_or_fallback",

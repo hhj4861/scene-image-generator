@@ -106,8 +106,12 @@ const escapeTextWithEmoji = (text) => {
   if (!text) return "";
   return text
     .trim()
+    .replace(/\$/g, "달러")       // $ → 달러
+    .replace(/\|/g, " - ")        // | → 하이픈으로 대체 (FFmpeg 필터 구분자 충돌 방지)
+    .replace(/%/g, "퍼센트")      // % → 퍼센트 (FFmpeg drawtext에서 %는 특수문자)
+    .replace(/'/g, "\u2019")      // 작은따옴표 → 유니코드
+    .replace(/"/g, "\u201D")      // 큰따옴표 → 유니코드
     .replace(/\\/g, "\\\\")
-    .replace(/'/g, "'\\''")
     .replace(/:/g, "\\:")
     .replace(/\[/g, "\\[")
     .replace(/\]/g, "\\]")
@@ -119,8 +123,12 @@ const escapeText = (text, keepEmoji = false) => {
   if (keepEmoji) return escapeTextWithEmoji(text);
   const cleanText = removeEmojis(text);
   return cleanText
+    .replace(/\$/g, "달러")       // $ → 달러
+    .replace(/\|/g, " - ")        // | → 하이픈으로 대체 (FFmpeg 필터 구분자 충돌 방지)
+    .replace(/%/g, "퍼센트")      // % → 퍼센트 (FFmpeg drawtext에서 %는 특수문자)
+    .replace(/'/g, "\u2019")      // 작은따옴표 → 유니코드
+    .replace(/"/g, "\u201D")      // 큰따옴표 → 유니코드
     .replace(/\\/g, "\\\\")
-    .replace(/'/g, "'\\''")
     .replace(/:/g, "\\:")
     .replace(/\[/g, "\\[")
     .replace(/\]/g, "\\]")
@@ -665,5 +673,7 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`  POST /render - Basic video concatenation`);
   console.log(`  POST /render/puppy - Puppy style render (OPTIMIZED)`);
 });
+
+
 
 

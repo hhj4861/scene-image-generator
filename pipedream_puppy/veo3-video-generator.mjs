@@ -553,6 +553,11 @@ export default defineComponent({
       "끼끼": "high-pitched excited giggling, whole body shaking",
       "푸하하": "bursting out laughing, explosive laughter",
       "키득키득": "quiet giggling, shoulders bouncing with suppressed laughter",
+      "콰당": "falling down dramatically, tumbling over with legs in the air, comedic collapse",
+      "털썩": "flopping down exhausted, collapsing dramatically",
+      "푸욱": "face planting into ground, falling forward",
+      "데굴데굴": "rolling on the ground, tumbling around",
+      "헉": "shocked freeze, wide eyes with jaw dropped",
     };
 
     const detectActionsFromNarration = (narration) => {
