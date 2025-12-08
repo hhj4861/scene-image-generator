@@ -1,0 +1,338 @@
+{
+  "video_info": {
+    "title": "2026년 1-2월 FDA 승인 대박 바이오 주식 TOP 3",
+    "title_en": "Top 3 FDA Approval Biotech Stocks Jan-Feb 2026",
+    "format": "9:16",
+    "total_scenes": 5,
+    "total_duration_seconds": 75.61,
+    "speech_rate_config": {
+      "characters_per_second": 4.5,
+      "description": "한국어 나레이션 기준 초당 글자수 (참고용)"
+    }
+  },
+  "scenes": [
+    {
+      "scene_id": 1,
+      "scene_name": "오프닝",
+      "scene_name_en": "Opening",
+      "video_url": "https://www.genspark.ai/api/files/s/3YPmFB7S",
+      "narration": {
+        "ko": "2026년 1월부터 2월, FDA 승인 대박 바이오주 3개 공개합니다!",
+        "en": "From January to February 2026, revealing 3 huge FDA approval biotech stocks!"
+      },
+      "duration_analysis": {
+        "audio_file": "audio-1.mp3",
+        "audio_duration_seconds": 6.85,
+        "narration_length_ko": 38,
+        "narration_length_en": 72,
+        "calculated_duration_seconds": 8,
+        "start_time": "00:00.00",
+        "end_time": "00:06.85"
+      },
+      "subtitles": [
+        {
+          "start_time": "00:00.00",
+          "end_time": "00:03.00",
+          "text_ko": "2026년 1-2월",
+          "text_en": "JAN-FEB 2026",
+          "position": "center",
+          "style": "bold",
+          "color": "white"
+        },
+        {
+          "start_time": "00:03.00",
+          "end_time": "00:06.85",
+          "text_ko": "FDA 승인 대박 바이오 주식 TOP 3",
+          "text_en": "FDA APPROVAL TOP 3 BIOTECH STOCKS",
+          "position": "center",
+          "style": "bold",
+          "color": "gold"
+        }
+      ]
+    },
+    {
+      "scene_id": 2,
+      "scene_name": "AQST - 1위",
+      "scene_name_en": "AQST - #1",
+      "video_url": "https://www.genspark.ai/api/files/s/ykAMUCxX",
+      "stock_info": {
+        "ticker": "AQST",
+        "company": "Aquestive Therapeutics",
+        "current_price": "$6.38",
+        "target_price": "$10-12",
+        "expected_return": "60-90%",
+        "pdufa_date": "2026-01-31"
+      },
+      "narration": {
+        "ko": "1위, AQST! 현재가 6달러 38센트. 세계 최초 설하 필름 알레르기 치료제 아나필름. FDA 자문위원회 면제로 승인 가능성 90%. 1월 31일 승인되면 목표가 10~12달러, 최대 90% 수익!",
+        "en": "Number 1, AQST! Current price $6.38. World's first sublingual film allergy treatment Anaphylm. 90% approval chance with FDA advisory waived. January 31st approval targets $10-12, up to 90% return!"
+      },
+      "duration_analysis": {
+        "audio_file": "audio-2.mp3",
+        "audio_duration_seconds": 18.93,
+        "narration_length_ko": 108,
+        "narration_length_en": 188,
+        "calculated_duration_seconds": 24,
+        "start_time": "00:06.85",
+        "end_time": "00:25.78"
+      },
+      "subtitles": [
+        {
+          "start_time": "00:06.85",
+          "end_time": "00:09.50",
+          "text_ko": "🥇 1위: AQST",
+          "text_en": "🥇 #1: AQST",
+          "position": "top",
+          "style": "bold",
+          "color": "gold"
+        },
+        {
+          "start_time": "00:09.50",
+          "end_time": "00:12.50",
+          "text_ko": "현재가: $6.38",
+          "text_en": "Current Price: $6.38",
+          "position": "center",
+          "style": "bold",
+          "color": "white"
+        },
+        {
+          "start_time": "00:12.50",
+          "end_time": "00:16.50",
+          "text_ko": "세계 최초 설하 필름 알레르기 치료제",
+          "text_en": "World's First Sublingual Film Allergy Treatment",
+          "position": "center",
+          "style": "regular",
+          "color": "white"
+        },
+        {
+          "start_time": "00:16.50",
+          "end_time": "00:20.50",
+          "text_ko": "FDA 자문위원회 면제 → 승인 가능성 90%",
+          "text_en": "FDA Advisory Waived → 90% Approval Chance",
+          "position": "center",
+          "style": "bold",
+          "color": "green"
+        },
+        {
+          "start_time": "00:20.50",
+          "end_time": "00:25.78",
+          "text_ko": "목표가 $10-12 | 예상 수익률: 60~90%",
+          "text_en": "Target $10-12 | Expected Return: 60-90%",
+          "position": "bottom",
+          "style": "bold",
+          "color": "yellow"
+        }
+      ]
+    },
+    {
+      "scene_id": 3,
+      "scene_name": "ASND - 2위",
+      "scene_name_en": "ASND - #2",
+      "video_url": "https://www.genspark.ai/api/files/s/mfXsEOtj",
+      "stock_info": {
+        "ticker": "ASND",
+        "company": "Ascendis Pharma",
+        "current_price": "$205",
+        "target_price": "$240-260",
+        "expected_return": "20-25%",
+        "pdufa_date": "2026-02-28"
+      },
+      "narration": {
+        "ko": "2위, ASND! 현재가 205달러. 소아 왜소증 치료제 트랜스콘 CNP. 시장 규모 30억 달러, 블록버스터 잠재력. 2월 28일 승인 목표가 240~260달러. 대형주 안정성 갑!",
+        "en": "Number 2, ASND! Current price $205. Pediatric achondroplasia treatment TransCon CNP. $3 billion market size, blockbuster potential. February 28th approval targets $240-260. Top-tier large-cap stability!"
+      },
+      "duration_analysis": {
+        "audio_file": "audio-3.mp3",
+        "audio_duration_seconds": 22.93,
+        "narration_length_ko": 95,
+        "narration_length_en": 196,
+        "calculated_duration_seconds": 21,
+        "start_time": "00:25.78",
+        "end_time": "00:48.71"
+      },
+      "subtitles": [
+        {
+          "start_time": "00:25.78",
+          "end_time": "00:28.50",
+          "text_ko": "🥈 2위: ASND",
+          "text_en": "🥈 #2: ASND",
+          "position": "top",
+          "style": "bold",
+          "color": "silver"
+        },
+        {
+          "start_time": "00:28.50",
+          "end_time": "00:32.00",
+          "text_ko": "현재가: $205",
+          "text_en": "Current Price: $205",
+          "position": "center",
+          "style": "bold",
+          "color": "white"
+        },
+        {
+          "start_time": "00:32.00",
+          "end_time": "00:37.00",
+          "text_ko": "소아 왜소증 치료제 TransCon CNP",
+          "text_en": "Pediatric Achondroplasia Treatment TransCon CNP",
+          "position": "center",
+          "style": "regular",
+          "color": "white"
+        },
+        {
+          "start_time": "00:37.00",
+          "end_time": "00:42.00",
+          "text_ko": "시장 규모: $3B 블록버스터 잠재력",
+          "text_en": "Market Size: $3B Blockbuster Potential",
+          "position": "center",
+          "style": "bold",
+          "color": "green"
+        },
+        {
+          "start_time": "00:42.00",
+          "end_time": "00:48.71",
+          "text_ko": "목표가 $240-260 | 예상 수익률: 20~25%",
+          "text_en": "Target $240-260 | Expected Return: 20-25%",
+          "position": "bottom",
+          "style": "bold",
+          "color": "yellow"
+        }
+      ]
+    },
+    {
+      "scene_id": 4,
+      "scene_name": "BMRN - 3위",
+      "scene_name_en": "BMRN - #3",
+      "video_url": "https://www.genspark.ai/api/files/s/8TMN0Kct",
+      "stock_info": {
+        "ticker": "BMRN",
+        "company": "BioMarin Pharmaceutical",
+        "current_price": "$53",
+        "target_price": "$58-62",
+        "expected_return": "10-15%",
+        "approval_probability": "95%",
+        "pdufa_date": "2026-02-28"
+      },
+      "narration": {
+        "ko": "3위, BMRN! 현재가 53달러. 청소년 PKU 치료제 팔린직 라벨 확대. 승인 확률 무려 95%! 안정적 수익 원하면 이거! 2월 28일 승인, 목표가 58~62달러!",
+        "en": "Number 3, BMRN! Current price $53. Adolescent PKU treatment PALYNZIQ label expansion. Whopping 95% approval probability! For stable returns, this is it! February 28th approval, targets $58-62!"
+      },
+      "duration_analysis": {
+        "audio_file": "audio-4.mp3",
+        "audio_duration_seconds": 18.81,
+        "narration_length_ko": 88,
+        "narration_length_en": 178,
+        "calculated_duration_seconds": 20,
+        "start_time": "00:48.71",
+        "end_time": "01:07.52"
+      },
+      "subtitles": [
+        {
+          "start_time": "00:48.71",
+          "end_time": "00:51.50",
+          "text_ko": "🥉 3위: BMRN",
+          "text_en": "🥉 #3: BMRN",
+          "position": "top",
+          "style": "bold",
+          "color": "bronze"
+        },
+        {
+          "start_time": "00:51.50",
+          "end_time": "00:55.00",
+          "text_ko": "현재가: $53",
+          "text_en": "Current Price: $53",
+          "position": "center",
+          "style": "bold",
+          "color": "white"
+        },
+        {
+          "start_time": "00:55.00",
+          "end_time": "00:59.00",
+          "text_ko": "청소년 PKU 치료제 라벨 확대",
+          "text_en": "Adolescent PKU Treatment Label Expansion",
+          "position": "center",
+          "style": "regular",
+          "color": "white"
+        },
+        {
+          "start_time": "00:59.00",
+          "end_time": "01:03.00",
+          "text_ko": "승인 확률: 95% - 안정적 수익!",
+          "text_en": "Approval Probability: 95% - Stable Returns!",
+          "position": "center",
+          "style": "bold",
+          "color": "green"
+        },
+        {
+          "start_time": "01:03.00",
+          "end_time": "01:07.52",
+          "text_ko": "목표가 $58-62 | 예상 수익률: 10~15%",
+          "text_en": "Target $58-62 | Expected Return: 10-15%",
+          "position": "bottom",
+          "style": "bold",
+          "color": "yellow"
+        }
+      ]
+    },
+    {
+      "scene_id": 5,
+      "scene_name": "엔딩",
+      "scene_name_en": "Ending",
+      "video_url": "https://www.genspark.ai/api/files/s/c1vRYcl5",
+      "narration": {
+        "ko": "바이오 투자는 고위험! 투자는 본인 책임! 좋아요와 구독은 제 책임!",
+        "en": "Biotech investing is high-risk! Investment is your own responsibility! Likes and subscribes are mine!"
+      },
+      "duration_analysis": {
+        "audio_file": "audio-5.mp3",
+        "audio_duration_seconds": 8.09,
+        "narration_length_ko": 36,
+        "narration_length_en": 100,
+        "calculated_duration_seconds": 8,
+        "start_time": "01:07.52",
+        "end_time": "01:15.61"
+      },
+      "subtitles": [
+        {
+          "start_time": "01:07.52",
+          "end_time": "01:11.50",
+          "text_ko": "바이오 투자는 고위험! 투자는 본인 책임!",
+          "text_en": "HIGH RISK! INVESTMENT AT YOUR OWN RISK!",
+          "position": "center",
+          "style": "bold",
+          "color": "red"
+        },
+        {
+          "start_time": "01:11.50",
+          "end_time": "01:15.61",
+          "text_ko": "좋아요 + 구독",
+          "text_en": "LIKE + SUBSCRIBE",
+          "position": "bottom",
+          "style": "bold",
+          "color": "white"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "created_date": "2024-12-07",
+    "updated_date": "2024-12-08",
+    "version": "1.2",
+    "language": ["ko", "en"],
+    "hashtags": [
+      "#바이오주",
+      "#FDA승인",
+      "#미국주식",
+      "#투자",
+      "#AQST",
+      "#ASND",
+      "#BMRN",
+      "#BiotechStocks",
+      "#FDAApproval",
+      "#USStocks"
+    ],
+    "disclaimer": {
+      "ko": "본 영상은 정보 제공 목적이며 투자 권유가 아닙니다. 모든 투자는 본인 책임입니다.",
+      "en": "This video is for informational purposes only and is not investment advice. All investments are at your own risk."
+    }
+  }
+}
