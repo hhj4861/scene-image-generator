@@ -17,7 +17,7 @@ const MODEL_ID = "veo-3.0-fast-generate-001";
 // Image Prompt: EXTREME CLOSE-UP of Pomeranian dog's face, wearing a pink bow tie, WIDE EYES with determination...
 // Video Prompt: lip_sync: yes, facial_expression: serious and determined.
 const PROMPT = `[CRITICAL: ABSOLUTELY NO TEXT, NO SUBTITLES, NO CAPTIONS, NO WRITTEN CHARACTERS OF ANY KIND VISIBLE IN VIDEO]
-8K cinematic video. Generate ONLY clean video with ZERO text on screen. Use the provided reference image (Pomeranian with pink bow tie) as the exact visual base.
+1080p cinematic video. Generate ONLY clean video with ZERO text on screen. Use the provided reference image (Pomeranian with pink bow tie) as the exact visual base.
 
 Scene Description:
 EXTREME CLOSE-UP of the Pomeranian dog's face. The dog has a determined, serious expression with wide, sparkling eyes. Ears perked up high.
