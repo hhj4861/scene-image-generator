@@ -78,8 +78,15 @@ EOF
 # 의존성 설치
 npm install
 
-# API 서버 코드 생성
-cat > server.js << 'SERVEREOF'
+# 작업 디렉토리 생성 (/app에서 실행)
+mkdir -p /app
+cd /app
+
+# API 서버 코드 - GCS에서 다운로드 (최신 버전 유지)
+echo "Downloading server.js from GCS..."
+gsutil cp gs://shorts-videos-storage-mcp-test-457809/deploy/server.js /app/server.js || {
+    echo "GCS download failed, using embedded version..."
+    cat > /app/server.js << 'SERVEREOF'
 /**
  * FFmpeg Render Server - 성능 최적화 버전
  * 
@@ -1239,9 +1246,15 @@ app.listen(PORT, "0.0.0.0", () => {
     console.log(`  POST /render/shop - Shopping Shorts style render (NEW)`);
 });
 SERVEREOF
+}
 
-# PM2로 서버 시작
-pm2 start server.js --name ffmpeg-api
+# /app 디렉토리에 package.json 복사 및 의존성 설치
+cp /opt/ffmpeg-api/package.json /app/
+cd /app
+npm install
+
+# PM2로 서버 시작 (/app/server.js)
+pm2 start /app/server.js --name ffmpeg-api
 pm2 save
 pm2 startup systemd -u root --hp /root
 

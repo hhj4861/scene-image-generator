@@ -144,86 +144,44 @@ const PEANUT_STYLE = {
         y_offset: 80, // 한글-영문 간격
     },
     subtitle: {
-        font_size: 42, // 자막 크기 (기본 모드)
+        font_size: 42, // 자막 크기 감소 (46 → 42) - 3줄 이상일 때 공간 확보
         color: "0xFFFFFF", // 흰색
         border_color: "0x000000",
-        border_width: 6,
-        shadow_x: 2,
-        shadow_y: 2,
+        border_width: 6, // 두꺼운 검정 테두리 (4 → 6)
+        shadow_x: 3,
+        shadow_y: 3,
         shadow_color: "0x000000@0.8",
-        y_percent: 55,
+        y_percent: 55, // 더 위로 이동 (62 → 55) - 3줄 자막도 영상 영역 안에 표시
     },
     subtitle_english: {
-        font_size: 24, // 영문 자막 크기 (기본 모드)
+        font_size: 24, // 영문 자막 크기 (28 → 24)
         color: "0xFFFFFF", // 흰색
         border_color: "0x000000",
-        border_width: 3,
+        border_width: 3, // (2 → 3)
         shadow_x: 2,
         shadow_y: 2,
         shadow_color: "0x000000@0.6",
-        y_percent: 58,
+        y_percent: 58, // 한글 자막 바로 아래 (65 → 58)
     },
     subtitle_interviewer: {
-        font_size: 42, // 인터뷰어 자막 (기본 모드)
+        font_size: 46,
         color: "0xFFFFFF",
         border_color: "0x000000",
-        border_width: 6,
-        shadow_x: 2,
+        border_width: 6, // (4 → 6)
+        shadow_x: 3,
         shadow_y: 3,
         shadow_color: "0x000000@0.8",
         y_percent: 62,
     },
     subtitle_interviewer_english: {
-        font_size: 24, // 영문 인터뷰어 자막 (기본 모드)
+        font_size: 28,
         color: "0xFFFFFF",
         border_color: "0x000000",
-        border_width: 3,
+        border_width: 3, // (2 → 3)
         shadow_x: 2,
         shadow_y: 2,
         shadow_color: "0x000000@0.6",
         y_percent: 65,
-    },
-};
-
-// =====================
-// Origin 모드 자막 스타일 (작은 크기)
-// =====================
-const ORIGIN_SUBTITLE_STYLE = {
-    subtitle: {
-        font_size: 30,
-        color: "0xFFFFFF",
-        border_color: "0x000000",
-        border_width: 4,
-        shadow_x: 2,
-        shadow_y: 2,
-        shadow_color: "0x000000@0.8",
-    },
-    subtitle_english: {
-        font_size: 15,
-        color: "0xFFFFFF",
-        border_color: "0x000000",
-        border_width: 2,
-        shadow_x: 2,
-        shadow_y: 2,
-        shadow_color: "0x000000@0.6",
-    },
-    subtitle_interviewer: {
-        font_size: 30,
-        color: "0xFFFFFF",
-        border_color: "0x000000",
-        border_width: 4,
-        shadow_x: 2,
-        shadow_y: 3,
-        shadow_color: "0x000000@0.8",
-    },
-    subtitle_interviewer_english: {
-        font_size: 15,
-        color: "0xFFFFFF",
-        border_color: "0x000000",
-        border_width: 2,
-        shadow_x: 2,
-        shadow_y: 2,
-        shadow_color: "0x000000@0.6",
     },
 };
 
@@ -754,9 +712,6 @@ app.post("/render/puppy", async (req, res) => {
             use_original_audio = false, // true: 원본 오디오 사용 (비디오에 음성 포함)
             width = 1080,
             height = 1920,
-            // ★★★ origin 모드: 영상이 가로 꽉 채우고 위아래만 여백 ★★★
-            use_origin_size = false,
-            origin_layout = null, // { video_area: {x, y, width, height}, header_area: {y, height}, ... }
             output_bucket,
             output_path,
             folder_name,
@@ -938,28 +893,13 @@ app.post("/render/puppy", async (req, res) => {
         console.log(`[${jobId}] [4/4] Running OPTIMIZED FFmpeg render...`);
         const renderStart = Date.now();
 
-        // ★★★ origin_layout이 제공되면 커스텀 레이아웃 사용 ★★★
-        let videoWidthFinal, videoHeightFinal, videoX, videoY, headerY, footerY;
-
-        if (use_origin_size && origin_layout) {
-            console.log(`[${jobId}] 🎯 Using ORIGIN layout: video ${origin_layout.video_area.width}x${origin_layout.video_area.height} at (${origin_layout.video_area.x}, ${origin_layout.video_area.y})`);
-            videoWidthFinal = origin_layout.video_area.width;
-            videoHeightFinal = origin_layout.video_area.height;
-            videoX = origin_layout.video_area.x;
-            videoY = origin_layout.video_area.y;
-            headerY = origin_layout.header_area?.y || 30;
-            footerY = origin_layout.footer_area?.y || (height - 80);
-        } else {
-            // 기존 PEANUT_STYLE 사용
-            videoWidthFinal = width; // 가로 전체
-            videoHeightFinal = Math.round(height * PEANUT_STYLE.video_height_percent / 100);
-            videoX = 0;
-            videoY = PEANUT_STYLE.video_y_percent
-                ? Math.round(height * PEANUT_STYLE.video_y_percent / 100)
-                : Math.round((height - videoHeightFinal) / 2);
-            headerY = Math.round(height * PEANUT_STYLE.header.y_percent / 100);
-            footerY = Math.round(height * PEANUT_STYLE.footer.y_percent / 100);
-        }
+        // videoHeight는 위에서 자막 너비 계산 시 이미 정의됨
+        // 영상 위치: video_y_percent가 있으면 사용, 없으면 중앙 정렬
+        const videoY = PEANUT_STYLE.video_y_percent
+            ? Math.round(height * PEANUT_STYLE.video_y_percent / 100)
+            : Math.round((height - videoHeight) / 2);
+        const headerY = Math.round(height * PEANUT_STYLE.header.y_percent / 100);
+        const footerY = Math.round(height * PEANUT_STYLE.footer.y_percent / 100);
 
         // 입력 파일 목록
         const inputFiles = downloadedVideos.map(v => `-i "${v.filePath}"`).join(" ");
@@ -971,20 +911,16 @@ app.post("/render/puppy", async (req, res) => {
         let audioConcatInputs = "";
 
         for (let i = 0; i < numVideos; i++) {
-            // ★★★ origin_layout 모드: 영상을 지정된 크기로 스케일 (가로 꽉 채움) ★★★
-            if (use_origin_size && origin_layout) {
-                // origin 모드: 영상을 videoWidthFinal x videoHeightFinal로 스케일 (crop으로 채움)
-                videoScaleFilters += `[${i}:v]scale=${videoWidthFinal}:${videoHeightFinal}:force_original_aspect_ratio=increase,crop=${videoWidthFinal}:${videoHeightFinal},setsar=1[v${i}];`;
-            } else if (PEANUT_STYLE.video_full_width) {
-                // video_full_width: true면 가로 전체 채움 (crop), 아니면 기존 방식 (pad)
+            // video_full_width: true면 가로 전체 채움 (crop), 아니면 기존 방식 (pad)
+            if (PEANUT_STYLE.video_full_width) {
                 // 영상 영역을 꽉 채우도록 스케일 (비율 유지, 최소 크기 보장) 후 중앙 crop
                 // force_original_aspect_ratio=increase: 가로/세로 중 큰 쪽 기준으로 스케일
                 // 9:16 영상: 가로 기준 스케일 → 세로 crop
                 // 16:9 영상: 세로 기준 스케일 → 가로 crop
-                videoScaleFilters += `[${i}:v]scale=${videoWidthFinal}:${videoHeightFinal}:force_original_aspect_ratio=increase,crop=${videoWidthFinal}:${videoHeightFinal},setsar=1[v${i}];`;
+                videoScaleFilters += `[${i}:v]scale=${width}:${videoHeight}:force_original_aspect_ratio=increase,crop=${width}:${videoHeight},setsar=1[v${i}];`;
             } else {
                 // 기존 방식: scale down + pad (검은 여백)
-                videoScaleFilters += `[${i}:v]scale=${videoWidthFinal}:${videoHeightFinal}:force_original_aspect_ratio=decrease,pad=${videoWidthFinal}:${videoHeightFinal}:(ow-iw)/2:(oh-ih)/2:black,setsar=1[v${i}];`;
+                videoScaleFilters += `[${i}:v]scale=${width}:${videoHeight}:force_original_aspect_ratio=decrease,pad=${width}:${videoHeight}:(ow-iw)/2:(oh-ih)/2:black,setsar=1[v${i}];`;
             }
             concatInputs += `[v${i}]`;
             audioConcatInputs += `[${i}:a]`;
@@ -993,8 +929,8 @@ app.post("/render/puppy", async (req, res) => {
         // 비디오 concat
         const concatFilter = `${concatInputs}concat=n=${numVideos}:v=1:a=0[concatv];${audioConcatInputs}concat=n=${numVideos}:v=0:a=1[concata];`;
 
-        // 배경 생성 및 비디오 오버레이 (origin 모드에서는 videoX 사용)
-        const bgFilter = `color=black:s=${width}x${height}:d=${totalDuration}[bg];[bg][concatv]overlay=${videoX}:${videoY}[combined];`;
+        // 배경 생성 및 비디오 오버레이
+        const bgFilter = `color=black:s=${width}x${height}:d=${totalDuration}[bg];[bg][concatv]overlay=0:${videoY}[combined];`;
 
         // =====================
         // 텍스트 필터 배열 생성 (콤마 문제 해결)
@@ -1025,18 +961,15 @@ app.post("/render/puppy", async (req, res) => {
 
         // 2. 자막 필터 (skip_subtitle_overlay가 true면 건너뛰기)
         // ★★★ 영상 영역 하단 계산 (자막 위치 기준점) ★★★
-        const videoBottom = videoY + videoHeightFinal;
+        const videoBottom = videoY + videoHeight;
         const subtitleBottomMargin = 20; // 영상 하단에서 자막까지의 여백
         const korEngGap = 15; // 한글/영어 자막 사이 여백
-
-        // ★★★ origin 모드면 작은 자막 스타일, 기본 모드면 큰 자막 스타일 ★★★
-        const subtitleStyleSource = (use_origin_size && origin_layout) ? ORIGIN_SUBTITLE_STYLE : PEANUT_STYLE;
 
         if (!skip_subtitle_overlay) {
         subtitles.forEach((sub) => {
             const isInterviewer = sub.speaker === "interviewer";
-            const subStyle = isInterviewer ? subtitleStyleSource.subtitle_interviewer : subtitleStyleSource.subtitle;
-            const subEngStyle = isInterviewer ? subtitleStyleSource.subtitle_interviewer_english : subtitleStyleSource.subtitle_english;
+            const subStyle = isInterviewer ? PEANUT_STYLE.subtitle_interviewer : PEANUT_STYLE.subtitle;
+            const subEngStyle = isInterviewer ? PEANUT_STYLE.subtitle_interviewer_english : PEANUT_STYLE.subtitle_english;
 
             // ★★★ 동적 폰트 크기 계산 (자막이 화면에 맞도록) ★★★
             const korDynamicFont = calculateDynamicFontSize(sub.text, subStyle.font_size, actualVideoWidth, 5);

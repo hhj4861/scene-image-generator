@@ -62,21 +62,71 @@ function parseTiming(timingStr) {
 }
 
 /**
- * 원본 영상에서 오디오 제거 + duration만큼 루핑
+ * ffprobe로 영상 길이 확인
  */
-async function processVideos(scenes) {
-    console.log('\n🔇 Processing videos (loop to duration + add silent audio)...');
+async function getVideoDuration(videoPath) {
+    try {
+        const { stdout } = await execAsync(`ffprobe -v error -show_entries format=duration -of csv=p=0 "${videoPath}"`);
+        return parseFloat(stdout.trim());
+    } catch (err) {
+        console.warn(`   ⚠️ Could not get duration for ${videoPath}`);
+        return 8; // 기본값
+    }
+}
+
+/**
+ * ffprobe로 오디오 길이 확인
+ */
+async function getAudioDuration(audioPath) {
+    try {
+        const { stdout } = await execAsync(`ffprobe -v error -show_entries format=duration -of csv=p=0 "${audioPath}"`);
+        return parseFloat(stdout.trim());
+    } catch (err) {
+        console.warn(`   ⚠️ Could not get audio duration`);
+        return 60;
+    }
+}
+
+/**
+ * 원본 영상에서 오디오 제거 + duration만큼 루핑
+ * @param {Array} scenes - 씬 배열
+ * @param {number} narrationDuration - 나레이션 전체 길이 (초)
+ */
+async function processVideos(scenes, narrationDuration) {
+    console.log('\n🔇 Processing videos (loop to match narration duration)...');
+    console.log(`   📢 Narration duration: ${narrationDuration.toFixed(2)}s`);
 
     if (!fs.existsSync(TEMP_DIR)) {
         fs.mkdirSync(TEMP_DIR, { recursive: true });
     }
 
+    // 각 씬의 타이밍 계산 (마지막 씬은 나레이션 끝까지 연장)
+    const sceneTimings = scenes.map((scene, idx) => {
+        const timing = parseTiming(scene.timing);
+        const isLastScene = idx === scenes.length - 1;
+
+        // 마지막 씬이면 나레이션 끝까지 연장
+        const targetDuration = isLastScene
+            ? Math.ceil(narrationDuration - timing.start)
+            : timing.duration;
+
+        return {
+            ...scene,
+            targetDuration,
+            startTime: timing.start,
+            isExtended: isLastScene && targetDuration > timing.duration
+        };
+    });
+
+    // 총 영상 길이 출력
+    const totalVideoDuration = sceneTimings.reduce((sum, s) => sum + s.targetDuration, 0);
+    console.log(`   📊 Total video duration: ${totalVideoDuration}s (narration: ${narrationDuration.toFixed(2)}s)`);
+
     const processedVideos = [];
 
-    for (const scene of scenes) {
+    for (const scene of sceneTimings) {
         const sceneNum = scene.scene_number;
-        const timing = parseTiming(scene.timing);
-        const targetDuration = timing.duration;
+        const targetDuration = scene.targetDuration;
 
         // 비디오 파일명: 씬1.mp4, 씬2.mp4, ...
         const videoFileName = `씬${sceneNum}.mp4`;
@@ -88,10 +138,16 @@ async function processVideos(scenes) {
             continue;
         }
 
+        // 원본 영상 길이 확인
+        const originalDuration = await getVideoDuration(inputPath);
+        const needsLoop = targetDuration > originalDuration;
+
         // FFmpeg: 루핑(-stream_loop) + 길이 제한(-t) + 무음 오디오 추가
         const cmd = `ffmpeg -y -stream_loop -1 -i "${inputPath}" -f lavfi -i anullsrc=r=44100:cl=stereo -t ${targetDuration} -map 0:v -map 1:a -c:v libx264 -preset ultrafast -crf 23 -c:a aac -shortest "${outputPath}"`;
 
-        console.log(`   Scene ${sceneNum}: ${videoFileName} -> ${targetDuration}s (silent audio track)`);
+        const loopInfo = needsLoop ? `🔄 loop ${(targetDuration / originalDuration).toFixed(1)}x` : '✓';
+        const extendInfo = scene.isExtended ? ' (extended to match narration)' : '';
+        console.log(`   Scene ${sceneNum}: ${originalDuration.toFixed(1)}s -> ${targetDuration}s ${loopInfo}${extendInfo}`);
 
         try {
             await execAsync(cmd, { maxBuffer: 1024 * 1024 * 100 });
@@ -99,7 +155,7 @@ async function processVideos(scenes) {
                 sceneNum,
                 path: outputPath,
                 duration: targetDuration,
-                startTime: timing.start
+                startTime: scene.startTime
             });
             console.log(`     ✅ Created: processed_scene_${sceneNum}.mp4`);
         } catch (err) {
@@ -136,18 +192,22 @@ async function main() {
     const bgmFile = bgmFiles[0];
     console.log(`   BGM: ${bgmFile}`);
 
-    // 4. 영상 처리 (오디오 제거 + 루핑)
-    const processedVideos = await processVideos(scenes);
+    // 4. 나레이션 길이 측정
+    const narrationPath = path.join(NARRATION_DIR, narrationFile);
+    const narrationDuration = await getAudioDuration(narrationPath);
+    console.log(`\n⏱️ Narration duration: ${narrationDuration.toFixed(2)}s`);
+
+    // 5. 영상 처리 (오디오 제거 + 루핑, 나레이션 길이에 맞춤)
+    const processedVideos = await processVideos(scenes, narrationDuration);
 
     if (processedVideos.length === 0) {
         throw new Error('No videos processed');
     }
 
-    // 5. 파일들 GCS 업로드
+    // 6. 파일들 GCS 업로드
     console.log('\n📤 Uploading files to GCS...');
 
     // 나레이션 업로드
-    const narrationPath = path.join(NARRATION_DIR, narrationFile);
     const gcsNarrationPath = `test/nvd/audio/narration_${Date.now()}.mp3`;
     const narrationUrl = await uploadToGCS(narrationPath, OUTPUT_BUCKET, gcsNarrationPath);
     console.log(`   ✅ Narration -> ${narrationUrl}`);
