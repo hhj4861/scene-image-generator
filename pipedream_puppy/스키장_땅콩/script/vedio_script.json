@@ -1055,7 +1055,7 @@
         "duration_seconds": 6,
         "veo3_compliant": true,
         "resolution": "8K",
-        "prompt": "1080p cinematic video. Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie., with pink bow tie facing camera. Snowy park, ski resort in the background. bright studio lighting, Bright sunlight. Dog with gentle mouth movements. IMPORTANT ACTION: Dog is scooting butt on floor, dragging bottom across ground using front legs, sliding forward comically, sitting with hind legs extended forward, using front paws to pull body forward while butt drags on floor, skiing on butt across floor playfully, scooting bottom on ground like skiing, legs spread forward while butt drags while speaking. Amused, slightly defeated expression. tracking camera movement. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "prompt": "1080p cinematic video. Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing ski goggles covering ears completely and cow-print ski suit, sitting on snowy ski slope. Dog's close-up face with goggles covering the ears completely, ensuring the ears do not stick out above the goggles. The camera pulls back to show the dog in a FULLY SEATED position with BOTTOM FIRMLY PLANTED ON THE SNOW, hind legs stretched forward, front paws resting on knees or held up playfully. The dog SLIDES DOWN the ski slope in this seated toboggan-like posture - butt NEVER leaves the snow surface, sliding smoothly like a sled. The body glides forward naturally due to slope momentum, NOT from leg pushing or scooting motion. Cute amused expression while passively sliding down. The video should emphasize the smooth gliding motion of the seated dog sliding down the snowy slope like a human sledding on their bottom. Goggles must stay over the ears throughout. Winter ski resort setting. Amused, slightly defeated expression. tracking camera movement. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
         "dialogue": {
           "timing": {
             "0.0_to_0.5_sec": "Silence, dog waiting",
@@ -1221,11 +1221,11 @@
         "has_narration": true,
         "image_prompt": "Pomeranian dog looking slightly defeated but also amused, snowy park in the background, ski resort visible in the distance.",
         "video_prompt": {
-          "character_action": "LEGS STAY STILL - only butt slides forward gently on snow",
+          "character_action": "SEATED TOBOGGAN SLIDE - dog sits firmly with bottom planted on snow, hind legs stretched forward, sliding down slope like a sled",
           "lip_sync": "yes",
-          "facial_expression": "Amused, slightly defeated",
-          "body_movement": "Sitting position, legs frozen, butt gently gliding forward on snow surface",
-          "camera_movement": "slow zoom in",
+          "facial_expression": "Amused, slightly defeated, enjoying the ride",
+          "body_movement": "Fully seated position with butt firmly on snow surface, passively gliding down the slope due to gravity - NO leg movement, NO scooting, just smooth sliding",
+          "camera_movement": "tracking",
           "is_interviewer_speaking": false,
           "lip_sync_to": "tts",
           "is_performance": false,
@@ -1249,7 +1249,7 @@
         "detected_actions": [
           {
             "keyword": "엉덩이스키",
-            "action": "Dog sits still with LEGS FROZEN in place, only the BUTT gently slides forward on the snow. NO leg movement at all. Body glides forward slightly while sitting."
+            "action": "Dog in FULLY SEATED toboggan position - bottom firmly planted on snow surface, hind legs stretched forward, front paws up or resting on knees. Slides smoothly down the snowy slope like a human sledding on their bottom. NO standing, NO walking, NO scooting motion - just passive gliding down the slope while seated."
           }
         ],
         "is_hook_scene": false,
@@ -1434,7 +1434,7 @@
         "duration_seconds": 6,
         "veo3_compliant": true,
         "resolution": "8K",
-        "prompt": "1080p cinematic video. Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie., with pink bow tie facing camera. Snowy park, ski resort in the background. bright studio lighting, Bright sunlight. Dog with gentle mouth movements. IMPORTANT ACTION: Dog is Wagging tail, looking excited, skiing on butt across floor playfully, scooting bottom on ground like skiing, Tail wagging, skiing on butt across floor playfully, scooting bottom on ground like skiing, legs spread forward while butt drags while speaking. Excited, happy expression. zoom_in camera movement. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "prompt": "1080p cinematic video. Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie., with pink bow tie facing camera. Snowy park, ski resort in the background. bright studio lighting, Bright sunlight. Dog with gentle mouth movements. The dog is in a FULLY SEATED position with BOTTOM FIRMLY PLANTED ON THE SNOW, hind legs stretched forward, front paws resting on knees or held up playfully. The dog SLIDES DOWN the ski slope in this seated toboggan-like posture - butt NEVER leaves the snow surface, sliding smoothly like a sled. The body glides forward naturally due to slope momentum, NOT from leg pushing or scooting motion. Excited happy expression while passively sliding down. The video should emphasize the smooth gliding motion of the seated dog sliding down the snowy slope like a human sledding on their bottom. Winter ski resort setting. zoom_in camera movement. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only. CRITICAL VOICE RULE: ONLY the baby puppy voice speaks - Korean baby infant voice, 2-3 years old. NO interviewer voice. NO adult female voice. NO news anchor voice. The DOG is the ONLY speaker in this video.",
         "dialogue": {
           "timing": {
             "0.0_to_0.5_sec": "Silence, dog waiting",
@@ -1453,7 +1453,13 @@
             "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
             "emotion": "happy",
             "laugh_style": "Adorable baby giggling, soft cooing laughter",
-            "consistent_across": "All videos"
+            "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+            "audio_must_be_heard": true,
+            "only_speaker": true
+          },
+          "interviewer": {
+            "enabled": false,
+            "note": "NO interviewer voice in this scene - dog speaks alone"
           }
         },
         "visual_continuity": {
@@ -1474,10 +1480,11 @@
         "lip_sync_style": {
           "type": "Subtle talking photo style",
           "method": "Minimal mouth animation on static image",
+          "dog_speaks": true,
+          "lip_sync_required": true,
           "mouth_movement": "Small natural opening and closing matching Korean syllables",
           "face": "Keep same expression, only mouth area moves slightly",
-          "do_not": "Do not regenerate dog image, do not change dog appearance",
-          "dog_speaks": true
+          "do_not": "Do not regenerate dog image, do not change dog appearance"
         },
         "character_appearance": {
           "base": "Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
@@ -1599,10 +1606,10 @@
         "has_narration": true,
         "image_prompt": "Pomeranian dog looking excited, snowy park in the background, ski resort visible in the distance., doing butt skiing on floor, playful scooting pose, legs spread like skiing, sliding forward comically",
         "video_prompt": {
-          "character_action": "Dragging its rear end across the floor while paddling with front legs, Pulling itself forward with front paws, butt glued to the ground",
+          "character_action": "SEATED TOBOGGAN SLIDE - dog sits firmly with bottom planted on snow, hind legs stretched forward, sliding down slope like a sled",
           "lip_sync": "yes",
-          "facial_expression": "Excited, happy",
-          "body_movement": "Tail wagging",
+          "facial_expression": "Excited, happy, enjoying the ride",
+          "body_movement": "Fully seated position with butt firmly on snow surface, passively gliding down the slope due to gravity - NO leg movement, NO scooting, just smooth sliding",
           "camera_movement": "zoom_in",
           "is_interviewer_speaking": false,
           "lip_sync_to": "tts",
@@ -1627,7 +1634,7 @@
         "detected_actions": [
           {
             "keyword": "엉덩이 스키",
-            "action": "Classic dog butt scoot pose - dragging rear end on ground while pulling forward with front paws, back legs lifted, scooting across the snow"
+            "action": "Dog in FULLY SEATED toboggan position - bottom firmly planted on snow surface, hind legs stretched forward, front paws up or resting on knees. Slides smoothly down the snowy slope like a human sledding on their bottom. NO standing, NO walking, NO scooting motion - just passive gliding down the slope while seated."
           }
         ],
         "is_hook_scene": false,
@@ -1640,50 +1647,65 @@
         "duration_seconds": 8,
         "veo3_compliant": true,
         "resolution": "8K",
-        "prompt": "1080p cinematic video. Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie., with pink bow tie facing camera. Snowy park, ski resort in the background. bright studio lighting, Bright sunlight. Dog with gentle mouth movements. IMPORTANT ACTION: Dog is Bursting into adorable laughter, then bursting into cute laughter, Shaking with laughter while speaking. bursting into adorable laughter, eyes squinting with pure joy, mouth wide open laughing happily, infectious giggling expression expression. zoom_out camera movement. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "prompt": "1080p cinematic video. Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie., with pink bow tie facing camera. Snowy park, ski resort in the background. bright studio lighting, Bright sunlight. PRECISE LIP SYNC required - dog's mouth must move matching each Korean syllable exactly. TIMELINE: 0-4sec: Dog standing, speaking with precise lip sync. At 4sec (괜찮아요): Dog SITS DOWN on the snow. 5-8sec (히히히히~): Dog in SEATED position, bursting into ADORABLE INNOCENT BABY GIGGLING - bright and cheerful, pure innocent baby-like happy giggling. Eyes squinting with pure joy, mouth wide open in genuine happy laughter, head tilting back slightly while giggling. CAMERA: Start medium shot, then ZOOM IN on dog's face during the 히히히히~ laughter section (5-8sec), ending with close-up of the laughing face. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only. CRITICAL VOICE: ONLY baby puppy voice - Korean baby infant voice, 2-3 years old. The laugh (히히히히~) must be BRIGHT CHEERFUL INNOCENT BABY GIGGLING, cute and adorable.",
         "dialogue": {
           "timing": {
-            "0.0_to_0.5_sec": "Silence, dog waiting",
-            "0.5_to_8_sec": "땅콩 audio, subtle mouth movement"
+            "0.0_to_0.5_sec": "Silence, dog standing, preparing to speak",
+            "0.5_to_4_sec": "Speaking with precise lip sync while standing",
+            "4_to_5_sec": "Says 괜찮아요 while SITTING DOWN",
+            "5_to_8_sec": "SEATED, adorable innocent baby giggling 히히히히~ with happy smiling face"
           },
           "interviewer": null,
-          "땅콩": "스노우보드는 실패했지만, 엉덩이가 시원해졌으니 괜찮아요! 흐흐흐흐흐흐~",
-          "script": "스노우보드는 실패했지만, 엉덩이가 시원해졌으니 괜찮아요! 흐흐흐흐흐흐~",
+          "땅콩": "스노우보드는 실패했지만, 엉덩이가 시원해졌으니 괜찮아요! 히히히히~",
+          "script": "스노우보드는 실패했지만, 엉덩이가 시원해졌으니 괜찮아요! 히히히히~",
           "script_english": "Even though snowboarding failed, my butt is cool, so it's okay! Hehehehehe~",
           "audio_only": true
         },
         "voice_settings": {
           "땅콩": {
             "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
-            "tone": "Happy, laughing",
+            "tone": "Happy, laughing with INNOCENT ADORABLE giggling",
             "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
             "emotion": "happy",
-            "laugh_style": "Adorable baby giggling, soft cooing laughter",
-            "consistent_across": "All videos"
+            "laugh_style": "INNOCENT ADORABLE baby giggling - NOT sly or cunning, pure happy baby laugh like a 2-year-old toddler",
+            "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+            "audio_must_be_heard": true,
+            "only_speaker": true
+          },
+          "interviewer": {
+            "enabled": false,
+            "note": "NO interviewer voice in this scene - dog speaks alone with baby voice"
           }
         },
         "visual_continuity": {
           "instruction": "Same visual appearance for all 8 seconds",
           "0.0_to_4_sec": {
             "base": "Reference image exactly",
-            "dog": "Same as reference",
-            "mouth": "Subtle lip sync"
+            "dog": "Standing, same as reference",
+            "mouth": "PRECISE lip sync matching Korean syllables",
+            "action": "Standing and speaking"
           },
-          "4_to_8_sec": {
+          "4_to_5_sec": {
+            "dog": "SITTING DOWN motion while saying 괜찮아요",
+            "mouth": "Precise lip sync",
+            "action": "Transition from standing to seated"
+          },
+          "5_to_8_sec": {
             "base": "Same reference image, do not change",
-            "dog": "Same golden cream with brown ears, same face, same appearance",
-            "mouth": "Subtle open and close for lip sync only",
-            "change_only": "Mouth movement",
-            "keep_same": "Everything else identical to reference image"
+            "dog": "SEATED position, same golden cream with brown ears, same face",
+            "mouth": "Wide open happy laughing expression for 히히히히~",
+            "expression": "Pure innocent happy laughter, eyes squinting with joy",
+            "camera": "ZOOM IN on face during this section"
           }
         },
         "lip_sync_style": {
-          "type": "Subtle talking photo style",
-          "method": "Minimal mouth animation on static image",
-          "mouth_movement": "Small natural opening and closing matching Korean syllables",
-          "face": "Keep same expression, only mouth area moves slightly",
-          "do_not": "Do not regenerate dog image, do not change dog appearance",
-          "dog_speaks": true
+          "type": "Precise talking with accurate lip sync",
+          "method": "Mouth animation matching each Korean syllable exactly",
+          "dog_speaks": true,
+          "lip_sync_required": true,
+          "mouth_movement": "PRECISE opening and closing matching Korean syllables - 스노우보드는 실패했지만 엉덩이가 시원해졌으니 괜찮아요 then wide open laughing for 히히히히~",
+          "face": "Normal expression during speech, then HAPPY LAUGHING expression during 히히히히~",
+          "do_not": "Do not regenerate dog image, do not change dog appearance"
         },
         "character_appearance": {
           "base": "Create a Pomeranian dog with golden cream and brown ears, fluffy fur, dark brown eyes, black nose, pointy erect ears, round face, compact body build, small size, wearing a pink bow tie.",
@@ -1753,12 +1775,27 @@
           "0.0_to_0.5_sec": {
             "audio": "Silence",
             "mouth": "Closed, relaxed",
-            "expression": "happy, preparing to speak"
+            "expression": "happy, preparing to speak",
+            "pose": "Standing"
           },
-          "0.5_to_8_sec": {
-            "text": "스노우보드는 실패했지만, 엉덩이가 시원해졌으니 괜찮아요! 흐흐흐흐흐흐~",
-            "mouth": "Precise mouth movements matching Korean syllables",
-            "expression": "Happiness"
+          "0.5_to_4_sec": {
+            "text": "스노우보드는 실패했지만, 엉덩이가 시원해졌으니",
+            "mouth": "PRECISE mouth movements matching EACH Korean syllable exactly",
+            "expression": "Speaking normally",
+            "pose": "Standing"
+          },
+          "4_to_5_sec": {
+            "text": "괜찮아요!",
+            "mouth": "Precise lip sync for 괜찮아요",
+            "expression": "Starting to smile",
+            "pose": "SITTING DOWN motion - transitioning from standing to seated"
+          },
+          "5_to_8_sec": {
+            "text": "히히히히~",
+            "mouth": "Wide open happy laughing mouth",
+            "expression": "ADORABLE INNOCENT baby giggling - eyes squinting with pure joy, big happy smile",
+            "pose": "FULLY SEATED",
+            "camera": "ZOOM IN on laughing face"
           }
         },
         "mouth_shapes": {
@@ -1799,23 +1836,24 @@
         "segment_number": 9,
         "start": 50,
         "end": 58,
-        "narration": "스노우보드는 실패했지만, 엉덩이가 시원해졌으니 괜찮아요! 흐흐흐흐흐흐~",
-        "narration_korean": "스노우보드는 실패했지만, 엉덩이가 시원해졌으니 괜찮아요! 흐흐흐흐흐흐~",
+        "narration": "스노우보드는 실패했지만, 엉덩이가 시원해졌으니 괜찮아요! 히히히히~",
+        "narration_korean": "스노우보드는 실패했지만, 엉덩이가 시원해졌으니 괜찮아요! 히히히히~",
         "narration_english": "Even though snowboarding failed, my butt is cool, so it's okay! Hehehehehe~",
         "spoken_language": "korean",
         "has_narration": true,
         "image_prompt": "Pomeranian dog bursting into adorable laughter, snowy park in the background, ski resort visible in the distance.",
         "video_prompt": {
-          "character_action": "Bursting into adorable laughter, then bursting into cute laughter",
-          "lip_sync": "yes",
-          "facial_expression": "bursting into adorable laughter, eyes squinting with pure joy, mouth wide open laughing happily, infectious giggling expression",
-          "body_movement": "Shaking with laughter",
-          "camera_movement": "zoom_out",
+          "character_action": "0-4sec: Standing and speaking. 4-5sec: SITS DOWN while saying 괜찮아요. 5-8sec: SEATED and bursting into ADORABLE INNOCENT baby giggling",
+          "lip_sync": "yes - PRECISE lip sync matching each Korean syllable exactly",
+          "facial_expression": "Normal speaking face (0-4sec), starting to smile (4-5sec), then ADORABLE INNOCENT baby giggling with eyes squinting pure joy (5-8sec)",
+          "body_movement": "Standing (0-4sec) → Sitting down (4-5sec) → Seated shaking with happy laughter (5-8sec)",
+          "camera_movement": "Medium shot (0-5sec) → ZOOM IN on laughing face (5-8sec)",
           "is_interviewer_speaking": false,
           "lip_sync_to": "tts",
           "is_performance": false,
           "performance_type": null,
-          "performance_phase": null
+          "performance_phase": null,
+          "laugh_note": "The 히히히히~ laugh must be INNOCENT ADORABLE baby giggling like a happy 2-year-old toddler, bright and cheerful, NOT a sly or cunning adult laugh"
         },
         "audio_details": {
           "voice_style": "baby_girl",
