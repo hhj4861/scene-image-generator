@@ -1221,10 +1221,10 @@
         "has_narration": true,
         "image_prompt": "Pomeranian dog looking slightly defeated but also amused, snowy park in the background, ski resort visible in the distance.",
         "video_prompt": {
-          "character_action": "BUTT ON GROUND sliding forward - bottom touching snow and dragging, NOT legs dragging",
+          "character_action": "LEGS STAY STILL - only butt slides forward gently on snow",
           "lip_sync": "yes",
           "facial_expression": "Amused, slightly defeated",
-          "body_movement": "Bottom/rear end pressed against snow surface, sliding forward while front paws pull, classic butt scoot",
+          "body_movement": "Sitting position, legs frozen, butt gently gliding forward on snow surface",
           "camera_movement": "slow zoom in",
           "is_interviewer_speaking": false,
           "lip_sync_to": "tts",
@@ -1249,7 +1249,7 @@
         "detected_actions": [
           {
             "keyword": "엉덩이스키",
-            "action": "BUTT SLIDING ON SNOW - the dogs BOTTOM/REAR touches the ground and slides forward, front paws pull the body, NOT leg dragging but BUTT DRAGGING on the snowy surface"
+            "action": "Dog sits still with LEGS FROZEN in place, only the BUTT gently slides forward on the snow. NO leg movement at all. Body glides forward slightly while sitting."
           }
         ],
         "is_hook_scene": false,
