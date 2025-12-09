@@ -115,7 +115,9 @@
       "Bash(/opt/homebrew/share/google-cloud-sdk/bin/gcloud auth login --brief)",
       "Bash(/opt/homebrew/share/google-cloud-sdk/bin/gcloud compute instances delete ffmpeg-render-server --zone=asia-northeast3-a --quiet)",
       "Bash(/opt/homebrew/bin/terraform apply -auto-approve -target=google_compute_instance.ffmpeg_server)",
-      "Bash(GOOGLE_APPLICATION_CREDENTIALS=/Users/admin/Desktop/workSpace/socar/scene-image-generator/mcp-test-457809-ab0f02124b33.json node:*)"
+      "Bash(GOOGLE_APPLICATION_CREDENTIALS=/Users/admin/Desktop/workSpace/socar/scene-image-generator/mcp-test-457809-ab0f02124b33.json node:*)",
+      "Bash(GOOGLE_APPLICATION_CREDENTIALS=/Users/honghyeonjong/home/IdeaProjects/scene-image-generator/mcp-test-457809-ab0f02124b33.json /opt/homebrew/share/google-cloud-sdk/bin/gsutil cp:*)",
+      "Bash(GOOGLE_APPLICATION_CREDENTIALS=/Users/honghyeonjong/home/IdeaProjects/scene-image-generator/mcp-test-457809-ab0f02124b33.json node:*)"
     ],
     "deny": [],
     "ask": []

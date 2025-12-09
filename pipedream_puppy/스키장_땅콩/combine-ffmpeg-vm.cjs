@@ -10,11 +10,26 @@ const GCS_BUCKET = "shorts-videos-storage-mcp-test-457809";
 // 플래그 처리: node combine-ffmpeg-vm.cjs origin
 const USE_ORIGIN_SIZE = process.argv[2] === "origin";
 
+// vedio_script.json에서 자막 데이터 로드
+const vedioScriptPath = path.join(__dirname, "script", "vedio_script.json");
+const vedioScriptData = JSON.parse(fs.readFileSync(vedioScriptPath, "utf-8"));
+const vedioScenes = vedioScriptData.$return_value?.scenes || [];
+
+// 씬별 자막 매핑
+function getNarration(sceneIndex) {
+  const scene = vedioScenes.find(s => s.video === sceneIndex);
+  if (!scene) return { narration: "", narration_english: "" };
+  return {
+    narration: scene.dialogue?.script || "",
+    narration_english: scene.dialogue?.script_english || ""
+  };
+}
+
 // 스키장 땅콩 스크립트 데이터
 const scriptData = {
   title: {
     korean: "스키장 인싸견의 최후 ㅋㅋ 엉덩이스키로 셀럽 등극",
-    english: "How This Dog Became Famous at the Ski Resort 😂 Butt-Sliding to Stardom"
+    english: "Ski Resort Dog Celebrity 😂 Butt-Sliding Fame"
   },
   bgm_url: "https://cdn1.suno.ai/a66a5a1e-0029-48a5-b431-b96b9fe47d5e.mp3",
   scenes: [
@@ -35,7 +50,12 @@ async function uploadToGCS(localPath, gcsPath) {
   const bucket = storage.bucket(GCS_BUCKET);
 
   console.log(`Uploading ${path.basename(localPath)} to gs://${GCS_BUCKET}/${gcsPath}...`);
-  await bucket.upload(localPath, { destination: gcsPath });
+  try {
+    await bucket.upload(localPath, { destination: gcsPath });
+  } catch (err) {
+    console.error(`  [ERROR] Upload failed: ${err.message}`);
+    throw err;
+  }
 
   const publicUrl = `https://storage.googleapis.com/${GCS_BUCKET}/${gcsPath}`;
   console.log(`  -> ${publicUrl}`);
@@ -81,12 +101,13 @@ async function combineVideos() {
     const gcsPath = `${testFolder}/scene${scene.index}.mp4`;
     const url = await uploadToGCS(localPath, gcsPath);
 
+    const { narration, narration_english } = getNarration(scene.index);
     videos.push({
       url,
       index: scene.index,
       duration: scene.duration,
-      narration: scene.narration,
-      narration_english: scene.narration_english,
+      narration: narration,
+      narration_english: narration_english,
       is_performance: false,
       scene_type: "interview"
     });
@@ -109,16 +130,21 @@ async function combineVideos() {
   // 2. FFmpeg VM API 호출
   console.log("Step 2: Calling FFmpeg VM API...\n");
 
-  // origin 모드용 레이아웃 및 폰트 스케일 설정
-  // 720/1080 = 0.67 비율로 스케일
+  // 레이아웃 및 폰트 스케일 설정
   const fontScale = USE_ORIGIN_SIZE ? (outputWidth / 1080) : 1;
 
-  // 영상 영역 계산 (상단 헤더 공간만 확보, 하단은 영상 내부에 오버레이)
-  const headerHeight = Math.round(100 * fontScale); // 상단 타이틀 영역
-  const videoAreaY = headerHeight;
-  const videoAreaHeight = outputHeight - headerHeight; // 영상이 하단까지 꽉 참
+  // 새 레이아웃: 상단여백 복원 + 자막 영상내부 + 푸터 위로 올림
+  const headerY = 110; // 상단 여백 추가 (80 → 110: 한글타이틀 더 아래로)
+  const headerHeight = 120; // 헤더 영역 (한글+영문)
+  const headerGap = 30; // 헤더-영상 간격
+  const videoAreaY = headerY + headerHeight + headerGap; // 영상 시작: 200px
+  const footerHeight = 80; // 푸터 영역 높이
+  const footerY = 1550; // 푸터 위치: 위로 올림 (1750 → 1550)
+  const videoEndY = footerY - 50; // 영상 끝: 1700px
+  const videoAreaHeight = videoEndY - videoAreaY; // 영상 높이: 1500px
 
-  const originLayout = USE_ORIGIN_SIZE ? {
+  // 레이아웃 설정
+  const layoutConfig = {
     video_area: {
       x: 0,
       y: videoAreaY,
@@ -126,19 +152,21 @@ async function combineVideos() {
       height: videoAreaHeight
     },
     header_area: {
-      y: Math.round(20 * fontScale), // 상단 텍스트 위치
-      height: Math.round(80 * fontScale)
-    },
-    footer_area: {
-      y: outputHeight - Math.round(60 * fontScale), // 하단 타이틀 (영상 내부 하단)
-      height: Math.round(50 * fontScale)
+      y: headerY, // 상단 여백 적용
+      height: headerHeight
     },
     subtitle_area: {
-      y: outputHeight - Math.round(150 * fontScale), // 자막 위치 (영상 내부, 푸터 위)
-      height: Math.round(80 * fontScale)
+      y: 1350, // 자막 위치 (1400 → 1350)
+      height: 150,
+      single_line: false, // 자막 두 줄 표기
+      max_lines: 2 // 최대 2줄로 제한
+    },
+    footer_area: {
+      y: footerY, // 영상 아래 100px
+      height: footerHeight
     },
     font_scale: fontScale
-  } : null;
+  };
 
   const requestPayload = {
     videos: videos.sort((a, b) => a.index - b.index),
@@ -152,8 +180,8 @@ async function combineVideos() {
     bgm_volume: 0.25,
     width: outputWidth,
     height: outputHeight,
-    use_origin_size: USE_ORIGIN_SIZE,  // VM에 원본 크기 유지 플래그 전달
-    origin_layout: originLayout,        // origin 모드용 레이아웃 설정
+    use_origin_size: true,  // origin_layout 적용을 위해 항상 true
+    origin_layout: layoutConfig,        // 레이아웃 설정 (영상 크기 확대)
     output_bucket: GCS_BUCKET,
     output_path: `${testFolder}/final_ski_peanut.mp4`,
     folder_name: testFolder,
@@ -175,16 +203,16 @@ async function combineVideos() {
       },
       subtitle_korean: {
         font: "NanumSquareRoundOTFEB",
-        size: Math.round(40 * fontScale),
+        size: Math.round(50 * fontScale),  // 55 → 50: 폰트 크기 5 줄임
         color: "white",
-        border_width: Math.round(3 * fontScale),
+        border_width: Math.round(4 * fontScale),
         border_color: "black"
       },
       subtitle_english: {
         font: "NotoSerif-Regular",
-        size: Math.round(22 * fontScale),
+        size: Math.round(30 * fontScale),  // 35 → 30: 폰트 크기 5 줄임
         color: "white",
-        border_width: Math.round(2 * fontScale),
+        border_width: Math.round(3 * fontScale),
         border_color: "black"
       }
     }
