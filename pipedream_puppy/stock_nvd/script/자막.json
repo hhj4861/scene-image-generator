@@ -1,0 +1,137 @@
+{
+  "title_ko": "Trump, Nvidia 中수출 허용! 단, 25% 상납 (초속보)",
+  "title_en": "Trump Approves Nvidia China Export! But 25% Revenue Share (BREAKING)",
+  "total_duration": "70.416s",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "timing": "0-8s",
+      "video_file": "https://www.genspark.ai/api/files/s/iK3rJuKW",
+      "subtitles": [
+        {
+          "start": 0.0,
+          "end": 3.5,
+          "text_ko": "🚨 초속보! Trump, Nvidia 中수출 허용!",
+          "text_en": "🚨 BREAKING! Trump Approves Nvidia China Export!"
+        },
+        {
+          "start": 3.5,
+          "end": 8.0,
+          "text_ko": "방금 터진 초대형 뉴스입니다!",
+          "text_en": "Just broke: MAJOR announcement!"
+        }
+      ]
+    },
+    {
+      "scene_number": 2,
+      "timing": "8-16s",
+      "video_file": "https://www.genspark.ai/api/files/s/Jnxis5e4",
+      "image_source": "https://www.genspark.ai/api/files/s/mWyHH4fM",
+      "subtitles": [
+        {
+          "start": 8.0,
+          "end": 12.0,
+          "text_ko": "Nvidia H200 칩 → 중국 수출 OK!",
+          "text_en": "Nvidia H200 chip → China export OK!"
+        },
+        {
+          "start": 12.0,
+          "end": 16.0,
+          "text_ko": "Biden 정책 완전 뒤집음",
+          "text_en": "Biden policy completely reversed"
+        }
+      ]
+    },
+    {
+      "scene_number": 3,
+      "timing": "16-32s",
+      "video_file": "https://www.genspark.ai/api/files/s/ZbBsvg0n",
+      "image_source": "https://www.genspark.ai/api/files/s/q3yseiBz",
+      "subtitles": [
+        {
+          "start": 16.0,
+          "end": 20.0,
+          "text_ko": "💰 단! 수익의 25%는 미국 정부에 상납!",
+          "text_en": "💰 BUT! 25% of revenue goes to U.S. Government!"
+        },
+        {
+          "start": 20.0,
+          "end": 26.0,
+          "text_ko": "중국 매출 100억 → 25억은 미국으로",
+          "text_en": "$10B China sales → $2.5B to U.S."
+        },
+        {
+          "start": 26.0,
+          "end": 32.0,
+          "text_ko": "이건 협상? 세금? 🤔",
+          "text_en": "Is this negotiation or tax? 🤔"
+        }
+      ]
+    },
+    {
+      "scene_number": 4,
+      "timing": "32-48s",
+      "video_file": "https://www.genspark.ai/api/files/s/fUPdJuwi",
+      "image_source": "https://www.genspark.ai/api/files/s/f9LmncXr",
+      "subtitles": [
+        {
+          "start": 32.0,
+          "end": 37.0,
+          "text_ko": "📈 Nvidia 주가 즉시 +2.3% 폭등!",
+          "text_en": "📈 Nvidia stock surges +2.3% immediately!"
+        },
+        {
+          "start": 37.0,
+          "end": 42.0,
+          "text_ko": "현재 주가: $185.55",
+          "text_en": "Current price: $185.55"
+        },
+        {
+          "start": 42.0,
+          "end": 48.0,
+          "text_ko": "중국 AI 시장: 수조 원 규모 💎",
+          "text_en": "China AI market: Trillion-dollar scale 💎"
+        }
+      ]
+    },
+    {
+      "scene_number": 5,
+      "timing": "48-60s",
+      "video_file": "https://www.genspark.ai/api/files/s/fmH2IceC",
+      "subtitles": [
+        {
+          "start": 48.0,
+          "end": 53.0,
+          "text_ko": "삼성·SK하이닉스도 수혜 전망 🇰🇷",
+          "text_en": "Samsung·SK Hynix also benefit 🇰🇷"
+        },
+        {
+          "start": 53.0,
+          "end": 57.0,
+          "text_ko": "Morgan Stanley: 'Nvidia AI 왕좌 유지'",
+          "text_en": "Morgan Stanley: 'Nvidia keeps AI throne'"
+        },
+        {
+          "start": 57.0,
+          "end": 60.0,
+          "text_ko": "💬 여러분 생각은? 구독하세요! 👍",
+          "text_en": "💬 What do you think? Subscribe! 👍"
+        }
+      ]
+    }
+  ],
+  "audio_narration": {
+    "file": "https://www.genspark.ai/api/files/s/M5BqKhBj",
+    "duration": "70.416s",
+    "language": "Korean"
+  },
+  "background_music": {
+    "file": "https://www.genspark.ai/api/files/s/6UNCtBp4",
+    "duration": "59.95s"
+  },
+  "metadata": {
+    "date_created": "2025-12-09 KST",
+    "news_date": "2025-12-08",
+    "data_sources": ["POLITICO", "CBS News", "Yahoo Finance", "Investors.com"]
+  }
+}
