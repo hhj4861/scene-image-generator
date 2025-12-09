@@ -31,19 +31,22 @@ if (!fs.existsSync(TEMP_DIR)) {
 // 폰트 경로 설정 - 헤더/푸터용 + 자막용 분리
 // =====================
 const findFonts = () => {
-    // 헤더/푸터용 폰트 (Noto Sans CJK)
+    // 헤더/푸터용 폰트 (NanumSquareRound Bold - 둥글고 부드러운 고딕체)
     const headerFontCandidates = [
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/truetype/nanum/NanumSquareB.ttf",
+        "/usr/share/fonts/truetype/nanum/NanumSquareRoundEB.ttf", // ExtraBold - 가장 굵음
+        "/usr/share/fonts/truetype/nanum/NanumSquareRoundB.ttf",  // Bold - 둥근 고딕
+        "/usr/share/fonts/truetype/nanum/NanumSquareEB.ttf",      // ExtraBold
+        "/usr/share/fonts/truetype/nanum/NanumSquareB.ttf",       // Bold
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
     ];
 
-    // 자막용 폰트 (나눔고딕 - 고딕체)
+    // 자막용 폰트 (NanumSquareRound - 둥글고 부드러운 고딕체)
     const subtitleFontCandidates = [
-        "/usr/share/fonts/truetype/nanum/NanumGothicCodingBold.ttf",
+        "/usr/share/fonts/truetype/nanum/NanumSquareRoundB.ttf",  // Bold - 둥근 고딕
+        "/usr/share/fonts/truetype/nanum/NanumSquareRoundR.ttf",  // Regular - 둥근 고딕
         "/usr/share/fonts/truetype/nanum/NanumSquareB.ttf",
-        "/usr/share/fonts/truetype/nanum/NanumSquareRoundB.ttf",
+        "/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf",
         "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
     ];
@@ -103,7 +106,10 @@ const PEANUT_STYLE = {
         font_size: 64, // 헤더 폰트
         color: "0xF5DEB3", // 베이지/골드색
         border_color: "0x000000",
-        border_width: 5,
+        border_width: 8, // 두꺼운 검정 테두리 (5 → 8)
+        shadow_x: 4, // 그림자 X 오프셋
+        shadow_y: 4, // 그림자 Y 오프셋
+        shadow_color: "0x000000@0.7", // 그림자 색상 (반투명 검정)
         y_percent: 6, // 상단 115px 여백
         max_chars_per_line: 14,
     },
@@ -111,49 +117,70 @@ const PEANUT_STYLE = {
         font_size: 38, // 영문 폰트 크기
         color: "0xAAAAAA", // 연한 회색
         border_color: "0x222222",
-        border_width: 4, // 볼드 효과
+        border_width: 5, // 볼드 효과 (4 → 5)
+        shadow_x: 3,
+        shadow_y: 3,
+        shadow_color: "0x000000@0.5",
         y_offset: 115, // 한글-영문 간격 115px
     },
     footer: {
         font_size: 72, // 푸터 한글 폰트
         color: "0x8B7355", // 진하고 흐릿한 베이지
         border_color: "0x000000",
-        border_width: 5,
+        border_width: 8, // 두꺼운 검정 테두리 (5 → 8)
+        shadow_x: 4,
+        shadow_y: 4,
+        shadow_color: "0x000000@0.7",
         y_percent: 80.7, // 푸터 위치 (영상끝+58px)
     },
     footer_english: {
         font_size: 28, // 영문 푸터 표시
         color: "0xAAAAAA", // 연한 회색
         border_color: "0x333333",
-        border_width: 2,
+        border_width: 3, // (2 → 3)
+        shadow_x: 2,
+        shadow_y: 2,
+        shadow_color: "0x000000@0.5",
         y_offset: 80, // 한글-영문 간격
     },
     subtitle: {
         font_size: 42, // 자막 크기 감소 (46 → 42) - 3줄 이상일 때 공간 확보
         color: "0xFFFFFF", // 흰색
         border_color: "0x000000",
-        border_width: 4,
+        border_width: 6, // 두꺼운 검정 테두리 (4 → 6)
+        shadow_x: 3,
+        shadow_y: 3,
+        shadow_color: "0x000000@0.8",
         y_percent: 55, // 더 위로 이동 (62 → 55) - 3줄 자막도 영상 영역 안에 표시
     },
     subtitle_english: {
         font_size: 24, // 영문 자막 크기 (28 → 24)
         color: "0xFFFFFF", // 흰색
         border_color: "0x000000",
-        border_width: 2,
+        border_width: 3, // (2 → 3)
+        shadow_x: 2,
+        shadow_y: 2,
+        shadow_color: "0x000000@0.6",
         y_percent: 58, // 한글 자막 바로 아래 (65 → 58)
     },
     subtitle_interviewer: {
         font_size: 46,
         color: "0xFFFFFF",
         border_color: "0x000000",
-        border_width: 4,
+        border_width: 6, // (4 → 6)
+        shadow_x: 3,
+        shadow_y: 3,
+        shadow_color: "0x000000@0.8",
         y_percent: 62,
     },
     subtitle_interviewer_english: {
         font_size: 28,
         color: "0xFFFFFF",
         border_color: "0x000000",
-        border_width: 2,
+        border_width: 3, // (2 → 3)
+        shadow_x: 2,
+        shadow_y: 2,
+        shadow_color: "0x000000@0.6",
         y_percent: 65,
     },
 };
@@ -685,6 +712,9 @@ app.post("/render/puppy", async (req, res) => {
             use_original_audio = false, // true: 원본 오디오 사용 (비디오에 음성 포함)
             width = 1080,
             height = 1920,
+            // ★★★ origin 모드: 영상이 가로 꽉 채우고 위아래만 여백 ★★★
+            use_origin_size = false,
+            origin_layout = null, // { video_area: {x, y, width, height}, header_area: {y, height}, ... }
             output_bucket,
             output_path,
             folder_name,
@@ -866,13 +896,28 @@ app.post("/render/puppy", async (req, res) => {
         console.log(`[${jobId}] [4/4] Running OPTIMIZED FFmpeg render...`);
         const renderStart = Date.now();
 
-        // videoHeight는 위에서 자막 너비 계산 시 이미 정의됨
-        // 영상 위치: video_y_percent가 있으면 사용, 없으면 중앙 정렬
-        const videoY = PEANUT_STYLE.video_y_percent
-            ? Math.round(height * PEANUT_STYLE.video_y_percent / 100)
-            : Math.round((height - videoHeight) / 2);
-        const headerY = Math.round(height * PEANUT_STYLE.header.y_percent / 100);
-        const footerY = Math.round(height * PEANUT_STYLE.footer.y_percent / 100);
+        // ★★★ origin_layout이 제공되면 커스텀 레이아웃 사용 ★★★
+        let videoWidthFinal, videoHeightFinal, videoX, videoY, headerY, footerY;
+
+        if (use_origin_size && origin_layout) {
+            console.log(`[${jobId}] 🎯 Using ORIGIN layout: video ${origin_layout.video_area.width}x${origin_layout.video_area.height} at (${origin_layout.video_area.x}, ${origin_layout.video_area.y})`);
+            videoWidthFinal = origin_layout.video_area.width;
+            videoHeightFinal = origin_layout.video_area.height;
+            videoX = origin_layout.video_area.x;
+            videoY = origin_layout.video_area.y;
+            headerY = origin_layout.header_area?.y || 30;
+            footerY = origin_layout.footer_area?.y || (height - 80);
+        } else {
+            // 기존 PEANUT_STYLE 사용
+            videoWidthFinal = width; // 가로 전체
+            videoHeightFinal = Math.round(height * PEANUT_STYLE.video_height_percent / 100);
+            videoX = 0;
+            videoY = PEANUT_STYLE.video_y_percent
+                ? Math.round(height * PEANUT_STYLE.video_y_percent / 100)
+                : Math.round((height - videoHeightFinal) / 2);
+            headerY = Math.round(height * PEANUT_STYLE.header.y_percent / 100);
+            footerY = Math.round(height * PEANUT_STYLE.footer.y_percent / 100);
+        }
 
         // 입력 파일 목록
         const inputFiles = downloadedVideos.map(v => `-i "${v.filePath}"`).join(" ");
@@ -884,16 +929,20 @@ app.post("/render/puppy", async (req, res) => {
         let audioConcatInputs = "";
 
         for (let i = 0; i < numVideos; i++) {
-            // video_full_width: true면 가로 전체 채움 (crop), 아니면 기존 방식 (pad)
-            if (PEANUT_STYLE.video_full_width) {
+            // ★★★ origin_layout 모드: 영상을 지정된 크기로 스케일 (가로 꽉 채움) ★★★
+            if (use_origin_size && origin_layout) {
+                // origin 모드: 영상을 videoWidthFinal x videoHeightFinal로 스케일 (crop으로 채움)
+                videoScaleFilters += `[${i}:v]scale=${videoWidthFinal}:${videoHeightFinal}:force_original_aspect_ratio=increase,crop=${videoWidthFinal}:${videoHeightFinal},setsar=1[v${i}];`;
+            } else if (PEANUT_STYLE.video_full_width) {
+                // video_full_width: true면 가로 전체 채움 (crop), 아니면 기존 방식 (pad)
                 // 영상 영역을 꽉 채우도록 스케일 (비율 유지, 최소 크기 보장) 후 중앙 crop
                 // force_original_aspect_ratio=increase: 가로/세로 중 큰 쪽 기준으로 스케일
                 // 9:16 영상: 가로 기준 스케일 → 세로 crop
                 // 16:9 영상: 세로 기준 스케일 → 가로 crop
-                videoScaleFilters += `[${i}:v]scale=${width}:${videoHeight}:force_original_aspect_ratio=increase,crop=${width}:${videoHeight},setsar=1[v${i}];`;
+                videoScaleFilters += `[${i}:v]scale=${videoWidthFinal}:${videoHeightFinal}:force_original_aspect_ratio=increase,crop=${videoWidthFinal}:${videoHeightFinal},setsar=1[v${i}];`;
             } else {
                 // 기존 방식: scale down + pad (검은 여백)
-                videoScaleFilters += `[${i}:v]scale=${width}:${videoHeight}:force_original_aspect_ratio=decrease,pad=${width}:${videoHeight}:(ow-iw)/2:(oh-ih)/2:black,setsar=1[v${i}];`;
+                videoScaleFilters += `[${i}:v]scale=${videoWidthFinal}:${videoHeightFinal}:force_original_aspect_ratio=decrease,pad=${videoWidthFinal}:${videoHeightFinal}:(ow-iw)/2:(oh-ih)/2:black,setsar=1[v${i}];`;
             }
             concatInputs += `[v${i}]`;
             audioConcatInputs += `[${i}:a]`;
@@ -902,15 +951,15 @@ app.post("/render/puppy", async (req, res) => {
         // 비디오 concat
         const concatFilter = `${concatInputs}concat=n=${numVideos}:v=1:a=0[concatv];${audioConcatInputs}concat=n=${numVideos}:v=0:a=1[concata];`;
 
-        // 배경 생성 및 비디오 오버레이
-        const bgFilter = `color=black:s=${width}x${height}:d=${totalDuration}[bg];[bg][concatv]overlay=0:${videoY}[combined];`;
+        // 배경 생성 및 비디오 오버레이 (origin 모드에서는 videoX 사용)
+        const bgFilter = `color=black:s=${width}x${height}:d=${totalDuration}[bg];[bg][concatv]overlay=${videoX}:${videoY}[combined];`;
 
         // =====================
         // 텍스트 필터 배열 생성 (콤마 문제 해결)
         // =====================
         const drawFilters = [];
 
-        // 1. 헤더 필터
+        // 1. 헤더 필터 (그림자 효과 포함)
         const titleLinesKorean = splitHeaderLines(header_text || "", PEANUT_STYLE.header.max_chars_per_line);
         const titleLineHeight = PEANUT_STYLE.header.font_size + 10;
         let lastKoreanLineY = headerY;
@@ -920,19 +969,21 @@ app.post("/render/puppy", async (req, res) => {
                 const escapedLine = escapeText(line);
                 const lineY = headerY + (idx * titleLineHeight);
                 lastKoreanLineY = lineY;
-                drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.header.font_size}:fontcolor=${PEANUT_STYLE.header.color}:borderw=${PEANUT_STYLE.header.border_width}:bordercolor=${PEANUT_STYLE.header.border_color}:x=(w-text_w)/2:y=${lineY}`);
+                const shadowOpts = PEANUT_STYLE.header.shadow_x ? `:shadowcolor=${PEANUT_STYLE.header.shadow_color}:shadowx=${PEANUT_STYLE.header.shadow_x}:shadowy=${PEANUT_STYLE.header.shadow_y}` : '';
+                drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.header.font_size}:fontcolor=${PEANUT_STYLE.header.color}:borderw=${PEANUT_STYLE.header.border_width}:bordercolor=${PEANUT_STYLE.header.border_color}${shadowOpts}:x=(w-text_w)/2:y=${lineY}`);
             });
         }
 
         if (header_text_english) {
             const englishY = lastKoreanLineY + PEANUT_STYLE.header_english.y_offset;
             const escapedEnglish = escapeText(header_text_english);
-            drawFilters.push(`drawtext=text='${escapedEnglish}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.header_english.font_size}:fontcolor=${PEANUT_STYLE.header_english.color}:borderw=${PEANUT_STYLE.header_english.border_width}:bordercolor=${PEANUT_STYLE.header_english.border_color}:x=(w-text_w)/2:y=${englishY}`);
+            const shadowOpts = PEANUT_STYLE.header_english.shadow_x ? `:shadowcolor=${PEANUT_STYLE.header_english.shadow_color}:shadowx=${PEANUT_STYLE.header_english.shadow_x}:shadowy=${PEANUT_STYLE.header_english.shadow_y}` : '';
+            drawFilters.push(`drawtext=text='${escapedEnglish}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.header_english.font_size}:fontcolor=${PEANUT_STYLE.header_english.color}:borderw=${PEANUT_STYLE.header_english.border_width}:bordercolor=${PEANUT_STYLE.header_english.border_color}${shadowOpts}:x=(w-text_w)/2:y=${englishY}`);
         }
 
         // 2. 자막 필터 (skip_subtitle_overlay가 true면 건너뛰기)
         // ★★★ 영상 영역 하단 계산 (자막 위치 기준점) ★★★
-        const videoBottom = videoY + videoHeight;
+        const videoBottom = videoY + videoHeightFinal;
         const subtitleBottomMargin = 20; // 영상 하단에서 자막까지의 여백
         const korEngGap = 15; // 한글/영어 자막 사이 여백
 
@@ -974,39 +1025,43 @@ app.post("/render/puppy", async (req, res) => {
             // 자막별 색상 지원 (timed_subtitles에서 제공된 경우)
             const subtitleColor = sub.color || subStyle.color;
 
-            // 한글 자막 렌더링
+            // 한글 자막 렌더링 (그림자 효과 포함)
             console.log(`[DEBUG_SUB] korLines count: ${korLines.length}, subtitle_enabled: ${subtitle_enabled}`);
             if (korLines.length > 0 && subtitle_enabled) {
+                const korShadowOpts = subStyle.shadow_x ? `:shadowcolor=${subStyle.shadow_color}:shadowx=${subStyle.shadow_x}:shadowy=${subStyle.shadow_y}` : '';
                 korLines.forEach((line, idx) => {
                     let escapedLine = escapeText(line);
                     if (idx === 0 && isInterviewer) escapedLine = `Q\\: ${escapedLine}`;
                     const lineY = korStartY + (idx * lineHeight);
                     console.log(`[DEBUG_SUB] Adding Korean line ${idx}: "${escapedLine}" at Y=${lineY}`);
-                    drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${SUBTITLE_FONT_PATH}:fontsize=${korFontSize}:fontcolor=${subtitleColor}:borderw=${subStyle.border_width}:bordercolor=${subStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})'`);
+                    drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${SUBTITLE_FONT_PATH}:fontsize=${korFontSize}:fontcolor=${subtitleColor}:borderw=${subStyle.border_width}:bordercolor=${subStyle.border_color}${korShadowOpts}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})'`);
                 });
             }
 
-            // 영어 자막 렌더링
+            // 영어 자막 렌더링 (그림자 효과 포함)
             if (engLines.length > 0 && subtitle_english_enabled) {
+                const engShadowOpts = subEngStyle.shadow_x ? `:shadowcolor=${subEngStyle.shadow_color}:shadowx=${subEngStyle.shadow_x}:shadowy=${subEngStyle.shadow_y}` : '';
                 engLines.forEach((line, idx) => {
                     let escapedLine = escapeText(line);
                     if (idx === 0 && isInterviewer) escapedLine = `Q\\: ${escapedLine}`;
                     const lineY = engStartY + (idx * engLineHeight);
-                    drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${SUBTITLE_FONT_PATH}:fontsize=${engFontSize}:fontcolor=${subEngStyle.color}:borderw=${subEngStyle.border_width}:bordercolor=${subEngStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})'`);
+                    drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${SUBTITLE_FONT_PATH}:fontsize=${engFontSize}:fontcolor=${subEngStyle.color}:borderw=${subEngStyle.border_width}:bordercolor=${subEngStyle.border_color}${engShadowOpts}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})'`);
                 });
             }
         });
         } // end if (!skip_subtitle_overlay)
 
-        // 3. 푸터 필터 (하단) - 주황+파랑 믹스 색상
+        // 3. 푸터 필터 (하단, 그림자 효과 포함)
         const escapedChannel = escapeText(footer_text || "땅콩이네", false);
-        drawFilters.push(`drawtext=text='${escapedChannel}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.footer.font_size}:fontcolor=${PEANUT_STYLE.footer.color}:borderw=${PEANUT_STYLE.footer.border_width}:bordercolor=${PEANUT_STYLE.footer.border_color}:x=(w-text_w)/2:y=${footerY}`);
+        const footerShadowOpts = PEANUT_STYLE.footer.shadow_x ? `:shadowcolor=${PEANUT_STYLE.footer.shadow_color}:shadowx=${PEANUT_STYLE.footer.shadow_x}:shadowy=${PEANUT_STYLE.footer.shadow_y}` : '';
+        drawFilters.push(`drawtext=text='${escapedChannel}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.footer.font_size}:fontcolor=${PEANUT_STYLE.footer.color}:borderw=${PEANUT_STYLE.footer.border_width}:bordercolor=${PEANUT_STYLE.footer.border_color}${footerShadowOpts}:x=(w-text_w)/2:y=${footerY}`);
 
-        // 4. 영문 푸터 필터 (한글 푸터 아래, 흰색)
+        // 4. 영문 푸터 필터 (한글 푸터 아래, 그림자 효과 포함)
         if (footer_text_english) {
             const escapedFooterEng = escapeText(footer_text_english, false);
             const footerEngY = footerY + PEANUT_STYLE.footer_english.y_offset;
-            drawFilters.push(`drawtext=text='${escapedFooterEng}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.footer_english.font_size}:fontcolor=${PEANUT_STYLE.footer_english.color}:borderw=${PEANUT_STYLE.footer_english.border_width}:bordercolor=${PEANUT_STYLE.footer_english.border_color}:x=(w-text_w)/2:y=${footerEngY}`);
+            const footerEngShadowOpts = PEANUT_STYLE.footer_english.shadow_x ? `:shadowcolor=${PEANUT_STYLE.footer_english.shadow_color}:shadowx=${PEANUT_STYLE.footer_english.shadow_x}:shadowy=${PEANUT_STYLE.footer_english.shadow_y}` : '';
+            drawFilters.push(`drawtext=text='${escapedFooterEng}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.footer_english.font_size}:fontcolor=${PEANUT_STYLE.footer_english.color}:borderw=${PEANUT_STYLE.footer_english.border_width}:bordercolor=${PEANUT_STYLE.footer_english.border_color}${footerEngShadowOpts}:x=(w-text_w)/2:y=${footerEngY}`);
         }
 
         // BGM 처리
