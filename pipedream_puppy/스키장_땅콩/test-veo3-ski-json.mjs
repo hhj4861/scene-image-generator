@@ -236,7 +236,29 @@ The dog MUST perform this specific action throughout the entire video:
 - Do NOT show the dog just sitting still - it must be moving as described above
 
 ` : "";
-    basePrompt = `1080p cinematic video. ${characterDesc} speaking in Korean with expressive body language.${actionEmphasis}The DOG speaks directly to camera with Korean baby infant voice, 2-3 years old, low-pitched adorable tone. NO interviewer. NO adult voice. NO off-screen voice. ONLY the baby puppy voice speaks. Use the provided reference image as the exact visual base for the entire ${duration} seconds. The dog appearance must stay identical to reference image. No text overlays. No subtitles. No captions. No watermarks.`;
+    basePrompt = `1080p cinematic video. ${characterDesc} speaking in Korean with expressive body language.${actionEmphasis}
+[CRITICAL VOICE REQUIREMENT - MUST USE THIS VOICE]
+- Voice: Korean BABY GIRL voice, 2-3 years old TODDLER
+- Characteristics: VERY HIGH PITCHED, adorable, innocent, soft cooing baby voice
+- Speech style: Slow baby talk with babbling pronunciation, slight lisp
+- Laugh style: ADORABLE INNOCENT BABY GIGGLING (NOT sly, NOT cunning, NOT adult-like)
+- ABSOLUTELY NO adult female voice
+- ABSOLUTELY NO news anchor voice
+- ABSOLUTELY NO interviewer voice
+- ONLY the cute baby puppy voice speaks throughout the entire video
+- The voice must sound like a 2-year-old Korean toddler girl speaking
+
+The DOG speaks directly to camera. Use the provided reference image as the exact visual base for the entire ${duration} seconds. The dog appearance must stay identical to reference image.
+
+[CRITICAL TEXT BAN - ABSOLUTELY NO TEXT ALLOWED]
+- ZERO text of ANY kind in the video
+- NO Korean characters (한글) anywhere on screen
+- NO English letters anywhere on screen
+- NO subtitles, NO captions, NO speech bubbles
+- NO watermarks, NO logos, NO signs, NO banners
+- NO floating text, NO overlay text, NO burned-in text
+- The video must be COMPLETELY TEXT-FREE from start to finish
+- If you generate any text, the video will be REJECTED`;
   } else {
     // 기타 씬 (플래시백 등)
     basePrompt = `1080p cinematic video. Use the provided reference image as the exact visual base for the entire ${duration} seconds. ${characterDesc}.${actionDescription ? ` IMPORTANT ACTION: ${actionDescription}.` : ""} The dog appearance must stay identical to reference image from 0:00 to ${duration}:00. No text overlays. No subtitles. No captions. No watermarks.`;
