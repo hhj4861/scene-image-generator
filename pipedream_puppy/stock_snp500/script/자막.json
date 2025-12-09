@@ -1,0 +1,287 @@
+{
+  "video_info": {
+    "title": "SnP 500 2026: 8000 or AI Bubble Crash?",
+    "total_duration": "00:01:20",
+    "date": "2025-12-08",
+    "timezone": "KST (UTC+9)",
+    "language": "KO/EN",
+    "format": "YouTube Shorts",
+    "aspect_ratio": "9:16"
+  },
+  "scenes": [
+    {
+      "scene_id": 1,
+      "scene_name": "Opening",
+      "duration": "5s",
+      "time_range": "00:00:00 - 00:00:05",
+      "video_file": "https://www.genspark.ai/api/files/s/Y8h7BQLE",
+      "description": "Dramatic opening with stock chart and 8000 question",
+      "visual_focus": "Candlestick chart, number 8000, question mark",
+      "subtitles": [
+        {
+          "id": 1,
+          "start": "00:00:00.000",
+          "end": "00:00:05.000",
+          "korean": "2026년 SnP 500, 8000 갈까요?",
+          "english": "Will SnP 500 hit 8,000 in 2026?",
+          "keywords": ["2026", "SnP 500", "8000"]
+        }
+      ]
+    },
+    {
+      "scene_id": 2,
+      "scene_name": "Segment 1 - Wall Street Optimism",
+      "duration": "13s",
+      "time_range": "00:00:05 - 00:00:18",
+      "video_file": "https://www.genspark.ai/api/files/s/yMUfGaND",
+      "image_source": "https://www.genspark.ai/api/files/s/xauLCHcH",
+      "description": "Bloomberg analysis showing Wall Street bullish targets",
+      "visual_focus": "Numbers 8000, 7800, 7500, 7692, upward arrows",
+      "subtitles": [
+        {
+          "id": 2,
+          "start": "00:00:05.000",
+          "end": "00:00:08.000",
+          "korean": "아니면 AI 버블 붕괴?",
+          "english": "Or AI bubble burst?",
+          "keywords": ["AI", "bubble", "burst"]
+        },
+        {
+          "id": 3,
+          "start": "00:00:08.000",
+          "end": "00:00:13.000",
+          "korean": "Deutsche Bank는 8000, Morgan Stanley는 7800을 예측했습니다.",
+          "english": "Deutsche Bank targets 8000, Morgan Stanley 7800",
+          "keywords": ["Deutsche Bank", "Morgan Stanley", "8000", "7800"]
+        },
+        {
+          "id": 4,
+          "start": "00:00:13.000",
+          "end": "00:00:18.000",
+          "korean": "평균 목표가는 7692로 현재보다 12퍼 상승 전망이에요.",
+          "english": "Average target 7692, +12per upside forecast",
+          "keywords": ["7692", "12per", "forecast"]
+        }
+      ]
+    },
+    {
+      "scene_id": 3,
+      "scene_name": "Segment 2 - AI Bubble Warning",
+      "duration": "15s",
+      "time_range": "00:00:18 - 00:00:33",
+      "video_file": "https://www.genspark.ai/api/files/s/vUN5vgyJ",
+      "image_source": "https://www.genspark.ai/api/files/s/UOuRtGut",
+      "description": "CNBC alert about AI bubble concerns and 400B spending",
+      "visual_focus": "400B , warning box, tech company names",
+      "subtitles": [
+        {
+          "id": 5,
+          "start": "00:00:18.000",
+          "end": "00:00:22.000",
+          "korean": "그런데 문제가 있습니다.",
+          "english": "But there's a problem",
+          "keywords": ["problem"]
+        },
+        {
+          "id": 6,
+          "start": "00:00:22.000",
+          "end": "00:00:28.000",
+          "korean": "빅테크가 2025년에만 무려 4000억 달러를 AI에 쏟아부었는데,",
+          "english": "Big Tech spent 400B on AI in 2025 alone",
+          "keywords": ["Big Tech", "$400B", "AI", "2025"]
+        },
+        {
+          "id": 7,
+          "start": "00:00:28.000",
+          "end": "00:00:33.000",
+          "korean": "정작 수익은 불확실합니다. Nasdaq은 2026년 버블 붕괴 가능성을 경고했죠.",
+          "english": "But returns uncertain. Nasdaq warns of 2026 burst risk",
+          "keywords": ["uncertain", "Nasdaq", "2026", "burst risk"]
+        }
+      ]
+    },
+    {
+      "scene_id": 4,
+      "scene_name": "Segment 3 - Three Scenarios",
+      "duration": "39s",
+      "time_range": "00:00:33 - 00:01:12",
+      "video_file": "https://www.genspark.ai/api/files/s/gl8vU9y5",
+      "image_source": "https://www.genspark.ai/api/files/s/6JZtZNka",
+      "description": "WSJ analysis of three investment scenarios with probabilities",
+      "visual_focus": "Three colored sections (green/yellow/red), numbers 8000/7400/6000, percentages 35%/45%/20%",
+      "subtitles": [
+        {
+          "id": 8,
+          "start": "00:00:33.000",
+          "end": "00:00:37.000",
+          "korean": "이제 중요한 3가지 시나리오입니다.",
+          "english": "Now, 3 critical scenarios",
+          "keywords": ["3 scenarios"]
+        },
+        {
+          "id": 9,
+          "start": "00:00:37.000",
+          "end": "00:00:41.000",
+          "korean": "첫 번째, 낙관 시나리오.",
+          "english": "First, Bull Case",
+          "keywords": ["Bull Case", "optimistic"]
+        },
+        {
+          "id": 10,
+          "start": "00:00:41.000",
+          "end": "00:00:47.000",
+          "korean": "Fed가 금리를 3회 이상 인하하고 AI 기업 실적이 13퍼 성장하면 8000까지 가능합니다.",
+          "english": "Fed cuts 3+ times, AI earnings +13per, 8000 possible",
+          "keywords": ["Fed", "rate cuts", "13%", "8000"]
+        },
+        {
+          "id": 11,
+          "start": "00:00:47.000",
+          "end": "00:00:50.000",
+          "korean": "확률은 35퍼.",
+          "english": "Probability 35per",
+          "keywords": ["35%"]
+        },
+        {
+          "id": 12,
+          "start": "00:00:50.000",
+          "end": "00:00:53.000",
+          "korean": "두 번째, 중립 시나리오.",
+          "english": "Second, Base Case",
+          "keywords": ["Base Case", "neutral"]
+        },
+        {
+          "id": 13,
+          "start": "00:00:53.000",
+          "end": "00:00:58.000",
+          "korean": "AI 수익이 점진적으로 나오고 Fed 인하가 둔화되면 7400 정도에서 보합.",
+          "english": "Gradual AI returns, slower Fed cuts, 7400 range-bound",
+          "keywords": ["gradual", "7400", "range-bound"]
+        },
+        {
+          "id": 14,
+          "start": "00:00:58.000",
+          "end": "00:01:01.000",
+          "korean": "확률 45퍼.",
+          "english": "Probability 45per",
+          "keywords": ["45%"]
+        },
+        {
+          "id": 15,
+          "start": "00:01:01.000",
+          "end": "00:01:04.000",
+          "korean": "세 번째, 위험 시나리오.",
+          "english": "Third, Bear Case",
+          "keywords": ["Bear Case", "risk"]
+        },
+        {
+          "id": 16,
+          "start": "00:01:04.000",
+          "end": "00:01:09.000",
+          "korean": "AI 실적 쇼크나 금리 재인상 시 6000까지 15퍼 하락 가능.",
+          "english": "AI shock or rate hikes, 6000 with 15per decline",
+          "keywords": ["shock", "rate hikes", "6000", "15per decline"]
+        },
+        {
+          "id": 17,
+          "start": "00:01:09.000",
+          "end": "00:01:12.000",
+          "korean": "확률 20퍼입니다.",
+          "english": "Probability 20per",
+          "keywords": ["20%"]
+        }
+      ]
+    },
+    {
+      "scene_id": 5,
+      "scene_name": "Closing - CTA",
+      "duration": "7s",
+      "time_range": "00:01:12 - 00:01:20",
+      "video_file": "https://www.genspark.ai/api/files/s/uFYtujwm",
+      "description": "Call to action with subscribe bell animation",
+      "visual_focus": "Bell icon, SUBSCRIBE text, clean blue background",
+      "subtitles": [
+        {
+          "id": 18,
+          "start": "00:01:12.000",
+          "end": "00:01:16.000",
+          "korean": "지금은 신중한 관망이 필요한 시기예요.",
+          "english": "Now requires cautious wait-and-see approach",
+          "keywords": ["cautious", "wait-and-see"]
+        },
+        {
+          "id": 19,
+          "start": "00:01:16.000",
+          "end": "00:01:20.000",
+          "korean": "구독과 좋아요 눌러서 최신 시장 분석 받아보세요!",
+          "english": "Subscribe & Like for latest market analysis!",
+          "keywords": ["Subscribe", "Like", "analysis"]
+        }
+      ]
+    }
+  ],
+  "audio": {
+    "narration_file": "https://www.genspark.ai/api/files/s/Jqtyufdf",
+    "duration": "73.116s",
+    "language": "Korean",
+    "voice": "Wise_Woman",
+    "speed": 1.0,
+    "format": "mp3"
+  },
+  "images": [
+    {
+      "id": 1,
+      "name": "Bloomberg Markets - Wall Street Targets",
+      "url": "https://www.genspark.ai/api/files/s/xauLCHcH",
+      "used_in_scene": 2,
+      "description": "Wall Street bank targets showing 8000, 7800, 7500, average 7692"
+    },
+    {
+      "id": 2,
+      "name": "CNBC Alert - AI Bubble Warning",
+      "url": "https://www.genspark.ai/api/files/s/UOuRtGut",
+      "used_in_scene": 3,
+      "description": "$400B AI spending warning with tech company names"
+    },
+    {
+      "id": 3,
+      "name": "WSJ Analysis - Three Scenarios",
+      "url": "https://www.genspark.ai/api/files/s/6JZtZNka",
+      "used_in_scene": 4,
+      "description": "Three colored sections showing Bull/Base/Bear cases with probabilities"
+    }
+  ],
+  "thumbnails": [
+    {
+      "version": 1,
+      "name": "Clean Split Design",
+      "url": "https://www.genspark.ai/api/files/s/uo7RKrMs",
+      "style": "Professional split layout with arrows",
+      "recommended_for": "General investors, high CTR"
+    },
+    {
+      "version": 2,
+      "name": "Minimal Terminal Style",
+      "url": "https://www.genspark.ai/api/files/s/TX72GRjz",
+      "style": "Ultra-minimal Bloomberg aesthetic",
+      "recommended_for": "Professional investors, brand trust"
+    }
+  ],
+
+  "export_formats": {
+    "srt_korean": "subtitles_korean.srt",
+    "srt_english": "subtitles_english.srt",
+    "srt_bilingual": "subtitles_bilingual.srt",
+    "vtt_youtube": "subtitles_youtube.vtt",
+    "csv_editable": "subtitles_edit.csv"
+  },
+  "editing_notes": {
+    "total_scenes": 5,
+    "total_subtitles": 19,
+    "recommended_fps": 30,
+    "recommended_resolution": "1080x1920",
+    "transition_type": "Cross dissolve 0.5s",
+    "color_grading": "Professional financial blue theme",
+    "font_recommendation": "Arial Bold or Helvetica Neue Bold"
+  }
+}
