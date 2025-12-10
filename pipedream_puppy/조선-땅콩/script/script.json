@@ -1,0 +1,670 @@
+{
+  "status": "Processing AI Edit Instruction with gemini-2.0-flash...",
+  "ai_edit_applied": true,
+  "$summary": "Script Finalized: 0 scenes, 46s, 7 subtitles",
+  "$return_value": {
+    "folder_name": "20251210_ce923664_Joseon_Hipster_Dog__",
+    "language": "korean",
+    "script_text": "[Scene 1] Interviewer: 오늘은 조선시대 강아지를 만나봤습니다! 과연 어떤 하루를 보낼까요? [Scene 2] 땅콩: (서예 붓을 들고) 아침에는 서예를 한답니다. 냠냠... 간식 그림 그리는 중이에요! [Scene 3] 땅콩: (찻잔을 들고) 오후에는 품격 있게 차를 마셔야죠. 킁킁... 오늘은 사골 육수에요! 젤 맛있어! [Scene 4] 땅콩: (책을 넘기며) 저녁에는 학문에 정진해야 해요. 음... 이 간식은 먹어봤고, 저 간식도 먹어봤어요! [Scene 5] 하녀 고양이: 나으리! 목욕 시간이옵니다! 땅콩: (공포에 질린 얼굴) 안 돼! 나는 양반인데! 목욕은... 싫어! [Scene 6] 땅콩: (물에 젖은 채) 양반도... 목욕은 해야 하나 봐요... 으앙...",
+    "total_duration_seconds": 46,
+    "title": {
+      "japanese": "",
+      "korean": "조선 힙스터 댕댕이: 반전 일상 대공개!",
+      "english": "Joseon Hipster Dog: Revealing a Day of Surprises!"
+    },
+    "content_type": "comic",
+    "content_type_config": {
+      "name": "코믹",
+      "emoji": "😂",
+      "description": "웃긴 상황과 반전으로 가득한 개그",
+      "tone": "funny, absurd, unexpected",
+      "mood": "hilarious and light-hearted",
+      "recommended_script_format": "mixed",
+      "themes": [
+        "반전 개그",
+        "상황 코미디",
+        "몰래카메라",
+        "실패 모음",
+        "리액션"
+      ],
+      "emotion_range": [
+        "신남",
+        "당황",
+        "멘붕",
+        "웃음"
+      ],
+      "example_topics": [
+        "로봇청소기와의 전쟁",
+        "목욕 탈출 대작전",
+        "간식 도둑 추격전"
+      ],
+      "primary_performance_type": null
+    },
+    "content_type_info": {
+      "tone": "funny, absurd, unexpected",
+      "mood": "hilarious and light-hearted",
+      "main_theme": "조선시대 양반견 댕댕이의 이중생활 코믹 폭로",
+      "key_element": "반전 개그, 허당미, 갭모에"
+    },
+    "topic_info": {
+      "topic": "조선힙스터 댕댕이: 반전 일상 대공개!",
+      "content_type": "comic",
+      "is_satire": false,
+      "original_topic": "양반견의 숨겨진 비밀",
+      "keyword_hint": "조선시대배경, 아침 일과 소개, 서예하는강아지 알고보니 간식그림, 차 마시는 척 알고보니 사골육수, 책 읽는 척 알고보니 간식 카달로그 , 목욕시간, 물에젖은 강아지, 결국 개는개다 하하하하 로 마무리 ",
+      "satire_info": null,
+      "story_context": {
+        "story_summary": "조선시대 양반견 댕댕이의 아침 일상을 보여주지만, 모든 행동 뒤에는 간식을 향한 집념이 숨겨져 있다는 반전 코미디. 서예는 간식 그림, 차는 사골육수, 책은 간식 카탈로그였다는 충격적인 진실!",
+        "hook": "“나는야 조선의 힙스터 댕댕이! 나의 하루를 따라와 보시개!”",
+        "narration_style": "신남",
+        "emotional_journey": "근엄 → 열정 → 좌절 → 자포자기 → 해탈",
+        "viral_elements": [
+          "반전 개그",
+          "댕냥이 공감",
+          "귀여운 허당미",
+          "예상치 못한 결말"
+        ],
+        "script_format": "interview"
+      },
+      "daily_context": {
+        "date": "2025-12-10",
+        "season": "겨울",
+        "season_jp": "冬",
+        "day_of_week": "수요일",
+        "time_of_day": "밤",
+        "special_days": [],
+        "random_theme": "운동"
+      },
+      "script_format": "interview"
+    },
+    "consistency": {
+      "main_character_prompt": "Create an image of a Pomeranian dog wearing a white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie. The dog has golden cream, fluffy fur, dark brown eyes, a black nose, and pointy erect ears. It is wearing a silver hair clip with a floral design and dangling beads on its head. The dog is sitting on a cushion in a traditional Korean room.",
+      "main_character_image_url": "https://storage.googleapis.com/scene-image-generator-storage-mcp-test-457809/origin/%E1%84%8A%E1%85%B5%E1%86%AB1.jpeg",
+      "consistent_background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+      "consistent_lighting": "Warm and bright",
+      "performance_stage_background": "dark concert stage with purple and blue neon lights, colorful spotlights from above, subtle smoke effects at the bottom",
+      "has_performance": false,
+      "performance_type": "beatbox",
+      "performance_accessories": "",
+      "real_dog_emphasis": "Real living dog. Actual puppy. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in dog mask. Real fur. Real animal.",
+      "no_text_emphasis": "No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements."
+    },
+    "characters": {
+      "main": {
+        "name": "땅콩",
+        "role": "main",
+        "image_url": "https://storage.googleapis.com/scene-image-generator-storage-mcp-test-457809/origin/%E1%84%8A%E1%85%B5%E1%86%AB1.jpeg",
+        "character_type": "animal",
+        "species": "dog",
+        "breed": "Pomeranian",
+        "estimated_age": "adult",
+        "personality": "cute",
+        "voice_type": "baby_girl",
+        "image_prompt": "Create an image of a Pomeranian dog wearing a white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie. The dog has golden cream, fluffy fur, dark brown eyes, a black nose, and pointy erect ears. It is wearing a silver hair clip with a floral design and dangling beads on its head. The dog is sitting on a cushion in a traditional Korean room.",
+        "distinctive_features": [
+          "fluffy fur",
+          "small size"
+        ],
+        "accessories": [
+          "silver hair clip with floral design and dangling beads",
+          "white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie"
+        ],
+        "fur_color": "golden cream",
+        "fur_texture": "fluffy",
+        "eye_color": "dark brown"
+      },
+      "sub1": {
+        "name": "할미",
+        "role": "sub1",
+        "character_type": "human",
+        "gender": "female",
+        "estimated_age_range": "50s",
+        "voice_type": "elderly_female",
+        "image_prompt": "middle-aged woman with warm gentle expression"
+      },
+      "interviewer": {
+        "name": "인터뷰어",
+        "role": "interviewer",
+        "image_url": null,
+        "character_type": "human",
+        "gender": "female",
+        "estimated_age_range": "30s",
+        "voice_type": "news_anchor_female",
+        "image_prompt": "off-screen interviewer (voice only)"
+      }
+    },
+    "bgm": {
+      "mood": "cute",
+      "duration": 40,
+      "is_performance": false
+    },
+    "timed_subtitles": [
+      {
+        "start_time": "00:00.00",
+        "end_time": "00:08.00",
+        "text_ko": "오늘은 스스로를 양반이라 믿는 강아지를 만나봤습니다! 과연 어떤 하루를 보낼까요?",
+        "text_en": "Today, we've met a dog who believes he's a nobleman! Let's see what his day is like!",
+        "speaker": "interviewer",
+        "color": "gold"
+      },
+      {
+        "start_time": "00:08.00",
+        "end_time": "00:16.00",
+        "text_ko": "아침에는 서예를 한답니다. 냠냠... 간식 그림 그리는 중이에요!",
+        "text_en": "In the morning, I do calligraphy. Yummy... drawing pictures of snacks!",
+        "speaker": "main",
+        "color": "gold"
+      },
+      {
+        "start_time": "00:16.00",
+        "end_time": "00:24.00",
+        "text_ko": "오후에는 품격 있게 차를 마셔야죠. 킁킁... 오늘은 사골 육수에요! 젤 맛있어!",
+        "text_en": "In the afternoon, I must drink tea with elegance. Sniff sniff... It's bone broth today! The best!",
+        "speaker": "main",
+        "color": "gold"
+      },
+      {
+        "start_time": "00:24.00",
+        "end_time": "00:32.00",
+        "text_ko": "저녁에는 학문에 정진해야 해요. 음... 이 간식은 먹어봤고, 저 간식도 먹어봤어요!",
+        "text_en": "In the evening, I must dedicate myself to learning. Hmm... I've tried this snack, and that snack too!",
+        "speaker": "main",
+        "color": "white"
+      },
+      {
+        "start_time": "00:32.00",
+        "end_time": "00:36.00",
+        "text_ko": "나으리! 목욕 시간이옵니다!",
+        "text_en": "My lord! It's bath time!",
+        "speaker": "sub1",
+        "color": "white"
+      },
+      {
+        "start_time": "00:36.00",
+        "end_time": "00:40.00",
+        "text_ko": "안 돼! 나는 양반인데! 목욕은... 싫어!",
+        "text_en": "No! I'm a nobleman! I hate baths!",
+        "speaker": "main",
+        "color": "white"
+      },
+      {
+        "start_time": "00:40.00",
+        "end_time": "00:46.00",
+        "text_ko": "양반도... 목욕은 해야 하나 봐요... 으앙...",
+        "text_en": "Even noblemen... have to take baths, I guess... Wah...",
+        "speaker": "main",
+        "color": "white"
+      }
+    ],
+    "script": {
+      "title": {
+        "japanese": "",
+        "korean": "조선 힙스터 댕댕이: 반전 일상 대공개!",
+        "english": "Joseon Hipster Dog: Revealing a Day of Surprises!"
+      },
+      "full_script": "[Scene 1] Interviewer: 오늘은 조선시대 강아지를 만나봤습니다! 과연 어떤 하루를 보낼까요? [Scene 2] 땅콩: (서예 붓을 들고) 아침에는 서예를 한답니다. 냠냠... 간식 그림 그리는 중이에요! [Scene 3] 땅콩: (찻잔을 들고) 오후에는 품격 있게 차를 마셔야죠. 킁킁... 오늘은 사골 육수에요! 젤 맛있어! [Scene 4] 땅콩: (책을 넘기며) 저녁에는 학문에 정진해야 해요. 음... 이 간식은 먹어봤고, 저 간식도 먹어봤어요! [Scene 5] 하녀 고양이: 나으리! 목욕 시간이옵니다! 땅콩: (공포에 질린 얼굴) 안 돼! 나는 양반인데! 목욕은... 싫어! [Scene 6] 땅콩: (물에 젖은 채) 양반도... 목욕은 해야 하나 봐요... 으앙...",
+      "location_setting": "한옥 스타일의 아늑한 거실. 붓, 먹, 벼루 등 서예 도구와 족자가 놓여있다. 창밖으로는 희미하게 눈 내리는 풍경이 보인다. 따뜻한 느낌을 주는 조명.",
+      "script_segments": [
+        {
+          "segment_number": 1,
+          "duration": 8,
+          "speaker": "interviewer",
+          "character_name": "인터뷰어",
+          "narration": "오늘은 스스로를 양반이라 믿는 강아지를 만나봤습니다! 과연 어떤 하루를 보낼까요?",
+          "narration_korean": "오늘은 스스로를 양반이라 믿는 강아지를 만나봤습니다! 과연 어떤 하루를 보낼까요?",
+          "narration_english": "Today, we've met a dog who believes he's a nobleman! Let's see what his day is like!",
+          "scene_type": "narration",
+          "image_prompt": "MEDIUM SHOT of Pomeranian dog wearing Hanbok, upper body visible, WIDE EYES with sparkling excitement, mouth slightly open in amazement, ears perked up high, BRIGHT studio lighting, vibrant colorful background, HIGH CONTRAST, attention-grabbing composition",
+          "video_prompt": {
+            "character_action": "Looking directly at the camera with a surprised expression",
+            "lip_sync": "no",
+            "facial_expression": "Wide-eyed and excited",
+            "body_movement": "Slight head tilt",
+            "camera_movement": "zoom_in",
+            "is_interviewer_speaking": true,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "indoor",
+            "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+            "weather": "snowy",
+            "lighting": "Warm and bright",
+            "mood": "Exciting and curious",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "Korean female news anchor, professional friendly tone",
+            "voice_type": "news_anchor_female",
+            "speaking_speed": "natural",
+            "sound_effects": [],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Excited and curious",
+            "ambient_sound": "Gentle crackling fireplace sound",
+            "background_music_mood": "cute"
+          },
+          "emotion": "excited",
+          "emotion_transition": "excited to curious",
+          "index": 1,
+          "start_time": 0,
+          "end_time": 8,
+          "spoken_language": "korean",
+          "voice_type": "news_anchor_female",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean female news anchor, 30s, professional friendly tone",
+          "voice_effect": null,
+          "dog_lip_sync": false,
+          "is_hook_scene": true,
+          "thumbnail_optimized": true
+        },
+        {
+          "segment_number": 2,
+          "duration": 8,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "아침에는 서예를 한답니다. 냠냠... 간식 그림 그리는 중이에요!",
+          "narration_korean": "아침에는 서예를 한답니다. 냠냠... 간식 그림 그리는 중이에요!",
+          "narration_english": "In the morning, I do calligraphy. Yummy... drawing pictures of snacks!",
+          "scene_type": "interview_answer",
+          "image_prompt": "CLOSE-UP of Pomeranian dog wearing Hanbok, holding a calligraphy brush, looking at the camera with a playful smile, writing on traditional paper, ink and calligraphy tools nearby, munching happily",
+          "video_prompt": {
+            "character_action": "Holding a calligraphy brush and pretending to write, then licking the brush, munching happily",
+            "lip_sync": "yes",
+            "facial_expression": "Playful and mischievous",
+            "body_movement": "Slightly tilting head while drawing",
+            "camera_movement": "zoom_in",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "indoor",
+            "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+            "weather": "snowy",
+            "lighting": "Warm and bright",
+            "mood": "Playful",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [
+              "Small licking sound"
+            ],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Playful and innocent",
+            "ambient_sound": "Gentle crackling fireplace sound",
+            "background_music_mood": "cute"
+          },
+          "emotion": "happy",
+          "emotion_transition": "happy to mischievous",
+          "index": 2,
+          "start_time": 8,
+          "end_time": 16,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        {
+          "segment_number": 3,
+          "duration": 8,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "오후에는 품격 있게 차를 마셔야죠. 킁킁... 오늘은 사골 육수에요! 젤 맛있어!",
+          "narration_korean": "오후에는 품격 있게 차를 마셔야죠. 킁킁... 오늘은 사골 육수에요! 젤 맛있어!",
+          "narration_english": "In the afternoon, I must drink tea with elegance. Sniff sniff... It's bone broth today! The best!",
+          "scene_type": "interview_answer",
+          "image_prompt": "CLOSE-UP of Pomeranian dog wearing Hanbok, holding a traditional Korean teacup, sniffing the liquid inside with a delighted expression, steam rising from the cup, enjoying food deliciously",
+          "video_prompt": {
+            "character_action": "Holding a teacup delicately and sniffing the contents, then taking a small sip, enjoying food deliciously",
+            "lip_sync": "yes",
+            "facial_expression": "Delighted and satisfied",
+            "body_movement": "Slight head tilt while sniffing",
+            "camera_movement": "zoom_in",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "indoor",
+            "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+            "weather": "snowy",
+            "lighting": "Warm and bright",
+            "mood": "Content and elegant",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [
+              "Small sipping sound"
+            ],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Content and satisfied",
+            "ambient_sound": "Gentle crackling fireplace sound",
+            "background_music_mood": "cute"
+          },
+          "emotion": "happy",
+          "emotion_transition": "happy to satisfied",
+          "index": 3,
+          "start_time": 16,
+          "end_time": 24,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        {
+          "segment_number": 4,
+          "duration": 8,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "저녁에는 학문에 정진해야 해요. 음... 이 간식은 먹어봤고, 저 간식도 먹어봤어요!",
+          "narration_korean": "저녁에는 학문에 정진해야 해요. 음... 이 간식은 먹어봤고, 저 간식도 먹어봤어요!",
+          "narration_english": "In the evening, I must dedicate myself to learning. Hmm... I've tried this snack, and that snack too!",
+          "scene_type": "interview_answer",
+          "image_prompt": "CLOSE-UP of Pomeranian dog wearing Hanbok, flipping through the pages of a book that is actually a snack catalog, looking at the pictures with interest, eating food",
+          "video_prompt": {
+            "character_action": "Flipping through the pages of a snack catalog with interest, eating food",
+            "lip_sync": "yes",
+            "facial_expression": "Curious and interested",
+            "body_movement": "Head moving slightly while reading",
+            "camera_movement": "zoom_in",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "indoor",
+            "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+            "weather": "snowy",
+            "lighting": "Warm and bright",
+            "mood": "Curious",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [
+              "Page turning sound"
+            ],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Curious and thoughtful",
+            "ambient_sound": "Gentle crackling fireplace sound",
+            "background_music_mood": "cute"
+          },
+          "emotion": "curious",
+          "emotion_transition": "curious to thoughtful",
+          "index": 4,
+          "start_time": 24,
+          "end_time": 32,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        {
+          "segment_number": 5,
+          "duration": 4,
+          "speaker": "sub1",
+          "character_name": "할미",
+          "narration": "나으리! 목욕 시간이옵니다!",
+          "narration_korean": "나으리! 목욕 시간이옵니다!",
+          "narration_english": "My lord! It's bath time!",
+          "scene_type": "reaction",
+          "image_prompt": "MEDIUM SHOT of Pomeranian dog wearing Hanbok, looking surprised and scared as a middle-aged woman (Halmi) enters the room with a towel and a bathtub in the background",
+          "video_prompt": {
+            "character_action": "Looking surprised and scared as someone enters the room",
+            "lip_sync": "yes",
+            "facial_expression": "Surprised and scared",
+            "body_movement": "Backing away slightly",
+            "camera_movement": "static",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "indoor",
+            "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+            "weather": "snowy",
+            "lighting": "Warm and bright",
+            "mood": "Surprised and scared",
+            "characters_in_scene": [
+              "땅콩",
+              "할미"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "elderly_female",
+            "voice_type": "elderly_female",
+            "speaking_speed": "natural",
+            "sound_effects": [],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Gentle but firm",
+            "ambient_sound": "Gentle crackling fireplace sound",
+            "background_music_mood": "cute"
+          },
+          "emotion": "scared",
+          "emotion_transition": "scared",
+          "index": 5,
+          "start_time": 32,
+          "end_time": 36,
+          "spoken_language": "korean",
+          "voice_type": "elderly_female",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        {
+          "segment_number": 6,
+          "duration": 4,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "안 돼! 나는 양반인데! 목욕은... 싫어!",
+          "narration_korean": "안 돼! 나는 양반인데! 목욕은... 싫어!",
+          "narration_english": "No! I'm a nobleman! I hate baths!",
+          "scene_type": "reaction",
+          "image_prompt": "CLOSE-UP of Pomeranian dog wearing Hanbok, looking terrified and trying to run away from the approaching woman",
+          "video_prompt": {
+            "character_action": "Trying to run away from someone",
+            "lip_sync": "yes",
+            "facial_expression": "Terrified and resisting",
+            "body_movement": "Struggling to escape",
+            "camera_movement": "dynamic",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "indoor",
+            "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+            "weather": "snowy",
+            "lighting": "Warm and bright",
+            "mood": "Terrified",
+            "characters_in_scene": [
+              "땅콩",
+              "할미"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [
+              "Small whimpering sound"
+            ],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Scared and resisting",
+            "ambient_sound": "Gentle crackling fireplace sound",
+            "background_music_mood": "cute"
+          },
+          "emotion": "scared",
+          "emotion_transition": "scared to defeated",
+          "index": 6,
+          "start_time": 36,
+          "end_time": 40,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        {
+          "segment_number": 7,
+          "duration": 6,
+          "speaker": "main",
+          "character_name": "땅콩",
+          "narration": "양반도... 목욕은 해야 하나 봐요... 으앙...",
+          "narration_korean": "양반도... 목욕은 해야 하나 봐요... 으앙...",
+          "narration_english": "Even noblemen... have to take baths, I guess... Wah...",
+          "scene_type": "interview_answer",
+          "image_prompt": "CLOSE-UP of Pomeranian dog wearing Hanbok, completely wet and looking defeated in a bathtub",
+          "video_prompt": {
+            "character_action": "Looking defeated and sad in a bathtub",
+            "lip_sync": "yes",
+            "facial_expression": "Sad and resigned",
+            "body_movement": "Slight trembling",
+            "camera_movement": "static",
+            "is_interviewer_speaking": false,
+            "lip_sync_to": "tts",
+            "is_performance": false,
+            "performance_type": null,
+            "performance_phase": null
+          },
+          "scene_details": {
+            "location": "indoor",
+            "background": "Bathroom with a traditional Korean style bathtub",
+            "weather": "none",
+            "lighting": "Warm and bright",
+            "mood": "Defeated",
+            "characters_in_scene": [
+              "땅콩"
+            ]
+          },
+          "audio_details": {
+            "voice_style": "baby_girl",
+            "voice_type": "cute_toddler_girl",
+            "speaking_speed": "slow and cute",
+            "sound_effects": [
+              "Small whimpering sound"
+            ],
+            "background_sound": "",
+            "bgm_featured": false,
+            "bgm_volume": 0.3,
+            "tts_enabled": true,
+            "voice_tone": "Sad and resigned",
+            "ambient_sound": "Gentle running water sound",
+            "background_music_mood": "cute"
+          },
+          "emotion": "sad",
+          "emotion_transition": "sad to resigned",
+          "index": 7,
+          "start_time": 40,
+          "end_time": 46,
+          "spoken_language": "korean",
+          "voice_type": "cute_toddler_girl",
+          "has_narration": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null,
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        }
+      ],
+      "music_mood": "cute",
+      "overall_style": "photorealistic",
+      "total_duration": 46
+    },
+    "total_duration": 46
+  }
+}

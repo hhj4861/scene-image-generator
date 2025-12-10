@@ -1,0 +1,426 @@
+{
+  "video_metadata": {
+    "title": "AQST 심층 분석 Part 2 - FDA 승인 D-52일",
+    "platform": "YouTube Shorts",
+    "total_duration_seconds": 99,
+    "aspect_ratio": "9:16",
+    "date": "2025-12-09",
+    "content_type": "Educational Financial Analysis",
+    "disclaimer_strategy": "Opening only + Watermark",
+    "target_language": "Korean (primary) + English subtitles"
+  },
+  "scenes": [
+    {
+      "scene_id": 1,
+      "title": "오프닝 면책 (Opening Disclaimer)",
+      "timestamp": "0-10초",
+      "duration_seconds": 10,
+      "korean_script": "투자 권유 아닙니다! 교육 목적 분석입니다. AQST 바이오 기업, 최신 공개 데이터로 분석해봤습니다. 차트부터 FDA 승인까지, 팩트만 전달합니다!",
+      "english_script": "Not financial advice! Educational analysis only. AQST biotech company, analyzed with latest public data. From chart to FDA approval - facts only!",
+      "visual_notes": "Viral thumbnail transition to disclaimer screen with warning icon, professional broadcast style",
+      "subtitle_timing": [
+        {
+          "time": "0-2.5s",
+          "text_ko": "투자 권유 아닙니다!",
+          "text_en": "Not financial advice!"
+        },
+        {
+          "time": "2.5-5s",
+          "text_ko": "교육 목적 분석입니다.",
+          "text_en": "Educational analysis only."
+        },
+        {
+          "time": "5-7.5s",
+          "text_ko": "AQST 바이오 기업, 최신 공개 데이터로 분석!",
+          "text_en": "AQST biotech, latest public data analysis!"
+        },
+        {
+          "time": "7.5-10s",
+          "text_ko": "차트부터 FDA까지, 팩트만 전달!",
+          "text_en": "Chart to FDA - facts only!"
+        }
+      ],
+      "generated_assets": {
+        "video": "https://www.genspark.ai/api/files/s/gJED04jH",
+        "description": "Data explosion thumbnail → Disclaimer screen transition"
+      }
+    },
+    {
+      "scene_id": 2,
+      "title": "차트 분석 (Chart Analysis)",
+      "timestamp": "10-23초",
+      "duration_seconds": 13,
+      "korean_script": "현재가 6달러 10센트! 최근 저점 대비 15퍼센트 반등 중! 애널리스트 평균 목표가 10달러 30센트, 최고 목표가는 무려 12달러에서 15달러! 현재가 대비 최대 145퍼센트 상승 여력!",
+      "english_script": "Current price: $6.10! Rebounding 15% from recent lows! Analyst average target: $10.30, High targets range $12 to $15! Up to 145% upside potential from current price!",
+      "visual_notes": "Stock chart with upward trend, price targets highlighted, green arrows showing potential",
+      "subtitle_timing": [
+        {
+          "time": "10-13s",
+          "text_ko": "현재가 6.10달러! 최근 저점 대비 플러스15퍼",
+          "text_en": "Current price: 6.10 dollar! plus 15 per from lows"
+        },
+        {
+          "time": "13-16s",
+          "text_ko": "애널리스트 평균 목표가 10.30달러",
+          "text_en": "Analyst avg target: 10.30 dollar"
+        },
+        {
+          "time": "16-20s",
+          "text_ko": "최고 목표가 12달러에서 15달러!",
+          "text_en": "High targets: 12 to 15 dollar!"
+        },
+        {
+          "time": "20-23s",
+          "text_ko": "최대 플러스145퍼 상승 여력!",
+          "text_en": "Up to plus 145 per upside!"
+        }
+      ],
+      "generated_assets": {
+        "image": "https://www.genspark.ai/api/files/s/27fz2KIY?cache_control=3600",
+        "video": "https://www.genspark.ai/api/files/s/DHMhvXEa",
+        "description": "Chart showing $6.10 → $15 potential with analyst targets"
+      }
+    },
+    {
+      "scene_id": 3,
+      "title": "수급 분석 (Institutional Buying)",
+      "timestamp": "23-40초",
+      "duration_seconds": 17,
+      "korean_script": "최근 기관 투자 폭발적 증가! 주요 헤지펀드들이 대량 매수 중! Pale Fire Capital 34만주, Sio Capital 55만주, Diametric Capital 16만주, Commonwealth Equity 590만 달러 신규 진입! 기관 보유율 32.45퍼센트로 상승!",
+      "english_script": "Recent explosive institutional buying! Major hedge funds accumulating shares! Pale Fire Capital: 340K shares, Sio Capital: 556K shares, Diametric Capital: 165K shares, Commonwealth Equity: $5.9M new entry! Institutional ownership rose to 32.45%!",
+      "visual_notes": "Institutional buying infographic with fund names, share counts, and ownership percentage",
+      "subtitle_timing": [
+        {
+          "time": "23-27s",
+          "text_ko": "최근 기관 투자 폭발! 헤지펀드 대량 매수",
+          "text_en": "Institutional buying surge! Hedge funds buying"
+        },
+        {
+          "time": "27-31s",
+          "text_ko": "Pale Fire 34만주, Sio Capital 55만주",
+          "text_en": "Pale Fire 340K, Sio Capital 556K"
+        },
+        {
+          "time": "31-36s",
+          "text_ko": "Diametric 16만주, Commonwealth 5.9M달러",
+          "text_en": "Diametric 165K, Commonwealth 5.9M dollar"
+        },
+        {
+          "time": "36-40s",
+          "text_ko": "기관 보유율 32.45퍼 상승!",
+          "text_en": "Institutional ownership: 32.45 per!"
+        }
+      ],
+      "generated_assets": {
+        "image": "https://www.genspark.ai/api/files/s/hiXgR5MW?cache_control=3600",
+        "video": "https://www.genspark.ai/api/files/s/eeQBmRpP",
+        "description": "Institutional buying infographic with 4 major funds"
+      }
+    },
+    {
+      "scene_id": 4,
+      "title": "FDA 타임라인 (FDA Timeline)",
+      "timestamp": "40-59초",
+      "duration_seconds": 19,
+      "korean_script": "FDA 승인 임박! PDUFA 날짜 2026년 1월 31일! 오늘 기준 52일만 남았습니다! FDA Advisory Committee 면제 승인! 이는 승인 가능성 대폭 상승 신호! 제품명 Anaphylm, 혁신적 설하 에피네프린 필름! 미국 시장 규모 11억 달러, 2032년 20억 달러 전망!",
+      "english_script": "FDA approval imminent! PDUFA date: January 31, 2026! Only 52 days remaining from today! FDA waived Advisory Committee requirement! This signals significantly higher approval odds! Product: Anaphylm, innovative sublingual epinephrine film! US market: $1.1B, projected $2.0B by 2032!",
+      "visual_notes": "FDA timeline with countdown clock, market size data, approval milestones",
+      "subtitle_timing": [
+        {
+          "time": "40-45s",
+          "text_ko": "FDA 승인 임박! PDUFA 2026.01.31",
+          "text_en": "FDA approval near! PDUFA 01/31/26"
+        },
+        {
+          "time": "45-49s",
+          "text_ko": "오늘 기준 52일 남음! AdCom 면제!",
+          "text_en": "52 days left! AdCom waived!"
+        },
+        {
+          "time": "49-54s",
+          "text_ko": "Anaphylm 혁신 에피네프린 필름",
+          "text_en": "Anaphylm innovative epinephrine film"
+        },
+        {
+          "time": "54-59s",
+          "text_ko": "시장 11억달러에서 20억달러(2032) 전망",
+          "text_en": "Market 1.1B dollar to 2.0B dollar 2032"
+        }
+      ],
+      "generated_assets": {
+        "image": "https://www.genspark.ai/api/files/s/wDF65MHG?cache_control=3600",
+        "video": "Previous FDA timeline video (reuse)",
+        "description": "FDA timeline showing PDUFA countdown and market projections"
+      }
+    },
+    {
+      "scene_id": 5,
+      "title": "계약 & 자금 (Funding & Contracts)",
+      "timestamp": "59-73초",
+      "duration_seconds": 14,
+      "korean_script": "전략 투자 7천5백만 달러 확보! FDA 승인 시 실행되는 조건부 계약! 현금 보유액 1억 2천9백만 달러! 공모로 8천5백만 달러 추가 조달 완료! 캐나다 시장 진출도 진행 중! 신규 파이프라인 개발도 계속됩니다!",
+      "english_script": "Secured $75M strategic investment! Conditional funding upon FDA approval! Cash holdings: $129M! Completed $85M public offering! Canada market expansion in progress! New pipeline development ongoing!",
+      "visual_notes": "Funding infographic with dollar amounts, cash holdings, expansion roadmap",
+      "subtitle_timing": [
+        {
+          "time": "59-63s",
+          "text_ko": "75M달러 전략 투자! FDA 승인 시 실행",
+          "text_en": "75M dollar investment! Conditional on FDA"
+        },
+        {
+          "time": "63-67s",
+          "text_ko": "현금 129M달러 보유! 85M달러 공모 완료",
+          "text_en": "Cash: 129M dollar! 85M dollar offering done"
+        },
+        {
+          "time": "67-70s",
+          "text_ko": "캐나다 진출 진행 중",
+          "text_en": "Canada expansion ongoing"
+        },
+        {
+          "time": "70-73s",
+          "text_ko": "신규 파이프라인 개발 계속",
+          "text_en": "New pipeline development continues"
+        }
+      ],
+      "generated_assets": {
+        "image": "Previous funding infographic (reuse)",
+        "video": "Previous funding video (reuse)",
+        "description": "Funding breakdown with strategic investment and cash position"
+      }
+    },
+    {
+      "scene_id": 6,
+      "title": "옵션 & 숏 데이터 (Options & Short Data)",
+      "timestamp": "73-90초",
+      "duration_seconds": 17,
+      "korean_script": "공개된 시장 데이터! 숏 인터레스트 1천920만주! 약 16퍼센트 공매도! Days to Cover 약 6일! Put/Call 비율 0.08에서 0.20! 일반적으로 0.7 이하면 강세! AQST는 극도로 낮은 수준! Call 옵션 압도적 우세! 옵션은 고위험입니다!",
+      "english_script": "Public market data! Short interest: 19.2M shares! ~16% shorted! Days to Cover: ~6 days! Put/Call ratio: 0.08-0.20! Generally <0.7 is bullish! AQST extremely low! Call options dominant! Options are high risk!",
+      "visual_notes": "Options data infographic with Put/Call ratio, short interest chart, risk warning",
+      "subtitle_timing": [
+        {
+          "time": "73-78s",
+          "text_ko": "공개 시장 데이터! 숏 19.2M주 (16퍼)",
+          "text_en": "Public data! Short 19.2M 16 per"
+        },
+        {
+          "time": "78-82s",
+          "text_ko": "DTC 6일! Put/Call 0.08에서0.20 극저",
+          "text_en": "DTC 6 days! P/C 0.08-0.20 very low"
+        },
+        {
+          "time": "82-86s",
+          "text_ko": "0.7 이하 강세! AQST 극도 낮은 수준",
+          "text_en": "less than 0.7 bullish! AQST extremely low"
+        },
+        {
+          "time": "86-90s",
+          "text_ko": "Call 옵션 압도적 우세! 옵션 고위험!",
+          "text_en": "Calls dominant! Options high risk!"
+        }
+      ],
+      "generated_assets": {
+        "image": "https://www.genspark.ai/api/files/s/9TVoyEKU?cache_control=3600",
+        "video": "https://www.genspark.ai/api/files/s/1wCxNjDP",
+        "description": "Options analysis with Put/Call ratio and short interest data"
+      }
+    },
+    {
+      "scene_id": 7,
+      "title": "CTA & 마무리 (Call-to-Action & Closing)",
+      "timestamp": "90-99초",
+      "duration_seconds": 9,
+      "korean_script": "SEC, FDA 공식 출처 기반! 여러분의 생각은? 댓글로 의견 남겨주세요! 좋아요와 구독 부탁드립니다! 다음 분석도 기대해주세요!",
+      "english_script": "Based on SEC, FDA official sources! What's your take? Leave comments! Like and subscribe please! Stay tuned for next analysis!",
+      "visual_notes": "CTA screen with Like/Comment/Subscribe buttons and final disclaimer banner",
+      "subtitle_timing": [
+        {
+          "time": "90-93s",
+          "text_ko": "SEC, FDA 공식 출처 기반!",
+          "text_en": "Based on SEC, FDA official sources!"
+        },
+        {
+          "time": "93-96s",
+          "text_ko": "댓글로 의견 남겨주세요!",
+          "text_en": "Leave your comments!"
+        },
+        {
+          "time": "96-99s",
+          "text_ko": "좋아요 & 구독! 다음 분석 기대!",
+          "text_en": "Like & Subscribe! Next analysis coming!"
+        }
+      ],
+      "generated_assets": {
+        "image": "https://www.genspark.ai/api/files/s/UOo3gaf6?cache_control=3600",
+        "video": "https://www.genspark.ai/api/files/s/Im53nwTK",
+        "description": "CTA screen with engagement prompts and final disclaimer"
+      }
+    }
+  ],
+  "watermark": {
+    "position": "bottom_right",
+    "text": "Not Financial Advice",
+    "display_duration": "0-99초 (entire video)",
+    "opacity": "70%",
+    "font_size": "small",
+    "color": "rgba(255, 255, 255, 0.7)"
+  },
+  "legal_disclaimers": {
+    "opening": {
+      "scene_id": 1,
+      "timing": "0-10초",
+      "korean": "투자 권유 아닙니다! 교육 목적 분석입니다.",
+      "english": "Not financial advice! Educational analysis only."
+    },
+    "options_specific": {
+      "scene_id": 6,
+      "timing": "86-90초",
+      "korean": "옵션은 원금 손실 위험이 매우 높습니다! 교육 목적이며, 투자 권유가 아닙니다!",
+      "english": "Options carry very high principal loss risk! Educational purposes, not investment advice!"
+    },
+    "closing": {
+      "scene_id": 7,
+      "timing": "90-99초",
+      "korean": "모든 데이터는 SEC, FDA 공식 출처 기반입니다!",
+      "english": "All data based on SEC, FDA official sources!"
+    }
+  },
+  "data_sources": {
+    "stock_price": [
+      "Yahoo Finance",
+      "NASDAQ"
+    ],
+    "institutional_ownership": [
+      "SEC 13F Filings",
+      "MarketBeat",
+      "Fintel"
+    ],
+    "fda_timeline": [
+      "FDA.gov",
+      "Aquestive Therapeutics IR"
+    ],
+    "funding": [
+      "SEC Form 8-K",
+      "SEC Form 10-Q"
+    ],
+    "options_data": [
+      "Yahoo Finance Options Chain",
+      "Barchart",
+      "StockOptionsChannel"
+    ],
+    "short_interest": [
+      "NASDAQ Short Interest",
+      "Fintel",
+      "Benzinga"
+    ],
+    "analyst_targets": [
+      "MarketBeat",
+      "Yahoo Finance",
+      "JMP Securities",
+      "Oppenheimer",
+      "TipRanks"
+    ]
+  },
+  "key_data_points": {
+    "current_price": "6.10달러",
+    "recent_low": "5.30달러",
+    "rebound_percentage": "플러스15퍼센트",
+    "analyst_avg_target": "10.30달러",
+    "analyst_high_target": "12달러에서 15달러",
+    "upside_potential": "최대 플러스145퍼센트",
+    "institutional_ownership_pct": "32.45퍼센트",
+    "major_funds": [
+      {
+        "name": "Pale Fire Capital",
+        "shares": "340,767"
+      },
+      {
+        "name": "Sio Capital",
+        "shares": "555,860"
+      },
+      {
+        "name": "Diametric Capital",
+        "shares": "165,373"
+      },
+      {
+        "name": "Commonwealth Equity",
+        "value": "5.9M달러"
+      }
+    ],
+    "pdufa_date": "2026-01-31",
+    "days_to_pdufa": "52 days (from 2025-12-09)",
+    "fda_adcom_status": "Waived",
+    "product_name": "Anaphylm",
+    "product_type": "Sublingual epinephrine film",
+    "market_size_current": "11억달러 (2024)",
+    "market_size_projected": "20억달러 (2032)",
+    "strategic_investment": "75M달러 (RTW)",
+    "cash_holdings": "129M달러 (Q3 2025)",
+    "public_offering": "85M달러 (completed)",
+    "short_interest_shares": "19.2M",
+    "short_interest_percentage": "약16퍼센트",
+    "days_to_cover": "약6일",
+    "put_call_ratio": "0.08에서0.20 (extremely bullish)",
+    "call_option_dominance": "Overwhelming vs puts"
+  },
+  "timing_breakdown": {
+    "scene_1_opening": "0-10초 (10초)",
+    "scene_2_chart": "10-23초 (13초)",
+    "scene_3_institutions": "23-40초 (17초)",
+    "scene_4_fda": "40-59초 (19초)",
+    "scene_5_funding": "59-73초 (14초)",
+    "scene_6_options": "73-90초 (17초)",
+    "scene_7_cta": "90-99초 (9초)",
+    "total_duration": "99초"
+  },
+  "production_notes": {
+    "narration_language": "Korean (primary)",
+    "subtitle_language": "Korean + English (dual subtitles)",
+    "bgm_style": "Professional financial news background music (110-120 BPM, C Minor)",
+    "bgm_duration": "99초 (full length)",
+    "narration_pacing": "Fast-paced for 60-second Shorts format",
+    "tone": "Educational, data-driven, optimistic, professional",
+    "target_audience": "Korean retail investors interested in US biotech stocks",
+    "platform_optimization": "YouTube Shorts (9:16, mobile-first)",
+    "compliance": "All statements fact-based from public sources, no investment recommendations",
+    "visual_style": "Professional trading terminal aesthetic, Bloomberg/CNBC broadcast style",
+    "color_scheme": "Dark background, green for bullish signals, red/yellow for warnings"
+  },
+  "editing_guide": {
+    "video_resolution": "1080x1920 (9:16)",
+    "frame_rate": "30fps",
+    "recommended_software": [
+      "CapCut",
+      "Adobe Premiere Pro",
+      "Final Cut Pro"
+    ],
+    "layer_structure": [
+      "Layer 1: Background video clips (각 씬별)",
+      "Layer 2: Infographic overlays (데이터 시각화)",
+      "Layer 3: Korean subtitles (하단 1/3)",
+      "Layer 4: English subtitles (하단 2/3)",
+      "Layer 5: Watermark (우측 하단, 전체 구간)"
+    ],
+    "transition_effects": "Smooth cross-fade (0.3-0.5초) between scenes",
+    "audio_mixing": [
+      "BGM: -18dB to -22dB (background level)",
+      "Narration: -6dB to -10dB (clear and prominent)",
+      "Apply audio ducking on BGM when narration plays"
+    ],
+    "export_settings": {
+      "format": "MP4 (H.264)",
+      "bitrate": "10-15 Mbps",
+      "audio": "AAC 192kbps",
+      "optimization": "YouTube Shorts upload preset"
+    }
+  },
+  "upload_checklist": {
+    "title": "AQST 심층분석 Part 2 | FDA 승인 D-52일 | 목표가 플러스145퍼 상승 여력?",
+    "hashtags": "#AQST #바이오주 #FDA승인 #미국주식 #주식분석 #투자 #Shorts",
+    "description": "See full description in YouTube metadata section",
+    "category": "Education",
+    "thumbnail": "Use viral curiosity gap thumbnail (Version 3 recommended)",
+    "upload_timing": "KST 저녁 6-8시 (highest engagement)",
+    "first_comment": "전체 데이터 출처:\nSEC EDGAR Database\nFDA.gov\nYahoo Finance\nAquestive IR\n\n투자 조언 아님! 교육 목적만!"
+  }
+}

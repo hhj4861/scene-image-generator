@@ -166,7 +166,7 @@ export default defineComponent({
                 throw new Error(`Input Script Parsing Error: ${e.message}`);
             }
 
-            const prompt = `You are a professional video script editor.
+            const prompt = `You are a professional video script editor for a 'Puppy Documentary/Reality Show'.
 Current Script (JSON):
 ${JSON.stringify(baseScript)}
 
@@ -174,56 +174,40 @@ User Instruction: "${this.edit_instruction}"
 
 TASK:
 1. Modify the script exactly according to the user's instruction.
-2. IMPORTANT: You MUST return the COMPLETE JSON object, including all metadata and the "script" object with "script_segments".
-3. Do NOT remove any existing fields unless asked.
-4. If the user asks to change a specific scene, find the segment with that "segment_number" or content.
-5. Maintain the overall structure strictly.
+2. Return the COMPLETE JSON object.
 
-★★★ VIDEO ACTION RULES (매우 중요!) ★★★
-⚠️ 대사에 동작이 포함되면 반드시 video_prompt.character_action에도 반영!
+★★★ CRITICAL REGENERATION RULE (MUST FOLLOW) ★★★
+⚠️ **IF YOU CHANGE ANY NARRATION/DIALOGUE, YOU MUST REGENERATE THE VISUAL & AUDIO PROMPTS!**
+- **video_prompt**: Update 'character_action', 'lip_sync', 'facial_expression' to match the NEW dialogue/emotion.
+- **image_prompt**: Update the visual description to match the NEW action/context.
+- **audio_details**: Update 'voice_tone' and 'sound_effects' to match the NEW scene mood.
+❌ DO NOT leave old prompts that conflict with the new text! (e.g., If text changes from "Sad" to "Happy", image/video MUST show "Happy".)
 
-📌 동작 키워드 매핑 (대사에 이 단어가 있으면 → character_action에 반영):
-- 춤/댄스/흔들흔들 → "dancing", "body swaying", "grooving"
-- 폴짝/뛰어/점프/깡충깡충 → "jumping", "hopping", "bouncing"
-- 빙글빙글/회전/돌아 → "spinning", "rotating", "twirling"
-- 꼬리 흔들/살랑살랑 → "wagging tail happily", "tail swaying"
-- 달려/뛰어가 → "running", "dashing"
-- 앉아 → "sitting down", "sitting pose"
-- 누워 → "lying down", "laying down"
-- 일어나/벌떡 → "standing up", "getting up suddenly"
-- 갸웃 → "tilting head curiously", "head tilt"
-- 하품 → "yawning", "stretching mouth in yawn"
-- 기지개 → "stretching body", "full body stretch"
-- 먹어/냠냠/맛있 → "eating", "chewing", "munching happily"
-- 핥/핥아 → "licking", "licking lips"
-- 구르/뒹굴 → "rolling on ground", "rolling around playfully"
-- 똥꼬스키/엉덩이 스키/엉덩이 끌/바닥 끌/스키 타/미끄러 → "scooting butt on floor", "skiing on butt across floor", "dragging bottom across ground using front legs", "butt sliding on floor comically"
+★★★ VIDEO ACTION RULES ★★★
+⚠️ If dialogue contains action keywords, update 'video_prompt.character_action'!
+- Dance: "춤", "댄스", "흔들흔들" → "dancing", "body swaying"
+- Jump: "폴짝", "점프", "뛰어" → "jumping", "hopping"
+- Spin: "빙글빙글", "돌아" → "spinning", "twirling"
+- Tail: "꼬리", "살랑살랑" → "wagging tail"
+- Scoot/Drag Butt: "똥꼬스키", "엉덩이 끌" → "scooting butt on floor"
 
-📌 예시:
-- 대사: "폴짝폴짝 뛰니까 신나요~"
-  → video_prompt.character_action: "jumping and hopping happily, energetic bouncing motion"
-  → video_prompt.body_movement: "active jumping motion, full body bouncing"
+★★★ 🎯 TONE & STYLE GUIDE (HYBRID) ★★★
+📌 'HUMAN BABY TONE' (사람 아기 말투 2-3세)
+The Main Character must speak like a human toddler, NOT a dog.
+- ❌ **ABSOLUTELY BANNED (Forbidden)**:
+  - DO NOT use dog-like endings: "~다개", "~멍", "~왈", "~개".
+  - DO NOT use animal sounds in text: "멍멍!", "왈왈!".
+- ✅ **REQUIRED PATTERNS (Korean Examples)**:
+  - Use "~해요" (Polite/Cute): "배고파요~", "산책 가요~"
+  - Use "~거야" (Causal/Cute): "이거 내 거야!", "안 할 거야~"
+  - Use "~할래" (Volition): "나도 할래!", "안아줄래?"
 
-- 대사: "빙글빙글 돌아볼게요!"
-  → video_prompt.character_action: "spinning around playfully, twirling motion"
-  → video_prompt.camera_movement: "tracking" (동작이 있으면 dynamic 또는 tracking 권장)
-
-- 대사: "똥꼬스키 타볼게요~ 슝슝!"
-  → video_prompt.character_action: "scooting butt on floor, dragging bottom across ground using front legs, sliding forward comically"
-  → video_prompt.body_movement: "sitting with hind legs extended forward, using front paws to pull body forward while butt drags on floor"
-  → video_prompt.camera_movement: "tracking" (이동하는 동작이므로 tracking)
-  → image_prompt: 기존 프롬프트 + "scooting on floor with butt dragging, front paws pulling forward, comical sliding pose"
-
-- 대사: "엉덩이 스키 타볼게요~!"
-  → video_prompt.character_action: "skiing on butt across floor playfully, scooting bottom on ground like skiing"
-  → video_prompt.body_movement: "sitting with butt on floor, hind legs spread forward, using front paws to glide forward in skiing motion"
-  → video_prompt.camera_movement: "dynamic"
-  → image_prompt: 기존 프롬프트 + "doing butt skiing on floor, playful scooting pose, legs spread like skiing, sliding forward comically"
-
-⚠️ 동작이 있는 씬은:
-- video_prompt.lip_sync: 대사가 있으면 "yes"
-- video_prompt.camera_movement: "dynamic" 또는 "tracking" (static 대신)
-- image_prompt에도 동작 설명 추가
+📌 **Specific Emotion Examples**:
+- Joy: "와! 신난다!", "까까 주세요!"
+- Affection: "오빠가 제일 좋아~♥", "사랑해요~"
+- Complaint: "왜 안 놀아줘요?", "심심한 거야~"
+- Surprise: "헐! 이게 뭐야?!", "우와..."
+- Sulking: "흥! 나 삐졌어요."
 
 Output Format: JSON only, no markdown.`;
 
@@ -439,9 +423,9 @@ Output Format: JSON only, no markdown.`;
                     // 기존 character_action이 없거나 기본값인 경우에만 업데이트
                     const existingAction = seg.video_prompt.character_action || '';
                     const isDefaultAction = existingAction.includes('talking') ||
-                                           existingAction.includes('listening') ||
-                                           existingAction === '' ||
-                                           existingAction.includes('natural idle');
+                        existingAction.includes('listening') ||
+                        existingAction === '' ||
+                        existingAction.includes('natural idle');
 
                     if (isDefaultAction) {
                         // 대사가 있으면 립싱크와 함께 동작 추가
@@ -506,34 +490,34 @@ Output Format: JSON only, no markdown.`;
 
             // ★★★ timed_subtitles 재생성 (스크립트 수정 후 시간 동기화) ★★★
             const secondsToTimeStr = (seconds) => {
-              const mins = Math.floor(seconds / 60);
-              const secs = (seconds % 60).toFixed(2);
-              return `${mins.toString().padStart(2, '0')}:${secs.padStart(5, '0')}`;
+                const mins = Math.floor(seconds / 60);
+                const secs = (seconds % 60).toFixed(2);
+                return `${mins.toString().padStart(2, '0')}:${secs.padStart(5, '0')}`;
             };
             // ★★★ 자막 특수문자 처리 함수 (FFmpeg drawtext 호환) ★★★
             const cleanSubtitleText = (text) => {
-              if (!text) return "";
-              return text
-                .replace(/\$/g, "달러")       // $ → 달러 (FFmpeg에서 $가 누락되는 문제 해결)
-                .replace(/\|/g, " - ")        // | → 하이픈으로 대체 (FFmpeg 필터 구분자 충돌 방지)
-                .replace(/%/g, "퍼센트")      // % → 퍼센트 (FFmpeg drawtext에서 %는 특수문자)
-                .replace(/&/g, "앤드")        // & → 앤드
-                .replace(/#/g, "")            // # 제거
-                .replace(/\*/g, "")           // * 제거
-                .replace(/<[^>]*>/g, "")      // HTML 태그 제거
-                .replace(/\s+/g, " ")         // 연속 공백 제거
-                .trim();
+                if (!text) return "";
+                return text
+                    .replace(/\$/g, "달러")       // $ → 달러 (FFmpeg에서 $가 누락되는 문제 해결)
+                    .replace(/\|/g, " - ")        // | → 하이픈으로 대체 (FFmpeg 필터 구분자 충돌 방지)
+                    .replace(/%/g, "퍼센트")      // % → 퍼센트 (FFmpeg drawtext에서 %는 특수문자)
+                    .replace(/&/g, "앤드")        // & → 앤드
+                    .replace(/#/g, "")            // # 제거
+                    .replace(/\*/g, "")           // * 제거
+                    .replace(/<[^>]*>/g, "")      // HTML 태그 제거
+                    .replace(/\s+/g, " ")         // 연속 공백 제거
+                    .trim();
             };
             finalScript.timed_subtitles = segments
-              .filter(seg => seg.has_narration && (seg.narration_korean?.trim() || seg.narration?.trim()))
-              .map(seg => ({
-                start_time: secondsToTimeStr(seg.start_time || 0),
-                end_time: secondsToTimeStr(seg.end_time || (seg.start_time || 0) + (seg.duration || 4)),
-                text_ko: cleanSubtitleText(seg.narration_korean || seg.narration || ""),
-                text_en: cleanSubtitleText(seg.narration_english || ""),
-                speaker: seg.speaker || "main",
-                color: seg.scene_type === "interview_question" ? "silver" : (seg.emotion === "excited" || seg.emotion === "happy" ? "gold" : "white")
-              }));
+                .filter(seg => seg.has_narration && (seg.narration_korean?.trim() || seg.narration?.trim()))
+                .map(seg => ({
+                    start_time: secondsToTimeStr(seg.start_time || 0),
+                    end_time: secondsToTimeStr(seg.end_time || (seg.start_time || 0) + (seg.duration || 4)),
+                    text_ko: cleanSubtitleText(seg.narration_korean || seg.narration || ""),
+                    text_en: cleanSubtitleText(seg.narration_english || ""),
+                    speaker: seg.speaker || "main",
+                    color: seg.scene_type === "interview_question" ? "silver" : (seg.emotion === "excited" || seg.emotion === "happy" ? "gold" : "white")
+                }));
             console.log(`Regenerated timed_subtitles: ${finalScript.timed_subtitles.length} entries`);
 
             // 동작 감지 통계

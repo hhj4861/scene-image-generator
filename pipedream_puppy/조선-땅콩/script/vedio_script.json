@@ -1,0 +1,1513 @@
+{
+  "input_info": {
+    "segments_count": 7,
+    "characters_count": 3,
+    "script_format": "interview",
+    "content_type": "comic",
+    "has_consistency_info": true
+  },
+  "consistency_used": {
+    "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+    "lighting": "Warm and bright",
+    "main_prompt": "Create an image of a Pomeranian dog wearing a white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie. The dog has golden cream, fluffy fur, dark brown eyes, a black nose, and pointy erect ears. It is wearing a silver hair clip with a floral design and dangling beads on its head. The dog is sitting on a cushion in a traditional Korean room.",
+    "has_performance": false,
+    "performance_type": "beatbox",
+    "accessories": ""
+  },
+  "action_detection_stats": {
+    "total_scenes": 7,
+    "scenes_with_actions": 2,
+    "actions_summary": [
+      {
+        "scene": 3,
+        "narration_preview": "오후에는 품격 있게 차를 마셔야죠. 킁킁... 오늘은 사골 육수에요! 젤 맛있어!",
+        "detected": [
+          "킁킁"
+        ]
+      },
+      {
+        "scene": 4,
+        "narration_preview": "저녁에는 학문에 정진해야 해요. 음... 이 간식은 먹어봤고, 저 간식도 먹어봤어요!",
+        "detected": [
+          "먹"
+        ]
+      }
+    ]
+  },
+  "$summary": "Video generation info prepared for 7 scenes (2 with actions detected)",
+  "$return_value": {
+    "folder_name": "20251210_ce923664_Joseon_Hipster_Dog__",
+    "total_scenes": 7,
+    "script_format": "interview",
+    "content_type": "comic",
+    "resolution": "8K",
+    "format": "Clean video only",
+    "text_overlays": false,
+    "subtitles": false,
+    "watermarks": false,
+    "overall_style": "photorealistic",
+    "character_prompts": {
+      "main": "Create an image of a Pomeranian dog wearing a white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie. The dog has golden cream, fluffy fur, dark brown eyes, a black nose, and pointy erect ears. It is wearing a silver hair clip with a floral design and dangling beads on its head. The dog is sitting on a cushion in a traditional Korean room.",
+      "sub1": "young woman with warm gentle expression",
+      "interviewer": "off-screen interviewer (voice only)"
+    },
+    "characters": {
+      "main": {
+        "name": "땅콩",
+        "role": "main",
+        "image_url": "https://storage.googleapis.com/scene-image-generator-storage-mcp-test-457809/origin/%E1%84%8A%E1%85%B5%E1%86%AB1.jpeg",
+        "character_type": "animal",
+        "species": "dog",
+        "breed": "Pomeranian",
+        "estimated_age": "adult",
+        "personality": "cute",
+        "voice_type": "baby_girl",
+        "image_prompt": "Create an image of a Pomeranian dog wearing a white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie. The dog has golden cream, fluffy fur, dark brown eyes, a black nose, and pointy erect ears. It is wearing a silver hair clip with a floral design and dangling beads on its head. The dog is sitting on a cushion in a traditional Korean room.",
+        "distinctive_features": [
+          "fluffy fur",
+          "small size"
+        ],
+        "accessories": [
+          "silver hair clip with floral design and dangling beads",
+          "white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie"
+        ],
+        "fur_color": "golden cream",
+        "fur_texture": "fluffy",
+        "eye_color": "dark brown"
+      },
+      "sub1": {
+        "name": "하녀",
+        "role": "sub1",
+        "character_type": "human",
+        "gender": "female",
+        "estimated_age_range": "30s",
+        "voice_type": "young_female",
+        "image_prompt": "young woman with warm gentle expression"
+      },
+      "interviewer": {
+        "name": "인터뷰어",
+        "role": "interviewer",
+        "image_url": null,
+        "character_type": "human",
+        "gender": "female",
+        "estimated_age_range": "30s",
+        "voice_type": "news_anchor_female",
+        "image_prompt": "off-screen interviewer (voice only)"
+      }
+    },
+    "voice_settings": {
+      "main": {
+        "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+        "tone": "super cute, innocent, soft cooing, sometimes whiny or excited",
+        "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+        "laugh_style": "Adorable baby giggling, soft cooing laughter, infectious cute chuckling",
+        "consistent_across": "All videos"
+      },
+      "interviewer": {
+        "type": "Korean female news anchor, 30s, professional friendly tone",
+        "characteristics": "clear, warm, professional",
+        "consistent_across": "All videos"
+      },
+      "sub1": {
+        "type": "Warm and elegant young woman voice",
+        "consistent_across": "All videos"
+      }
+    },
+    "interview_background": {
+      "type": "Interview studio or themed background",
+      "description": "Professional interview setting matching the topic: 조선힙스터 댕댕이: 반전 일상 대공개!",
+      "lighting": "Warm soft studio lighting",
+      "props": "Microphone visible or implied",
+      "consistency": "Same background throughout all interview segments"
+    },
+    "scenes": [
+      {
+        "video": 1,
+        "title": "조선 힙스터 댕댕이: 반전 일상 대공개! - Scene 1",
+        "duration": "8 seconds",
+        "duration_seconds": 8,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "1080p cinematic video. Camera SLOWLY ZOOMS IN on a Pomeranian dog wearing traditional Korean Hanbok. The dog is ONLY LISTENING to off-screen female interviewer voice. CRITICAL: Dog mouth must stay COMPLETELY CLOSED - no mouth movement at all. The dog looks at camera with curious, excited expression. Gentle head tilt allowed. Hanok style living room with calligraphy tools and a snowy landscape outside the window. Warm and bright lighting. OFF-SCREEN Korean female news anchor voice (30s) narrates. Dog does NOT speak - only listens. Real animal. Natural appearance. NOT animated. NOT cartoon. No text anywhere. No signs. No banners. No Korean text. No watermarks. No subtitles.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_8_sec": "인터뷰어 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "인터뷰어": "오늘은 스스로를 양반이라 믿는 강아지를 만나봤습니다! 과연 어떤 하루를 보낼까요?",
+          "script": "오늘은 스스로를 양반이라 믿는 강아지를 만나봤습니다! 과연 어떤 하루를 보낼까요?",
+          "script_english": "Today, we've met a dog who believes he's a nobleman! Let's see what his day is like!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "인터뷰어": {
+            "type": "Korean female news anchor, 30s, professional friendly tone",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 8 seconds",
+          "0.0_to_4_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "4_to_8_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same fur color, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "NO LIP SYNC - Dog is listening only",
+          "method": "Dog mouth stays COMPLETELY CLOSED entire duration",
+          "mouth_movement": "NONE - mouth frozen shut",
+          "face": "Curious listening expression, no mouth movement",
+          "do_not": "Do not animate dog mouth at all",
+          "dog_speaks": false,
+          "mouth_state": "CLOSED",
+          "allowed_movements": ["head_tilt", "ear_twitch", "eye_blink", "gentle_head_nod"],
+          "forbidden_movements": ["mouth_open", "lip_movement", "jaw_movement", "tongue_visible"]
+        },
+        "character_appearance": {
+          "base": "Pomeranian dog wearing white and light purple Hanbok with floral embroidery",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "golden cream",
+          "fur_texture": "fluffy",
+          "outfit": "white and light purple Hanbok (Korean traditional dress) with floral embroidery",
+          "accessories": ["silver hair clip with floral design and dangling beads"],
+          "props": [],
+          "distinctive_features": ["fluffy fur", "small size", "dark brown eyes", "black nose", "pointy erect ears"]
+        },
+        "scene_environment": {
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+          "location": "indoor",
+          "lighting": "Warm and bright",
+          "weather": "snowy",
+          "mood": "Exciting and curious",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": {
+          "interviewee_expression": "curious, attentive, listening intently with closed mouth",
+          "interviewer_voice": "Korean female news anchor, 30s, professional friendly tone"
+        },
+        "scene_details": {
+          "scene_type": "interview_question",
+          "speaker": "interviewer",
+          "character_name": "인터뷰어",
+          "character_type": "human",
+          "is_animal_character": false,
+          "character_description": "Off-screen female interviewer, dog listening",
+          "location": "indoor",
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+          "lighting": "Warm and bright",
+          "weather": "snowy",
+          "mood": "Exciting and curious",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": true,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "excited",
+          "transition": "excited to curious",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "Fur color must stay consistent",
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window must look same throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "excited, preparing to speak"
+          },
+          "0.5_to_8_sec": {
+            "text": "오늘은 스스로를 양반이라 믿는 강아지를 만나봤습니다! 과연 어떤 하루를 보낼까요?",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "excited to curious"
+          }
+        },
+        "mouth_shapes": {
+          "오": "lips form round O",
+          "늘": "lips stretch wide teeth close",
+          "은": "lips stretch wide teeth close",
+          "스": "lips stretch wide teeth close",
+          "로": "lips form round O",
+          "를": "lips stretch wide teeth close",
+          "양": "mouth wide open jaw drops",
+          "반": "mouth wide open jaw drops",
+          "이": "lips stretch sideways teeth visible",
+          "라": "mouth wide open jaw drops",
+          "믿": "lips stretch sideways teeth visible",
+          "는": "lips stretch wide teeth close",
+          "강": "mouth wide open jaw drops",
+          "아": "mouth wide open jaw drops",
+          "지": "lips stretch sideways teeth visible",
+          "만": "mouth wide open jaw drops",
+          "나": "mouth wide open jaw drops",
+          "봤": "lips round then wide",
+          "습": "lips stretch wide teeth close",
+          "니": "lips stretch sideways teeth visible",
+          "다": "mouth wide open jaw drops",
+          "과": "lips round then wide",
+          "연": "mouth medium open rounded",
+          "어": "mouth medium open rounded",
+          "떤": "mouth medium open rounded",
+          "하": "mouth wide open jaw drops",
+          "루": "lips push forward round",
+          "보": "lips form round O",
+          "낼": "mouth open lips stretched",
+          "까": "mouth wide open jaw drops",
+          "요": "lips form round O"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean female news anchor, 30s, professional friendly tone",
+          "voice_effect": null,
+          "dog_lip_sync": false
+        },
+        "index": 1,
+        "segment_number": 1,
+        "start": 0,
+        "end": 8,
+        "narration": "오늘은 스스로를 양반이라 믿는 강아지를 만나봤습니다! 과연 어떤 하루를 보낼까요?",
+        "narration_korean": "오늘은 스스로를 양반이라 믿는 강아지를 만나봤습니다! 과연 어떤 하루를 보낼까요?",
+        "narration_english": "Today, we've met a dog who believes he's a nobleman! Let's see what his day is like!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "MEDIUM SHOT of Pomeranian dog wearing Hanbok, upper body visible, WIDE EYES with sparkling excitement, mouth slightly open in amazement, ears perked up high, BRIGHT studio lighting, vibrant colorful background, HIGH CONTRAST, attention-grabbing composition",
+        "video_prompt": {
+          "character_action": "Looking directly at the camera with a surprised expression",
+          "lip_sync": "no",
+          "facial_expression": "Wide-eyed and excited",
+          "body_movement": "Slight head tilt",
+          "camera_movement": "static",
+          "is_interviewer_speaking": true,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "Korean female news anchor, professional friendly tone",
+          "voice_type": "news_anchor_female",
+          "speaking_speed": "natural",
+          "sound_effects": [],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "Excited and curious",
+          "ambient_sound": "Gentle crackling fireplace sound",
+          "background_music_mood": "cute"
+        },
+        "action_cues": {},
+        "detected_actions": [],
+        "is_hook_scene": true,
+        "thumbnail_optimized": true
+      },
+      {
+        "video": 2,
+        "title": "조선 힙스터 댕댕이: 반전 일상 대공개! - Scene 2",
+        "duration": "6 seconds",
+        "duration_seconds": 6,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "1080p cinematic video. Create an image of a Pomeranian dog wearing a white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie. The dog has golden cream, fluffy fur, dark brown eyes, a black nose, and pointy erect ears. It is wearing a silver hair clip with a floral design and dangling beads on its head. The dog is sitting on a cushion in a traditional Korean room., with silver hair clip with floral design and dangling beads, white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie facing camera. Hanok style living room with calligraphy tools and a snowy landscape outside the window. Warm and bright. Dog with gentle mouth movements. IMPORTANT ACTION: Dog is Holding a calligraphy brush and writing calligraphy with focused concentration, Slightly tilting head while drawing while speaking. Focused and playful expression. zoom_in camera movement. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_6_sec": "땅콩 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "땅콩": "아침에는 서예를 한답니다. 간식 그림 그리는 중이에요!",
+          "script": "아침에는 서예를 한답니다. 간식 그림 그리는 중이에요!",
+          "script_english": "In the morning, I do calligraphy. I'm drawing pictures of snacks!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩": {
+            "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+            "tone": "Playful and innocent",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+            "emotion": "happy",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 6 seconds",
+          "0.0_to_3_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "3_to_6_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same golden cream, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create an image of a Pomeranian dog wearing a white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie. The dog has golden cream, fluffy fur, dark brown eyes, a black nose, and pointy erect ears. It is wearing a silver hair clip with a floral design and dangling beads on its head. The dog is sitting on a cushion in a traditional Korean room.",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "golden cream",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [
+            "silver hair clip with floral design and dangling beads",
+            "white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie"
+          ],
+          "props": [],
+          "distinctive_features": [
+            "fluffy fur",
+            "small size"
+          ]
+        },
+        "scene_environment": {
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+          "location": "indoor",
+          "lighting": "Warm and bright",
+          "weather": "snowy",
+          "mood": "Playful",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "interview_answer",
+          "speaker": "main",
+          "character_name": "땅콩",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+          "lighting": "Warm and bright",
+          "weather": "snowy",
+          "mood": "Playful",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "happy",
+          "transition": "happy to mischievous",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "golden cream must stay same at all times",
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window must look same throughout",
+          "accessories": "silver hair clip with floral design and dangling beads, white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "happy, preparing to speak"
+          },
+          "0.5_to_8_sec": {
+            "text": "아침에는 서예를 한답니다. 간식 그림 그리는 중이에요!",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "happy to playful"
+          }
+        },
+        "mouth_shapes": {
+          "아": "mouth wide open jaw drops",
+          "침": "lips stretch sideways teeth visible",
+          "에": "mouth open stretched",
+          "는": "lips stretch wide teeth close",
+          "서": "mouth medium open rounded",
+          "예": "mouth open stretched",
+          "를": "lips stretch wide teeth close",
+          "한": "mouth wide open jaw drops",
+          "답": "mouth wide open jaw drops",
+          "니": "lips stretch sideways teeth visible",
+          "다": "mouth wide open jaw drops",
+          "간": "mouth wide open jaw drops",
+          "식": "lips stretch sideways teeth visible",
+          "그": "lips stretch wide teeth close",
+          "림": "lips stretch sideways teeth visible",
+          "리": "lips stretch sideways teeth visible",
+          "중": "lips push forward round",
+          "이": "lips stretch sideways teeth visible",
+          "요": "lips form round O"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 2,
+        "segment_number": 2,
+        "start": 8,
+        "end": 16,
+        "narration": "아침에는 서예를 한답니다. 간식 그림 그리는 중이에요!",
+        "narration_korean": "아침에는 서예를 한답니다. 간식 그림 그리는 중이에요!",
+        "narration_english": "In the morning, I do calligraphy. I'm drawing pictures of snacks!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "CLOSE-UP of Pomeranian dog wearing Hanbok, holding a calligraphy brush, looking at the camera with a playful smile, writing on traditional paper, ink and calligraphy tools nearby",
+        "video_prompt": {
+          "character_action": "Holding a calligraphy brush and writing calligraphy with focused concentration",
+          "lip_sync": "yes",
+          "facial_expression": "Focused and playful",
+          "body_movement": "Slightly tilting head while drawing",
+          "camera_movement": "static",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl",
+          "voice_type": "cute_toddler_girl",
+          "speaking_speed": "slow and cute",
+          "sound_effects": [],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "Playful and innocent",
+          "ambient_sound": "Gentle crackling fireplace sound",
+          "background_music_mood": "cute"
+        },
+        "action_cues": {},
+        "detected_actions": [],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 3,
+        "title": "조선 힙스터 댕댕이: 반전 일상 대공개! - Scene 3",
+        "duration": "6 seconds",
+        "duration_seconds": 6,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "1080p cinematic video. Create an image of a Pomeranian dog wearing a white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie. The dog has golden cream, fluffy fur, dark brown eyes, a black nose, and pointy erect ears. It is wearing a silver hair clip with a floral design and dangling beads on its head. The dog is sitting on a cushion in a traditional Korean room., with silver hair clip with floral design and dangling beads, white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie facing camera. Hanok style living room with calligraphy tools and a snowy landscape outside the window. Warm and bright. Dog with gentle mouth movements. IMPORTANT ACTION: Dog is Holding a teacup delicately and sniffing the contents, then taking a small sip, enjoying food deliciously, Slight head tilt while sniffing, sniffing with nose twitching while speaking. Delighted and satisfied expression. zoom_in camera movement. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_6_sec": "땅콩 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "땅콩": "오후에는 품격 있게 차를 마셔야죠. 킁킁... 오늘은 사골 육수에요! 젤 맛있어!",
+          "script": "오후에는 품격 있게 차를 마셔야죠. 킁킁... 오늘은 사골 육수에요! 젤 맛있어!",
+          "script_english": "In the afternoon, I must drink tea with elegance. Sniff sniff... It's bone broth today! The best!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩": {
+            "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+            "tone": "Content and satisfied",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+            "emotion": "happy",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 6 seconds",
+          "0.0_to_3_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "3_to_6_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same golden cream, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create an image of a Pomeranian dog wearing a white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie. The dog has golden cream, fluffy fur, dark brown eyes, a black nose, and pointy erect ears. It is wearing a silver hair clip with a floral design and dangling beads on its head. The dog is sitting on a cushion in a traditional Korean room.",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "golden cream",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [
+            "silver hair clip with floral design and dangling beads",
+            "white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie"
+          ],
+          "props": [],
+          "distinctive_features": [
+            "fluffy fur",
+            "small size"
+          ]
+        },
+        "scene_environment": {
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+          "location": "indoor",
+          "lighting": "Warm and bright",
+          "weather": "snowy",
+          "mood": "Content and elegant",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "interview_answer",
+          "speaker": "main",
+          "character_name": "땅콩",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+          "lighting": "Warm and bright",
+          "weather": "snowy",
+          "mood": "Content and elegant",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "happy",
+          "transition": "happy to satisfied",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "golden cream must stay same at all times",
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window must look same throughout",
+          "accessories": "silver hair clip with floral design and dangling beads, white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "happy, preparing to speak"
+          },
+          "0.5_to_8_sec": {
+            "text": "오후에는 품격 있게 차를 마셔야죠. 킁킁... 오늘은 사골 육수에요! 젤 맛있어!",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "happy to satisfied"
+          }
+        },
+        "mouth_shapes": {
+          "오": "lips form round O",
+          "후": "lips push forward round",
+          "에": "mouth open stretched",
+          "는": "lips stretch wide teeth close",
+          "품": "lips push forward round",
+          "격": "mouth medium open rounded",
+          "있": "lips stretch sideways teeth visible",
+          "게": "mouth open stretched",
+          "차": "mouth wide open jaw drops",
+          "를": "lips stretch wide teeth close",
+          "마": "mouth wide open jaw drops",
+          "셔": "mouth medium open rounded",
+          "야": "mouth wide open jaw drops",
+          "죠": "lips form round O",
+          "킁": "lips stretch wide teeth close",
+          "늘": "lips stretch wide teeth close",
+          "은": "lips stretch wide teeth close",
+          "사": "mouth wide open jaw drops",
+          "골": "lips form round O",
+          "육": "lips push forward round",
+          "수": "lips push forward round",
+          "요": "lips form round O",
+          "젤": "mouth open stretched",
+          "맛": "mouth wide open jaw drops",
+          "어": "mouth medium open rounded"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 3,
+        "segment_number": 3,
+        "start": 16,
+        "end": 24,
+        "narration": "오후에는 품격 있게 차를 마셔야죠. 킁킁... 오늘은 사골 육수에요! 젤 맛있어!",
+        "narration_korean": "오후에는 품격 있게 차를 마셔야죠. 킁킁... 오늘은 사골 육수에요! 젤 맛있어!",
+        "narration_english": "In the afternoon, I must drink tea with elegance. Sniff sniff... It's bone broth today! The best!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "CLOSE-UP of Pomeranian dog wearing Hanbok, holding a traditional Korean teacup, sniffing the liquid inside with a delighted expression, steam rising from the cup, enjoying food deliciously",
+        "video_prompt": {
+          "character_action": "Holding a teacup delicately and sniffing the contents, then taking a small sip, enjoying food deliciously",
+          "lip_sync": "yes",
+          "facial_expression": "Delighted and satisfied",
+          "body_movement": "Slight head tilt while sniffing",
+          "camera_movement": "static",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl",
+          "voice_type": "cute_toddler_girl",
+          "speaking_speed": "slow and cute",
+          "sound_effects": [
+            "Small sipping sound"
+          ],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "Content and satisfied",
+          "ambient_sound": "Gentle crackling fireplace sound",
+          "background_music_mood": "cute"
+        },
+        "action_cues": {},
+        "detected_actions": [
+          {
+            "keyword": "킁킁",
+            "action": "sniffing with nose twitching"
+          }
+        ],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 4,
+        "title": "조선 힙스터 댕댕이: 반전 일상 대공개! - Scene 4",
+        "duration": "8 seconds",
+        "duration_seconds": 8,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "1080p cinematic video. Create an image of a Pomeranian dog wearing a white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie. The dog has golden cream, fluffy fur, dark brown eyes, a black nose, and pointy erect ears. It is wearing a silver hair clip with a floral design and dangling beads on its head. The dog is sitting on a cushion in a traditional Korean room., with silver hair clip with floral design and dangling beads, white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie facing camera. Hanok style living room with calligraphy tools and a snowy landscape outside the window. Warm and bright. Dog with gentle mouth movements. IMPORTANT ACTION: Dog is Flipping through the pages of a snack catalog with interest, eating food, Head moving slightly while reading, eating or chewing something while speaking. Curious and interested expression. zoom_in camera movement. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_8_sec": "땅콩 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "땅콩": "저녁에는 학문에 정진해야 해요. 음... 이 간식은 먹어봤고, 저 간식도 먹어봤어요!",
+          "script": "저녁에는 학문에 정진해야 해요. 음... 이 간식은 먹어봤고, 저 간식도 먹어봤어요!",
+          "script_english": "In the evening, I must dedicate myself to learning. Hmm... I've tried this snack, and that snack too!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩": {
+            "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+            "tone": "Curious and thoughtful",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+            "emotion": "curious",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 8 seconds",
+          "0.0_to_4_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "4_to_8_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same golden cream, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create an image of a Pomeranian dog wearing a white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie. The dog has golden cream, fluffy fur, dark brown eyes, a black nose, and pointy erect ears. It is wearing a silver hair clip with a floral design and dangling beads on its head. The dog is sitting on a cushion in a traditional Korean room.",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "golden cream",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [
+            "silver hair clip with floral design and dangling beads",
+            "white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie"
+          ],
+          "props": [],
+          "distinctive_features": [
+            "fluffy fur",
+            "small size"
+          ]
+        },
+        "scene_environment": {
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+          "location": "indoor",
+          "lighting": "Warm and bright",
+          "weather": "snowy",
+          "mood": "Curious",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "interview_answer",
+          "speaker": "main",
+          "character_name": "땅콩",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+          "lighting": "Warm and bright",
+          "weather": "snowy",
+          "mood": "Curious",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "curious",
+          "transition": "curious to thoughtful",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "golden cream must stay same at all times",
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window must look same throughout",
+          "accessories": "silver hair clip with floral design and dangling beads, white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "curious, preparing to speak"
+          },
+          "0.5_to_8_sec": {
+            "text": "저녁에는 학문에 정진해야 해요. 음... 이 간식은 먹어봤고, 저 간식도 먹어봤어요!",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "curious to thoughtful"
+          }
+        },
+        "mouth_shapes": {
+          "저": "mouth medium open rounded",
+          "녁": "mouth medium open rounded",
+          "에": "mouth open stretched",
+          "는": "lips stretch wide teeth close",
+          "학": "mouth wide open jaw drops",
+          "문": "lips push forward round",
+          "정": "mouth medium open rounded",
+          "진": "lips stretch sideways teeth visible",
+          "해": "mouth open lips stretched",
+          "야": "mouth wide open jaw drops",
+          "요": "lips form round O",
+          "음": "lips stretch wide teeth close",
+          "이": "lips stretch sideways teeth visible",
+          "간": "mouth wide open jaw drops",
+          "식": "lips stretch sideways teeth visible",
+          "은": "lips stretch wide teeth close",
+          "먹": "mouth medium open rounded",
+          "어": "mouth medium open rounded",
+          "봤": "lips round then wide",
+          "고": "lips form round O",
+          "도": "lips form round O"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 4,
+        "segment_number": 4,
+        "start": 24,
+        "end": 32,
+        "narration": "저녁에는 학문에 정진해야 해요. 음... 이 간식은 먹어봤고, 저 간식도 먹어봤어요!",
+        "narration_korean": "저녁에는 학문에 정진해야 해요. 음... 이 간식은 먹어봤고, 저 간식도 먹어봤어요!",
+        "narration_english": "In the evening, I must dedicate myself to learning. Hmm... I've tried this snack, and that snack too!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "CLOSE-UP of Pomeranian dog wearing Hanbok, flipping through the pages of a book that is actually a snack catalog, looking at the pictures with interest, eating food",
+        "video_prompt": {
+          "character_action": "Flipping through the pages of a snack catalog with interest, eating food",
+          "lip_sync": "yes",
+          "facial_expression": "Curious and interested",
+          "body_movement": "Head moving slightly while reading",
+          "camera_movement": "static",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl",
+          "voice_type": "cute_toddler_girl",
+          "speaking_speed": "slow and cute",
+          "sound_effects": [
+            "Page turning sound"
+          ],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "Curious and thoughtful",
+          "ambient_sound": "Gentle crackling fireplace sound",
+          "background_music_mood": "cute"
+        },
+        "action_cues": {},
+        "detected_actions": [
+          {
+            "keyword": "먹",
+            "action": "eating or chewing something"
+          }
+        ],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 5,
+        "title": "조선 힙스터 댕댕이: 반전 일상 대공개! - Scene 5",
+        "duration": "4 seconds",
+        "duration_seconds": 4,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "1080p cinematic video. A young Korean maid (하녀) in traditional hanbok SPEAKING with natural mouth movements to a Pomeranian dog. CRITICAL: The MAID speaks - her mouth must move with Korean lip sync. The DOG listens - dog mouth must stay COMPLETELY CLOSED, no mouth movement at all. Hanok style living room with calligraphy tools and a snowy landscape outside the window. Warm and bright. IMPORTANT: Only the maid's mouth moves while speaking. The dog just looks at the maid with curious expression, mouth sealed shut. Real persons and real dog. Natural appearance. NOT animated. NOT cartoon. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements. No subtitles.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_4_sec": "하녀 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "하녀": "나으리! 목욕 시간이옵니다!",
+          "script": "나으리! 목욕 시간이옵니다!",
+          "script_english": "My lord! It's bath time!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "하녀": {
+            "type": "warm and elegant gentle young woman voice, loving grandmother tone",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 4 seconds",
+          "0.0_to_2_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "2_to_4_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same fur color, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Human speaking - maid speaks",
+          "method": "Maid (young woman) mouth animation, dog mouth stays CLOSED",
+          "mouth_movement": "Maid speaks with natural Korean lip sync",
+          "face": "Maid speaks, dog listens with closed mouth",
+          "do_not": "Do not animate dog mouth - only maid speaks",
+          "dog_speaks": false,
+          "human_speaks": true,
+          "speaker": "하녀"
+        },
+        "character_appearance": {
+          "base": "young woman with warm gentle and elegant expression",
+          "species": "dog",
+          "breed": "unknown",
+          "fur_color": "",
+          "fur_texture": "",
+          "outfit": "",
+          "accessories": [],
+          "props": [],
+          "distinctive_features": []
+        },
+        "scene_environment": {
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+          "location": "indoor",
+          "lighting": "Warm and bright",
+          "weather": "snowy",
+          "mood": "Surprised and scared",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "reaction",
+          "speaker": "sub1",
+          "character_name": "하녀",
+          "character_type": "human",
+          "is_animal_character": false,
+          "character_description": "30s female person",
+          "location": "indoor",
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+          "lighting": "Warm and bright",
+          "weather": "snowy",
+          "mood": "Surprised and scared",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "scared",
+          "transition": "scared",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "Fur color must stay consistent",
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window must look same throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "scared, preparing to speak"
+          },
+          "0.5_to_4_sec": {
+            "text": "나으리! 목욕 시간이옵니다!",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "scared"
+          }
+        },
+        "mouth_shapes": {
+          "나": "mouth wide open jaw drops",
+          "으": "lips stretch wide teeth close",
+          "리": "lips stretch sideways teeth visible",
+          "목": "lips form round O",
+          "욕": "lips form round O",
+          "시": "lips stretch sideways teeth visible",
+          "간": "mouth wide open jaw drops",
+          "이": "lips stretch sideways teeth visible",
+          "옵": "lips form round O",
+          "니": "lips stretch sideways teeth visible",
+          "다": "mouth wide open jaw drops"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Warm and elegant young woman voice",
+          "voice_effect": null,
+          "dog_lip_sync": false,
+          "human_lip_sync": true,
+          "speaker": "하녀"
+        },
+        "index": 5,
+        "segment_number": 5,
+        "start": 32,
+        "end": 36,
+        "narration": "나으리! 목욕 시간이옵니다!",
+        "narration_korean": "나으리! 목욕 시간이옵니다!",
+        "narration_english": "My lord! It's bath time!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "MEDIUM SHOT of Pomeranian dog wearing Hanbok, looking surprised and scared as a ypung-aged woman (Hanyu) enters the room with a towel and a bathtub in the background",
+        "video_prompt": {
+          "character_action": "Looking surprised and scared as someone enters the room",
+          "lip_sync": "yes",
+          "facial_expression": "Surprised and scared",
+          "body_movement": "Backing away slightly",
+          "camera_movement": "static",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "young_female",
+          "voice_type": "young_female",
+          "speaking_speed": "natural",
+          "sound_effects": [],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "Gentle but firm",
+          "ambient_sound": "Gentle crackling fireplace sound",
+          "background_music_mood": "cute"
+        },
+        "action_cues": {},
+        "detected_actions": [],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 6,
+        "title": "조선 힙스터 댕댕이: 반전 일상 대공개! - Scene 6",
+        "duration": "4 seconds",
+        "duration_seconds": 4,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "1080p cinematic video. Create an image of a Pomeranian dog wearing a white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie. The dog has golden cream, fluffy fur, dark brown eyes, a black nose, and pointy erect ears. It is wearing a silver hair clip with a floral design and dangling beads on its head. The dog is sitting on a cushion in a traditional Korean room., with silver hair clip with floral design and dangling beads, white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie facing camera. Hanok style living room with calligraphy tools and a snowy landscape outside the window. Warm and bright. Dog with gentle mouth movements. IMPORTANT ACTION: Dog is Trying to run away from someone, Struggling to escape while speaking. Terrified and resisting expression. dynamic camera movement. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_4_sec": "땅콩 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "땅콩": "안 돼! 나는 양반인데! 목욕은... 싫어!",
+          "script": "안 돼! 나는 양반인데! 목욕은... 싫어!",
+          "script_english": "No! I'm a nobleman! I hate baths!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩": {
+            "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+            "tone": "Scared and resisting",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+            "emotion": "scared",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 4 seconds",
+          "0.0_to_2_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "2_to_4_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same golden cream, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create an image of a Pomeranian dog wearing a white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie. The dog has golden cream, fluffy fur, dark brown eyes, a black nose, and pointy erect ears. It is wearing a silver hair clip with a floral design and dangling beads on its head. The dog is sitting on a cushion in a traditional Korean room.",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "golden cream",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [
+            "silver hair clip with floral design and dangling beads",
+            "white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie"
+          ],
+          "props": [],
+          "distinctive_features": [
+            "fluffy fur",
+            "small size"
+          ]
+        },
+        "scene_environment": {
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+          "location": "indoor",
+          "lighting": "Warm and bright",
+          "weather": "snowy",
+          "mood": "Terrified",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "reaction",
+          "speaker": "main",
+          "character_name": "땅콩",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+          "lighting": "Warm and bright",
+          "weather": "snowy",
+          "mood": "Terrified",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "scared",
+          "transition": "scared to defeated",
+          "ending_expression": null
+        },
+        "consistency_check": {
+          "fur_color": "golden cream must stay same at all times",
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window must look same throughout",
+          "accessories": "silver hair clip with floral design and dangling beads, white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "scared, preparing to speak"
+          },
+          "0.5_to_4_sec": {
+            "text": "안 돼! 나는 양반인데! 목욕은... 싫어!",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "scared to defeated"
+          }
+        },
+        "mouth_shapes": {
+          "안": "mouth wide open jaw drops",
+          "돼": "lips round then stretched",
+          "나": "mouth wide open jaw drops",
+          "는": "lips stretch wide teeth close",
+          "양": "mouth wide open jaw drops",
+          "반": "mouth wide open jaw drops",
+          "인": "lips stretch sideways teeth visible",
+          "데": "mouth open stretched",
+          "목": "lips form round O",
+          "욕": "lips form round O",
+          "은": "lips stretch wide teeth close",
+          "싫": "lips stretch sideways teeth visible",
+          "어": "mouth medium open rounded"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 6,
+        "segment_number": 6,
+        "start": 36,
+        "end": 40,
+        "narration": "안 돼! 나는 양반인데! 목욕은... 싫어!",
+        "narration_korean": "안 돼! 나는 양반인데! 목욕은... 싫어!",
+        "narration_english": "No! I'm a nobleman! I hate baths!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "CLOSE-UP of Pomeranian dog wearing Hanbok, looking terrified and trying to run away from the approaching woman",
+        "video_prompt": {
+          "character_action": "Trying to run away from someone",
+          "lip_sync": "yes",
+          "facial_expression": "Terrified and resisting",
+          "body_movement": "Struggling to escape",
+          "camera_movement": "static",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl",
+          "voice_type": "cute_toddler_girl",
+          "speaking_speed": "slow and cute",
+          "sound_effects": [
+            "Small whimpering sound"
+          ],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "Scared and resisting",
+          "ambient_sound": "Gentle crackling fireplace sound",
+          "background_music_mood": "cute"
+        },
+        "action_cues": {},
+        "detected_actions": [],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 7,
+        "title": "조선 힙스터 댕댕이: 반전 일상 대공개! - Scene 7",
+        "duration": "4 seconds",
+        "duration_seconds": 4,
+        "veo3_compliant": true,
+        "resolution": "8K",
+        "prompt": "1080p cinematic video. Create an image of a Pomeranian dog wearing a white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie. The dog has golden cream, fluffy fur, dark brown eyes, a black nose, and pointy erect ears. It is wearing a silver hair clip with a floral design and dangling beads on its head. The dog is sitting on a cushion in a traditional Korean room., with silver hair clip with floral design and dangling beads, white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie facing camera. Hanok style living room with calligraphy tools and a snowy landscape outside the window. Warm and bright. Dog with gentle mouth movements. IMPORTANT ACTION: Dog is Looking defeated and sad in a bathtub, Slight trembling while speaking. Sad and resigned expression. Same dog appearance maintained throughout. Real living animal. Actual pet. NOT a mascot. NOT a costume. NOT a plush toy. NOT a stuffed animal. NOT a person in animal mask. Real fur. Real animal.. No text anywhere. No signs. No banners. No posters. No letters. No words. No writing. No Korean text. No watermarks. Clean background without any text elements.. No subtitles. No microphone. No human hands. No people. Single dog only.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog waiting",
+            "0.5_to_4_sec": "땅콩 audio, subtle mouth movement"
+          },
+          "interviewer": null,
+          "땅콩": "양반도... 목욕은 해야 하나 봐요... 흑흑...",
+          "script": "양반도... 목욕은 해야 하나 봐요... 흑흑...",
+          "script_english": "Even noblemen... have to take baths, I guess... *sob sob*...",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩": {
+            "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+            "tone": "Sad and resigned",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
+            "emotion": "sad",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 4 seconds",
+          "0.0_to_2_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference",
+            "mouth": "Subtle lip sync"
+          },
+          "2_to_4_sec": {
+            "base": "Same reference image, do not change",
+            "dog": "Same golden cream, same face, same appearance",
+            "mouth": "Subtle open and close for lip sync only",
+            "change_only": "Mouth movement",
+            "keep_same": "Everything else identical to reference image"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create an image of a Pomeranian dog wearing a white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie. The dog has golden cream, fluffy fur, dark brown eyes, a black nose, and pointy erect ears. It is wearing a silver hair clip with a floral design and dangling beads on its head. The dog is sitting on a cushion in a traditional Korean room.",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "golden cream",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [
+            "silver hair clip with floral design and dangling beads",
+            "white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie"
+          ],
+          "props": [],
+          "distinctive_features": [
+            "fluffy fur",
+            "small size"
+          ]
+        },
+        "scene_environment": {
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+          "location": "indoor",
+          "lighting": "Warm and bright",
+          "weather": "none",
+          "mood": "Defeated",
+          "props_in_scene": [],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "interview_answer",
+          "speaker": "main",
+          "character_name": "땅콩",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+          "lighting": "Warm and bright",
+          "weather": "none",
+          "mood": "Defeated",
+          "props_in_scene": [],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "sad",
+          "transition": "sad to crying",
+          "ending_expression": "crying with teary eyes"
+        },
+        "consistency_check": {
+          "fur_color": "golden cream must stay same at all times",
+          "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window must look same throughout",
+          "accessories": "silver hair clip with floral design and dangling beads, white and light purple Hanbok (Korean traditional dress) with floral embroidery and a light purple ribbon tie must be visible throughout"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, relaxed",
+            "expression": "sad, preparing to speak"
+          },
+          "0.5_to_6_sec": {
+            "text": "양반도... 목욕은 해야 하나 봐요... 흑흑...",
+            "mouth": "Precise mouth movements matching Korean syllables, crying sounds at end",
+            "expression": "sad to crying with teary watery eyes"
+          }
+        },
+        "mouth_shapes": {
+          "양": "mouth wide open jaw drops",
+          "반": "mouth wide open jaw drops",
+          "도": "lips form round O",
+          "목": "lips form round O",
+          "욕": "lips form round O",
+          "은": "lips stretch wide teeth close",
+          "해": "mouth open lips stretched",
+          "야": "mouth wide open jaw drops",
+          "하": "mouth wide open jaw drops",
+          "나": "mouth wide open jaw drops",
+          "봐": "lips round then wide",
+          "요": "lips form round O",
+          "흑": "lips push forward crying sound, mouth trembles"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 7,
+        "segment_number": 7,
+        "start": 40,
+        "end": 46,
+        "narration": "양반도... 목욕은 해야 하나 봐요... 흑흑...",
+        "narration_korean": "양반도... 목욕은 해야 하나 봐요... 흑흑...",
+        "narration_english": "Even noblemen... have to take baths, I guess... *sob sob*...",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "CLOSE-UP of Pomeranian dog wearing Hanbok, completely wet and looking defeated in a bathtub",
+        "video_prompt": {
+          "character_action": "Looking defeated and sad in a bathtub, crying at the end",
+          "lip_sync": "yes",
+          "facial_expression": "Sad and crying with teary watery eyes, whimpering expression",
+          "body_movement": "Slight trembling, shoulders shaking from crying",
+          "camera_movement": "static",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl",
+          "voice_type": "cute_toddler_girl",
+          "speaking_speed": "slow and cute",
+          "sound_effects": [
+            "Small whimpering sound"
+          ],
+          "background_sound": "",
+          "bgm_featured": false,
+          "bgm_volume": 0.3,
+          "tts_enabled": true,
+          "voice_tone": "Sad and resigned",
+          "ambient_sound": "Gentle running water sound",
+          "background_music_mood": "cute"
+        },
+        "action_cues": {},
+        "detected_actions": [],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      }
+    ],
+    "total_duration_seconds": 40,
+    "script_reference": {
+      "title": {
+        "japanese": "",
+        "korean": "조선 힙스터 댕댕이: 반전 일상 대공개!",
+        "english": "Joseon Hipster Dog: Revealing a Day of Surprises!"
+      },
+      "topic": "조선힙스터 댕댕이: 반전 일상 대공개!"
+    }
+  }
+}

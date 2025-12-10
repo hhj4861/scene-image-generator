@@ -1,0 +1,29 @@
+{
+  "project_name": "조선-땅콩",
+  "project_id": "joseon_peanut",
+  "title": {
+    "korean": "조선 힙스터 댕댕이: 반전 일상 대공개!",
+    "english": "Joseon Hipster Dog: A Day in the Life!"
+  },
+  "footer": {
+    "korean": "땅콩이의 귀여운 하루 🐶",
+    "english": "Pomeranian TtangKong Cute Day 🐶"
+  },
+  "bgm_url": "https://cdn1.suno.ai/a66a5a1e-0029-48a5-b431-b96b9fe47d5e.mp3",
+  "bgm_volume": 0.25,
+  "scene_count": 7,
+  "default_character": {
+    "name": "땅콩",
+    "breed": "Pomeranian",
+    "fur_color": "golden cream",
+    "accessories": ["silver hair clip with floral design and dangling beads", "white and light purple Hanbok with floral embroidery"]
+  },
+  "default_background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
+  "default_voice": {
+    "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
+    "characteristics": "very slow speech, babbling pronunciation, cute baby talk"
+  },
+  "interviewer_voice": {
+    "type": "Korean female news anchor, 30s, professional friendly tone"
+  }
+}
