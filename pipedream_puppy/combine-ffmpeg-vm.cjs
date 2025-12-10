@@ -254,14 +254,13 @@ async function combineVideos() {
   // 9:16 세로 모드용 레이아웃 설정
   const fontScale = outputWidth / 720;
 
-  const headerY = 80;
-  const headerHeight = 140;
-  const videoAreaY = 350;
-  const videoAreaHeight = 650;
+  const headerY = 20;
+  const headerHeight = 100;
+  const videoAreaY = 130;
+  const videoAreaHeight = 850;
   const videoEndY = videoAreaY + videoAreaHeight;
-  const videoToFooterGap = 40;
-  const footerHeight = 80;
-  const footerY = videoEndY + videoToFooterGap;
+  const footerHeight = 60;
+  const footerY = 1020;
 
   const layoutConfig = {
     video_area: {
@@ -307,16 +306,16 @@ async function combineVideos() {
     font_settings: {
       header_korean: {
         font: "NanumSquareRoundOTFEB",
-        size: Math.round(32 * fontScale),
+        size: Math.round(16 * fontScale),
         color: "white",
-        border_width: Math.round(2 * fontScale),
+        border_width: Math.round(1 * fontScale),
         border_color: "black"
       },
       header_english: {
         font: "NotoSerif-Regular",
-        size: Math.round(16 * fontScale),
+        size: Math.round(10 * fontScale),
         color: "white",
-        border_width: Math.round(1 * fontScale),
+        border_width: Math.round(0.5 * fontScale),
         border_color: "black"
       },
       subtitle_korean: {

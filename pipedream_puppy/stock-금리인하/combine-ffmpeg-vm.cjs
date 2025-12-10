@@ -1,51 +1,70 @@
+/**
+ * Stock 금리인하 → YouTube Shorts 렌더링
+ * - 비디오를 음성 길이에 맞춰 반복 재생
+ * - 씬별 음성 파일 합성
+ * - 타이밍별 자막 적용
+ */
+
 const { Storage } = require("@google-cloud/storage");
-const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
+const { promisify } = require("util");
+const { exec } = require("child_process");
+const axios = require("axios");
+
+const execAsync = promisify(exec);
 
 const FFMPEG_VM_URL = "http://34.64.168.173:3000";
 const GCS_BUCKET = "shorts-videos-storage-mcp-test-457809";
 
-// 플래그 처리: node combine-ffmpeg-vm.cjs origin
-const USE_ORIGIN_SIZE = process.argv[2] === "origin";
+const TEMP_DIR = path.join(__dirname, "temp_render");
 
-// narration.json에서 자막 데이터 로드
-const narrationPath = path.join(__dirname, "script", "narration.json");
-const narrationData = JSON.parse(fs.readFileSync(narrationPath, "utf-8"));
-
-// 씬별 자막 매핑
-function getNarration(sceneIndex) {
-  const scene = narrationData.find(s => s.scene === sceneIndex);
-  if (!scene) return { narration: "", narration_english: "" };
-  return {
-    narration: scene.prompt["한글자막"] || scene.original || "",
-    narration_english: scene.prompt["영어자막"] || ""
-  };
+// ==========================================
+// 오디오/비디오 길이 측정
+// ==========================================
+async function getMediaDuration(filePath) {
+  try {
+    const { stdout } = await execAsync(
+      `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`
+    );
+    return parseFloat(stdout.trim()) || 0;
+  } catch {
+    return 0;
+  }
 }
 
-// Stock 금리인하 스크립트 데이터
-const scriptData = {
-  title: {
-    korean: "오늘 밤 Fed 발표, 이렇게 대응하세요!",
-    english: "Fed Rate Decision Tonight: How to React"
-  },
-  // BGM URL - 생성된 BGM이 있으면 여기에 URL을 넣으세요
-  bgm_url: null, // 현재 BGM 없음 (나레이션이 메인)
-  // 씬 정보 (로컬 파일)
-  scenes: [
-    { index: 1, localFile: "씬1.mp4" },
-    { index: 2, localFile: "씬2.mp4" },
-    { index: 3, localFile: "씬3.mp4" },
-    { index: 4, localFile: "씬4.mp4" },
-    { index: 5, localFile: "씬5.mp4" },
-    { index: 6, localFile: "씬6.mp4" }
-  ]
-};
+// ==========================================
+// 로컬 FFmpeg: 비디오를 음성 길이에 맞춰 반복 재생 + 음성 합성
+// ==========================================
+async function loopVideoWithVoice(videoPath, voicePath, outputPath) {
+  const videoDuration = await getMediaDuration(videoPath);
+  const audioDuration = await getMediaDuration(voicePath);
 
-// 나레이션 오디오 파일 경로
-const NARRATION_AUDIO_DIR = path.join(__dirname, "audio");
+  if (videoDuration <= 0 || audioDuration <= 0) {
+    throw new Error(`Invalid duration: video=${videoDuration}s, audio=${audioDuration}s`);
+  }
 
+  console.log(`      📏 비디오: ${videoDuration.toFixed(2)}s, 음성: ${audioDuration.toFixed(2)}s`);
+
+  if (videoDuration >= audioDuration) {
+    // 비디오가 음성보다 길거나 같으면 그냥 합성 (음성 길이에 맞춰 자름)
+    await execAsync(`ffmpeg -y -i "${videoPath}" -i "${voicePath}" -c:v libx264 -preset ultrafast -c:a aac -map 0:v -map 1:a -t ${audioDuration} "${outputPath}"`);
+  } else {
+    // 비디오가 음성보다 짧으면 반복 재생
+    const loopCount = Math.ceil(audioDuration / videoDuration);
+    console.log(`      🔁 비디오 ${loopCount}회 반복 필요`);
+
+    // stream_loop으로 반복하고 음성 길이에 맞춰 자름
+    await execAsync(`ffmpeg -y -stream_loop ${loopCount - 1} -i "${videoPath}" -i "${voicePath}" -c:v libx264 -preset ultrafast -c:a aac -map 0:v -map 1:a -t ${audioDuration} "${outputPath}"`);
+  }
+
+  return { outputPath, duration: audioDuration };
+}
+
+// ==========================================
+// GCS 업로드 함수
+// ==========================================
 async function uploadToGCS(localPath, gcsPath) {
   const storage = new Storage();
   const bucket = storage.bucket(GCS_BUCKET);
@@ -63,239 +82,206 @@ async function uploadToGCS(localPath, gcsPath) {
   return publicUrl;
 }
 
-// 원본 영상 해상도 가져오기
-function getVideoResolution(videoPath) {
-  try {
-    const output = execSync(
-      `ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "${videoPath}"`,
-      { encoding: "utf8" }
-    ).trim();
-    const [width, height] = output.split(",").map(Number);
-    return { width, height };
-  } catch (err) {
-    console.error(`Failed to get resolution for ${videoPath}`);
-    return { width: 1080, height: 1920 }; // fallback
-  }
-}
+// ==========================================
+// 메인 함수
+// ==========================================
+async function main() {
+  console.log("🎬 Stock 금리인하 → YouTube Shorts 렌더링 시작\n");
 
-// 오디오 파일 길이 가져오기 (ffprobe 사용)
-function getAudioDuration(audioPath) {
-  try {
-    const output = execSync(
-      `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${audioPath}"`,
-      { encoding: "utf8" }
-    ).trim();
-    return parseFloat(output);
-  } catch (err) {
-    console.error(`Failed to get audio duration for ${audioPath}:`, err.message);
-    return 8; // fallback: 8초
-  }
-}
-
-async function combineVideos() {
-  const testFolder = `stock_fed_${Date.now()}`;
   const videoDir = path.join(__dirname, "video");
+  const audioDir = path.join(__dirname, "audio");
+  const scriptPath = path.join(__dirname, "script", "narration.json");
 
-  console.log("===========================================");
-  console.log("Stock 금리인하 - Video Combine with FFmpeg VM");
-  console.log(`Mode: ${USE_ORIGIN_SIZE ? "ORIGIN SIZE" : "1080x1920 (default)"}`);
-  console.log("===========================================\n");
+  // temp 디렉토리 생성
+  if (!fs.existsSync(TEMP_DIR)) {
+    fs.mkdirSync(TEMP_DIR, { recursive: true });
+  }
 
-  // 1. 영상 파일 GCS 업로드 (오디오 길이 기반 duration 설정)
-  console.log("Step 1: Uploading videos to GCS (with audio-synced duration)...\n");
-  const videos = [];
+  // 1. 자막 데이터 로드
+  console.log("📝 [1/6] 자막 데이터 로드...");
+  const narrationData = JSON.parse(fs.readFileSync(scriptPath, "utf8"));
+  console.log(`   - ${narrationData.length}개 씬 로드 완료`);
 
-  for (const scene of scriptData.scenes) {
-    const localPath = path.join(videoDir, scene.localFile);
+  // 2. 씬 정보 설정
+  const scenes = [
+    { index: 1, videoFile: "씬1.mp4", audioFile: "scene_1_narration.mp3" },
+    { index: 2, videoFile: "씬2.mp4", audioFile: "scene_2_narration.mp3" },
+    { index: 3, videoFile: "씬3.mp4", audioFile: "scene_3_narration.mp3" },
+    { index: 4, videoFile: "씬4.mp4", audioFile: "scene_4_narration.mp3" },
+    { index: 5, videoFile: "씬5.mp4", audioFile: "scene_5_narration.mp3" },
+    { index: 6, videoFile: "씬6.mp4", audioFile: "scene_6_narration.mp3" },
+  ];
 
-    if (!fs.existsSync(localPath)) {
-      console.error(`  [SKIP] File not found: ${scene.localFile}`);
+  // 3. 비디오 + 음성 합성 (로컬) - 음성 길이에 맞춰 영상 반복 재생
+  console.log("\n🔊 [2/6] 비디오 + 음성 합성 (로컬 FFmpeg)...");
+  const processedVideos = [];
+
+  for (const scene of scenes) {
+    const videoPath = path.join(videoDir, scene.videoFile);
+    const audioPath = path.join(audioDir, scene.audioFile);
+    const outputPath = path.join(TEMP_DIR, `processed_scene${scene.index}.mp4`);
+
+    if (!fs.existsSync(videoPath)) {
+      console.log(`   ⚠️ [SKIP] Video not found: ${scene.videoFile}`);
       continue;
     }
 
-    const gcsPath = `${testFolder}/scene${scene.index}.mp4`;
-    const url = await uploadToGCS(localPath, gcsPath);
-
-    const { narration, narration_english } = getNarration(scene.index);
-
-    // 씬별 오디오 파일에서 duration 계산
-    const sceneAudioPath = path.join(NARRATION_AUDIO_DIR, `scene_${scene.index}_narration.mp3`);
-    let sceneDuration = 8; // 기본값
-    if (fs.existsSync(sceneAudioPath)) {
-      sceneDuration = getAudioDuration(sceneAudioPath);
-      console.log(`  Scene ${scene.index}: Audio duration = ${sceneDuration.toFixed(2)}s`);
+    if (!fs.existsSync(audioPath)) {
+      console.log(`   ⚠️ [SKIP] Audio not found: ${scene.audioFile}`);
+      continue;
     }
 
-    // 씬별 오디오 업로드
-    let sceneAudioUrl = null;
-    if (fs.existsSync(sceneAudioPath)) {
-      const audioGcsPath = `${testFolder}/audio_scene${scene.index}.mp3`;
-      sceneAudioUrl = await uploadToGCS(sceneAudioPath, audioGcsPath);
-    }
+    console.log(`   📹 씬${scene.index} 처리 중...`);
+    const result = await loopVideoWithVoice(videoPath, audioPath, outputPath);
+    console.log(`   ✅ 씬${scene.index}: ${result.duration.toFixed(2)}s 완료`);
 
-    videos.push({
-      url,
+    processedVideos.push({
       index: scene.index,
-      duration: sceneDuration, // 오디오 길이 기반 duration
-      narration: narration,
-      narration_english: narration_english,
-      tts_audio_url: sceneAudioUrl, // 씬별 TTS 오디오
-      is_performance: false,
-      scene_type: "narration"
+      path: outputPath,
+      duration: result.duration,
+      narration: narrationData.find(n => n.scene === scene.index)
     });
   }
 
-  console.log(`\n  Uploaded ${videos.length} videos\n`);
+  // 4. GCS 업로드
+  console.log("\n☁️ [3/6] GCS 업로드...");
+  const timestamp = Date.now();
+  const folderName = `stock_fed_${timestamp}`;
 
-  // 2. 전체 나레이션 오디오 업로드 (백업용)
-  console.log("Step 2: Uploading full narration audio...\n");
-  const fullNarrationPath = path.join(NARRATION_AUDIO_DIR, "full_narration.mp3");
-  let fullNarrationUrl = null;
-  if (fs.existsSync(fullNarrationPath)) {
-    const audioGcsPath = `${testFolder}/full_narration.mp3`;
-    fullNarrationUrl = await uploadToGCS(fullNarrationPath, audioGcsPath);
-  } else {
-    console.warn("  [WARN] full_narration.mp3 not found!");
+  const videoUrls = [];
+  for (const video of processedVideos) {
+    const gcsPath = `${folderName}/processed_scene${video.index}.mp4`;
+    const url = await uploadToGCS(video.path, gcsPath);
+    videoUrls.push({
+      index: video.index,
+      url,
+      duration: video.duration,
+      narration: video.narration
+    });
   }
 
+  // 5. 타이밍별 자막 생성 (씬 누적 시간 기준)
+  console.log("\n📝 [4/6] 타이밍별 자막 생성...");
+  const timed_subtitles = [];
+  let cumulativeTime = 0;
 
-  // origin 모드일 경우 첫 번째 영상의 해상도 사용
-  let outputWidth = 1080;
-  let outputHeight = 1920;
+  for (const video of videoUrls) {
+    const narration = video.narration;
+    const sceneDuration = video.duration;
 
-  if (USE_ORIGIN_SIZE) {
-    const firstVideoPath = path.join(videoDir, scriptData.scenes[0].localFile);
-    const resolution = getVideoResolution(firstVideoPath);
-    outputWidth = resolution.width;
-    outputHeight = resolution.height;
-    console.log(`  Using origin size: ${outputWidth}x${outputHeight}\n`);
+    if (narration && narration.subtitles) {
+      // 새 형식: 각 씬에 여러 개의 자막이 있음
+      for (const sub of narration.subtitles) {
+        const absoluteStart = cumulativeTime + sub.start_time;
+        const absoluteEnd = cumulativeTime + sub.end_time;
+
+        timed_subtitles.push({
+          start_time: absoluteStart,
+          end_time: absoluteEnd,
+          text_ko: sub.text_ko || "",
+          text_en: sub.text_en || "",
+          color: "white"
+        });
+
+        console.log(`   📌 ${absoluteStart.toFixed(2)}s - ${absoluteEnd.toFixed(2)}s: "${sub.text_ko.substring(0, 30)}..."`);
+      }
+    }
+
+    cumulativeTime += sceneDuration;
   }
 
-  // 3. FFmpeg VM API 호출
-  console.log("Step 3: Calling FFmpeg VM API...\n");
+  console.log(`   총 ${timed_subtitles.length}개 자막 생성, 총 길이: ${cumulativeTime.toFixed(2)}s`);
 
-  // 9:16 세로 모드용 레이아웃 설정 (조선-땅콩 스타일)
-  const fontScale = outputWidth / 720; // 720 기준 스케일
+  // 6. FFmpeg VM에 렌더링 요청
+  console.log("\n🎥 [5/6] FFmpeg VM 렌더링 요청...");
 
-  // 세로(9:16) 레이아웃: 여백 충분히 확보
-  const headerY = 80;              // 상단 여백
-  const headerHeight = 140;        // 헤더 영역 (한글+영어)
-  const videoAreaY = 350;          // 영상 시작 Y 고정
-  const videoAreaHeight = 650;     // 영상 높이
-  const videoEndY = videoAreaY + videoAreaHeight;  // 1000
+  // 비디오 데이터 구성
+  const videos = videoUrls.map((v) => ({
+    index: v.index,
+    url: v.url,
+    duration: v.duration,
+    scene_type: "narration",
+    speaker: "main"
+  }));
 
-  const videoToFooterGap = 40;     // 영상-푸터 사이 여백
-  const footerHeight = 80;         // 푸터 영역
-  const footerY = videoEndY + videoToFooterGap;  // 1020
+  // 9:16 레이아웃 설정
+  const outputWidth = 1080;
+  const outputHeight = 1920;
 
-  // 레이아웃 설정
+  // 레이아웃 계산 (상단 여백 줄이고, 영상-푸터 간격 80px)
+  const headerY = 100;              // 헤더 시작: 100px
+  const headerHeight = 130;         // 헤더 영역 (한글+영어)
+  const videoAreaY = 250;           // 영상 시작: 250px (헤더와 가까이)
+  const footerHeight = 120;         // 푸터 높이
+  const footerY = 1670;             // 푸터 시작: 1670px (80 위로)
+  const videoFooterGap = 80;        // 영상-푸터 간격
+  const videoAreaHeight = footerY - videoFooterGap - videoAreaY;  // 1340px
+  const subtitleY = 1470;           // 자막 위치: 1470px (80 위로)
+
   const layoutConfig = {
-    video_area: {
-      x: 0,
-      y: videoAreaY,
-      width: outputWidth,
-      height: videoAreaHeight
-    },
-    header_area: {
-      y: headerY,
-      height: headerHeight
-    },
-    subtitle_area: {
-      y: videoEndY - 160, // 영상 하단에 자막 (840)
-      height: 140,
-      single_line: false,
-      max_lines: 2
-    },
-    footer_area: {
-      y: footerY,
-      height: footerHeight
-    },
-    font_scale: fontScale
+    video_area: { x: 0, y: videoAreaY, width: outputWidth, height: videoAreaHeight },
+    header_area: { y: headerY, height: headerHeight },
+    subtitle_area: { y: subtitleY, height: 180, single_line: false, max_lines: 2 },
+    footer_area: { y: footerY, height: footerHeight },
+    font_scale: 1
   };
 
-  const requestPayload = {
-    videos: videos.sort((a, b) => a.index - b.index),
-    header_text: scriptData.title.korean,
-    header_text_english: scriptData.title.english,
-    footer_text: "📊 주식 분석 채널 구독하기",
-    footer_text_english: "📊 Subscribe for Stock Analysis",
+  const renderPayload = {
+    videos: videos,
+    header_text: "오늘 밤 Fed 발표, 이렇게 대응하세요!",
+    header_text_english: "Fed Rate Decision Tonight: How to React",
+    footer_text: "주식 분석 채널 구독하기",
+    footer_text_english: "Subscribe for Stock Analysis",
+    timed_subtitles: timed_subtitles,  // 타이밍별 자막 배열
     subtitle_enabled: true,
     subtitle_english_enabled: true,
-    bgm_url: fullNarrationUrl, // 전체 나레이션을 BGM 대신 사용
-    bgm_volume: 1.0, // 나레이션은 100% 볼륨
-    narration_url: fullNarrationUrl, // 나레이션 전용 필드 (VM에서 지원하는 경우)
+    use_original_audio: true,  // 이미 로컬에서 음성 합성됨
     width: outputWidth,
     height: outputHeight,
     use_origin_size: true,
     origin_layout: layoutConfig,
     output_bucket: GCS_BUCKET,
-    output_path: `${testFolder}/final_stock_fed.mp4`,
-    folder_name: testFolder,
-    // 폰트 스타일 설정 (조선-땅콩 스타일)
+    output_path: `${folderName}/final_stock_fed.mp4`,
+    folder_name: folderName,
     font_settings: {
-      header_korean: {
-        font: "NanumSquareRoundOTFEB",
-        size: Math.round(32 * fontScale),
-        color: "white",
-        border_width: Math.round(2 * fontScale),
-        border_color: "black"
-      },
-      header_english: {
-        font: "NotoSerif-Regular",
-        size: Math.round(16 * fontScale),
-        color: "white",
-        border_width: Math.round(1 * fontScale),
-        border_color: "black"
-      },
-      subtitle_korean: {
-        font: "NanumSquareRoundOTFEB",
-        size: Math.round(36 * fontScale),
-        color: "white",
-        border_width: Math.round(3 * fontScale),
-        border_color: "black"
-      },
-      subtitle_english: {
-        font: "NotoSerif-Regular",
-        size: Math.round(24 * fontScale),
-        color: "white",
-        border_width: Math.round(2 * fontScale),
-        border_color: "black"
-      }
+      header_korean: { font: "NanumSquareRoundOTFEB", size: 80, color: "white", border_width: 5, border_color: "black" },
+      header_english: { font: "NotoSerif-Regular", size: 42, color: "white", border_width: 3, border_color: "black" },
+      subtitle_korean: { font: "NanumSquareRoundOTFEB", size: 63, color: "white", border_width: 6, border_color: "black" },
+      subtitle_english: { font: "NotoSerif-Regular", size: 39, color: "white", border_width: 4, border_color: "black" }
     }
   };
 
-  console.log("Request payload:");
-  console.log(JSON.stringify(requestPayload, null, 2));
-  console.log("\n");
+  console.log("\n📤 렌더링 요청 데이터:");
+  console.log(`   - 비디오: ${videos.length}개`);
+  console.log(`   - 타이밍 자막: ${timed_subtitles.length}개`);
+  console.log(`   - 총 길이: ${cumulativeTime.toFixed(2)}s`);
 
   try {
-    console.log("Sending request to FFmpeg VM...");
-    const startTime = Date.now();
-
-    const response = await axios.post(
-      `${FFMPEG_VM_URL}/render/puppy`,
-      requestPayload,
-      {
-        headers: { "Content-Type": "application/json" },
-        timeout: 600000 // 10분
-      }
-    );
-
-    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    const response = await axios.post(`${FFMPEG_VM_URL}/render/puppy`, renderPayload, {
+      headers: { "Content-Type": "application/json" },
+      timeout: 600000
+    });
 
     console.log("\n===========================================");
     console.log("SUCCESS!");
     console.log("===========================================");
-    console.log(`Time elapsed: ${elapsed}s`);
-    console.log(`Job ID: ${response.data.job_id}`);
-    console.log(`Total duration: ${response.data.total_duration?.toFixed(1)}s`);
+    console.log(`Time elapsed: ${response.data.elapsed || "N/A"}`);
+    console.log(`Total duration: ${response.data.total_duration}s`);
     console.log(`Output URL: ${response.data.url}`);
-    console.log("\nStats:", JSON.stringify(response.data.stats, null, 2));
 
     // 로컬에 결과 URL 저장
     const resultPath = path.join(__dirname, "output_url.txt");
     fs.writeFileSync(resultPath, response.data.url);
     console.log(`\nOutput URL saved to: ${resultPath}`);
+
+    // 7. temp 파일 정리
+    console.log("\n🧹 [6/6] 임시 파일 정리...");
+    for (const video of processedVideos) {
+      if (fs.existsSync(video.path)) {
+        fs.unlinkSync(video.path);
+      }
+    }
+    console.log("   ✅ 정리 완료");
 
     return response.data;
 
@@ -312,13 +298,13 @@ async function combineVideos() {
 }
 
 // 실행
-combineVideos()
-  .then(result => {
-    console.log("\n\nVideo combine completed successfully!");
-    process.exit(0);
-  })
-  .catch(err => {
-    console.error("\n\nVideo combine failed!");
-    process.exit(1);
-  });
-
+main().then(result => {
+  console.log("\n🎉 완료!");
+  if (result?.url) {
+    console.log(`📺 최종 영상: ${result.url}`);
+  }
+  process.exit(0);
+}).catch(err => {
+  console.error("Error:", err);
+  process.exit(1);
+});

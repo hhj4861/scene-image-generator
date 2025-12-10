@@ -169,8 +169,18 @@
           "do_not": "Do not animate dog mouth at all",
           "dog_speaks": false,
           "mouth_state": "CLOSED",
-          "allowed_movements": ["head_tilt", "ear_twitch", "eye_blink", "gentle_head_nod"],
-          "forbidden_movements": ["mouth_open", "lip_movement", "jaw_movement", "tongue_visible"]
+          "allowed_movements": [
+            "head_tilt",
+            "ear_twitch",
+            "eye_blink",
+            "gentle_head_nod"
+          ],
+          "forbidden_movements": [
+            "mouth_open",
+            "lip_movement",
+            "jaw_movement",
+            "tongue_visible"
+          ]
         },
         "character_appearance": {
           "base": "Pomeranian dog wearing white and light purple Hanbok with floral embroidery",
@@ -179,9 +189,17 @@
           "fur_color": "golden cream",
           "fur_texture": "fluffy",
           "outfit": "white and light purple Hanbok (Korean traditional dress) with floral embroidery",
-          "accessories": ["silver hair clip with floral design and dangling beads"],
+          "accessories": [
+            "silver hair clip with floral design and dangling beads"
+          ],
           "props": [],
-          "distinctive_features": ["fluffy fur", "small size", "dark brown eyes", "black nose", "pointy erect ears"]
+          "distinctive_features": [
+            "fluffy fur",
+            "small size",
+            "dark brown eyes",
+            "black nose",
+            "pointy erect ears"
+          ]
         },
         "scene_environment": {
           "background": "Hanok style living room with calligraphy tools and a snowy landscape outside the window",
@@ -1321,17 +1339,17 @@
             "0.5_to_4_sec": "땅콩 audio, subtle mouth movement"
           },
           "interviewer": null,
-          "땅콩": "양반도... 목욕은 해야 하나 봐요... 흑흑...",
-          "script": "양반도... 목욕은 해야 하나 봐요... 흑흑...",
-          "script_english": "Even noblemen... have to take baths, I guess... *sob sob*...",
+          "땅콩": "양반도... 목욕은 해야 하나 봐요...",
+          "script": "양반도... 목욕은 해야 하나 봐요...",
+          "script_english": "Even noblemen... have to take baths, I guess...",
           "audio_only": true
         },
         "voice_settings": {
           "땅콩": {
             "type": "Korean baby infant voice, 2-3 years old, low-pitched adorable tone",
-            "tone": "Sad and resigned",
+            "tone": "Playful and accepting",
             "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft low voice",
-            "emotion": "sad",
+            "emotion": "happy",
             "laugh_style": "Adorable baby giggling, soft cooing laughter",
             "consistent_across": "All videos"
           }
@@ -1408,9 +1426,9 @@
         },
         "performance_info": null,
         "emotion": {
-          "primary": "sad",
-          "transition": "sad to crying",
-          "ending_expression": "crying with teary eyes"
+          "primary": "happy",
+          "transition": "happy to accepting",
+          "ending_expression": "cute accepting smile"
         },
         "consistency_check": {
           "fur_color": "golden cream must stay same at all times",
@@ -1431,9 +1449,9 @@
             "expression": "sad, preparing to speak"
           },
           "0.5_to_6_sec": {
-            "text": "양반도... 목욕은 해야 하나 봐요... 흑흑...",
-            "mouth": "Precise mouth movements matching Korean syllables, crying sounds at end",
-            "expression": "sad to crying with teary watery eyes"
+            "text": "양반도... 목욕은 해야 하나 봐요...",
+            "mouth": "Precise mouth movements matching Korean syllables",
+            "expression": "happy to accepting smile"
           }
         },
         "mouth_shapes": {
@@ -1448,8 +1466,7 @@
           "하": "mouth wide open jaw drops",
           "나": "mouth wide open jaw drops",
           "봐": "lips round then wide",
-          "요": "lips form round O",
-          "흑": "lips push forward crying sound, mouth trembles"
+          "요": "lips form round O"
         },
         "tts_info": {
           "tts_enabled": true,
@@ -1461,17 +1478,17 @@
         "segment_number": 7,
         "start": 40,
         "end": 46,
-        "narration": "양반도... 목욕은 해야 하나 봐요... 흑흑...",
-        "narration_korean": "양반도... 목욕은 해야 하나 봐요... 흑흑...",
-        "narration_english": "Even noblemen... have to take baths, I guess... *sob sob*...",
+        "narration": "양반도... 목욕은 해야 하나 봐요...",
+        "narration_korean": "양반도... 목욕은 해야 하나 봐요...",
+        "narration_english": "Even noblemen... have to take baths, I guess...",
         "spoken_language": "korean",
         "has_narration": true,
         "image_prompt": "CLOSE-UP of Pomeranian dog wearing Hanbok, completely wet and looking defeated in a bathtub",
         "video_prompt": {
-          "character_action": "Looking defeated and sad in a bathtub, crying at the end",
+          "character_action": "Looking cute and accepting in a bathtub",
           "lip_sync": "yes",
-          "facial_expression": "Sad and crying with teary watery eyes, whimpering expression",
-          "body_movement": "Slight trembling, shoulders shaking from crying",
+          "facial_expression": "Playful yet accepting expression, cute smile",
+          "body_movement": "Slight head tilt, relaxed posture",
           "camera_movement": "static",
           "is_interviewer_speaking": false,
           "lip_sync_to": "tts",
@@ -1490,7 +1507,7 @@
           "bgm_featured": false,
           "bgm_volume": 0.3,
           "tts_enabled": true,
-          "voice_tone": "Sad and resigned",
+          "voice_tone": "Playful and accepting",
           "ambient_sound": "Gentle running water sound",
           "background_music_mood": "cute"
         },

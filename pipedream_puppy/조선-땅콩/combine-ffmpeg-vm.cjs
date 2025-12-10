@@ -25,13 +25,14 @@ function getNarration(sceneIndex) {
   };
 }
 
-// 조선-땅콩 스크립트 데이터
+// 조선 땅콩 스크립트 데이터
 const scriptData = {
   title: {
     korean: "조선 힙스터 댕댕이: 반전 일상 대공개!",
-    english: "Joseon Hipster Dog: A Day in the Life!"
+    english: "Joseon Hipster Dog: Revealing a Day of Surprises!"
   },
-  bgm_url: "https://cdn1.suno.ai/a66a5a1e-0029-48a5-b431-b96b9fe47d5e.mp3", // 임시 BGM
+  // BGM URL - 한옥/전통 느낌의 BGM (없으면 빈 문자열로 설정)
+  bgm_url: "",  // TODO: BGM URL 추가 필요
   scenes: [
     { index: 1, localFile: "scene1_veo3_json.mp4" },
     { index: 2, localFile: "scene2_veo3_json.mp4" },
@@ -71,7 +72,7 @@ function getVideoResolution(videoPath) {
     return { width, height };
   } catch (err) {
     console.error(`Failed to get resolution for ${videoPath}`);
-    return { width: 1280, height: 720 }; // fallback (16:9 landscape)
+    return { width: 1080, height: 1920 }; // fallback
   }
 }
 
@@ -80,8 +81,8 @@ async function combineVideos() {
   const videoDir = path.join(__dirname, "video");
 
   console.log("===========================================");
-  console.log("조선-땅콩 - Video Combine with FFmpeg VM");
-  console.log(`Mode: ${USE_ORIGIN_SIZE ? "ORIGIN SIZE" : "1920x1080 (default)"}`);
+  console.log("조선 땅콩 - Video Combine with FFmpeg VM");
+  console.log(`Mode: ${USE_ORIGIN_SIZE ? "ORIGIN SIZE" : "1080x1920 (default)"}`);
   console.log("===========================================\n");
 
   // 1. 영상 파일 GCS 업로드
@@ -113,39 +114,33 @@ async function combineVideos() {
 
   console.log(`\n  Uploaded ${videos.length} videos\n`);
 
-  if (videos.length === 0) {
-    console.error("No videos found to combine!");
-    process.exit(1);
-  }
+  // origin 모드일 경우 첫 번째 영상의 해상도 사용
+  let outputWidth = 1080;
+  let outputHeight = 1920;
 
-  // 첫 번째 영상의 해상도를 기본으로 사용 (9:16 Shorts용)
-  const firstVideoPath = path.join(videoDir, scriptData.scenes[0].localFile);
-  let outputWidth = 720;  // 9:16 Shorts 기본값
-  let outputHeight = 1280;
-
-  if (fs.existsSync(firstVideoPath)) {
+  if (USE_ORIGIN_SIZE) {
+    const firstVideoPath = path.join(videoDir, scriptData.scenes[0].localFile);
     const resolution = getVideoResolution(firstVideoPath);
     outputWidth = resolution.width;
     outputHeight = resolution.height;
+    console.log(`  Using origin size: ${outputWidth}x${outputHeight}\n`);
   }
-  console.log(`  Output size: ${outputWidth}x${outputHeight}\n`);
 
   // 2. FFmpeg VM API 호출
   console.log("Step 2: Calling FFmpeg VM API...\n");
 
-  // 9:16 세로 모드용 레이아웃 설정
-  const fontScale = outputWidth / 720; // 720 기준 스케일
+  // 레이아웃 및 폰트 스케일 설정
+  const fontScale = USE_ORIGIN_SIZE ? (outputWidth / 1080) : 1;
 
-  // 세로(9:16) 레이아웃: 여백 충분히 확보
-  const headerY = 80;              // 상단 여백
-  const headerHeight = 140;        // 헤더 영역 (한글+영어)
-  const videoAreaY = 350;          // 영상 시작 Y 고정
-  const videoAreaHeight = 650;     // 영상 높이
-  const videoEndY = videoAreaY + videoAreaHeight;  // 1000
-
-  const videoToFooterGap = 40;     // 영상-푸터 사이 여백
-  const footerHeight = 80;         // 푸터 영역
-  const footerY = videoEndY + videoToFooterGap;  // 1020
+  // 조선시대 테마에 맞는 레이아웃
+  const headerY = 100;
+  const headerHeight = 130;
+  const headerGap = 20;
+  const videoAreaY = headerY + headerHeight + headerGap; // 250px
+  const footerHeight = 100;
+  const footerY = 1700;
+  const videoEndY = footerY - 80;
+  const videoAreaHeight = videoEndY - videoAreaY;
 
   // 레이아웃 설정
   const layoutConfig = {
@@ -160,8 +155,8 @@ async function combineVideos() {
       height: headerHeight
     },
     subtitle_area: {
-      y: videoEndY - 160, // 영상 하단에 자막 (830)
-      height: 140,
+      y: 1400,
+      height: 180,
       single_line: false,
       max_lines: 2
     },
@@ -176,12 +171,12 @@ async function combineVideos() {
     videos: videos.sort((a, b) => a.index - b.index),
     header_text: scriptData.title.korean,
     header_text_english: scriptData.title.english,
-    footer_text: "땅콩이의 귀여운 하루 🐶",
-    footer_text_english: "Pomeranian TtangKong Cute Day 🐶",
+    footer_text: "조선시대 양반견 땅콩이 🐕",
+    footer_text_english: "Joseon Nobleman Dog TtangKong 🐕",
     subtitle_enabled: true,
     subtitle_english_enabled: true,
-    bgm_url: scriptData.bgm_url,
-    bgm_volume: 0.25,
+    bgm_url: scriptData.bgm_url || undefined,
+    bgm_volume: scriptData.bgm_url ? 0.25 : 0,
     width: outputWidth,
     height: outputHeight,
     use_origin_size: true,
@@ -189,34 +184,33 @@ async function combineVideos() {
     output_bucket: GCS_BUCKET,
     output_path: `${testFolder}/final_joseon_peanut.mp4`,
     folder_name: testFolder,
-    // 폰트 스타일 설정
     font_settings: {
       header_korean: {
         font: "NanumSquareRoundOTFEB",
-        size: Math.round(32 * fontScale),
-        color: "white",
-        border_width: Math.round(2 * fontScale),
-        border_color: "black"
-      },
-      header_english: {
-        font: "NotoSerif-Regular",
-        size: Math.round(16 * fontScale),
-        color: "white",
-        border_width: Math.round(1 * fontScale),
-        border_color: "black"
-      },
-      subtitle_korean: {
-        font: "NanumSquareRoundOTFEB",
-        size: Math.round(36 * fontScale),
+        size: Math.round(42 * fontScale),
         color: "white",
         border_width: Math.round(3 * fontScale),
         border_color: "black"
       },
-      subtitle_english: {
+      header_english: {
         font: "NotoSerif-Regular",
-        size: Math.round(24 * fontScale),
+        size: Math.round(20 * fontScale),
         color: "white",
         border_width: Math.round(2 * fontScale),
+        border_color: "black"
+      },
+      subtitle_korean: {
+        font: "NanumSquareRoundOTFEB",
+        size: Math.round(55 * fontScale),
+        color: "white",
+        border_width: Math.round(4 * fontScale),
+        border_color: "black"
+      },
+      subtitle_english: {
+        font: "NotoSerif-Regular",
+        size: Math.round(32 * fontScale),
+        color: "white",
+        border_width: Math.round(3 * fontScale),
         border_color: "black"
       }
     }

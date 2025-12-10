@@ -2,49 +2,193 @@
   {
     "scene": 1,
     "original": "오늘 밤 Fed 발표 이렇게 대응하세요. 오늘 밤 새벽 3시 Fed 금리 발표. 2025년 마지막 초대형 이벤트입니다. 지금부터 딱 13시간 남았습니다.",
-    "prompt": {
-      "한글자막": "오늘 밤 Fed 발표, 이렇게 대응하세요. 새벽 3시, 2025년 마지막 초대형 이벤트가 13시간 남았습니다.",
-      "영어자막": "Here's how to react to the Fed's announcement tonight. The rate decision is at 3 AM. The last mega-event of 2025 is just 13 hours away."
-    }
+    "audio_duration": 11.10,
+    "subtitles": [
+      {
+        "start_time": 0.0,
+        "end_time": 3.5,
+        "text_ko": "오늘 밤 Fed 발표, 이렇게 대응하세요!",
+        "text_en": "Fed announcement tonight - here is how to react!"
+      },
+      {
+        "start_time": 3.5,
+        "end_time": 7.0,
+        "text_ko": "새벽 3시 Fed 금리 발표",
+        "text_en": "Fed rate decision at 3 AM"
+      },
+      {
+        "start_time": 7.0,
+        "end_time": 11.10,
+        "text_ko": "2025년 마지막 초대형 이벤트! 13시간 남음",
+        "text_en": "Last mega-event of 2025! 13 hours left"
+      }
+    ]
   },
   {
     "scene": 2,
     "original": "어제 미국 증시는 S&P 500 마이너스 0.09%, Nasdaq 플러스 0.13%, Dow 마이너스 0.38%로 완전 관망세를 보였습니다. 모두 Fed 발표만 기다리고 있습니다.",
-    "prompt": {
-      "한글자막": "어제 미국 증시는 완전 관망세. 모두가 Fed 발표만 기다리고 있습니다.",
-      "영어자막": "Yesterday, the US market was in a complete wait-and-see mode. Everyone is waiting for the Fed's announcement."
-    }
+    "audio_duration": 13.98,
+    "subtitles": [
+      {
+        "start_time": 0.0,
+        "end_time": 4.5,
+        "text_ko": "어제 미국 증시: S앤P 마이너스 0.09퍼",
+        "text_en": "Yesterday US market: S and P minus 0.09 per"
+      },
+      {
+        "start_time": 4.5,
+        "end_time": 8.5,
+        "text_ko": "나스닥 플러스 0.13퍼, 다우 마이너스 0.38퍼",
+        "text_en": "Nasdaq plus 0.13 per, Dow minus 0.38 per"
+      },
+      {
+        "start_time": 8.5,
+        "end_time": 13.98,
+        "text_ko": "완전 관망세! 모두가 Fed만 기다리는 중",
+        "text_en": "Complete wait-and-see mode! Everyone waiting for Fed"
+      }
+    ]
   },
   {
     "scene": 3,
     "original": "문제는 매파적 인하입니다. 금리는 내리는데 파월 의장이 금리가 적정 수준이다라고 발언한다면 이는 추가 인하가 없다는 신호로 해석될 수 있습니다. 이 경우 고평가 성장주가 대폭락할 가능성이 있을 것으로 보입니다.",
-    "prompt": {
-      "한글자막": "문제는 '매파적 인하'. 금리를 내리면서 \"금리는 적정 수준\"이라 발언하면 추가 인하가 없다는 신호! 고평가 성장주가 폭락할 수 있습니다.",
-      "영어자막": "The problem is a 'hawkish cut.' If Powell cuts rates but says they're at an 'appropriate level,' it signals no more cuts. High-growth stocks could crash."
-    }
+    "audio_duration": 15.65,
+    "subtitles": [
+      {
+        "start_time": 0.0,
+        "end_time": 3.5,
+        "text_ko": "주의! 문제는 매파적 인하",
+        "text_en": "Warning! The problem: Hawkish Cut"
+      },
+      {
+        "start_time": 3.5,
+        "end_time": 8.0,
+        "text_ko": "금리 인하 플러스 적정 수준 발언",
+        "text_en": "Rate cut plus appropriate level comment"
+      },
+      {
+        "start_time": 8.0,
+        "end_time": 12.0,
+        "text_ko": "이건 추가 인하 없다는 신호!",
+        "text_en": "This signals no more cuts!"
+      },
+      {
+        "start_time": 12.0,
+        "end_time": 15.65,
+        "text_ko": "고평가 성장주 폭락 가능성",
+        "text_en": "High-growth stocks could crash"
+      }
+    ]
   },
   {
     "scene": 4,
     "original": "세 가지 시나리오가 점쳐지고 있습니다. 첫째 비둘기파적 발표 시 50% 확률로 Nasdaq이 2% 상승하고 둘째 매파적 인하 시 40% 확률로 시장이 1.5% 조정을 받을 수 있습니다. 셋째 금리 동결 시 10% 확률로 Nasdaq이 4% 폭락할 가능성이 시사되고 있습니다.",
-    "prompt": {
-      "한글자막": "시나리오는 셋. 1) 비둘기파적 발표: 나스닥 2% 상승(50%). 2) 매파적 인하: 1.5% 조정(40%). 3) 금리 동결: 나스닥 4% 폭락(10%).",
-      "영어자막": "Three scenarios: 1) Dovish: Nasdaq +2% (50% chance). 2) Hawkish cut: Market correction of 1.5% (40% chance). 3) Rate hold: Nasdaq -4% (10% chance)."
-    }
+    "audio_duration": 21.92,
+    "subtitles": [
+      {
+        "start_time": 0.0,
+        "end_time": 3.0,
+        "text_ko": "세 가지 시나리오",
+        "text_en": "Three Scenarios"
+      },
+      {
+        "start_time": 3.0,
+        "end_time": 8.0,
+        "text_ko": "첫째 비둘기파: 나스닥 플러스 2퍼 (50퍼 확률)",
+        "text_en": "First Dovish: Nasdaq plus 2 per (50 per chance)"
+      },
+      {
+        "start_time": 8.0,
+        "end_time": 14.0,
+        "text_ko": "둘째 매파적 인하: 1.5퍼 조정 (40퍼 확률)",
+        "text_en": "Second Hawkish Cut: 1.5 per correction (40 per chance)"
+      },
+      {
+        "start_time": 14.0,
+        "end_time": 21.92,
+        "text_ko": "셋째 금리 동결: 나스닥 마이너스 4퍼 폭락 (10퍼 확률)",
+        "text_en": "Third Rate Hold: Nasdaq minus 4 per crash (10 per chance)"
+      }
+    ]
   },
   {
     "scene": 5,
     "original": "타임라인을 반드시 기억해야 합니다. 밤 11시 30분 프리마켓, 자정 정규장 오픈, 새벽 3시 Fed 발표, 새벽 3시 30분 파월 의장 기자회견 순입니다. 이 3시간이 올해 가장 중요할 것으로 보입니다.",
-    "prompt": {
-      "한글자막": "타임라인 기억하세요. 11:30 PM 프리마켓, 12 AM 정규장, 3 AM Fed 발표, 3:30 AM 기자회견. 올해 가장 중요한 3시간입니다.",
-      "영어자막": "Remember the timeline. 11:30 PM Pre-market, 12 AM Open, 3 AM Fed announcement, 3:30 AM Powell's press conference. The most crucial 3 hours of the year."
-    }
+    "audio_duration": 14.63,
+    "subtitles": [
+      {
+        "start_time": 0.0,
+        "end_time": 2.5,
+        "text_ko": "타임라인 기억하세요!",
+        "text_en": "Remember the Timeline!"
+      },
+      {
+        "start_time": 2.5,
+        "end_time": 5.5,
+        "text_ko": "밤 11시 30분 프리마켓",
+        "text_en": "11:30 PM Pre-market"
+      },
+      {
+        "start_time": 5.5,
+        "end_time": 8.0,
+        "text_ko": "자정 12시 정규장 오픈",
+        "text_en": "12:00 AM Market Open"
+      },
+      {
+        "start_time": 8.0,
+        "end_time": 11.0,
+        "text_ko": "새벽 3시 Fed 발표",
+        "text_en": "3:00 AM Fed Announcement"
+      },
+      {
+        "start_time": 11.0,
+        "end_time": 14.63,
+        "text_ko": "새벽 3시 30분 파월 기자회견, 올해 가장 중요한 3시간!",
+        "text_en": "3:30 AM Powell Press Conference, Most crucial 3 hours!"
+      }
+    ]
   },
   {
     "scene": 6,
     "original": "발표 전 급매수와 발표 후 패닉 매도는 절대 금물입니다. 반드시 새벽 3시 알람을 설정하고 현금을 준비하며 파월 의장의 in a good place 키워드를 체크해야 합니다. 준비된 투자자만 살아남습니다. 좋아요 구독 알림 설정 부탁드립니다. 새벽 3시에 뵙겠습니다.",
-    "prompt": {
-      "한글자막": "발표 전 매수, 발표 후 패닉셀 절대 금물! 새벽 3시 알람, 현금 준비, 파월의 'in a good place' 키워드 체크! 준비된 자만 살아남습니다. 좋아요, 구독! 새벽 3시에 뵙겠습니다.",
-      "영어자막": "Don't FOMO-buy before or panic-sell after! Set a 3 AM alarm, have cash ready, and watch for Powell's 'in a good place' keyword. Only the prepared survive. Like & subscribe! See you at 3 AM."
-    }
+    "audio_duration": 21.55,
+    "subtitles": [
+      {
+        "start_time": 0.0,
+        "end_time": 4.0,
+        "text_ko": "발표 전 매수, 발표 후 패닉셀 절대 금지!",
+        "text_en": "No FOMO-buy before, no panic-sell after!"
+      },
+      {
+        "start_time": 4.0,
+        "end_time": 8.0,
+        "text_ko": "새벽 3시 알람 설정하세요",
+        "text_en": "Set 3 AM alarm"
+      },
+      {
+        "start_time": 8.0,
+        "end_time": 12.0,
+        "text_ko": "현금을 준비하세요",
+        "text_en": "Prepare cash"
+      },
+      {
+        "start_time": 12.0,
+        "end_time": 16.0,
+        "text_ko": "in a good place 키워드 체크!",
+        "text_en": "Watch for in a good place keyword!"
+      },
+      {
+        "start_time": 16.0,
+        "end_time": 19.0,
+        "text_ko": "준비된 자만 살아남습니다",
+        "text_en": "Only the prepared survive"
+      },
+      {
+        "start_time": 19.0,
+        "end_time": 21.55,
+        "text_ko": "좋아요, 구독! 새벽 3시에 뵙겠습니다!",
+        "text_en": "Like, Subscribe! See you at 3 AM!"
+      }
+    ]
   }
 ]

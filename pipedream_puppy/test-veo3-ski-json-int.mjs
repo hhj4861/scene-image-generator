@@ -595,28 +595,48 @@ FINAL: Reference image = EXACT appearance for ALL ${duration} seconds. Only subt
     prompt: isInterviewQuestion
       ? interviewQuestionPrompt
       : (dogSpeaks
-        ? `1080p cinematic video.
+        ? `⚠️⚠️⚠️ CRITICAL - READ FIRST ⚠️⚠️⚠️
+1. NO TEXT: Zero text in video. No subtitles, no captions, no Korean text, no broken characters.
+2. VOICE: KOREAN 2-3 YEAR OLD BABY GIRL VOICE. High-pitched toddler voice. NOT adult.
+3. VOICE CONSISTENCY: EXACT SAME VOICE for ALL scenes - no voice change based on emotion!
+⚠️⚠️⚠️ END CRITICAL ⚠️⚠️⚠️
+
+1080p cinematic video.
 
 ${COMMON_RULES}
 
 [SCENE SPECIFIC - CHARACTER SPEAKS]
-${actionDescription ? `[ACTION]\n${actionDescription}\n\n` : ""}[VOICE - CRITICAL REQUIREMENT]
-⚠️ VOICE TYPE IS MANDATORY - DO NOT USE DEFAULT VOICE ⚠️
-- Character MUST speak with: KOREAN BABY TODDLER VOICE, 2-3 YEARS OLD INFANT
+${actionDescription ? `[ACTION]\n${actionDescription}\n\n` : ""}[VOICE - CRITICAL REQUIREMENT - HIGHEST PRIORITY]
+★★★ MANDATORY VOICE TYPE - VIOLATION = REJECTED ★★★
+- Character MUST speak with: KOREAN BABY TODDLER VOICE, 2-3 YEARS OLD BABY GIRL
 - Voice characteristics: VERY HIGH-PITCHED, adorable baby talk, slow babbling speech
-- Sound like a CUTE KOREAN TODDLER, NOT an adult, NOT a teenager
+- Sound like a CUTE KOREAN 2-3 YEAR OLD TODDLER BABY GIRL
 - Baby voice with slight lisp, innocent cooing sounds
-- NO adult voice, NO mature voice, NO deep voice
-- NO interviewer voice, NO off-screen narrator
-- ONLY the baby character voice speaks
+- ❌ NO adult voice, ❌ NO mature voice, ❌ NO deep voice, ❌ NO male voice
+- ❌ NO interviewer voice, ❌ NO off-screen narrator
+- ✅ ONLY the baby toddler character voice speaks
+- ⚠️ SAME VOICE FROM START TO END - NO VOICE CHANGE MID-SENTENCE
+- ⚠️ First word to last word = SAME baby girl voice
+★★★ IF VOICE IS NOT BABY GIRL = VIDEO REJECTED ★★★
+
+[VOICE CONSISTENCY - CRITICAL - CROSS-SCENE RULE]
+★★★ VOICE MUST BE IDENTICAL ACROSS ALL SCENES ★★★
+- The EXACT SAME baby girl voice must be used for THIS scene as ALL other scenes
+- Do NOT change voice pitch, tone, or character based on emotion (sad, happy, angry, etc.)
+- Even if the character is crying (흑흑, 엉엉), keep the SAME baby voice pitch
+- Even if the scene is sad or emotional, maintain the EXACT SAME voice
+- Voice consistency is MORE important than emotional expression
+- The audience must hear the IDENTICAL voice in every scene
+★★★ VOICE CHANGE = REJECTED ★★★
 
 [ALLOWED]
 - Lip sync mouth movement for speaking
 - Facial expressions matching dialogue
 - Subtle body movements as specified
 
-[REMINDER - NO TEXT]
+[REMINDER - NO TEXT - ZERO TOLERANCE]
 - ZERO text, ZERO subtitles, ZERO captions in the video
+- ZERO broken text, ZERO garbled characters
 - Clean video only - no text elements whatsoever
 
 ${accessoriesKeepStr}
