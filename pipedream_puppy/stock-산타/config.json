@@ -12,5 +12,6 @@
     "bgm_url": "",
     "bgm_volume": 0.2,
     "scene_count": 8,
-    "video_file_pattern": "scene{index}.mp4"
+    "video_file_pattern": "scene{index}.mp4",
+    "subtitle_timing_mode": "timed"
 }

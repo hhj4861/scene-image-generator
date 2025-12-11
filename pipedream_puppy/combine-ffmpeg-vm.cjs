@@ -79,7 +79,8 @@ function loadProjectConfig(projectPath) {
       },
       bgm_url: "https://cdn1.suno.ai/xxx.mp3",
       bgm_volume: 0.25,
-      scene_count: 7
+      scene_count: 7,
+      subtitle_timing_mode: "timed"  // "timed" or "always"
     }, null, 2));
     process.exit(1);
   }
@@ -107,10 +108,11 @@ function loadScriptData(projectPath) {
 // =====================================================
 function getNarration(scenes, sceneIndex) {
   const scene = scenes.find(s => s.video === sceneIndex);
-  if (!scene) return { narration: "", narration_english: "" };
+  if (!scene) return { narration: "", narration_english: "", timed_subtitles: null };
   return {
     narration: scene.dialogue?.script || scene.narration || "",
-    narration_english: scene.dialogue?.script_english || scene.narration_english || ""
+    narration_english: scene.dialogue?.script_english || scene.narration_english || "",
+    timed_subtitles: scene.timed_subtitles || null  // 타이밍 자막 배열
   };
 }
 
@@ -232,12 +234,17 @@ async function combineVideos() {
     const gcsPath = `${testFolder}/scene${file.index}.mp4`;
     const url = await uploadToGCS(file.path, gcsPath);
 
-    const { narration, narration_english } = getNarration(scenes, file.index);
+    const { narration, narration_english, timed_subtitles } = getNarration(scenes, file.index);
+    
+    // use_timed_subtitles가 false면 timed_subtitles 무시 (기본값: true)
+    const useTimedSubs = config.use_timed_subtitles !== false;
+    
     videos.push({
       url,
       index: file.index,
       narration: narration,
       narration_english: narration_english,
+      timed_subtitles: useTimedSubs ? timed_subtitles : null,
       is_performance: false,
       scene_type: "interview"
     });
@@ -268,8 +275,8 @@ async function combineVideos() {
   // 9:16 세로 모드용 레이아웃 설정
   const fontScale = outputWidth / 720;
 
-  const headerY = 20;
-  const headerHeight = 60;  // 한 줄 높이
+  const headerY = 80;
+  const headerHeight = 40;  // 한 줄 높이
   const videoAreaY = 90;
   const videoAreaHeight = 900;
   const videoEndY = videoAreaY + videoAreaHeight;
@@ -292,8 +299,7 @@ async function combineVideos() {
     subtitle_area: {
       y: videoEndY - 60,
       height: 120,
-      single_line: false,
-      max_lines: 2  // 자막 2줄 제한
+      single_line: false
     },
     footer_area: {
       y: footerY,
@@ -310,6 +316,7 @@ async function combineVideos() {
     footer_text_english: config.footer?.english || "",
     subtitle_enabled: true,
     subtitle_english_enabled: true,
+    subtitle_timing_mode: config.subtitle_timing_mode || "timed",  // "timed" or "always"
     bgm_url: config.bgm_url || "",
     bgm_volume: config.bgm_volume || 0.25,
     width: outputWidth,
@@ -322,32 +329,27 @@ async function combineVideos() {
     font_settings: {
       header_korean: {
         font: "NanumSquareRoundOTFEB",
-        size: Math.round(12 * fontScale),  // 16→12 한줄로 나오게
-        color: "white",
-        border_width: Math.round(1 * fontScale),
-        border_color: "black"
+        size: Math.round(50 * fontScale),  // 16→12 한줄로 나오게
       },
       header_english: {
         font: "NotoSerif-Regular",
-        size: Math.round(7 * fontScale),
-        color: "white",
-        border_width: Math.round(0.5 * fontScale),
-        border_color: "black"
+        size: Math.round(25 * fontScale),
+        y_offset: 40  // ← 한글/영문 간격 (기본값: 70)
       },
       subtitle_korean: {
         font: "NanumSquareRoundOTFEB",
-        size: Math.round(36 * fontScale),
-        color: "white",
-        border_width: Math.round(3 * fontScale),
-        border_color: "black"
+        size: Math.round(25 * fontScale),
+        max_lines: 1  // 한글 자막 1줄 제한
       },
       subtitle_english: {
         font: "NotoSerif-Regular",
-        size: Math.round(24 * fontScale),
-        color: "white",
-        border_width: Math.round(2 * fontScale),
-        border_color: "black"
-      }
+        size: Math.round(18 * fontScale),
+        max_lines: 1  // 영어 자막 1줄 제한
+      },
+      footer_korean: { size: Math.round(45 * fontScale) },
+      footer_english: { size: Math.round(20 * fontScale),
+        y_offset: 30  // ← 한글/영문 간격 (기본값: 80)
+       }
     }
   };
 
