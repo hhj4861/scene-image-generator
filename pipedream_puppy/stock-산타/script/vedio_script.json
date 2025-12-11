@@ -1,0 +1,368 @@
+{
+    "input_info": {
+        "segments_count": 8,
+        "characters_count": 1,
+        "script_format": "narration",
+        "content_type": "financial_education",
+        "has_consistency_info": true
+    },
+    "consistency_used": {
+        "background": "Stock market charts and holiday theme with Santa elements",
+        "lighting": "Professional studio lighting with festive accents",
+        "main_prompt": "Financial news style graphics with Christmas/Santa theme overlay"
+    },
+    "$return_value": {
+        "folder_name": "20251212_santa_rally",
+        "total_scenes": 8,
+        "script_format": "narration",
+        "content_type": "financial_education",
+        "resolution": "1080p",
+        "format": "Clean video only",
+        "text_overlays": false,
+        "subtitles": true,
+        "watermarks": false,
+        "overall_style": "professional",
+        "characters": {
+            "narrator": {
+                "name": "내레이터",
+                "role": "narrator",
+                "character_type": "human",
+                "voice_type": "professional_male",
+                "image_prompt": "Professional financial news style narrator voice"
+            }
+        },
+        "voice_settings": {
+            "narrator": {
+                "type": "Professional male Korean voice, news anchor style",
+                "tone": "Informative, authoritative yet friendly"
+            }
+        },
+        "scenes": [
+            {
+                "video": 1,
+                "title": "산타랠리 정의",
+                "duration": "8 seconds",
+                "duration_seconds": 8,
+                "dialogue": {
+                    "script": "산타랠리, 들어보셨나요? 12월 마지막 5거래일부터 1월 첫 2거래일까지 73년간 79% 확률로 발생",
+                    "script_english": "Have you heard of Santa Rally? Last 5 trading days of December through first 2 days of January. 79% probability over 73 years"
+                },
+                "narration": "산타랠리, 들어보셨나요? 12월 마지막 5거래일부터 1월 첫 2거래일까지 73년간 79% 확률로 발생",
+                "narration_english": "Have you heard of Santa Rally? Last 5 trading days of December through first 2 days of January. 79% probability over 73 years",
+                "timed_subtitles": [
+                    {
+                        "start": 0.0,
+                        "end": 2.5,
+                        "korean": "산타랠리, 들어보셨나요?",
+                        "english": "Have you heard of Santa Rally?"
+                    },
+                    {
+                        "start": 2.5,
+                        "end": 5.0,
+                        "korean": "12월 마지막 5거래일부터",
+                        "english": "Last 5 trading days of December"
+                    },
+                    {
+                        "start": 5.0,
+                        "end": 6.5,
+                        "korean": "1월 첫 2거래일까지",
+                        "english": "Through first 2 days of January"
+                    },
+                    {
+                        "start": 6.5,
+                        "end": 8.0,
+                        "korean": "73년간 79% 확률로 발생",
+                        "english": "79% probability over 73 years"
+                    }
+                ],
+                "scene_details": {
+                    "scene_type": "narration",
+                    "speaker": "narrator"
+                }
+            },
+            {
+                "video": 2,
+                "title": "역사적 수익률",
+                "duration": "8 seconds",
+                "duration_seconds": 8,
+                "dialogue": {
+                    "script": "S&P 500은 평균 +1.3%. 다우존스는 +1.44% 상승. 12월 전체로는 +2~3% 상승이 일반적",
+                    "script_english": "S&P 500 averaged +1.3%. Dow Jones rose +1.44%. For entire December +2-3% gains typical"
+                },
+                "narration": "S&P 500은 평균 +1.3%. 다우존스는 +1.44% 상승. 12월 전체로는 +2~3% 상승이 일반적",
+                "narration_english": "S&P 500 averaged +1.3%. Dow Jones rose +1.44%. For entire December +2-3% gains typical",
+                "timed_subtitles": [
+                    {
+                        "start": 0.0,
+                        "end": 2.5,
+                        "korean": "S&P 500은 평균 +1.3%",
+                        "english": "S&P 500 averaged +1.3%"
+                    },
+                    {
+                        "start": 2.5,
+                        "end": 4.5,
+                        "korean": "다우존스는 +1.44% 상승",
+                        "english": "Dow Jones rose +1.44%"
+                    },
+                    {
+                        "start": 4.5,
+                        "end": 6.5,
+                        "korean": "12월 전체로는",
+                        "english": "For entire December"
+                    },
+                    {
+                        "start": 6.5,
+                        "end": 8.0,
+                        "korean": "+2~3% 상승이 일반적",
+                        "english": "+2-3% gains typical"
+                    }
+                ],
+                "scene_details": {
+                    "scene_type": "narration",
+                    "speaker": "narrator"
+                }
+            },
+            {
+                "video": 3,
+                "title": "2025년 특수 상황",
+                "duration": "8 seconds",
+                "duration_seconds": 8,
+                "dialogue": {
+                    "script": "하지만 2025년은 다릅니다. 중앙은행이 2026년 금리 인하 제한. 주요 기술주가 11% 급락. 섹터 전반을 압박 중",
+                    "script_english": "But 2025 is different. Central bank: Limited 2026 cuts. Major tech stock crashed 11%. Pressuring entire sector"
+                },
+                "narration": "하지만 2025년은 다릅니다. 중앙은행이 2026년 금리 인하 제한. 주요 기술주가 11% 급락. 섹터 전반을 압박 중",
+                "narration_english": "But 2025 is different. Central bank: Limited 2026 cuts. Major tech stock crashed 11%. Pressuring entire sector",
+                "timed_subtitles": [
+                    {
+                        "start": 0.0,
+                        "end": 2.0,
+                        "korean": "하지만 2025년은 다릅니다",
+                        "english": "But 2025 is different"
+                    },
+                    {
+                        "start": 2.0,
+                        "end": 4.5,
+                        "korean": "중앙은행이 2026년 금리 인하 제한",
+                        "english": "Central bank: Limited 2026 cuts"
+                    },
+                    {
+                        "start": 4.5,
+                        "end": 6.5,
+                        "korean": "주요 기술주가 11% 급락",
+                        "english": "Major tech stock crashed 11%"
+                    },
+                    {
+                        "start": 6.5,
+                        "end": 8.0,
+                        "korean": "섹터 전반을 압박 중",
+                        "english": "Pressuring entire sector"
+                    }
+                ],
+                "scene_details": {
+                    "scene_type": "narration",
+                    "speaker": "narrator"
+                }
+            },
+            {
+                "video": 4,
+                "title": "2024년 실패 사례",
+                "duration": "8 seconds",
+                "duration_seconds": 8,
+                "dialogue": {
+                    "script": "2024년 산타랠리 실패. S&P 500이 -2.4% 하락. 산타랠리 실패 시 다음 해 1월 83% 확률로 하락",
+                    "script_english": "2024 Santa Rally FAILED. S&P 500 fell -2.4%. When Santa Rally fails, January drops 83% of the time"
+                },
+                "narration": "2024년 산타랠리 실패. S&P 500이 -2.4% 하락. 산타랠리 실패 시 다음 해 1월 83% 확률로 하락",
+                "narration_english": "2024 Santa Rally FAILED. S&P 500 fell -2.4%. When Santa Rally fails, January drops 83% of the time",
+                "timed_subtitles": [
+                    {
+                        "start": 0.0,
+                        "end": 2.0,
+                        "korean": "2024년 산타랠리 실패",
+                        "english": "2024 Santa Rally FAILED"
+                    },
+                    {
+                        "start": 2.0,
+                        "end": 4.5,
+                        "korean": "S&P 500이 -2.4% 하락",
+                        "english": "S&P 500 fell -2.4%"
+                    },
+                    {
+                        "start": 4.5,
+                        "end": 6.0,
+                        "korean": "산타랠리 실패 시",
+                        "english": "When Santa Rally fails"
+                    },
+                    {
+                        "start": 6.0,
+                        "end": 8.0,
+                        "korean": "다음 해 1월 83% 확률로 하락",
+                        "english": "January drops 83% of the time"
+                    }
+                ],
+                "scene_details": {
+                    "scene_type": "narration",
+                    "speaker": "narrator",
+                    "note": "효과음 강조 씬"
+                }
+            },
+            {
+                "video": 5,
+                "title": "최강 섹터",
+                "duration": "8 seconds",
+                "duration_seconds": 8,
+                "dialogue": {
+                    "script": "어디에 투자해야 할까요? 헬스케어가 69% 승률로 1위. 소비재와 리테일 68%. ETF: XLV, XLP, XRT",
+                    "script_english": "So where should you invest? Healthcare led with 69% win rate. Consumer and Retail 68%. ETF: XLV, XLP, XRT"
+                },
+                "narration": "어디에 투자해야 할까요? 헬스케어가 69% 승률로 1위. 소비재와 리테일 68%. ETF: XLV, XLP, XRT",
+                "narration_english": "So where should you invest? Healthcare led with 69% win rate. Consumer and Retail 68%. ETF: XLV, XLP, XRT",
+                "timed_subtitles": [
+                    {
+                        "start": 0.0,
+                        "end": 2.0,
+                        "korean": "어디에 투자해야 할까요?",
+                        "english": "So where should you invest?"
+                    },
+                    {
+                        "start": 2.0,
+                        "end": 4.5,
+                        "korean": "헬스케어가 69% 승률로 1위",
+                        "english": "Healthcare led with 69% win rate"
+                    },
+                    {
+                        "start": 4.5,
+                        "end": 6.5,
+                        "korean": "소비재와 리테일 68%",
+                        "english": "Consumer and Retail 68%"
+                    },
+                    {
+                        "start": 6.5,
+                        "end": 8.0,
+                        "korean": "ETF: XLV, XLP, XRT",
+                        "english": "ETF: XLV, XLP, XRT"
+                    }
+                ],
+                "scene_details": {
+                    "scene_type": "narration",
+                    "speaker": "narrator"
+                }
+            },
+            {
+                "video": 6,
+                "title": "2025년 유망 섹터",
+                "duration": "8 seconds",
+                "duration_seconds": 8,
+                "dialogue": {
+                    "script": "2025년 유망: 반도체 SMH. 리테일 XRT, 운송주 IYT. REITs와 소형주도 주목. 금리 인하 수혜 기대",
+                    "script_english": "2025 picks: Semiconductor SMH. Retail XRT, Transportation IYT. Also watch REITs and Small Caps. Benefit from rate cuts"
+                },
+                "narration": "2025년 유망: 반도체 SMH. 리테일 XRT, 운송주 IYT. REITs와 소형주도 주목. 금리 인하 수혜 기대",
+                "narration_english": "2025 picks: Semiconductor SMH. Retail XRT, Transportation IYT. Also watch REITs and Small Caps. Benefit from rate cuts",
+                "timed_subtitles": [
+                    {
+                        "start": 0.0,
+                        "end": 2.0,
+                        "korean": "2025년 유망: 반도체 SMH",
+                        "english": "2025 picks: Semiconductor SMH"
+                    },
+                    {
+                        "start": 2.0,
+                        "end": 4.5,
+                        "korean": "리테일 XRT, 운송주 IYT",
+                        "english": "Retail XRT, Transportation IYT"
+                    },
+                    {
+                        "start": 4.5,
+                        "end": 6.5,
+                        "korean": "REITs와 소형주도 주목",
+                        "english": "Also watch REITs and Small Caps"
+                    },
+                    {
+                        "start": 6.5,
+                        "end": 8.0,
+                        "korean": "금리 인하 수혜 기대",
+                        "english": "Benefit from rate cuts"
+                    }
+                ],
+                "scene_details": {
+                    "scene_type": "narration",
+                    "speaker": "narrator"
+                }
+            },
+            {
+                "video": 7,
+                "title": "투자 전략",
+                "duration": "6 seconds",
+                "duration_seconds": 6,
+                "dialogue": {
+                    "script": "12월 20~24일 소량 진입. 목표 수익률 +1~2%. 손절 -1.5%, 1월 3일까지",
+                    "script_english": "Enter Dec 20-24 gradually. Target profit +1-2%. Stop-loss -1.5%, until Jan 3"
+                },
+                "narration": "12월 20~24일 소량 진입. 목표 수익률 +1~2%. 손절 -1.5%, 1월 3일까지",
+                "narration_english": "Enter Dec 20-24 gradually. Target profit +1-2%. Stop-loss -1.5%, until Jan 3",
+                "timed_subtitles": [
+                    {
+                        "start": 0.0,
+                        "end": 2.0,
+                        "korean": "12월 20~24일 소량 진입",
+                        "english": "Enter Dec 20-24 gradually"
+                    },
+                    {
+                        "start": 2.0,
+                        "end": 4.0,
+                        "korean": "목표 수익률 +1~2%",
+                        "english": "Target profit +1-2%"
+                    },
+                    {
+                        "start": 4.0,
+                        "end": 6.0,
+                        "korean": "손절 -1.5%, 1월 3일까지",
+                        "english": "Stop-loss -1.5%, until Jan 3"
+                    }
+                ],
+                "scene_details": {
+                    "scene_type": "narration",
+                    "speaker": "narrator"
+                }
+            },
+            {
+                "video": 8,
+                "title": "면책 및 결론",
+                "duration": "6 seconds",
+                "duration_seconds": 6,
+                "dialogue": {
+                    "script": "통계적 경향일 뿐, 보장 아님. 2025년은 변수가 많으니 신중히. 투자 판단은 본인 책임",
+                    "script_english": "Statistical trend, not guaranteed. 2025 has many variables, be cautious. Your own responsibility"
+                },
+                "narration": "통계적 경향일 뿐, 보장 아님. 2025년은 변수가 많으니 신중히. 투자 판단은 본인 책임",
+                "narration_english": "Statistical trend, not guaranteed. 2025 has many variables, be cautious. Your own responsibility",
+                "timed_subtitles": [
+                    {
+                        "start": 0.0,
+                        "end": 2.0,
+                        "korean": "통계적 경향일 뿐, 보장 아님",
+                        "english": "Statistical trend, not guaranteed"
+                    },
+                    {
+                        "start": 2.0,
+                        "end": 4.0,
+                        "korean": "2025년은 변수가 많으니 신중히",
+                        "english": "2025 has many variables, be cautious"
+                    },
+                    {
+                        "start": 4.0,
+                        "end": 6.0,
+                        "korean": "투자 판단은 본인 책임",
+                        "english": "Your own responsibility"
+                    }
+                ],
+                "scene_details": {
+                    "scene_type": "narration",
+                    "speaker": "narrator"
+                }
+            }
+        ]
+    }
+}

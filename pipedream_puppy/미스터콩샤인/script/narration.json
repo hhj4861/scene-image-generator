@@ -1,0 +1,296 @@
+{
+  "video_title": "미스터 땅샤인 Episode 1 - 조선견의 귀환",
+  "video_title_en": "Mr. Ttangshine Episode 1 - Return of the Joseon Dog",
+  "total_duration": "40초",
+  "aspect_ratio": "9:16",
+  "subtitle_style": {
+    "korean": {
+      "font": "배달의민족 주아체",
+      "color": "#FFE4B5",
+      "outline_color": "#3D2817",
+      "outline_width": "3px",
+      "position": "bottom_center",
+      "size": "medium"
+    },
+    "english": {
+      "font": "Arial Bold",
+      "color": "#FFFFFF",
+      "outline_color": "#000000",
+      "outline_width": "2px",
+      "position": "below_korean",
+      "size": "small"
+    }
+  },
+  "subtitles": [
+    {
+      "scene": "씬1 - 기차역 도착",
+      "time_range": "0-8초",
+      "subtitle_entries": [
+        {
+          "start_time": "0.0",
+          "end_time": "2.0",
+          "korean": "미스터 땅샤인",
+          "english": "Mr. Ttangshine",
+          "position": "center_top",
+          "style": "title",
+          "animation": "fade_in_scale",
+          "emotion": "dramatic"
+        },
+        {
+          "start_time": "2.0",
+          "end_time": "3.5",
+          "korean": "나는 미해군 대위 유진땅콩 ",
+          "english": "I am Captain Eugene TtangKong of the United States Navy.",
+          "speaker": "유진 땅콩",
+          "emotion": "serious_heroic",
+          "animation": "fade_in"
+        },
+        {
+          "start_time": "6.0",
+          "end_time": "7.5",
+          "korean": "조선... 돌아왔다",
+          "english": "Joseon... I have returned",
+          "speaker": "유진 땅콩",
+          "emotion": "hopeful_determined",
+          "animation": "fade_in"
+        }
+      ]
+    },
+    {
+      "scene": "씬2 - 조선 거리 탐험",
+      "time_range": "8-16초",
+      "subtitle_entries": [
+        {
+          "start_time": "10.0",
+          "end_time": "11.5",
+          "korean": "우와... 정말 많이 변했네",
+          "english": "Wow... so much has changed",
+          "speaker": "유진 땅콩",
+          "emotion": "surprised_amazed",
+          "animation": "fade_in"
+        },
+        {
+          "start_time": "13.0",
+          "end_time": "14.5",
+          "korean": "이곳이... 내가 떠난 조선인가?",
+          "english": "Is this... the Joseon I left behind?",
+          "speaker": "유진 땅콩",
+          "emotion": "nostalgic_curious",
+          "animation": "fade_in"
+        }
+      ]
+    },
+    {
+      "scene": "씬3 - 간식 시계 확인",
+      "time_range": "16-24초",
+      "subtitle_entries": [
+        {
+          "start_time": "17.0",
+          "end_time": "18.0",
+          "korean": "어? 뭔가...",
+          "english": "Huh? Something's...",
+          "speaker": "유진 땅콩",
+          "emotion": "confused_wondering",
+          "animation": "fade_in"
+        },
+        {
+          "start_time": "20.0",
+          "end_time": "21.5",
+          "korean": "아! 간식 시간이구나!",
+          "english": "Ah! It's snack time!",
+          "speaker": "유진 땅콩",
+          "emotion": "excited_realization",
+          "animation": "bounce_in"
+        },
+        {
+          "start_time": "23.0",
+          "end_time": "24.5",
+          "korean": "역시 내 몸은 정확해!",
+          "english": "My body never lies!",
+          "speaker": "유진 땅콩",
+          "emotion": "proud_satisfied",
+          "animation": "fade_in"
+        }
+      ]
+    },
+    {
+      "scene": "씬4 - 간식집 이동",
+      "time_range": "24-32초",
+      "subtitle_entries": [
+        {
+          "start_time": "25.0",
+          "end_time": "26.5",
+          "korean": "어디에 맛있는 간식이 있을까?",
+          "english": "Where can I find delicious snacks?",
+          "speaker": "유진 땅콩",
+          "emotion": "curious_searching",
+          "animation": "fade_in"
+        },
+        {
+          "start_time": "27.0",
+          "end_time": "28.5",
+          "korean": "어? 저기 뭔가 보이는데!",
+          "english": "Oh? I see something over there!",
+          "speaker": "유진 땅콩",
+          "emotion": "excited_discovery",
+          "animation": "fade_in"
+        },
+        {
+          "start_time": "31.0",
+          "end_time": "32.5",
+          "korean": "여기가 바로 그곳인가?",
+          "english": "Is this the place?",
+          "speaker": "유진 땅콩",
+          "emotion": "anticipation",
+          "animation": "fade_in"
+        }
+      ]
+    },
+    {
+      "scene": "씬5 - 고은땅과의 첫 만남",
+      "time_range": "32-41초",
+      "subtitle_entries": [
+        {
+          "start_time": "33.0",
+          "end_time": "34.0",
+          "korean": "어... 저분은?",
+          "english": "Uh... who is that?",
+          "speaker": "유진 땅콩",
+          "emotion": "surprised_curious",
+          "animation": "fade_in",
+          "subtitle_color_override": "#FFE4B5"
+        },
+        {
+          "start_time": "35.0",
+          "end_time": "36.0",
+          "korean": "누구세요?",
+          "english": "Who are you?",
+          "speaker": "애신 고은땅",
+          "emotion": "elegant_cautious",
+          "animation": "fade_in",
+          "subtitle_color_override": "#FFB6C1"
+        },
+        {
+          "start_time": "37.0",
+          "end_time": "38.5",
+          "korean": "유진땅콩...",
+          "english": "Eugene TtangKong...",
+          "speaker": "유진 땅콩",
+          "emotion": "polite_gentleman",
+          "animation": "fade_in",
+          "subtitle_color_override": "#FFE4B5"
+        },
+        {
+          "start_time": "39.0",
+          "end_time": "41",
+          "korean": "애신...",
+          "english": "Ae-shin...",
+          "speaker": "애신 고은땅",
+          "emotion": "gentle_elegant",
+          "animation": "fade_in",
+          "subtitle_color_override": "#FFB6C1"
+        }
+      ]
+    },
+    {
+      "scene": "씬6 -  어색한 동행 시작",
+      "time_range": "41-49초",
+      "scene_description": "떡집 앞에서 처음 만난 두 강아지가 어색하게 대화를 시작하며 함께 걷기로 하는 장면",
+      "subtitle_entries": [
+        {
+          "start_time": "41.0",
+          "end_time": "43.0",
+          "korean": "",
+          "english": "",
+          "description": "두 강아지 서로 의식하며 어색하게 서있는 무대사 구간",
+          "speaker": "none",
+          "emotion": "awkward_silence"
+        },
+        {
+          "start_time": "43.0",
+          "end_time": "45.0",
+          "korean": "저... 함께 가도 될까요?",
+          "english": "May I... walk with you?",
+          "speaker": "유진 땅콩",
+          "emotion": "nervous_polite",
+          "animation": "fade_in",
+          "subtitle_color": "#FFE4B5"
+        },
+        {
+          "start_time": "46.0",
+          "end_time": "47.5",
+          "korean": "네... 좋아요",
+          "english": "Yes... that would be nice",
+          "speaker": "애신 고은땅",
+          "emotion": "shy_accepting",
+          "animation": "fade_in",
+          "subtitle_color": "#FFB6C1"
+        },
+        {
+          "start_time": "47.5",
+          "end_time": "49.0",
+          "korean": "Episode 2에서 계속...",
+          "english": "To be continued in Episode 2...",
+          "position": "center",
+          "style": "ending_title",
+          "animation": "fade_in_out",
+          "emotion": "anticipation"
+        }
+      ]
+    }
+  ],
+  "animation_types": {
+    "fade_in": {
+      "description": "부드럽게 나타남",
+      "duration": "0.2초"
+    },
+    "fade_in_out": {
+      "description": "나타났다 사라짐",
+      "duration": "0.3초"
+    },
+    "fade_in_scale": {
+      "description": "커지면서 나타남",
+      "duration": "0.4초"
+    },
+    "bounce_in": {
+      "description": "튀면서 나타남",
+      "duration": "0.3초"
+    }
+  },
+  "character_subtitle_colors": {
+    "유진_땅콩": "#FFE4B5",
+    "애신_고은땅": "#FFB6C1"
+  },
+  "emotion_tags": {
+    "dramatic": "드라마틱하고 웅장함",
+    "serious_heroic": "진지하고 영웅적",
+    "hopeful_determined": "희망적이고 결연함",
+    "surprised_amazed": "놀라고 감탄함",
+    "nostalgic_curious": "향수와 호기심",
+    "confused_wondering": "혼란스럽고 궁금함",
+    "excited_realization": "신나는 깨달음",
+    "proud_satisfied": "자랑스럽고 만족스러움",
+    "curious_searching": "호기심으로 탐색",
+    "excited_discovery": "발견의 기쁨",
+    "anticipation": "기대감",
+    "surprised_curious": "놀람과 호기심",
+    "elegant_cautious": "우아하고 조심스러움",
+    "polite_gentleman": "정중하고 신사적",
+    "gentle_elegant": "부드럽고 우아함"
+  },
+  "export_settings": {
+    "format": "SRT",
+    "encoding": "UTF-8",
+    "platform_optimization": {
+      "youtube_shorts": true,
+      "instagram_reels": true,
+      "tiktok": true
+    }
+  },
+  "notes": {
+    "timing_precision": "모든 타이밍은 립싱크와 정확히 동기화되어야 함",
+    "readability": "각 자막은 최소 1.5초 이상 표시",
+    "emoji_usage": "특수문자 제외됨",
+    "character_distinction": "두 캐릭터는 자막 색상으로 구분"
+  }
+}

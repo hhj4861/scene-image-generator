@@ -1,0 +1,214 @@
+{
+    "input_info": {
+        "segments_count": 6,
+        "characters_count": 2,
+        "script_format": "drama",
+        "content_type": "emotional",
+        "has_consistency_info": true
+    },
+    "consistency_used": {
+        "background": "Late Joseon era streetscape with traditional architecture",
+        "lighting": "Dramatic cinematic lighting",
+        "main_prompt": "A Pomeranian dog wearing elegant traditional Korean nobleman clothes (Gentleman-style Hanbok), looking noble and serious with a hint of sadness",
+        "has_performance": false
+    },
+    "$return_value": {
+        "folder_name": "20251211_mr_ttangshine_ep1",
+        "total_scenes": 6,
+        "script_format": "drama",
+        "content_type": "emotional",
+        "resolution": "1080p",
+        "format": "Clean video only",
+        "text_overlays": false,
+        "subtitles": true,
+        "watermarks": false,
+        "overall_style": "cinematic",
+        "characters": {
+            "main": {
+                "name": "유진 땅콩",
+                "role": "main",
+                "character_type": "animal",
+                "species": "dog",
+                "breed": "Pomeranian",
+                "estimated_age": "adult",
+                "personality": "noble gentleman",
+                "voice_type": "calm_gentleman",
+                "image_prompt": "A Pomeranian dog wearing elegant traditional Korean nobleman clothes, looking noble and serious"
+            },
+            "sub1": {
+                "name": "애신 고은땅",
+                "role": "sub1",
+                "character_type": "animal",
+                "species": "dog",
+                "breed": "Pomeranian",
+                "estimated_age": "young adult",
+                "personality": "elegant lady",
+                "voice_type": "elegant_female",
+                "image_prompt": "A female Pomeranian dog wearing traditional Korean noble lady clothes (Hanbok), elegant and graceful"
+            }
+        },
+        "voice_settings": {
+            "main": {
+                "type": "Calm gentleman voice, dignified noble tone",
+                "tone": "Serious, nostalgic, noble",
+                "characteristics": "Clear, measured speech, noble gentleman style"
+            },
+            "sub1": {
+                "type": "Elegant young lady voice",
+                "tone": "Graceful, cautious, gentle"
+            }
+        },
+        "scenes": [
+            {
+                "video": 1,
+                "title": "미스터 땅샤인 Ep.1 - Scene 1: 기차역 도착",
+                "duration": "8 seconds",
+                "duration_seconds": 8,
+                "dialogue": {
+                    "script": "나는 미해군 대위 유진땅콩. 조선... 돌아왔다",
+                    "script_english": "I am Captain Eugene TtangKong of the United States Navy. Joseon... I have returned"
+                },
+                "narration": "미스터 땅샤인. 나는 미해군 대위 유진땅콩. 조선... 돌아왔다",
+                "narration_english": "Mr. Ttangshine. I am Captain Eugene TtangKong of the United States Navy. Joseon... I have returned",
+                "emotion": {
+                    "primary": "serious_heroic",
+                    "transition": "dramatic to hopeful"
+                },
+                "scene_details": {
+                    "scene_type": "monologue",
+                    "speaker": "main",
+                    "character_name": "유진 땅콩",
+                    "location": "train_station",
+                    "background": "Late Joseon era train station"
+                }
+            },
+            {
+                "video": 2,
+                "title": "미스터 땅샤인 Ep.1 - Scene 2: 조선 거리 탐험",
+                "duration": "8 seconds",
+                "duration_seconds": 8,
+                "dialogue": {
+                    "script": "우와... 정말 많이 변했네. 이곳이... 내가 떠난 조선인가?",
+                    "script_english": "Wow... so much has changed. Is this... the Joseon I left behind?"
+                },
+                "narration": "우와... 정말 많이 변했네. 이곳이... 내가 떠난 조선인가?",
+                "narration_english": "Wow... so much has changed. Is this... the Joseon I left behind?",
+                "emotion": {
+                    "primary": "surprised_amazed",
+                    "transition": "amazed to nostalgic"
+                },
+                "scene_details": {
+                    "scene_type": "monologue",
+                    "speaker": "main",
+                    "character_name": "유진 땅콩",
+                    "location": "joseon_street",
+                    "background": "Traditional Joseon street with hanok buildings"
+                }
+            },
+            {
+                "video": 3,
+                "title": "미스터 땅샤인 Ep.1 - Scene 3: 간식 시계 확인",
+                "duration": "8 seconds",
+                "duration_seconds": 8,
+                "dialogue": {
+                    "script": "어? 뭔가... 아! 간식 시간이구나! 역시 내 몸은 정확해!",
+                    "script_english": "Huh? Something's... Ah! It's snack time! My body never lies!"
+                },
+                "narration": "어? 뭔가... 아! 간식 시간이구나! 역시 내 몸은 정확해!",
+                "narration_english": "Huh? Something's... Ah! It's snack time! My body never lies!",
+                "emotion": {
+                    "primary": "excited_realization",
+                    "transition": "confused to excited"
+                },
+                "scene_details": {
+                    "scene_type": "monologue",
+                    "speaker": "main",
+                    "character_name": "유진 땅콩",
+                    "location": "joseon_street",
+                    "background": "Street with food shops visible"
+                }
+            },
+            {
+                "video": 4,
+                "title": "미스터 땅샤인 Ep.1 - Scene 4: 간식집 이동",
+                "duration": "8 seconds",
+                "duration_seconds": 8,
+                "dialogue": {
+                    "script": "어디에 맛있는 간식이 있을까? 어? 저기 뭔가 보이는데! 여기가 바로 그곳인가?",
+                    "script_english": "Where can I find delicious snacks? Oh? I see something over there! Is this the place?"
+                },
+                "narration": "어디에 맛있는 간식이 있을까? 어? 저기 뭔가 보이는데! 여기가 바로 그곳인가?",
+                "narration_english": "Where can I find delicious snacks? Oh? I see something over there! Is this the place?",
+                "emotion": {
+                    "primary": "curious_searching",
+                    "transition": "curious to excited"
+                },
+                "scene_details": {
+                    "scene_type": "monologue",
+                    "speaker": "main",
+                    "character_name": "유진 땅콩",
+                    "location": "food_shop_area",
+                    "background": "Traditional food shop vicinity"
+                }
+            },
+            {
+                "video": 5,
+                "title": "미스터 땅샤인 Ep.1 - Scene 5: 고은땅과의 첫 만남",
+                "duration": "9 seconds",
+                "duration_seconds": 9,
+                "dialogue": {
+                    "script": "어... 저분은? 유진땅콩...",
+                    "script_english": "Uh... who is that? Eugene TtangKong..."
+                },
+                "narration": "어... 저분은? 누구세요? 유진땅콩... 애신...",
+                "narration_english": "Uh... who is that? Who are you? Eugene TtangKong... Ae-shin...",
+                "emotion": {
+                    "primary": "surprised_romantic",
+                    "transition": "curious to romantic tension"
+                },
+                "scene_details": {
+                    "scene_type": "dialogue",
+                    "speakers": [
+                        "main",
+                        "sub1"
+                    ],
+                    "character_names": [
+                        "유진 땅콩",
+                        "애신 고은땅"
+                    ],
+                    "location": "food_shop_front",
+                    "background": "Traditional rice cake shop entrance"
+                }
+            },
+            {
+                "video": 6,
+                "title": "미스터 땅샤인 Ep.1 - Scene 6: 어색한 동행 시작",
+                "duration": "8 seconds",
+                "duration_seconds": 8,
+                "dialogue": {
+                    "script": "저... 함께 가도 될까요? 네... 좋아요",
+                    "script_english": "May I... walk with you? Yes... that would be nice"
+                },
+                "narration": "저... 함께 가도 될까요? 네... 좋아요. Episode 2에서 계속...",
+                "narration_english": "May I... walk with you? Yes... that would be nice. To be continued in Episode 2...",
+                "emotion": {
+                    "primary": "nervous_romantic",
+                    "transition": "nervous to hopeful"
+                },
+                "scene_details": {
+                    "scene_type": "dialogue",
+                    "speakers": [
+                        "main",
+                        "sub1"
+                    ],
+                    "character_names": [
+                        "유진 땅콩",
+                        "애신 고은땅"
+                    ],
+                    "location": "joseon_street",
+                    "background": "Traditional Joseon street, two dogs walking together"
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "project_name": "산타 랠리",
+    "project_id": "santa_rally",
+    "title": {
+        "korean": "산타랠리 투자 전략",
+        "english": "Santa Rally Investment Strategy"
+    },
+    "footer": {
+        "korean": "주식 투자 정보 📈🎅",
+        "english": "Stock Investment Info 📈🎅"
+    },
+    "bgm_url": "",
+    "bgm_volume": 0.2,
+    "scene_count": 8,
+    "video_file_pattern": "scene{index}.mp4"
+}

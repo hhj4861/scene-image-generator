@@ -1,0 +1,16 @@
+{
+    "project_name": "미스터 땅샤인",
+    "project_id": "mr_ttangshine",
+    "title": {
+        "korean": "Episode 1 - 조선견의 귀환",
+        "english": "Return of the Joseon Dog"
+    },
+    "footer": {
+        "korean": "미스터 땅샤인 🐕✨",
+        "english": "Mr. Ttangshine 🐕✨"
+    },
+    "bgm_url": "https://cdn1.suno.ai/dc77e406-d668-4a62-a888-20196ae40e50.mp3",
+    "bgm_volume": 0.3,
+    "scene_count": 6,
+    "video_file_pattern": "씬{index}.mp4"
+}

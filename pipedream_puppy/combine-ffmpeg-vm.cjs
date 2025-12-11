@@ -154,21 +154,35 @@ function getVideoResolution(videoPath) {
 // =====================================================
 // 영상 파일 목록 생성
 // =====================================================
-function getVideoFiles(videoDir, sceneCount) {
+function getVideoFiles(videoDir, sceneCount, config) {
   const files = [];
 
-  for (let i = 1; i <= sceneCount; i++) {
+  // config.json에 video_file_pattern이 있으면 사용
+  const customPattern = config?.video_file_pattern;
+
+  // 0-indexed인지 1-indexed인지 확인
+  const startIndex = fs.existsSync(path.join(videoDir, "scene0.mp4")) ||
+    fs.existsSync(path.join(videoDir, "씬0.mp4")) ? 0 : 1;
+  const endIndex = startIndex === 0 ? sceneCount - 1 : sceneCount;
+
+  for (let i = startIndex; i <= endIndex; i++) {
     // 다양한 파일명 패턴 지원
     const patterns = [
       `scene${i}_veo3_json.mp4`,
       `scene${i}_veo3.mp4`,
-      `scene${i}.mp4`
+      `scene${i}.mp4`,
+      `씬${i}.mp4`  // Korean pattern
     ];
+
+    // Custom pattern from config
+    if (customPattern) {
+      patterns.unshift(customPattern.replace('{index}', i));
+    }
 
     for (const pattern of patterns) {
       const filePath = path.join(videoDir, pattern);
       if (fs.existsSync(filePath)) {
-        files.push({ index: i, localFile: pattern, path: filePath });
+        files.push({ index: i + (startIndex === 0 ? 1 : 0), localFile: pattern, path: filePath });
         break;
       }
     }
@@ -206,7 +220,7 @@ async function combineVideos() {
   // 1. 영상 파일 확인 및 GCS 업로드
   console.log("Step 1: Uploading videos to GCS...\n");
 
-  const videoFiles = getVideoFiles(videoDir, config.scene_count || scenes.length);
+  const videoFiles = getVideoFiles(videoDir, config.scene_count || scenes.length, config);
   const videos = [];
 
   for (const file of videoFiles) {
@@ -255,12 +269,12 @@ async function combineVideos() {
   const fontScale = outputWidth / 720;
 
   const headerY = 20;
-  const headerHeight = 100;
-  const videoAreaY = 130;
-  const videoAreaHeight = 850;
+  const headerHeight = 60;  // 한 줄 높이
+  const videoAreaY = 90;
+  const videoAreaHeight = 900;
   const videoEndY = videoAreaY + videoAreaHeight;
   const footerHeight = 60;
-  const footerY = 1020;
+  const footerY = 1020;  // 원래 위치로 원복
 
   const layoutConfig = {
     video_area: {
@@ -271,13 +285,15 @@ async function combineVideos() {
     },
     header_area: {
       y: headerY,
-      height: headerHeight
+      height: headerHeight,
+      single_line: true,  // 헤더 한 줄로 강제
+      max_lines: 1
     },
     subtitle_area: {
-      y: videoEndY - 160,
-      height: 140,
+      y: videoEndY - 60,
+      height: 120,
       single_line: false,
-      max_lines: 2
+      max_lines: 2  // 자막 2줄 제한
     },
     footer_area: {
       y: footerY,
@@ -306,14 +322,14 @@ async function combineVideos() {
     font_settings: {
       header_korean: {
         font: "NanumSquareRoundOTFEB",
-        size: Math.round(16 * fontScale),
+        size: Math.round(12 * fontScale),  // 16→12 한줄로 나오게
         color: "white",
         border_width: Math.round(1 * fontScale),
         border_color: "black"
       },
       header_english: {
         font: "NotoSerif-Regular",
-        size: Math.round(10 * fontScale),
+        size: Math.round(7 * fontScale),
         color: "white",
         border_width: Math.round(0.5 * fontScale),
         border_color: "black"
