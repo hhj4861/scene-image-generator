@@ -6,7 +6,7 @@
 import { GoogleGenAI } from "@google/genai";
 import fs from "fs";
 
-const API_KEY = "AIzaSyAJRK9BVbfofGoFofIwNyEmkF3yPLugo2E";
+const API_KEY = "";
 const ai = new GoogleGenAI({ apiKey: API_KEY });
 
 // 씬6용 레퍼런스 이미지
