@@ -275,10 +275,10 @@ async function combineVideos() {
   // 9:16 세로 모드용 레이아웃 설정
   const fontScale = outputWidth / 720;
 
-  const headerY = 80;
-  const headerHeight = 40;  // 한 줄 높이
-  const videoAreaY = 90;
-  const videoAreaHeight = 900;
+  const headerY = 70;
+  const headerHeight = 50;  // 한 줄 높이
+  const videoAreaY = 200;
+  const videoAreaHeight = 800;
   const videoEndY = videoAreaY + videoAreaHeight;
   const footerHeight = 60;
   const footerY = 1020;  // 원래 위치로 원복
@@ -297,7 +297,7 @@ async function combineVideos() {
       max_lines: 1
     },
     subtitle_area: {
-      y: videoEndY - 60,
+      y: videoEndY - 0, // -30 으로 하면 한줄로 했을때 영상 마지막
       height: 120,
       single_line: false
     },
@@ -334,7 +334,7 @@ async function combineVideos() {
       header_english: {
         font: "NotoSerif-Regular",
         size: Math.round(25 * fontScale),
-        y_offset: 40  // ← 한글/영문 간격 (기본값: 70)
+        y_offset: 80  // ← 한글/영문 간격 (기본값: 70)
       },
       subtitle_korean: {
         font: "NanumSquareRoundOTFEB",
@@ -348,7 +348,7 @@ async function combineVideos() {
       },
       footer_korean: { size: Math.round(45 * fontScale) },
       footer_english: { size: Math.round(20 * fontScale),
-        y_offset: 30  // ← 한글/영문 간격 (기본값: 80)
+        y_offset: 60  // ← 한글/영문 간격 (기본값: 80)
        }
     }
   };
