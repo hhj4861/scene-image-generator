@@ -1,0 +1,1354 @@
+{
+  "input_info": {
+    "segments_count": 5,
+    "characters_count": 1,
+    "script_format": "narration",
+    "content_type": "healing_story",
+    "has_consistency_info": true
+  },
+  "consistency_used": {
+    "background": "Korean apartment interior (living room, hallway, entrance)",
+    "lighting": "warm indoor lighting, afternoon to evening transition",
+    "main_prompt": "Create a 3-year-old female brown Pomeranian dog with innocent, pure, baby-like features",
+    "has_performance": false,
+    "performance_type": null,
+    "accessories": "none"
+  },
+  "action_detection_stats": {
+    "total_scenes": 5,
+    "scenes_with_actions": 5,
+    "actions_summary": [
+      {
+        "scene": 1,
+        "narration_preview": "엄마 아빠 뭐해? 어디 가나?",
+        "detected": [
+          "watching parents",
+          "head tilting",
+          "curious observation"
+        ]
+      },
+      {
+        "scene": 2,
+        "narration_preview": "갔네... 혼자네...",
+        "detected": [
+          "ears perking at door sound",
+          "lonely expression",
+          "resting head"
+        ]
+      },
+      {
+        "scene": 3,
+        "narration_preview": "엄마 아빠... 언제 와...",
+        "detected": [
+          "walking slowly",
+          "lying down",
+          "falling asleep"
+        ]
+      },
+      {
+        "scene": 4,
+        "narration_preview": "어?! 엄마 아빠다!! 왔다!! 왔다!!",
+        "detected": [
+          "ears perking at door lock sound",
+          "excited anticipation",
+          "tail wagging"
+        ]
+      },
+      {
+        "scene": 5,
+        "narration_preview": "킁킁킁... 우와!! 군고구마다!! 헤헤헤헤!!",
+        "detected": [
+          "sniffing air",
+          "sparkling eyes",
+          "explosive laughter"
+        ]
+      }
+    ]
+  },
+  "$summary": "Video generation info prepared for 5 scenes (healing story content - 고독한 땅콩이)",
+  "$return_value": {
+    "folder_name": "고독한땅콩이",
+    "total_scenes": 5,
+    "script_format": "narration",
+    "content_type": "healing_story",
+    "resolution": "1080p",
+    "format": "Clean video only",
+    "text_overlays": false,
+    "subtitles": false,
+    "watermarks": false,
+    "overall_style": "photorealistic",
+    "character_prompts": {
+      "main": "Create a 3-year-old female brown Pomeranian dog with innocent, pure, baby-like features"
+    },
+    "characters": {
+      "main": {
+        "name": "땅콩이",
+        "role": "main",
+        "character_type": "animal",
+        "species": "dog",
+        "breed": "Pomeranian",
+        "estimated_age": "3 years old",
+        "personality": "innocent, pure, baby-like, curious, lonely, joyful",
+        "voice_type": "baby_girl",
+        "image_prompt": "Create a 3-year-old female brown Pomeranian dog with innocent, pure, baby-like features",
+        "distinctive_features": [
+          "innocent pure baby-like features",
+          "brown fur"
+        ],
+        "accessories": [],
+        "fur_color": "brown",
+        "fur_texture": "fluffy",
+        "eye_color": "dark"
+      }
+    },
+    "voice_settings": {
+      "main": {
+        "type": "Korean baby infant voice, 2-3 years old, LOW-PITCHED adorable tone",
+        "tone": "Calm observation → Lonely → Sleepy → Excited → Extremely happy with explosive laughter",
+        "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft LOW voice",
+        "laugh_style": "Adorable soft baby giggling burst with LOW-PITCHED cooing sounds - eyes squint tight, whole face laughing, open happy laughing mouth showing teeth, can't stop laughing. Soft gentle baby chuckling. Rapid open-close-open mouth pattern for laughter. Uncontrollable cute infant giggling with low soft voice.",
+        "consistent_across": "All videos"
+      }
+    },
+    "scenes": [
+      {
+        "video": 1,
+        "title": "고독한 땅콩이 - Scene 1: 소파에서 지켜보는 땅콩이",
+        "duration": "8 seconds",
+        "duration_seconds": 8,
+        "veo3_compliant": true,
+        "resolution": "1080p",
+        "prompt": "1080p cinematic video. Create a 3-year-old female brown Pomeranian dog with innocent, pure, baby-like features, lying on a living room sofa, watching human parents (woman and man, partial bodies visible in background) preparing to leave. Korean apartment living room with warm afternoon lighting. Camera: middle-wide shot, static 0-5s, slow smooth zoom-in (1.0x → 1.3x) 6-8s on dog's face. Dog observes parents with curious expression, eyes following their movements, speaks with LOW-PITCHED baby voice. Real living animal. Actual pet. NOT a mascot. NOT a costume. Real fur. Real animal. No text anywhere. No subtitles. No watermarks. Clean video only.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_3_sec": "Silence, dog watching parents",
+            "3.0_to_5_sec": "땅콩이 audio: 엄마 아빠 뭐해?",
+            "5.0_to_6_sec": "Silence, continued observation",
+            "6.0_to_8_sec": "땅콩이 audio: 어디 가나?"
+          },
+          "interviewer": null,
+          "땅콩이": "엄마 아빠 뭐해? 어디 가나?",
+          "script": "엄마 아빠 뭐해? 어디 가나?",
+          "script_english": "Mom, Dad, what are you doing? Where are you going?",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩이": {
+            "type": "Korean baby infant voice, 2-3 years old, LOW-PITCHED adorable tone",
+            "tone": "Curious and observant",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft LOW voice",
+            "emotion": "curious, innocent observation",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 8 seconds",
+          "0.0_to_3_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference, lying on sofa, watching",
+            "mouth": "Closed, observing"
+          },
+          "3_to_5_sec": {
+            "base": "Same reference image",
+            "dog": "Same brown fur, same face",
+            "mouth": "Subtle lip sync for dialogue",
+            "change_only": "Mouth movement only",
+            "keep_same": "Everything else identical"
+          },
+          "5_to_6_sec": {
+            "base": "Same reference image",
+            "dog": "Same appearance, eyes following parents",
+            "mouth": "Closed",
+            "keep_same": "All features identical"
+          },
+          "6_to_8_sec": {
+            "base": "Same reference image",
+            "dog": "Same brown fur, same face",
+            "mouth": "Subtle lip sync for dialogue",
+            "change_only": "Mouth movement, zoom in",
+            "keep_same": "Fur color, facial features"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a 3-year-old female brown Pomeranian dog with innocent, pure, baby-like features",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "brown",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [],
+          "props": [],
+          "distinctive_features": [
+            "innocent pure baby-like features",
+            "brown fur"
+          ]
+        },
+        "scene_environment": {
+          "background": "Korean apartment living room",
+          "location": "indoor",
+          "lighting": "warm afternoon lighting",
+          "weather": null,
+          "mood": "Curious, observant, calm",
+          "props_in_scene": ["sofa", "parents in background preparing to leave"],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "narration",
+          "speaker": "main",
+          "character_name": "땅콩이",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "Korean apartment living room",
+          "lighting": "warm afternoon lighting",
+          "weather": null,
+          "mood": "Curious, observant, calm",
+          "props_in_scene": ["sofa", "parents in background"],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "curious",
+          "transition": "Calm curiosity",
+          "ending_expression": "gentle curiosity with slight concern"
+        },
+        "consistency_check": {
+          "fur_color": "exact same brown shade and patterns must stay same at all times",
+          "background": "Korean apartment living room must look same throughout",
+          "accessories": "none"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_3_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, observing",
+            "expression": "curious observation of parents"
+          },
+          "3.0_to_5_sec": {
+            "text": "엄마 아빠 뭐해?",
+            "mouth": "Subtle movements for Korean syllables",
+            "expression": "questioning curiosity"
+          },
+          "5.0_to_6_sec": {
+            "audio": "Silence",
+            "mouth": "Closed",
+            "expression": "continued observation"
+          },
+          "6.0_to_8_sec": {
+            "text": "어디 가나?",
+            "mouth": "Subtle movements for Korean syllables",
+            "expression": "gentle concern and curiosity"
+          }
+        },
+        "mouth_shapes": {
+          "엄": "lips_close_for_mmm_sound",
+          "마": "mouth_opens_for_ma",
+          "아": "mouth_opens_wider_for_ah",
+          "빠": "lips_part_for_ppa",
+          "뭐": "lips_round_for_mwo",
+          "해": "mouth_closes_gently_for_hae",
+          "어": "mouth_opens_for_eo",
+          "디": "tongue_touches_for_di",
+          "가": "jaw_drops_for_ga",
+          "나": "soft_closure_for_na"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice, LOW-PITCHED",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 1,
+        "segment_number": 1,
+        "start": 0,
+        "end": 8,
+        "narration": "엄마 아빠 뭐해? 어디 가나?",
+        "narration_korean": "엄마 아빠 뭐해? 어디 가나?",
+        "narration_english": "Mom, Dad, what are you doing? Where are you going?",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "3-year-old female brown Pomeranian dog lying on sofa in Korean apartment living room, watching parents prepare to leave, warm afternoon lighting",
+        "video_prompt": {
+          "character_action": "Lying on sofa, observing parents, eyes following their movements, speaks with curious tone",
+          "lip_sync": "yes",
+          "facial_expression": "Curious observation → gentle concern",
+          "body_movement": "Lying still on sofa, head may tilt slightly, eyes following parents",
+          "camera_movement": "static 0-5s, slow zoom-in 6-8s (1.0x → 1.3x)",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl",
+          "voice_type": "cute_toddler_girl_low_pitched",
+          "speaking_speed": "very slow",
+          "sound_effects": [],
+          "background_sound": "quiet room ambience",
+          "bgm_featured": false,
+          "bgm_volume": 0.2,
+          "tts_enabled": true,
+          "voice_tone": "Curious, innocent",
+          "ambient_sound": "Gentle room ambience, parents' movement sounds",
+          "background_music_mood": "Calm, observant"
+        },
+        "action_cues": {},
+        "detected_actions": [
+          {
+            "keyword": "watching parents",
+            "action": "Dog lying on sofa, watching parents prepare to leave"
+          },
+          {
+            "keyword": "head tilting",
+            "action": "Dog may tilt head slightly in curiosity"
+          },
+          {
+            "keyword": "curious observation",
+            "action": "Dog's eyes following parents' movements"
+          }
+        ],
+        "is_hook_scene": true,
+        "thumbnail_optimized": true
+      },
+      {
+        "video": 2,
+        "title": "고독한 땅콩이 - Scene 2: 엄마 아빠 외출 & 혼자 남은 땅콩이",
+        "duration": "8 seconds",
+        "duration_seconds": 8,
+        "veo3_compliant": true,
+        "resolution": "1080p",
+        "prompt": "1080p cinematic video continuation. Create a 3-year-old female brown Pomeranian dog with innocent, pure, baby-like features, lying on living room sofa. Korean apartment living room, no humans visible (parents have left). Camera: middle-wide shot, static 0-5s, slow zoom-in (1.0x → 1.5x) 6-8s. Dog reacts to OFF-SCREEN door closing sound ('쾅' at 2-3s), ears perk up, head slightly lifts, then rests back down with lonely expression, speaks with LOW-PITCHED baby voice expressing loneliness. Real living animal. Actual pet. Real fur. No text. No subtitles. No watermarks.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_2_sec": "Silence, dog lying on sofa",
+            "2.0_to_3_sec": "🔊 OFF-SCREEN door closing sound '쾅'",
+            "3.0_to_4_sec": "Silence, dog's ears perk, head lifts",
+            "4.0_to_5.5_sec": "땅콩이 audio: 갔네...",
+            "5.5_to_6_sec": "Silence, dog rests head",
+            "6.0_to_8_sec": "땅콩이 audio: 혼자네..."
+          },
+          "interviewer": null,
+          "땅콩이": "갔네... 혼자네...",
+          "script": "갔네... 혼자네...",
+          "script_english": "They're gone... I'm alone...",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩이": {
+            "type": "Korean baby infant voice, 2-3 years old, LOW-PITCHED adorable tone",
+            "tone": "Lonely and sad",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft LOW voice",
+            "emotion": "lonely, quiet sadness",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 8 seconds",
+          "0.0_to_2_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference, lying on sofa",
+            "mouth": "Closed, quiet"
+          },
+          "2_to_4_sec": {
+            "base": "Same reference image",
+            "dog": "Same brown fur, ears perk at sound, head lifts",
+            "mouth": "Closed",
+            "change_only": "Ear movement, head lift",
+            "keep_same": "Everything else identical"
+          },
+          "4_to_5.5_sec": {
+            "base": "Same reference image",
+            "dog": "Same appearance",
+            "mouth": "Subtle lip sync for dialogue",
+            "change_only": "Mouth movement only",
+            "keep_same": "All features identical"
+          },
+          "5.5_to_6_sec": {
+            "base": "Same reference image",
+            "dog": "Same appearance, rests head back",
+            "mouth": "Closed",
+            "keep_same": "All features identical"
+          },
+          "6_to_8_sec": {
+            "base": "Same reference image",
+            "dog": "Same brown fur, lonely expression",
+            "mouth": "Subtle lip sync for dialogue",
+            "change_only": "Mouth movement, zoom in",
+            "keep_same": "Fur color, facial features"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a 3-year-old female brown Pomeranian dog with innocent, pure, baby-like features",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "brown",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [],
+          "props": [],
+          "distinctive_features": [
+            "innocent pure baby-like features",
+            "brown fur"
+          ]
+        },
+        "scene_environment": {
+          "background": "Korean apartment living room (parents gone)",
+          "location": "indoor",
+          "lighting": "warm afternoon lighting",
+          "weather": null,
+          "mood": "Lonely, quiet, sad",
+          "props_in_scene": ["sofa"],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "narration",
+          "speaker": "main",
+          "character_name": "땅콩이",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "Korean apartment living room",
+          "lighting": "warm afternoon lighting",
+          "weather": null,
+          "mood": "Lonely, quiet, sad",
+          "props_in_scene": ["sofa"],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "lonely",
+          "transition": "Realization → loneliness",
+          "ending_expression": "quiet sadness and loneliness"
+        },
+        "consistency_check": {
+          "fur_color": "exact same brown shade and patterns must stay same at all times",
+          "background": "Korean apartment living room must look same throughout",
+          "accessories": "none"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_2_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, quiet",
+            "expression": "lying peacefully on sofa"
+          },
+          "2.0_to_3_sec": {
+            "audio": "🔊 Door closing sound OFF-SCREEN",
+            "mouth": "Closed",
+            "expression": "ears perk up at sound"
+          },
+          "3.0_to_4_sec": {
+            "audio": "Silence",
+            "mouth": "Closed",
+            "expression": "head lifts, realization"
+          },
+          "4.0_to_5.5_sec": {
+            "text": "갔네...",
+            "mouth": "Subtle movements for Korean syllables",
+            "expression": "quiet realization, lonely"
+          },
+          "5.5_to_6_sec": {
+            "audio": "Silence",
+            "mouth": "Closed",
+            "expression": "rests head back down"
+          },
+          "6.0_to_8_sec": {
+            "text": "혼자네...",
+            "mouth": "Subtle movements for Korean syllables",
+            "expression": "lonely expression deepens"
+          }
+        },
+        "mouth_shapes": {
+          "갔": "lips_part_for_gat",
+          "네": "soft_opening_for_ne",
+          "혼": "lips_round_for_hon",
+          "자": "jaw_drops_gently_for_ja",
+          "네2": "soft_closure_for_ne"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice, LOW-PITCHED",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 2,
+        "segment_number": 2,
+        "start": 8,
+        "end": 16,
+        "narration": "갔네... 혼자네...",
+        "narration_korean": "갔네... 혼자네...",
+        "narration_english": "They're gone... I'm alone...",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "3-year-old female brown Pomeranian dog lying alone on sofa in Korean apartment living room, lonely expression, warm afternoon lighting",
+        "video_prompt": {
+          "character_action": "Lying on sofa, reacts to door sound, ears perk, head lifts then rests, speaks with lonely tone",
+          "lip_sync": "yes",
+          "facial_expression": "Peaceful → surprised → lonely",
+          "body_movement": "Lying still, ears perk up, head lifts slightly then rests back",
+          "camera_movement": "static 0-5s, slow zoom-in 6-8s (1.0x → 1.5x)",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl",
+          "voice_type": "cute_toddler_girl_low_pitched",
+          "speaking_speed": "very slow",
+          "sound_effects": ["door closing sound '쾅' at 2-3s OFF-SCREEN"],
+          "background_sound": "quiet room ambience",
+          "bgm_featured": false,
+          "bgm_volume": 0.2,
+          "tts_enabled": true,
+          "voice_tone": "Lonely, sad",
+          "ambient_sound": "Quiet room, door closing sound",
+          "background_music_mood": "Melancholic, lonely"
+        },
+        "action_cues": {},
+        "detected_actions": [
+          {
+            "keyword": "ears perking at door sound",
+            "action": "Dog's ears perk up at OFF-SCREEN door closing sound"
+          },
+          {
+            "keyword": "lonely expression",
+            "action": "Dog shows lonely, sad expression"
+          },
+          {
+            "keyword": "resting head",
+            "action": "Dog rests head back down after realizing parents left"
+          }
+        ],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 3,
+        "title": "고독한 땅콩이 - Scene 3: 집안을 돌아다니다 현관문 앞에서 잠듦",
+        "duration": "8 seconds",
+        "duration_seconds": 8,
+        "veo3_compliant": true,
+        "resolution": "1080p",
+        "prompt": "1080p cinematic video continuation. Create a 3-year-old female brown Pomeranian dog with innocent, pure, baby-like features, walking slowly from living room towards entrance door area. Korean apartment interior, warm indoor lighting gradually dimming. Camera: middle-wide shot, smoothly follows dog's movement, slow zoom-in (1.0x → 1.4x) 6.5-8s on sleeping dog's face. Dog walks slowly, occasionally stopping to look around, speaks with LOW-PITCHED baby voice, lies down in front of door area/hallway, falls asleep peacefully. Real living animal. Actual pet. Real fur. No text. No subtitles. No watermarks.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_2_sec": "Silence, dog walking slowly",
+            "2.0_to_3.5_sec": "땅콩이 audio: 엄마 아빠...",
+            "3.5_to_5_sec": "Silence, dog continues walking slowly",
+            "5.0_to_6.5_sec": "땅콩이 audio: 언제 와...",
+            "6.5_to_7_sec": "Silence, dog lies down",
+            "7.0_to_8_sec": "Silence, dog falls asleep"
+          },
+          "interviewer": null,
+          "땅콩이": "엄마 아빠... 언제 와...",
+          "script": "엄마 아빠... 언제 와...",
+          "script_english": "Mom, Dad... when are you coming...",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩이": {
+            "type": "Korean baby infant voice, 2-3 years old, LOW-PITCHED adorable tone",
+            "tone": "Tired, longing, sleepy",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft LOW voice",
+            "emotion": "tired longing, sleepiness",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 8 seconds",
+          "0.0_to_2_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference, walking slowly",
+            "mouth": "Closed, walking"
+          },
+          "2_to_3.5_sec": {
+            "base": "Same reference image",
+            "dog": "Same brown fur, walking",
+            "mouth": "Subtle lip sync for dialogue",
+            "change_only": "Mouth movement, walking",
+            "keep_same": "Everything else identical"
+          },
+          "3.5_to_5_sec": {
+            "base": "Same reference image",
+            "dog": "Same appearance, continues walking",
+            "mouth": "Closed",
+            "keep_same": "All features identical"
+          },
+          "5_to_6.5_sec": {
+            "base": "Same reference image",
+            "dog": "Same brown fur, walking",
+            "mouth": "Subtle lip sync for dialogue",
+            "change_only": "Mouth movement only",
+            "keep_same": "Fur color, facial features"
+          },
+          "6.5_to_7_sec": {
+            "base": "Same reference image",
+            "dog": "Same appearance, lying down",
+            "mouth": "Closed",
+            "keep_same": "All features identical"
+          },
+          "7_to_8_sec": {
+            "base": "Same reference image",
+            "dog": "Same brown fur, sleeping peacefully",
+            "mouth": "Closed, sleeping",
+            "change_only": "Sleeping expression",
+            "keep_same": "Fur color, facial features"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a 3-year-old female brown Pomeranian dog with innocent, pure, baby-like features",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "brown",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [],
+          "props": [],
+          "distinctive_features": [
+            "innocent pure baby-like features",
+            "brown fur"
+          ]
+        },
+        "scene_environment": {
+          "background": "Korean apartment interior (living room to hallway/entrance)",
+          "location": "indoor",
+          "lighting": "warm indoor lighting, gradually dimming",
+          "weather": null,
+          "mood": "Tired, longing, peaceful",
+          "props_in_scene": ["entrance door area/hallway"],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "narration",
+          "speaker": "main",
+          "character_name": "땅콩이",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "Korean apartment interior",
+          "lighting": "warm indoor lighting, gradually dimming",
+          "weather": null,
+          "mood": "Tired, longing, peaceful",
+          "props_in_scene": ["entrance door area"],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "tired",
+          "transition": "Lonely walking → tired longing → peaceful sleep",
+          "ending_expression": "peaceful sleeping expression"
+        },
+        "consistency_check": {
+          "fur_color": "exact same brown shade and patterns must stay same at all times",
+          "background": "Korean apartment interior must look same throughout",
+          "accessories": "none"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_2_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, walking",
+            "expression": "tired, walking slowly"
+          },
+          "2.0_to_3.5_sec": {
+            "text": "엄마 아빠...",
+            "mouth": "Subtle movements for Korean syllables",
+            "expression": "longing, tired"
+          },
+          "3.5_to_5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed",
+            "expression": "continued slow walking"
+          },
+          "5.0_to_6.5_sec": {
+            "text": "언제 와...",
+            "mouth": "Subtle movements for Korean syllables",
+            "expression": "tired longing, sleepy"
+          },
+          "6.5_to_7_sec": {
+            "audio": "Silence",
+            "mouth": "Closed",
+            "expression": "lying down"
+          },
+          "7.0_to_8_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, sleeping",
+            "expression": "peaceful sleeping"
+          }
+        },
+        "mouth_shapes": {
+          "엄": "lips_close_for_mmm_sound",
+          "마": "mouth_opens_for_ma",
+          "아": "mouth_opens_wider_for_ah",
+          "빠": "lips_part_for_ppa",
+          "언": "mouth_opens_for_eon",
+          "제": "lips_part_for_je",
+          "와": "mouth_opens_for_wa"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice, LOW-PITCHED",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 3,
+        "segment_number": 3,
+        "start": 16,
+        "end": 24,
+        "narration": "엄마 아빠... 언제 와...",
+        "narration_korean": "엄마 아빠... 언제 와...",
+        "narration_english": "Mom, Dad... when are you coming...",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "3-year-old female brown Pomeranian dog walking slowly in Korean apartment hallway towards entrance door, tired expression, warm dimming lighting",
+        "video_prompt": {
+          "character_action": "Walking slowly from living room to entrance, occasionally stopping to look around, speaks with tired longing tone, lies down and falls asleep",
+          "lip_sync": "yes",
+          "facial_expression": "Tired longing → sleepy → peaceful sleeping",
+          "body_movement": "Walking slowly, stops occasionally, lies down, falls asleep",
+          "camera_movement": "smoothly follows dog, slow zoom-in 6.5-8s (1.0x → 1.4x)",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl",
+          "voice_type": "cute_toddler_girl_low_pitched",
+          "speaking_speed": "very slow",
+          "sound_effects": ["soft paw steps"],
+          "background_sound": "quiet room ambience",
+          "bgm_featured": false,
+          "bgm_volume": 0.2,
+          "tts_enabled": true,
+          "voice_tone": "Tired, longing, sleepy",
+          "ambient_sound": "Gentle room ambience, soft footsteps",
+          "background_music_mood": "Peaceful, melancholic"
+        },
+        "action_cues": {},
+        "detected_actions": [
+          {
+            "keyword": "walking slowly",
+            "action": "Dog walking slowly from living room towards entrance"
+          },
+          {
+            "keyword": "lying down",
+            "action": "Dog lies down in front of entrance door area"
+          },
+          {
+            "keyword": "falling asleep",
+            "action": "Dog falls asleep peacefully while waiting"
+          }
+        ],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 4,
+        "title": "고독한 땅콩이 - Scene 4: 도어락 소리에 귀 쫑긋 & 문 앞에서 대기",
+        "duration": "8 seconds",
+        "duration_seconds": 8,
+        "veo3_compliant": true,
+        "resolution": "1080p",
+        "prompt": "1080p cinematic video continuation. Create a 3-year-old female brown Pomeranian dog with innocent, pure, baby-like features, sleeping peacefully on floor in front of closed apartment entrance door. Korean apartment entrance hallway, warm indoor lighting. Camera: middle-wide shot, static 0-6.5s, slow zoom-in (1.0x → 1.2x) 6.5-8s. At 1.5s, electronic door lock beeping sound ('띠~띠-띨~띠~' OFF-SCREEN), dog's ears perk up, head lifts, eyes open, speaks with LOW-PITCHED baby voice in surprised excitement, raises to sitting position, tail wagging vigorously. Door remains CLOSED throughout. Real living animal. Actual pet. Real fur. No text. No subtitles. No watermarks.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_1.5_sec": "Silence, dog sleeping peacefully",
+            "1.5_to_2_sec": "🔊 Electronic door lock beeping sound '띠~띠-띨~띠~' OFF-SCREEN",
+            "2.0_to_2.5_sec": "Silence, ears perk up",
+            "2.5_to_3_sec": "Silence, head lifts, eyes open",
+            "3.0_to_4_sec": "땅콩이 audio: 어?! 엄마 아빠다!!",
+            "4.0_to_5_sec": "Silence, raises to sitting",
+            "5.0_to_6.5_sec": "땅콩이 audio: 왔다!! 왔다!!",
+            "6.5_to_8_sec": "Silence, excited waiting"
+          },
+          "interviewer": null,
+          "땅콩이": "어?! 엄마 아빠다!! 왔다!! 왔다!!",
+          "script": "어?! 엄마 아빠다!! 왔다!! 왔다!!",
+          "script_english": "Oh?! It's Mom and Dad!! They're here!! They're here!!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩이": {
+            "type": "Korean baby infant voice, 2-3 years old, LOW-PITCHED adorable tone",
+            "tone": "Surprised excitement → joyful anticipation",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft LOW voice",
+            "emotion": "surprised excitement, joyful anticipation",
+            "laugh_style": "Adorable baby giggling, soft cooing laughter",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 8 seconds",
+          "0.0_to_1.5_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference, sleeping peacefully",
+            "mouth": "Closed, sleeping"
+          },
+          "1.5_to_3_sec": {
+            "base": "Same reference image",
+            "dog": "Same brown fur, ears perk, head lifts, eyes open",
+            "mouth": "Closed",
+            "change_only": "Ear movement, head lift, eyes open",
+            "keep_same": "Everything else identical"
+          },
+          "3_to_4_sec": {
+            "base": "Same reference image",
+            "dog": "Same appearance, excited expression",
+            "mouth": "Subtle lip sync for dialogue",
+            "change_only": "Mouth movement, excited expression",
+            "keep_same": "All features identical"
+          },
+          "4_to_5_sec": {
+            "base": "Same reference image",
+            "dog": "Same brown fur, raises to sitting",
+            "mouth": "Closed",
+            "change_only": "Position change to sitting",
+            "keep_same": "Fur color, facial features"
+          },
+          "5_to_6.5_sec": {
+            "base": "Same reference image",
+            "dog": "Same appearance, sitting, tail wagging",
+            "mouth": "Subtle lip sync for dialogue",
+            "change_only": "Mouth movement, tail wagging",
+            "keep_same": "All features identical"
+          },
+          "6.5_to_8_sec": {
+            "base": "Same reference image",
+            "dog": "Same brown fur, excited sitting, tail wagging",
+            "mouth": "Closed",
+            "change_only": "Excited expression, zoom in",
+            "keep_same": "Fur color, facial features"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style",
+          "method": "Minimal mouth animation on static image",
+          "mouth_movement": "Small natural opening and closing matching Korean syllables",
+          "face": "Keep same expression, only mouth area moves slightly",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a 3-year-old female brown Pomeranian dog with innocent, pure, baby-like features",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "brown",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [],
+          "props": [],
+          "distinctive_features": [
+            "innocent pure baby-like features",
+            "brown fur"
+          ]
+        },
+        "scene_environment": {
+          "background": "Korean apartment entrance hallway (door CLOSED)",
+          "location": "indoor",
+          "lighting": "warm indoor lighting, slightly brighter from 4.0s",
+          "weather": null,
+          "mood": "Surprised excitement, joyful anticipation",
+          "props_in_scene": ["closed entrance door"],
+          "special_effects": ""
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "narration",
+          "speaker": "main",
+          "character_name": "땅콩이",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "Korean apartment entrance hallway",
+          "lighting": "warm indoor lighting",
+          "weather": null,
+          "mood": "Surprised excitement, joyful anticipation",
+          "props_in_scene": ["closed door"],
+          "special_effects": "",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "excited",
+          "transition": "Sleeping → surprised → excited → joyfully anticipating",
+          "ending_expression": "excited anticipation facing closed door"
+        },
+        "consistency_check": {
+          "fur_color": "exact same brown shade and patterns must stay same at all times",
+          "background": "Korean apartment entrance hallway must look same throughout",
+          "accessories": "none",
+          "door_state": "door MUST remain CLOSED for entire 8 seconds"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_1.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, sleeping",
+            "expression": "peaceful sleeping"
+          },
+          "1.5_to_2_sec": {
+            "audio": "🔊 Door lock beeping OFF-SCREEN",
+            "mouth": "Closed",
+            "expression": "sleeping"
+          },
+          "2.0_to_2.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed",
+            "expression": "ears perk up"
+          },
+          "2.5_to_3_sec": {
+            "audio": "Silence",
+            "mouth": "Closed",
+            "expression": "head lifts, eyes open"
+          },
+          "3.0_to_4_sec": {
+            "text": "어?! 엄마 아빠다!!",
+            "mouth": "Subtle movements for Korean syllables",
+            "expression": "surprised excitement"
+          },
+          "4.0_to_5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed",
+            "expression": "raises to sitting position"
+          },
+          "5.0_to_6.5_sec": {
+            "text": "왔다!! 왔다!!",
+            "mouth": "Subtle movements for Korean syllables",
+            "expression": "joyful anticipation, tail wagging"
+          },
+          "6.5_to_8_sec": {
+            "audio": "Silence",
+            "mouth": "Closed",
+            "expression": "excited waiting, tail wagging"
+          }
+        },
+        "mouth_shapes": {
+          "어": "mouth_opens_for_eo_surprise",
+          "엄": "lips_close_for_mmm_sound",
+          "마": "mouth_opens_for_ma",
+          "아": "mouth_opens_wider_for_ah",
+          "빠": "lips_part_for_ppa",
+          "다": "jaw_drops_for_da_excited",
+          "왔": "lips_part_for_wat",
+          "다2": "jaw_drops_for_da_joyful"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice, LOW-PITCHED",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 4,
+        "segment_number": 4,
+        "start": 24,
+        "end": 32,
+        "narration": "어?! 엄마 아빠다!! 왔다!! 왔다!!",
+        "narration_korean": "어?! 엄마 아빠다!! 왔다!! 왔다!!",
+        "narration_english": "Oh?! It's Mom and Dad!! They're here!! They're here!!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "3-year-old female brown Pomeranian dog sitting excitedly in front of closed entrance door in Korean apartment, tail wagging, warm indoor lighting",
+        "video_prompt": {
+          "character_action": "Sleeping, wakes to door lock sound, ears perk, head lifts, eyes open, speaks with excited surprise, raises to sitting, tail wags, waits excitedly",
+          "lip_sync": "yes",
+          "facial_expression": "Sleeping → surprised → excited → joyfully anticipating",
+          "body_movement": "Sleeping → ears perk → head lifts → sitting up → tail wagging",
+          "camera_movement": "static 0-6.5s, slow zoom-in 6.5-8s (1.0x → 1.2x)",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl",
+          "voice_type": "cute_toddler_girl_low_pitched",
+          "speaking_speed": "very slow",
+          "sound_effects": ["electronic door lock beeping '띠~띠-띨~띠~' at 1.5-2s OFF-SCREEN", "tail wagging sounds"],
+          "background_sound": "quiet room ambience",
+          "bgm_featured": false,
+          "bgm_volume": 0.2,
+          "tts_enabled": true,
+          "voice_tone": "Surprised excitement, joyful anticipation",
+          "ambient_sound": "Door lock sound, excited breathing, tail wagging",
+          "background_music_mood": "Exciting, anticipatory"
+        },
+        "action_cues": {},
+        "detected_actions": [
+          {
+            "keyword": "ears perking at door lock sound",
+            "action": "Dog's ears perk up at OFF-SCREEN electronic door lock beeping"
+          },
+          {
+            "keyword": "excited anticipation",
+            "action": "Dog shows excited, joyful anticipation"
+          },
+          {
+            "keyword": "tail wagging",
+            "action": "Dog's tail wags vigorously while sitting and waiting"
+          }
+        ],
+        "is_hook_scene": false,
+        "thumbnail_optimized": false
+      },
+      {
+        "video": 5,
+        "title": "고독한 땅콩이 - Scene 5: 문 열고 주인 등장 & 킁킁 & 군고구마 발견 & 폭소",
+        "duration": "8 seconds",
+        "duration_seconds": 8,
+        "veo3_compliant": true,
+        "resolution": "1080p",
+        "prompt": "1080p cinematic video continuation. Create a 3-year-old female brown Pomeranian dog with innocent, pure, baby-like features, sitting excitedly in front of closed door (0-0.5s). Door handle turns (0.5s), door swings open (1.0s), two human figures (mom and dad, full bodies visible) enter from outside holding shopping bags. Korean apartment entrance area, warm indoor + natural light from open door. Camera: middle-wide shot 0-4s, close-up 4-8s, smooth zoom-in (1.0x → 1.5x) 4.5-8s. Dog rushes to greet (1.5-2s), nose twitches sniffing air (2-2.5s, 'sniff sniff sniff' sounds), parent shows roasted sweet potatoes (2.5-3s), dog looks up with SPARKLING WIDE EYES (3-5s, eyes literally shining/glistening), speaks with LOW-PITCHED baby voice in extreme excitement, then EXPLOSIVE LAUGHTER (5-8s): eyes squint TIGHT shut, mouth WIDE OPEN showing teeth, rapid open-close-open mouth pattern, whole body wiggling with uncontrollable giggles. Real living animal. Actual pet. Real fur. No text. No subtitles. No watermarks.",
+        "dialogue": {
+          "timing": {
+            "0.0_to_0.5_sec": "Silence, dog sitting, door closed",
+            "0.5_to_1_sec": "🚪 Door handle turning, door opening sounds",
+            "1.0_to_1.5_sec": "Footsteps entering from outside",
+            "1.5_to_2_sec": "🐕 Excited panting, paw pattering",
+            "2.0_to_2.5_sec": "🐕 Sniffing sounds 'sniff sniff sniff', bag rustling",
+            "2.5_to_3_sec": "Paper bag rustling, sweet potato revealed",
+            "3.0_to_5_sec": "땅콩이 audio: 우와!! 군고구마다!!",
+            "5.0_to_8_sec": "땅콩이 audio: 헤헤헤헤!! 헤헤헤!! 헤헤!!"
+          },
+          "interviewer": null,
+          "땅콩이": "킁킁킁... 우와!! 군고구마다!! 헤헤헤헤!!",
+          "script": "킁킁킁... 우와!! 군고구마다!! 헤헤헤헤!!",
+          "script_english": "Sniff sniff sniff... Wow!! Roasted sweet potato!! Hehehehe!!",
+          "audio_only": true
+        },
+        "voice_settings": {
+          "땅콩이": {
+            "type": "Korean baby infant voice, 2-3 years old, LOW-PITCHED adorable tone",
+            "tone": "Sniffing curiosity → sparkling-eyed extreme excitement → explosive uncontrollable laughter",
+            "characteristics": "very slow speech, babbling pronunciation, slight lisp, baby talk with soft LOW voice",
+            "emotion": "curious sniffing, extreme excitement, explosive laughter",
+            "laugh_style": "Adorable soft baby giggling burst with LOW-PITCHED cooing sounds - eyes squint tight, whole face laughing, open happy laughing mouth showing teeth, can't stop laughing. Soft gentle baby chuckling. Rapid open-close-open mouth pattern for laughter. Uncontrollable cute infant giggling with low soft voice.",
+            "consistent_across": "All videos"
+          }
+        },
+        "visual_continuity": {
+          "instruction": "Same visual appearance for all 8 seconds",
+          "0.0_to_1_sec": {
+            "base": "Reference image exactly",
+            "dog": "Same as reference, sitting, door closed then opening",
+            "mouth": "Closed, excited"
+          },
+          "1_to_2_sec": {
+            "base": "Same reference image",
+            "dog": "Same brown fur, rushing forward to greet",
+            "mouth": "Closed, panting",
+            "change_only": "Movement forward",
+            "keep_same": "Everything else identical"
+          },
+          "2_to_2.5_sec": {
+            "base": "Same reference image",
+            "dog": "Same appearance, nose twitching, sniffing",
+            "mouth": "Nose twitching, nostrils flaring",
+            "change_only": "Sniffing action, nose movement",
+            "keep_same": "All features identical"
+          },
+          "2.5_to_3_sec": {
+            "base": "Same reference image",
+            "dog": "Same brown fur, looking up",
+            "mouth": "Closed",
+            "change_only": "Looking up at sweet potato",
+            "keep_same": "Fur color, facial features"
+          },
+          "3_to_5_sec": {
+            "base": "Same reference image",
+            "dog": "Same appearance, SPARKLING EYES (wide open, bright shining)",
+            "mouth": "Subtle lip sync for dialogue",
+            "change_only": "SPARKLING EYES (wide, gleaming), mouth movement",
+            "keep_same": "All other features identical",
+            "special_effect": "Eyes literally shining/glistening with bright sparkle"
+          },
+          "5_to_8_sec": {
+            "base": "Same reference image",
+            "dog": "Same brown fur, EXPLOSIVE LAUGHTER (eyes TIGHT shut, mouth WIDE open showing teeth)",
+            "mouth": "WIDE OPEN showing teeth, rapid open-close-open pattern",
+            "change_only": "LAUGH EXPRESSION (eyes squint shut, mouth wide open, whole face laughing), body wiggling",
+            "keep_same": "Fur color, other features",
+            "critical": "Eyes MUST be squint TIGHT shut (opposite of sparkling eyes), mouth MUST be WIDE OPEN showing teeth"
+          }
+        },
+        "lip_sync_style": {
+          "type": "Subtle talking photo style + explosive laughter animation",
+          "method": "Minimal mouth animation for dialogue, intense mouth animation for laughter",
+          "mouth_movement": "Small natural opening for dialogue, WIDE OPEN rapid movements for laughter",
+          "face": "Keep same expression for dialogue, FULL LAUGHING FACE for laughter (eyes tight shut, mouth wide, whole face scrunched)",
+          "do_not": "Do not regenerate dog image, do not change dog appearance",
+          "dog_speaks": true
+        },
+        "character_appearance": {
+          "base": "Create a 3-year-old female brown Pomeranian dog with innocent, pure, baby-like features",
+          "species": "dog",
+          "breed": "Pomeranian",
+          "fur_color": "brown",
+          "fur_texture": "fluffy",
+          "outfit": "",
+          "accessories": [],
+          "props": [],
+          "distinctive_features": [
+            "innocent pure baby-like features",
+            "brown fur"
+          ]
+        },
+        "scene_environment": {
+          "background": "Korean apartment entrance area (door OPENS, people enter from outside)",
+          "location": "indoor",
+          "lighting": "warm indoor lighting + natural light coming through open door",
+          "weather": null,
+          "mood": "Sniffing curiosity → extreme excitement → explosive joy with uncontrollable laughter",
+          "props_in_scene": ["open door", "shopping bags", "roasted sweet potatoes (군고구마)"],
+          "special_effects": "Sparkling eyes effect (3-5s), whole body wiggling during laughter (5-8s)"
+        },
+        "interview_question_info": null,
+        "scene_details": {
+          "scene_type": "narration",
+          "speaker": "main",
+          "character_name": "땅콩이",
+          "character_type": "animal",
+          "is_animal_character": true,
+          "character_description": "Dog",
+          "location": "indoor",
+          "background": "Korean apartment entrance area",
+          "lighting": "warm indoor + natural light from open door",
+          "weather": null,
+          "mood": "Extreme excitement, explosive joy",
+          "props_in_scene": ["door", "shopping bags", "sweet potatoes"],
+          "special_effects": "Sparkling eyes, explosive laughter",
+          "is_flashback": false,
+          "is_interview_question": false,
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "performance_info": null,
+        "emotion": {
+          "primary": "excited",
+          "transition": "Anticipation → sniffing curiosity → sparkling-eyed excitement → explosive uncontrollable laughter",
+          "ending_expression": "can't stop laughing, whole face laughing, eyes tight shut, mouth wide open"
+        },
+        "consistency_check": {
+          "fur_color": "exact same brown shade and patterns must stay same at all times",
+          "background": "Korean apartment entrance area must look same throughout",
+          "accessories": "none",
+          "door_state": "door CLOSED (0-0.5s), door OPENS (0.5-1.0s), door remains OPEN (1.0-8.0s)",
+          "human_presence": "full bodies visible, entering from outside"
+        },
+        "output": {
+          "format": "Clean video only",
+          "text_overlays": false,
+          "subtitles": false,
+          "captions": false,
+          "watermarks": false
+        },
+        "lip_sync_timing": {
+          "0.0_to_0.5_sec": {
+            "audio": "Silence",
+            "mouth": "Closed, excited waiting",
+            "expression": "excited anticipation, door closed"
+          },
+          "0.5_to_1_sec": {
+            "audio": "🚪 Door opening sounds",
+            "mouth": "Closed",
+            "expression": "door opening, anticipation increases"
+          },
+          "1.0_to_1.5_sec": {
+            "audio": "Footsteps entering",
+            "mouth": "Closed, excited panting",
+            "expression": "parents entering from outside"
+          },
+          "1.5_to_2_sec": {
+            "audio": "🐕 Excited panting, pattering",
+            "mouth": "Panting",
+            "expression": "rushing forward to greet"
+          },
+          "2.0_to_2.5_sec": {
+            "audio": "🐕 'sniff sniff sniff' sounds",
+            "mouth": "Nose twitching, nostrils flaring",
+            "expression": "sniffing the air, detecting sweet potato smell"
+          },
+          "2.5_to_3_sec": {
+            "audio": "Paper bag rustling",
+            "mouth": "Closed",
+            "expression": "looking up at parent showing sweet potato"
+          },
+          "3.0_to_5_sec": {
+            "text": "우와!! 군고구마다!!",
+            "mouth": "Subtle movements for Korean syllables",
+            "expression": "🚨 SPARKLING EYES - eyes WIDE OPEN, bright shining reflective sparkle like stars, eyes literally glistening and gleaming with excitement, eyeballs shining/glowing"
+          },
+          "5.0_to_8_sec": {
+            "text": "헤헤헤헤!! 헤헤헤!! 헤헤!!",
+            "mouth": "🚨 WIDE OPEN showing teeth, rapid open-close-open pattern for laughter",
+            "expression": "🚨 EXPLOSIVE LAUGHTER - eyes squint TIGHT SHUT (opposite of sparkling), whole face scrunched in laughter, mouth WIDE OPEN showing teeth, rapid laughing mouth movements, entire body wiggling with uncontrollable giggles"
+          }
+        },
+        "mouth_shapes": {
+          "킁": "nose_twitch_sniffing",
+          "우": "lips_round_wide_for_oo_amazed",
+          "와": "mouth_opens_wider_for_wa_excited",
+          "군": "lips_part_for_gun",
+          "고": "mouth_rounds_for_go",
+          "구": "lips_round_for_gu",
+          "마": "mouth_opens_for_ma",
+          "다": "jaw_drops_for_da_excited",
+          "헤": "mouth_opens_WIDE_for_laughing_heh",
+          "헤2": "mouth_closes_PARTIALLY_mid_laugh",
+          "헤3": "mouth_opens_WIDE_again_for_laugh_heh",
+          "헤4": "rapid_open_close_open_laughing_pattern"
+        },
+        "tts_info": {
+          "tts_enabled": true,
+          "tts_voice": "Korean baby girl, 2-3 years old toddler voice, LOW-PITCHED",
+          "voice_effect": null,
+          "dog_lip_sync": true
+        },
+        "index": 5,
+        "segment_number": 5,
+        "start": 32,
+        "end": 40,
+        "narration": "킁킁킁... 우와!! 군고구마다!! 헤헤헤헤!!",
+        "narration_korean": "킁킁킁... 우와!! 군고구마다!! 헤헤헤헤!!",
+        "narration_english": "Sniff sniff sniff... Wow!! Roasted sweet potato!! Hehehehe!!",
+        "spoken_language": "korean",
+        "has_narration": true,
+        "image_prompt": "3-year-old female brown Pomeranian dog looking up with sparkling wide eyes at roasted sweet potato in Korean apartment entrance, parents visible, warm lighting from open door",
+        "video_prompt": {
+          "character_action": "Sitting excitedly, door opens, rushes forward, nose twitches sniffing air, looks up with SPARKLING WIDE EYES at sweet potato, speaks with extreme excitement, then EXPLOSIVE LAUGHTER with eyes tight shut, mouth wide open showing teeth, whole body wiggling",
+          "lip_sync": "yes",
+          "facial_expression": "Excited → sniffing → SPARKLING EYES (wide, shining) → EXPLOSIVE LAUGHTER (eyes tight shut, mouth wide open)",
+          "body_movement": "Sitting → rushing forward → sniffing → looking up → whole body wiggling with laughter",
+          "camera_movement": "middle-wide 0-4s, smooth zoom-in 4.5-8s (1.0x → 1.5x) on laughing face",
+          "is_interviewer_speaking": false,
+          "lip_sync_to": "tts",
+          "is_performance": false,
+          "performance_type": null,
+          "performance_phase": null
+        },
+        "audio_details": {
+          "voice_style": "baby_girl",
+          "voice_type": "cute_toddler_girl_low_pitched",
+          "speaking_speed": "very slow for dialogue, rapid bursts for laughter",
+          "sound_effects": ["door handle turning", "door opening", "footsteps entering", "sniffing sounds 'sniff sniff sniff'", "paper bag rustling", "tail wagging", "body wiggling"],
+          "background_sound": "room ambience with outdoor sounds from open door",
+          "bgm_featured": false,
+          "bgm_volume": 0.2,
+          "tts_enabled": true,
+          "voice_tone": "Extreme excitement → explosive uncontrollable laughter",
+          "ambient_sound": "Door sounds, footsteps, sniffing, bag rustling, excited breathing, laughter",
+          "background_music_mood": "Extremely joyful, explosive happiness"
+        },
+        "action_cues": {},
+        "detected_actions": [
+          {
+            "keyword": "sniffing air",
+            "action": "Dog's nose twitching rapidly, nostrils flaring, head moving as it sniffs the air detecting sweet potato smell"
+          },
+          {
+            "keyword": "sparkling eyes",
+            "action": "Dog looks up with WIDE SPARKLING SHINING EYES (eyes literally gleaming like stars, bright reflective sparkle, eyeballs glistening with excitement)"
+          },
+          {
+            "keyword": "explosive laughter",
+            "action": "Dog's EXPLOSIVE UNCONTROLLABLE LAUGHTER - eyes squint TIGHT shut, whole face laughing, mouth WIDE OPEN showing teeth, rapid open-close-open mouth pattern, entire body wiggling with giggles"
+          }
+        ],
+        "is_hook_scene": false,
+        "thumbnail_optimized": true
+      }
+    ],
+    "total_duration_seconds": 40,
+    "script_reference": {
+      "title": {
+        "japanese": "",
+        "korean": "고독한 땅콩이",
+        "english": "Lonely Ddangkongi"
+      },
+      "topic": "고독한 땅콩이"
+    }
+  }
+}

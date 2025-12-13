@@ -1,0 +1,17 @@
+{
+    "project_name": "낮잠땅콩",
+    "project_id": "peanut_nap",
+    "title": {
+        "korean": "힐링 낮잠",
+        "english": "Healing Nap"
+    },
+    "footer": {
+        "korean": "땅콩이의 하루",
+        "english": "Peanut's Day"
+    },
+    "bgm_url": "https://cdn1.suno.ai/7901f6df-2381-40c0-90dd-d79c159facb2.mp3",
+    "bgm_volume": 0.2,
+    "scene_count": 2,
+    "video_file_pattern": "scene{index}.mp4",
+    "subtitle_timing_mode": "timed"
+}

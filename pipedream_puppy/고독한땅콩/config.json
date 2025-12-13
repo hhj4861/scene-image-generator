@@ -1,0 +1,56 @@
+{
+    "project_name": "고독한땅콩",
+    "project_id": "lonely_peanut",
+    "title": {
+        "korean": "고독한 땅콩이",
+        "english": "Lonely Peanut"
+    },
+    "footer": {
+        "korean": "땅콩이의 하루",
+        "english": "Peanut's Day"
+    },
+    "bgm_url": "",
+    "bgm_volume": 0.2,
+    "scene_count": 1,
+    "video_file_pattern": "Dec_11__1955_37s_202512131231_xer8e.mp4",
+    "subtitle_timing_mode": "timed",
+    "force_vertical": true,
+    "layout": {
+        "header_y": 100,
+        "header_height": 50,
+        "video_area_y": 180,
+        "video_area_height": 770,
+        "subtitle_y": 720,
+        "footer_y": 950,
+        "footer_height": 70
+    },
+    "font_settings": {
+        "header_korean": {
+            "font": "NanumSquareRoundOTFEB",
+            "size": 62
+        },
+        "header_english": {
+            "font": "NotoSerif-Regular",
+            "size": 30,
+            "y_offset": 80
+        },
+        "subtitle_korean": {
+            "font": "NanumSquareRoundOTFEB",
+            "size": 25,
+            "max_lines": 1
+        },
+        "subtitle_english": {
+            "font": "NotoSerif-Regular",
+            "size": 20,
+            "max_lines": 1
+        },
+        "footer_korean": {
+            "size": 58
+        },
+        "footer_english": {
+            "size": 25,
+            "y_offset": 60
+        }
+    }
+}
+
