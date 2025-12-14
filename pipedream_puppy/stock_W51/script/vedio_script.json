@@ -1,0 +1,256 @@
+{
+  "$return_value": {
+    "folder_name": "stock_w51",
+    "total_scenes": 10,
+    "scenes": [
+      {
+        "video": 1,
+        "title": "오프닝",
+        "narration": "12월 12일 금요일, 나스닥 -1.6퍼센트 급락! 그 이유가 뭘까요?",
+        "narration_english": "Friday, December 12 NASDAQ crashed -1.6 percent! What's the reason?",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 2.5,
+            "korean": "12월 12일 금요일,",
+            "english": "Friday, December 12"
+          },
+          {
+            "start": 2.5,
+            "end": 4.5,
+            "korean": "나스닥 -1.6퍼센트 급락!",
+            "english": "NASDAQ crashed -1.6 percent!"
+          },
+          {
+            "start": 4.5,
+            "end": 8,
+            "korean": "그 이유가 뭘까요?",
+            "english": "What's the reason?"
+          }
+        ]
+      },
+      {
+        "video": 2,
+        "title": "원인 1 - AI 버블",
+        "narration": "첫째, AI 버블 공포. 브로드컴 -10퍼센트, 오라클 -15퍼센트. AI는 성장하지만 수익성이 악화되고 있어요",
+        "narration_english": "First, AI bubble fears. Broadcom -10 percent, Oracle -15 percent. AI grows but profitability declining",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 2,
+            "korean": "첫째, AI 버블 공포.",
+            "english": "First, AI bubble fears."
+          },
+          {
+            "start": 2,
+            "end": 5,
+            "korean": "브로드컴 -10퍼센트, 오라클 -15퍼센트.",
+            "english": "Broadcom -10 percent, Oracle -15 percent."
+          },
+          {
+            "start": 5,
+            "end": 8,
+            "korean": "AI는 성장하지만 수익성이 악화되고 있어요",
+            "english": "AI grows but profitability declining"
+          }
+        ]
+      },
+      {
+        "video": 3,
+        "title": "원인 2 - 중앙은행 금리 쇼크",
+        "narration": "둘째, 중앙은행 금리 쇼크. 2026년 금리 인하 횟수, 4번에서 2번으로 축소!",
+        "narration_english": "Second, Central Bank rate shock. 2026 rate cuts reduced: From 4 times to 2 times!",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 2.5,
+            "korean": "둘째, 중앙은행 금리 쇼크.",
+            "english": "Second, Central Bank rate shock."
+          },
+          {
+            "start": 2.5,
+            "end": 5.5,
+            "korean": "2026년 금리 인하 횟수,",
+            "english": "2026 rate cuts reduced:"
+          },
+          {
+            "start": 5.5,
+            "end": 8,
+            "korean": "4번에서 2번으로 축소!",
+            "english": "From 4 times to 2 times!"
+          }
+        ]
+      },
+      {
+        "video": 4,
+        "title": "원인 3 - 기술주 엑소더스",
+        "narration": "셋째, 기술주 엑소더스. 투자자들이 AI 기술주에서 방어주로 대거 이동 중!",
+        "narration_english": "Third, tech stock exodus. Investors rotating out of AI tech Into defensive stocks!",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 2.5,
+            "korean": "셋째, 기술주 엑소더스.",
+            "english": "Third, tech stock exodus."
+          },
+          {
+            "start": 2.5,
+            "end": 5.5,
+            "korean": "투자자들이 AI 기술주에서",
+            "english": "Investors rotating out of AI tech"
+          },
+          {
+            "start": 5.5,
+            "end": 8,
+            "korean": "방어주로 대거 이동 중!",
+            "english": "Into defensive stocks!"
+          }
+        ]
+      },
+      {
+        "video": 5,
+        "title": "다음 주 핵심 일정",
+        "narration": "다음 주 핵심 일정 두 가지. 12월 16일 화요일 고용지표, 12월 18일 목요일 인플레이션 지표!",
+        "narration_english": "Two key dates next week. Dec 16 (Tue): Employment data, Dec 18 (Thu): Inflation data!",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 2.5,
+            "korean": "다음 주 핵심 일정 두 가지.",
+            "english": "Two key dates next week."
+          },
+          {
+            "start": 2.5,
+            "end": 5,
+            "korean": "12월 16일 화요일 고용지표,",
+            "english": "Dec 16 (Tue): Employment data,"
+          },
+          {
+            "start": 5,
+            "end": 8,
+            "korean": "12월 18일 목요일 인플레이션 지표!",
+            "english": "Dec 18 (Thu): Inflation data!"
+          }
+        ]
+      },
+      {
+        "video": 6,
+        "title": "12월 16일 고용지표",
+        "narration": "12월 16일 고용지표, 강하면 시장 반등! 약하면 추가 하락 가능성!",
+        "narration_english": "Dec 16 employment data, Strong = market rally! Weak = further drop risk!",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 2.5,
+            "korean": "12월 16일 고용지표,",
+            "english": "Dec 16 employment data,"
+          },
+          {
+            "start": 2.5,
+            "end": 5,
+            "korean": "강하면 시장 반등!",
+            "english": "Strong = market rally!"
+          },
+          {
+            "start": 5,
+            "end": 8,
+            "korean": "약하면 추가 하락 가능성!",
+            "english": "Weak = further drop risk!"
+          }
+        ]
+      },
+      {
+        "video": 7,
+        "title": "12월 18일 인플레이션 지표",
+        "narration": "12월 18일 인플레이션 지표 발표! 현재 시장 컨센서스는 약 3퍼센트 수준, 3퍼센트 이상이면 변동성 확대 가능!",
+        "narration_english": "Dec 18 inflation data release! Market consensus around 3 percent, Above 3 percent = high volatility!",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 2.5,
+            "korean": "12월 18일 인플레이션 지표 발표!",
+            "english": "Dec 18 inflation data release!"
+          },
+          {
+            "start": 2.5,
+            "end": 5,
+            "korean": "현재 시장 컨센서스는 약 3퍼센트 수준,",
+            "english": "Market consensus around 3 percent,"
+          },
+          {
+            "start": 5,
+            "end": 8,
+            "korean": "3퍼센트 이상이면 변동성 확대 가능!",
+            "english": "Above 3 percent = high volatility!"
+          }
+        ]
+      },
+      {
+        "video": 8,
+        "title": "단기+중기 전략",
+        "narration": "투자 전략은? 단기는 12월 16일 이후 선별 매수! 중기는 12월 20일부터 산타랠리 노려보세요!",
+        "narration_english": "Investment strategy? Short-term: selective buying after Dec 16! Mid-term: target Santa Rally from Dec 20!",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 2,
+            "korean": "투자 전략은?",
+            "english": "Investment strategy?"
+          },
+          {
+            "start": 2,
+            "end": 5,
+            "korean": "단기는 12월 16일 이후 선별 매수!",
+            "english": "Short-term: selective buying after Dec 16!"
+          },
+          {
+            "start": 5,
+            "end": 8,
+            "korean": "중기는 12월 20일부터 산타랠리 노려보세요!",
+            "english": "Mid-term: target Santa Rally from Dec 20!"
+          }
+        ]
+      },
+      {
+        "video": 9,
+        "title": "장기 전략 + 면책 프리뷰",
+        "narration": "단, 변동성 고려해 분할 매수 추천! 이 콘텐츠는 교육 목적이며, 투자 권유가 아닙니다.",
+        "narration_english": "Caution: use dollar-cost averaging! Educational content only. Not investment advice.",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 3,
+            "korean": "단, 변동성 고려해 분할 매수 추천!",
+            "english": "Caution: use dollar-cost averaging!"
+          },
+          {
+            "start": 3,
+            "end": 8,
+            "korean": "이 콘텐츠는 교육 목적이며, 투자 권유가 아닙니다.",
+            "english": "Educational content only. Not investment advice."
+          }
+        ]
+      },
+      {
+        "video": 10,
+        "title": "면책조항",
+        "narration": "투자 전 반드시 전문가와 상담하세요. 모든 투자에는 리스크가 있습니다.",
+        "narration_english": "Consult professional advisor before investing. All investments carry risk.",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 4,
+            "korean": "투자 전 반드시 전문가와 상담하세요.",
+            "english": "Consult professional advisor before investing."
+          },
+          {
+            "start": 4,
+            "end": 8,
+            "korean": "모든 투자에는 리스크가 있습니다.",
+            "english": "All investments carry risk."
+          }
+        ]
+      }
+    ]
+  }
+}

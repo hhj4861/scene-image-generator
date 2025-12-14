@@ -1,0 +1,161 @@
+{
+    "project_name": "땅콩이와버터",
+    "project_id": "peanut_butter",
+    "title": {
+        "korean": "땅콩이의 새 친구 버터 🐕💕",
+        "english": "Peanut's New Friend Butter"
+    },
+    "footer": {
+        "korean": "땅콩이네 🐶",
+        "english": "Peanut Family 🐶"
+    },
+    "bgm_url": "",
+    "bgm_volume": 0.2,
+    "scene_count": 6,
+    "video_file_pattern": "씬{index}.mp4",
+    "subtitle_timing_mode": "timed",
+    "force_vertical": true,
+    "video_scale_mode": "fit",
+    "timed_subtitles": [
+        {
+            "start": 0.5,
+            "end": 2.5,
+            "text": "오늘 땅콩이 기분: 설렘 100%",
+            "text_english": "Peanut's mood today: 100% excited"
+        },
+        {
+            "start": 2.5,
+            "end": 5.0,
+            "text": "아빠, 나 오늘 좀 예뻐?",
+            "text_english": "Dad, do I look pretty today?"
+        },
+        {
+            "start": 6.0,
+            "end": 7.5,
+            "text": "[여자 출연자] 이름: 땅콩 (3세)",
+            "text_english": "[Female] Name: Peanut (3 yrs)"
+        },
+        {
+            "start": 7.5,
+            "end": 10.0,
+            "text": "직업: 집구석 여포 | 이상형: 연하남",
+            "text_english": "Job: House Queen | Type: Younger guy"
+        },
+        {
+            "start": 11.0,
+            "end": 13.0,
+            "text": "🚪 남자 1호 입장!",
+            "text_english": "🚪 Male #1 entering!"
+        },
+        {
+            "start": 13.0,
+            "end": 15.0,
+            "text": "[남자 출연자] 이름: 버터 (1~2세)",
+            "text_english": "[Male] Name: Butter (1-2 yrs)"
+        },
+        {
+            "start": 15.0,
+            "end": 17.0,
+            "text": "매력: 뽀글머리 & 넘치는 체력 💪",
+            "text_english": "Charm: Curly hair & Energy 💪"
+        },
+        {
+            "start": 18.0,
+            "end": 20.0,
+            "text": "숨 막히는 탐색전...",
+            "text_english": "Breathtaking investigation..."
+        },
+        {
+            "start": 20.0,
+            "end": 22.5,
+            "text": "🥜 너가 내 소개팅남이니?",
+            "text_english": "🥜 So you're my blind date?"
+        },
+        {
+            "start": 22.5,
+            "end": 25.0,
+            "text": "🧈 누나.. 실물이 더 예뻐요.. ⚡",
+            "text_english": "🧈 Noona.. you're prettier in person.. ⚡"
+        },
+        {
+            "start": 26.0,
+            "end": 28.0,
+            "text": "연하남의 적극적인 어필!",
+            "text_english": "Younger guy's active appeal!"
+        },
+        {
+            "start": 28.0,
+            "end": 30.5,
+            "text": "🧈 누나 이거 내 선물이야",
+            "text_english": "🧈 Noona, this is my gift"
+        },
+        {
+            "start": 31.0,
+            "end": 33.5,
+            "text": "땅콩이의 반응은?!",
+            "text_english": "Peanut's reaction?!"
+        },
+        {
+            "start": 33.5,
+            "end": 35.5,
+            "text": "어? 꼬리 흔들었다! 🟢",
+            "text_english": "Huh? Tail wagging! 🟢"
+        },
+        {
+            "start": 36.5,
+            "end": 39.0,
+            "text": "이 만남... 찬성일세 ❤️",
+            "text_english": "This meeting... I approve ❤️"
+        },
+        {
+            "start": 39.5,
+            "end": 42.0,
+            "text": "땅콩 & 버터 1일 차 시작?",
+            "text_english": "Peanut & Butter Day 1?"
+        },
+        {
+            "start": 42.5,
+            "end": 45.0,
+            "text": "본격 연애 스토리는 구독하고 확인하세요!",
+            "text_english": "Subscribe for the full love story!"
+        }
+    ],
+    "layout": {
+        "header_y": 80,
+        "header_height": 60,
+        "video_area_y": 200,
+        "video_area_height": 750,
+        "subtitle_y": 850,
+        "footer_y": 980,
+        "footer_height": 70
+    },
+    "font_settings": {
+        "header_korean": {
+            "font": "NanumSquareRoundOTFEB",
+            "size": 52
+        },
+        "header_english": {
+            "font": "NotoSerif-Regular",
+            "size": 28,
+            "y_offset": 70
+        },
+        "subtitle_korean": {
+            "font": "NanumSquareRoundOTFEB",
+            "size": 32,
+            "max_lines": 2
+        },
+        "subtitle_english": {
+            "font": "NotoSerif-Regular",
+            "size": 24,
+            "max_lines": 2
+        },
+        "footer_korean": {
+            "size": 48
+        },
+        "footer_english": {
+            "size": 22,
+            "y_offset": 55
+        }
+    }
+}
+

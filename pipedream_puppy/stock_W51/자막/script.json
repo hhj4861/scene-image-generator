@@ -1,0 +1,449 @@
+{
+  "video_title": "12월 12일 미국 증시 급락 분석",
+  "video_duration": "80 seconds",
+  "subtitle_format": "dual_language",
+  "languages": {
+    "primary": "Korean",
+    "secondary": "English"
+  },
+  "global_style": {
+    "korean": {
+      "font": "Noto Sans KR Bold",
+      "font_size": "48px",
+      "color": "#FFFFFF",
+      "stroke": {
+        "color": "#000000",
+        "width": "4px"
+      }
+    },
+    "english": {
+      "font": "Arial Bold",
+      "font_size": "36px",
+      "color": "#FFFFFF",
+      "stroke": {
+        "color": "#000000",
+        "width": "4px"
+      }
+    },
+    "background": {
+      "color": "#000000",
+      "opacity": 0.8,
+      "border_radius": "16px",
+      "padding": {
+        "horizontal": "24px",
+        "vertical": "16px"
+      }
+    },
+    "position": {
+      "alignment": "bottom_center",
+      "bottom_offset": "120px"
+    },
+    "animation": {
+      "fade_in_duration": "0.3s",
+      "fade_out_duration": "0.2s"
+    },
+    "line_spacing": "1.3x",
+    "safe_zone": "60px"
+  },
+  "subtitles": [
+    {
+      "scene": 1,
+      "scene_name": "오프닝",
+      "time_range": "0-8 seconds",
+      "items": [
+        {
+          "id": 1,
+          "start_time": "00:00:00.000",
+          "end_time": "00:00:02.500",
+          "korean": "12월 12일 금요일,",
+          "english": "Friday, December 12",
+          "style_override": null
+        },
+        {
+          "id": 2,
+          "start_time": "00:00:02.500",
+          "end_time": "00:00:04.500",
+          "korean": "나스닥 -1.6% 급락!",
+          "english": "NASDAQ crashed -1.6%!",
+          "style_override": {
+            "emphasis": {
+              "text": "-1.6%",
+              "color": "#FF3B30"
+            }
+          }
+        },
+        {
+          "id": 3,
+          "start_time": "00:00:04.500",
+          "end_time": "00:00:08.000",
+          "korean": "그 이유가 뭘까요?",
+          "english": "What's the reason?",
+          "style_override": null
+        }
+      ]
+    },
+    {
+      "scene": 2,
+      "scene_name": "원인 1 - AI 버블",
+      "time_range": "8-16 seconds",
+      "items": [
+        {
+          "id": 4,
+          "start_time": "00:00:08.000",
+          "end_time": "00:00:10.000",
+          "korean": "첫째, AI 버블 공포.",
+          "english": "First, AI bubble fears.",
+          "style_override": null
+        },
+        {
+          "id": 5,
+          "start_time": "00:00:10.000",
+          "end_time": "00:00:13.000",
+          "korean": "브로드컴 -10%, 오라클 -15%.",
+          "english": "Broadcom -10%, Oracle -15%.",
+          "style_override": {
+            "emphasis": {
+              "text": ["-10%", "-15%"],
+              "color": "#FF3B30"
+            }
+          }
+        },
+        {
+          "id": 6,
+          "start_time": "00:00:13.000",
+          "end_time": "00:00:16.000",
+          "korean": "AI는 성장하지만 수익성이 악화되고 있어요",
+          "english": "AI grows but profitability declining",
+          "style_override": null
+        }
+      ]
+    },
+    {
+      "scene": 3,
+      "scene_name": "원인 2 - 중앙은행 금리 쇼크",
+      "time_range": "16-24 seconds",
+      "items": [
+        {
+          "id": 7,
+          "start_time": "00:00:16.000",
+          "end_time": "00:00:18.500",
+          "korean": "둘째, 중앙은행 금리 쇼크.",
+          "english": "Second, Central Bank rate shock.",
+          "style_override": null
+        },
+        {
+          "id": 8,
+          "start_time": "00:00:18.500",
+          "end_time": "00:00:21.500",
+          "korean": "2026년 금리 인하 횟수,",
+          "english": "2026 rate cuts reduced:",
+          "style_override": null
+        },
+        {
+          "id": 9,
+          "start_time": "00:00:21.500",
+          "end_time": "00:00:24.000",
+          "korean": "4번에서 2번으로 축소!",
+          "english": "From 4 times to 2 times!",
+          "style_override": {
+            "emphasis": {
+              "text": ["4", "2"],
+              "color": "#FFD700"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "scene": 4,
+      "scene_name": "원인 3 - 기술주 엑소더스",
+      "time_range": "24-32 seconds",
+      "items": [
+        {
+          "id": 10,
+          "start_time": "00:00:24.000",
+          "end_time": "00:00:26.500",
+          "korean": "셋째, 기술주 엑소더스.",
+          "english": "Third, tech stock exodus.",
+          "style_override": null
+        },
+        {
+          "id": 11,
+          "start_time": "00:00:26.500",
+          "end_time": "00:00:29.500",
+          "korean": "투자자들이 AI 기술주에서",
+          "english": "Investors rotating out of AI tech",
+          "style_override": null
+        },
+        {
+          "id": 12,
+          "start_time": "00:00:29.500",
+          "end_time": "00:00:32.000",
+          "korean": "방어주로 대거 이동 중!",
+          "english": "Into defensive stocks!",
+          "style_override": null
+        }
+      ]
+    },
+    {
+      "scene": 5,
+      "scene_name": "다음 주 핵심 일정",
+      "time_range": "32-40 seconds",
+      "items": [
+        {
+          "id": 13,
+          "start_time": "00:00:32.000",
+          "end_time": "00:00:34.500",
+          "korean": "다음 주 핵심 일정 두 가지.",
+          "english": "Two key dates next week.",
+          "style_override": null
+        },
+        {
+          "id": 14,
+          "start_time": "00:00:34.500",
+          "end_time": "00:00:37.000",
+          "korean": "12월 16일 화요일 고용지표,",
+          "english": "Dec 16 (Tue): Employment data,",
+          "style_override": {
+            "emphasis": {
+              "text": ["12월 16일", "Dec 16"],
+              "color": "#007AFF"
+            }
+          }
+        },
+        {
+          "id": 15,
+          "start_time": "00:00:37.000",
+          "end_time": "00:00:40.000",
+          "korean": "12월 18일 목요일 인플레이션 지표!",
+          "english": "Dec 18 (Thu): Inflation data!",
+          "style_override": {
+            "emphasis": {
+              "text": ["12월 18일", "Dec 18"],
+              "color": "#FF3B30"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "scene": 6,
+      "scene_name": "12월 16일 고용지표",
+      "time_range": "40-48 seconds",
+      "items": [
+        {
+          "id": 16,
+          "start_time": "00:00:40.000",
+          "end_time": "00:00:42.500",
+          "korean": "12월 16일 고용지표,",
+          "english": "Dec 16 employment data,",
+          "style_override": {
+            "emphasis": {
+              "text": ["12월 16일", "Dec 16"],
+              "color": "#007AFF"
+            }
+          }
+        },
+        {
+          "id": 17,
+          "start_time": "00:00:42.500",
+          "end_time": "00:00:45.000",
+          "korean": "강하면 시장 반등!",
+          "english": "Strong = market rally!",
+          "style_override": {
+            "emphasis": {
+              "text": ["반등", "rally"],
+              "color": "#34C759"
+            }
+          }
+        },
+        {
+          "id": 18,
+          "start_time": "00:00:45.000",
+          "end_time": "00:00:48.000",
+          "korean": "약하면 추가 하락 가능성!",
+          "english": "Weak = further drop risk!",
+          "style_override": {
+            "emphasis": {
+              "text": ["하락", "drop"],
+              "color": "#FF3B30"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "scene": 7,
+      "scene_name": "12월 18일 인플레이션 지표",
+      "time_range": "48-56 seconds",
+      "items": [
+        {
+          "id": 19,
+          "start_time": "00:00:48.000",
+          "end_time": "00:00:50.500",
+          "korean": "12월 18일 인플레이션 지표 발표!",
+          "english": "Dec 18 inflation data release!",
+          "style_override": {
+            "emphasis": {
+              "text": ["12월 18일", "Dec 18"],
+              "color": "#FF3B30"
+            }
+          }
+        },
+        {
+          "id": 20,
+          "start_time": "00:00:50.500",
+          "end_time": "00:00:53.000",
+          "korean": "현재 시장 컨센서스는 약 3% 수준,",
+          "english": "Market consensus around 3%,",
+          "style_override": {
+            "emphasis": {
+              "text": "3%",
+              "color": "#FFD700"
+            }
+          }
+        },
+        {
+          "id": 21,
+          "start_time": "00:00:53.000",
+          "end_time": "00:00:56.000",
+          "korean": "3% 이상이면 변동성 확대 가능!",
+          "english": "Above 3% = high volatility!",
+          "style_override": {
+            "emphasis": {
+              "text": ["3% 이상", "Above 3%", "변동성", "volatility"],
+              "color": "#FF3B30"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "scene": "8A",
+      "scene_name": "단기+중기 전략",
+      "time_range": "56-64 seconds",
+      "items": [
+        {
+          "id": 22,
+          "start_time": "00:00:56.000",
+          "end_time": "00:00:58.000",
+          "korean": "투자 전략은?",
+          "english": "Investment strategy?",
+          "style_override": null
+        },
+        {
+          "id": 23,
+          "start_time": "00:00:58.000",
+          "end_time": "00:01:01.000",
+          "korean": "단기는 12월 16일 이후 선별 매수!",
+          "english": "Short-term: selective buying after Dec 16!",
+          "style_override": {
+            "emphasis": {
+              "text": ["12월 16일", "Dec 16"],
+              "color": "#007AFF"
+            }
+          }
+        },
+        {
+          "id": 24,
+          "start_time": "00:01:01.000",
+          "end_time": "00:01:04.000",
+          "korean": "중기는 12월 20일부터 산타랠리 노려보세요!",
+          "english": "Mid-term: target Santa Rally from Dec 20!",
+          "style_override": {
+            "emphasis": {
+              "text": ["산타랠리", "Santa Rally"],
+              "color": "#34C759"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "scene": "8B",
+      "scene_name": "장기 전략 + 면책 프리뷰",
+      "time_range": "64-72 seconds",
+      "items": [
+        {
+          "id": 25,
+          "start_time": "00:01:04.000",
+          "end_time": "00:01:07.000",
+          "korean": "단, 변동성 고려해 분할 매수 추천!",
+          "english": "Caution: use dollar-cost averaging!",
+          "style_override": {
+            "emphasis": {
+              "text": ["변동성", "분할 매수"],
+              "color": "#FF9500"
+            }
+          }
+        },
+        {
+          "id": 26,
+          "start_time": "00:01:07.000",
+          "end_time": "00:01:12.000",
+          "korean": "이 콘텐츠는 교육 목적이며, 투자 권유가 아닙니다.",
+          "english": "Educational content only. Not investment advice.",
+          "style_override": {
+            "korean": {
+              "font_size": "52px",
+              "color": "#FF3B30"
+            },
+            "english": {
+              "font_size": "40px",
+              "color": "#FF3B30"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "scene": 9,
+      "scene_name": "면책조항",
+      "time_range": "72-80 seconds",
+      "items": [
+        {
+          "id": 27,
+          "start_time": "00:01:12.000",
+          "end_time": "00:01:16.000",
+          "korean": "투자 전 반드시 전문가와 상담하세요.",
+          "english": "Consult professional advisor before investing.",
+          "style_override": {
+            "korean": {
+              "font_size": "52px",
+              "color": "#FF3B30"
+            },
+            "english": {
+              "font_size": "40px",
+              "color": "#FF3B30"
+            }
+          }
+        },
+        {
+          "id": 28,
+          "start_time": "00:01:16.000",
+          "end_time": "00:01:20.000",
+          "korean": "모든 투자에는 리스크가 있습니다.",
+          "english": "All investments carry risk.",
+          "style_override": {
+            "korean": {
+              "font_size": "52px",
+              "color": "#FF3B30"
+            },
+            "english": {
+              "font_size": "40px",
+              "color": "#FF3B30"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "total_subtitles": 28,
+    "sync_precision": "±50ms",
+    "encoding": "UTF-8",
+    "compatible_formats": ["SRT", "VTT", "ASS", "SSA"],
+    "created_date": "2025-12-13",
+    "version": "1.0"
+  }
+}

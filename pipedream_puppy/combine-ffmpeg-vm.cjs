@@ -108,11 +108,36 @@ function loadScriptData(projectPath) {
 // =====================================================
 function getNarration(scenes, sceneIndex) {
   const scene = scenes.find(s => s.video === sceneIndex);
-  if (!scene) return { narration: "", narration_english: "", timed_subtitles: null };
+  if (!scene) return { narration: "", narration_english: "", timed_subtitles: null, profile_card: null };
+
+  // profile_card가 있으면 timed_subtitles 형태로 변환
+  let profileCardSubtitles = null;
+  if (scene.profile_card) {
+    const pc = scene.profile_card;
+    profileCardSubtitles = pc.items.map((item, idx) => ({
+      start: pc.start_time + (idx * (pc.interval || 1.0)),
+      end: pc.end_time || 8.0,
+      korean: `${item.label}: ${item.value}`,
+      english: item.english || '',
+      position: 'right'  // 오른쪽 위치 플래그
+    }));
+    // 헤더 추가
+    if (pc.header) {
+      profileCardSubtitles.unshift({
+        start: pc.start_time || 0.5,
+        end: pc.end_time || 8.0,
+        korean: `[${pc.header}]`,
+        english: pc.header_english ? `[${pc.header_english}]` : '',
+        position: 'right'
+      });
+    }
+  }
+
   return {
     narration: scene.dialogue?.script || scene.narration || "",
     narration_english: scene.dialogue?.script_english || scene.narration_english || "",
-    timed_subtitles: scene.timed_subtitles || null  // 타이밍 자막 배열
+    timed_subtitles: scene.timed_subtitles || profileCardSubtitles || null,
+    profile_card: scene.profile_card || null
   };
 }
 
@@ -234,17 +259,22 @@ async function combineVideos() {
     const gcsPath = `${testFolder}/scene${file.index}.mp4`;
     const url = await uploadToGCS(file.path, gcsPath);
 
-    const { narration, narration_english, timed_subtitles } = getNarration(scenes, file.index);
-    
+    const { narration, narration_english, timed_subtitles, profile_card } = getNarration(scenes, file.index);
+
     // use_timed_subtitles가 false면 timed_subtitles 무시 (기본값: true)
     const useTimedSubs = config.use_timed_subtitles !== false;
-    
+
+    // config.json에 timed_subtitles가 있으면 우선 사용, 없으면 스크립트에서 가져옴
+    const configTimedSubs = config.timed_subtitles || null;
+    const finalTimedSubs = useTimedSubs ? (configTimedSubs || timed_subtitles) : null;
+
     videos.push({
       url,
       index: file.index,
       narration: narration,
       narration_english: narration_english,
-      timed_subtitles: useTimedSubs ? timed_subtitles : null,
+      timed_subtitles: finalTimedSubs,
+      profile_card: profile_card,  // 프로필 카드 정보 추가
       is_performance: false,
       scene_type: "interview"
     });
@@ -261,11 +291,23 @@ async function combineVideos() {
   const firstVideoPath = videoFiles[0]?.path;
   let outputWidth = 720;
   let outputHeight = 1280;
+  let sourceWidth = 720;
+  let sourceHeight = 1280;
 
   if (firstVideoPath && fs.existsSync(firstVideoPath)) {
     const resolution = getVideoResolution(firstVideoPath);
-    outputWidth = resolution.width;
-    outputHeight = resolution.height;
+    sourceWidth = resolution.width;
+    sourceHeight = resolution.height;
+
+    // force_vertical: true면 16:9를 9:16으로 변환
+    if (config.force_vertical && sourceWidth > sourceHeight) {
+      outputWidth = 720;
+      outputHeight = 1280;
+      console.log(`  Source: ${sourceWidth}x${sourceHeight} (landscape) → Output: ${outputWidth}x${outputHeight} (portrait)`);
+    } else {
+      outputWidth = resolution.width;
+      outputHeight = resolution.height;
+    }
   }
   console.log(`  Output size: ${outputWidth}x${outputHeight}\n`);
 
@@ -275,13 +317,16 @@ async function combineVideos() {
   // 9:16 세로 모드용 레이아웃 설정
   const fontScale = outputWidth / 720;
 
-  const headerY = 70;
-  const headerHeight = 50;  // 한 줄 높이
-  const videoAreaY = 200;
-  const videoAreaHeight = 800;
+  // config.json에 layout 설정이 있으면 사용, 없으면 기본값
+  const configLayout = config.layout || {};
+  const headerY = configLayout.header_y ?? 70;
+  const headerHeight = configLayout.header_height ?? 50;
+  const videoAreaY = configLayout.video_area_y ?? 200;
+  const videoAreaHeight = configLayout.video_area_height ?? 800;
   const videoEndY = videoAreaY + videoAreaHeight;
-  const footerHeight = 60;
-  const footerY = 1020;  // 원래 위치로 원복
+  const subtitleY = configLayout.subtitle_y ?? videoEndY;
+  const footerY = configLayout.footer_y ?? 1020;
+  const footerHeight = configLayout.footer_height ?? 60;
 
   const layoutConfig = {
     video_area: {
@@ -293,11 +338,11 @@ async function combineVideos() {
     header_area: {
       y: headerY,
       height: headerHeight,
-      single_line: true,  // 헤더 한 줄로 강제
+      single_line: true,
       max_lines: 1
     },
     subtitle_area: {
-      y: videoEndY - 0, // -30 으로 하면 한줄로 했을때 영상 마지막
+      y: subtitleY,
       height: 120,
       single_line: false
     },
@@ -305,7 +350,41 @@ async function combineVideos() {
       y: footerY,
       height: footerHeight
     },
-    font_scale: fontScale
+    font_scale: fontScale,
+    force_vertical: config.force_vertical || false
+  };
+
+  // config.json에 font_settings 설정이 있으면 사용, 없으면 기본값
+  const configFontSettings = config.font_settings || {};
+
+  const fontSettings = {
+    header_korean: {
+      font: configFontSettings.header_korean?.font || "NanumSquareRoundOTFEB",
+      size: configFontSettings.header_korean?.size || Math.round(50 * fontScale),
+      max_lines: configFontSettings.header_korean?.max_lines ?? 1
+    },
+    header_english: {
+      font: configFontSettings.header_english?.font || "NotoSerif-Regular",
+      size: configFontSettings.header_english?.size || Math.round(25 * fontScale),
+      y_offset: configFontSettings.header_english?.y_offset ?? 80
+    },
+    subtitle_korean: {
+      font: configFontSettings.subtitle_korean?.font || "NanumSquareRoundOTFEB",
+      size: configFontSettings.subtitle_korean?.size || Math.round(25 * fontScale),
+      max_lines: configFontSettings.subtitle_korean?.max_lines ?? 1
+    },
+    subtitle_english: {
+      font: configFontSettings.subtitle_english?.font || "NotoSerif-Regular",
+      size: configFontSettings.subtitle_english?.size || Math.round(18 * fontScale),
+      max_lines: configFontSettings.subtitle_english?.max_lines ?? 1
+    },
+    footer_korean: {
+      size: configFontSettings.footer_korean?.size || Math.round(45 * fontScale)
+    },
+    footer_english: {
+      size: configFontSettings.footer_english?.size || Math.round(20 * fontScale),
+      y_offset: configFontSettings.footer_english?.y_offset ?? 60
+    }
   };
 
   const requestPayload = {
@@ -316,41 +395,19 @@ async function combineVideos() {
     footer_text_english: config.footer?.english || "",
     subtitle_enabled: true,
     subtitle_english_enabled: true,
-    subtitle_timing_mode: config.subtitle_timing_mode || "timed",  // "timed" or "always"
+    subtitle_timing_mode: config.subtitle_timing_mode || "timed",
     bgm_url: config.bgm_url || "",
     bgm_volume: config.bgm_volume || 0.25,
     width: outputWidth,
     height: outputHeight,
     use_origin_size: true,
+    force_vertical: config.force_vertical || false,
+    video_scale_mode: config.video_scale_mode || "fit",
     origin_layout: layoutConfig,
     output_bucket: GCS_BUCKET,
     output_path: `${testFolder}/final_${projectId}.mp4`,
     folder_name: testFolder,
-    font_settings: {
-      header_korean: {
-        font: "NanumSquareRoundOTFEB",
-        size: Math.round(50 * fontScale),  // 16→12 한줄로 나오게
-      },
-      header_english: {
-        font: "NotoSerif-Regular",
-        size: Math.round(25 * fontScale),
-        y_offset: 80  // ← 한글/영문 간격 (기본값: 70)
-      },
-      subtitle_korean: {
-        font: "NanumSquareRoundOTFEB",
-        size: Math.round(25 * fontScale),
-        max_lines: 1  // 한글 자막 1줄 제한
-      },
-      subtitle_english: {
-        font: "NotoSerif-Regular",
-        size: Math.round(18 * fontScale),
-        max_lines: 1  // 영어 자막 1줄 제한
-      },
-      footer_korean: { size: Math.round(45 * fontScale) },
-      footer_english: { size: Math.round(20 * fontScale),
-        y_offset: 60  // ← 한글/영문 간격 (기본값: 80)
-       }
-    }
+    font_settings: fontSettings
   };
 
   console.log("Request payload:");

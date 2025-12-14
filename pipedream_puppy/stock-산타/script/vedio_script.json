@@ -263,24 +263,24 @@
                 "timed_subtitles": [
                     {
                         "start": 0.0,
-                        "end": 2.0,
+                        "end": 3.0,
                         "korean": "2025년 유망: 반도체 SMH",
                         "english": "2025 picks: Semiconductor SMH"
                     },
                     {
-                        "start": 2.0,
-                        "end": 4.5,
+                        "start": 3.0,
+                        "end": 5.5,
                         "korean": "리테일 XRT, 운송주 IYT",
                         "english": "Retail XRT, Transportation IYT"
                     },
                     {
-                        "start": 4.5,
-                        "end": 6.5,
+                        "start": 5.5,
+                        "end": 7.0,
                         "korean": "REITs와 소형주도 주목",
                         "english": "Also watch REITs and Small Caps"
                     },
                     {
-                        "start": 6.5,
+                        "start": 7.0,
                         "end": 8.0,
                         "korean": "금리 인하 수혜 기대",
                         "english": "Benefit from rate cuts"

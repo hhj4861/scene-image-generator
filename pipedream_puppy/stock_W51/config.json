@@ -1,0 +1,19 @@
+{
+    "project_name": "12/12 증시 분석 및 다음주 대응 전략",
+    "project_id": "stock_w51",
+    "title": {
+        "korean": "12월 12일 미국 증시 급락 분석",
+        "english": "Dec 12 US Market Crash Analysis"
+    },
+    "footer": {
+        "korean": "주식 투자 정보 📈",
+        "english": "Stock Investment Info 📈"
+    },
+    "bgm_url": "",
+    "bgm_volume": 0.2,
+    "scene_count": 9,
+    "video_file_pattern": "씬{index}.mp4",
+    "subtitle_timing_mode": "timed",
+    "use_timed_subtitles": true
+}
+
