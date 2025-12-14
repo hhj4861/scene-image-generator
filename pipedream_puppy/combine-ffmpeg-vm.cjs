@@ -108,7 +108,7 @@ function loadScriptData(projectPath) {
 // =====================================================
 function getNarration(scenes, sceneIndex) {
   const scene = scenes.find(s => s.video === sceneIndex);
-  if (!scene) return { narration: "", narration_english: "", timed_subtitles: null, profile_card: null };
+  if (!scene) return { narration: "", narration_english: "", timed_subtitles: null, profile_card: null, has_audio: true };
 
   // profile_card가 있으면 timed_subtitles 형태로 변환
   let profileCardSubtitles = null;
@@ -137,7 +137,8 @@ function getNarration(scenes, sceneIndex) {
     narration: scene.dialogue?.script || scene.narration || "",
     narration_english: scene.dialogue?.script_english || scene.narration_english || "",
     timed_subtitles: scene.timed_subtitles || profileCardSubtitles || null,
-    profile_card: scene.profile_card || null
+    profile_card: scene.profile_card || null,
+    has_audio: scene.has_audio !== undefined ? scene.has_audio : true  // ★ 씬별 오디오 유무
   };
 }
 
@@ -259,22 +260,18 @@ async function combineVideos() {
     const gcsPath = `${testFolder}/scene${file.index}.mp4`;
     const url = await uploadToGCS(file.path, gcsPath);
 
-    const { narration, narration_english, timed_subtitles, profile_card } = getNarration(scenes, file.index);
+    const { narration, narration_english, timed_subtitles, profile_card, has_audio } = getNarration(scenes, file.index);
 
-    // use_timed_subtitles가 false면 timed_subtitles 무시 (기본값: true)
-    const useTimedSubs = config.use_timed_subtitles !== false;
-
-    // config.json에 timed_subtitles가 있으면 우선 사용, 없으면 스크립트에서 가져옴
-    const configTimedSubs = config.timed_subtitles || null;
-    const finalTimedSubs = useTimedSubs ? (configTimedSubs || timed_subtitles) : null;
-
+    // ★ video 객체에는 씬별 자막과 profile_card, has_audio 포함 ★
+    // 전체 영상 기준 자막은 requestPayload.timed_subtitles에서 처리
     videos.push({
       url,
       index: file.index,
       narration: narration,
       narration_english: narration_english,
-      timed_subtitles: finalTimedSubs,
+      timed_subtitles: timed_subtitles || null,
       profile_card: profile_card,  // 프로필 카드 정보 추가
+      has_audio: has_audio,  // ★ 씬별 오디오 유무 (BGM 볼륨 조절용)
       is_performance: false,
       scene_type: "interview"
     });
@@ -317,16 +314,15 @@ async function combineVideos() {
   // 9:16 세로 모드용 레이아웃 설정
   const fontScale = outputWidth / 720;
 
-  // config.json에 layout 설정이 있으면 사용, 없으면 기본값
+  // config.json에 layout 설정이 있으면 사용, 없으면 기본값 (test-scene2-3.cjs 기준)
   const configLayout = config.layout || {};
-  const headerY = configLayout.header_y ?? 70;
-  const headerHeight = configLayout.header_height ?? 50;
-  const videoAreaY = configLayout.video_area_y ?? 200;
+  const headerY = configLayout.header_y ?? 150;
+  const headerHeight = configLayout.header_height ?? 80;
+  const videoAreaY = configLayout.video_area_y ?? 130;
   const videoAreaHeight = configLayout.video_area_height ?? 800;
-  const videoEndY = videoAreaY + videoAreaHeight;
-  const subtitleY = configLayout.subtitle_y ?? videoEndY;
-  const footerY = configLayout.footer_y ?? 1020;
-  const footerHeight = configLayout.footer_height ?? 60;
+  const subtitleY = configLayout.subtitle_y ?? 850;
+  const footerY = configLayout.footer_y ?? 900;
+  const footerHeight = configLayout.footer_height ?? 80;
 
   const layoutConfig = {
     video_area: {
@@ -343,7 +339,7 @@ async function combineVideos() {
     },
     subtitle_area: {
       y: subtitleY,
-      height: 120,
+      height: 100,
       single_line: false
     },
     footer_area: {
@@ -366,7 +362,7 @@ async function combineVideos() {
     header_english: {
       font: configFontSettings.header_english?.font || "NotoSerif-Regular",
       size: configFontSettings.header_english?.size || Math.round(25 * fontScale),
-      y_offset: configFontSettings.header_english?.y_offset ?? 80
+      y_offset: configFontSettings.header_english?.y_offset ?? 90
     },
     subtitle_korean: {
       font: configFontSettings.subtitle_korean?.font || "NanumSquareRoundOTFEB",
@@ -387,6 +383,104 @@ async function combineVideos() {
     }
   };
 
+  // ★★★ 프로필 카드 기본 설정 (config에서 읽거나 기본값 사용) ★★★
+  const PROFILE_CARD_CONFIG = config.profile_card_config || {
+    baseY: 450,           // 시작 Y 위치
+    lineHeight: 40,       // 각 항목 간격
+    headerFontSize: 30,   // 헤더 폰트 크기
+    itemFontSize: 20,     // 항목 폰트 크기
+    maxChars: 30,         // 줄당 최대 글자
+    rightMargin: 30       // 오른쪽 여백
+  };
+
+  // ★ config.json의 timed_subtitles + profile_card 병합된 최종 자막 생성 ★
+  // position이 'right'인 경우 right_margin 추가
+  let mergedTimedSubtitles = config.timed_subtitles 
+    ? config.timed_subtitles.map(sub => ({
+        ...sub,
+        right_margin: sub.right_margin || (sub.position === 'right' ? PROFILE_CARD_CONFIG.rightMargin : undefined)
+      }))
+    : [];
+  
+  // profile_card를 timed_subtitles로 변환하여 병합
+
+  for (const video of videos) {
+    if (video.profile_card) {
+      const pc = video.profile_card;
+      const sceneDuration = 8;
+      const sceneStartTime = (video.index - 1) * sceneDuration;
+      
+      // 프로필 카드 커스텀 설정 (있으면 사용, 없으면 기본값)
+      const baseY = pc.base_y || PROFILE_CARD_CONFIG.baseY;
+      const lineHeight = pc.line_height || PROFILE_CARD_CONFIG.lineHeight;
+      const headerFontSize = pc.header_font_size || PROFILE_CARD_CONFIG.headerFontSize;
+      const itemFontSize = pc.item_font_size || PROFILE_CARD_CONFIG.itemFontSize;
+      const maxChars = pc.max_chars || PROFILE_CARD_CONFIG.maxChars;
+      const rightMargin = pc.right_margin || PROFILE_CARD_CONFIG.rightMargin;
+      
+      // 헤더 추가 (개별 설정 가능)
+      const startTime = pc.start_time || 0.5;
+      const endTime = pc.end_time || 8;
+      
+      if (pc.header) {
+        mergedTimedSubtitles.push({
+          start_time: sceneStartTime + (pc.header_start_time || startTime),
+          end_time: sceneStartTime + (pc.header_end_time || endTime),
+          text_ko: pc.header.startsWith('[') ? pc.header : `[${pc.header}]`,
+          text_en: pc.header_english || '',
+          position: pc.position || 'right',
+          y_offset: pc.header_y_offset || baseY,
+          font_size: pc.header_font_size || headerFontSize,
+          max_chars: pc.header_max_chars || maxChars,
+          right_margin: rightMargin
+        });
+      }
+      
+      // 아이템들 추가 (각 아이템별 개별 설정 가능)
+      if (pc.items) {
+        pc.items.forEach((item, idx) => {
+          const itemStart = item.start_time 
+            ? sceneStartTime + item.start_time 
+            : sceneStartTime + startTime + ((idx + 1) * (pc.interval || 1.5));
+          const itemEnd = item.end_time 
+            ? sceneStartTime + item.end_time 
+            : sceneStartTime + endTime;
+          const itemYOffset = item.y_offset || (baseY + 20 + (lineHeight * (idx + 1)));
+          const itemFontSizeOverride = item.font_size || itemFontSize;
+          const itemMaxChars = item.max_chars || maxChars;
+          
+          mergedTimedSubtitles.push({
+            start_time: itemStart,
+            end_time: itemEnd,
+            text_ko: `${item.label}: ${item.value}`,
+            text_en: item.english || '',
+            position: item.position || pc.position || 'right',
+            y_offset: itemYOffset,
+            font_size: itemFontSizeOverride,
+            max_chars: itemMaxChars,
+            right_margin: item.right_margin || rightMargin
+          });
+        });
+      }
+      
+      console.log(`  [Scene ${video.index}] Added profile card subtitles`);
+    }
+  }
+  
+  // 시간순 정렬
+  mergedTimedSubtitles.sort((a, b) => a.start_time - b.start_time);
+  console.log(`  Total merged subtitles: ${mergedTimedSubtitles.length}`);
+
+  // ★★★ 씬별 오디오 정보 (BGM 구간별 볼륨 조절용) ★★★
+  const sceneDuration = 8;  // 각 씬 기본 길이 (초)
+  const sceneAudioMap = videos.map(v => ({
+    scene_index: v.index,
+    start_time: (v.index - 1) * sceneDuration,
+    end_time: v.index * sceneDuration,
+    has_audio: v.has_audio
+  }));
+  console.log(`  Scene audio map:`, JSON.stringify(sceneAudioMap, null, 2));
+
   const requestPayload = {
     videos: videos.sort((a, b) => a.index - b.index),
     header_text: config.title?.korean || config.project_name || "제목",
@@ -396,8 +490,11 @@ async function combineVideos() {
     subtitle_enabled: true,
     subtitle_english_enabled: true,
     subtitle_timing_mode: config.subtitle_timing_mode || "timed",
+    timed_subtitles: mergedTimedSubtitles.length > 0 ? mergedTimedSubtitles : null,  // ★ 최상위에 추가
     bgm_url: config.bgm_url || "",
-    bgm_volume: config.bgm_volume || 0.25,
+    bgm_volume: config.bgm_volume || 0.2,           // 원본 오디오 있을 때 BGM 볼륨
+    bgm_volume_no_audio: config.bgm_volume_no_audio || 0.8,  // 원본 오디오 없을 때 BGM 볼륨
+    scene_audio_map: sceneAudioMap,  // ★ 씬별 오디오 유무 (구간별 BGM 볼륨 조절용)
     width: outputWidth,
     height: outputHeight,
     use_origin_size: true,

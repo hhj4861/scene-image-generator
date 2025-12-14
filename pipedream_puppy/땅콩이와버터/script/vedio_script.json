@@ -1,0 +1,275 @@
+{
+  "$return_value": {
+    "folder_name": "peanut_butter_blind_date",
+    "total_scenes": 8,
+    "script_format": "dating_show",
+    "content_type": "romance_comedy",
+    "resolution": "1080p",
+    "scenes": [
+      {
+        "video": 1,
+        "title": "땅콩이 독백 - 설렘",
+        "duration": "8 seconds (0-8s)",
+        "duration_seconds": 8,
+        "has_audio": true,
+        "dialogue": {
+          "script": "오늘 땅콩이 기분 설렘 100퍼센트",
+          "script_english": "Peanut mood today 100 percent excited"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0.5,
+            "end": 2.5,
+            "korean": "오늘 땅콩이 기분 설렘 100퍼센트",
+            "english": "Peanut mood today 100 percent excited"
+          },
+          {
+            "start": 3.0,
+            "end": 5.5,
+            "korean": "아빠 나 오늘 좀 예뻐",
+            "english": "Dad do I look pretty today"
+          }
+        ]
+      },
+      {
+        "video": 2,
+        "title": "땅콩이 프로필 공개",
+        "duration": "8 seconds (8-16s)",
+        "duration_seconds": 8,
+        "has_audio": false,
+        "dialogue": {
+          "script": "",
+          "script_english": ""
+        },
+        "profile_card": {
+          "header": "[여자 출연자]",
+          "header_y_offset": 580,
+          "header_font_size": 30,
+          "start_time": 0.5,
+          "end_time": 8,
+          "interval": 1.5,
+          "position": "right",
+          "base_y": 580,
+          "line_height": 40,
+          "item_font_size": 20,
+          "max_chars": 30,
+          "items": [
+            { "label": "이름", "value": "땅콩이", "y_offset": 640, "start_time": 2.0 },
+            { "label": "나이", "value": "3살", "y_offset": 680, "start_time": 3.5 },
+            { "label": "직업", "value": "집구석 여포", "y_offset": 720, "start_time": 5.0 },
+            { "label": "이상형", "value": "나만 바라보는 연하남", "y_offset": 760, "start_time": 6.5}
+          ]
+        }
+      },
+      {
+        "video": 3,
+        "title": "남자 1호 버터 등장",
+        "duration": "8 seconds (16-24s)",
+        "duration_seconds": 8,
+        "has_audio": true,
+        "dialogue": {
+          "script": "안녕하세요 저 버터에요",
+          "script_english": "Hello I am Butter"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0.5,
+            "end": 2.0,
+            "korean": "남자 1호 입장",
+            "english": "Male 1 entering"
+          },
+          {
+            "start": 4.0,
+            "end": 5.0,
+            "korean": "안녕하세요",
+            "english": "Hello"
+          },
+          {
+            "start": 5.0,
+            "end": 7.0,
+            "korean": "저 버터에요",
+            "english": "I am Butter"
+          }
+        ],
+        "profile_card": {
+          "header": "[남자 1호]",
+          "header_y_offset": 580,
+          "header_font_size": 28,
+          "start_time": 1.0,
+          "end_time": 8,
+          "interval": 1.2,
+          "position": "right",
+          "base_y": 580,
+          "line_height": 35,
+          "item_font_size": 20,
+          "max_chars": 35,
+          "items": [
+            { "label": "이름", "value": "버터", "y_offset": 640, "start_time": 2.2 },
+            { "label": "나이", "value": "2살", "y_offset": 680, "start_time": 3.4 },
+            { "label": "매력", "value": "뽀글머리와 넘치는 체력", "y_offset": 720, "start_time": 4.6, "font_size": 18 }
+          ]
+        }
+      },
+      {
+        "video": 4,
+        "title": "탐색전과 첫인상",
+        "duration": "8 seconds (24-32s)",
+        "duration_seconds": 8,
+        "has_audio": true,
+        "dialogue": {
+          "script": "너가 내 소개팅남이니",
+          "script_english": "So you are my blind date"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0.5,
+            "end": 2.5,
+            "korean": "숨 막히는 탐색전",
+            "english": "Breathtaking investigation"
+          },
+          {
+            "start": 3.0,
+            "end": 5.0,
+            "korean": "너가 내 소개팅남이니",
+            "english": "So you are my blind date"
+          },
+          {
+            "start": 5.5,
+            "end": 7.5,
+            "korean": "누나 실물이 더 예뻐요",
+            "english": "Noona you are prettier in person"
+          }
+        ]
+      },
+      {
+        "video": 5,
+        "title": "버터 선물 건네기",
+        "duration": "8 seconds (32-40s)",
+        "duration_seconds": 8,
+        "has_audio": true,
+        "speaker": "버터",
+        "dialogue": {
+          "script": "누나 이거 내 선물이야",
+          "script_english": "Noona this is my gift"
+        },
+        "timed_subtitles": [
+          {
+            "start": 3.0,
+            "end": 6.0,
+            "korean": "누나 이거 내 선물이야",
+            "english": "Noona this is my gift"
+          }
+        ],
+        "note": "버터가 폴짝폴짝 뛰며 귀여운 행동"
+      },
+      {
+        "video": 6,
+        "title": "땅콩이 반응 - 그린라이트",
+        "duration": "8 seconds (40-48s)",
+        "duration_seconds": 8,
+        "has_audio": true,
+        "speaker": "땅콩이",
+        "dialogue": {
+          "script": "어 꼬리 흔들렸다",
+          "script_english": "Huh Tail wagging"
+        },
+        "timed_subtitles": [
+          {
+            "start": 2.0,
+            "end": 5.0,
+            "korean": "어 꼬리 흔들렸다",
+            "english": "Huh Tail wagging"
+          },
+          {
+            "start": 5.0,
+            "end": 7.0,
+            "korean": "그린라이트",
+            "english": "Green Light"
+          }
+        ],
+        "note": "땅콩이의 꼬리가 흔들리는 클로즈업 샷"
+      },
+      {
+        "video": 7,
+        "title": "최종 선택 - 서로 웃는 엔딩",
+        "duration": "8 seconds (48-56s)",
+        "duration_seconds": 8,
+        "has_audio": true,
+        "speaker": "땅콩이",
+        "dialogue": {
+          "script": "뭐 나쁘지 않네",
+          "script_english": "Well not bad"
+        },
+        "timed_subtitles": [
+          {
+            "start": 2.0,
+            "end": 5.0,
+            "korean": "뭐 나쁘지 않네",
+            "english": "Well not bad"
+          }
+        ],
+        "note": "버터는 완전 침묵, 6.5-8.0s에 서로 미소 지으며 바라보는 엔딩"
+      },
+      {
+        "video": 8,
+        "title": "구독 좋아요 요청",
+        "duration": "8 seconds (56-64s)",
+        "duration_seconds": 8,
+        "has_audio": true,
+        "speakers": "땅콩이 버터",
+        "dialogue": {
+          "script": "구독과 좋아요는 우리에게 간식이 됩니다",
+          "script_english": "Subscribe and likes become snack to us"
+        },
+        "timed_subtitles": [
+          {
+            "start": 2.0,
+            "end": 2.5,
+            "korean": "구독과",
+            "english": "Subscribe and",
+            "speaker": "땅콩이"
+          },
+          {
+            "start": 2.5,
+            "end": 3.5,
+            "korean": "좋아요는",
+            "english": "Likes are",
+            "speaker": "땅콩이"
+          },
+          {
+            "start": 4.5,
+            "end": 5.5,
+            "korean": "우리에게",
+            "english": "To us",
+            "speaker": "버터"
+          },
+          {
+            "start": 5.5,
+            "end": 6.5,
+            "korean": "간식이 됩니다",
+            "english": "Becomes snack",
+            "speaker": "버터"
+          },
+          {
+            "start": 6.5,
+            "end": 7.5,
+            "korean": "헤헤헤헤",
+            "english": "Hehehe",
+            "speaker": "both"
+          }
+        ],
+        "critical_timing": "3.5-4.5s MANDATORY 1 second complete silence"
+      }
+    ],
+    "character_voice_consistency": {
+      "땅콩이": {
+        "profile": "Korean baby INFANT GIRL 2-3 years old LOW-PITCHED soft gentle slow deliberate speech babbling quality slight lisp",
+        "emotional_range": "Worried Scene 1 Embarrassed Scene 6 7 Cool-supportive Scene 8"
+      },
+      "버터": {
+        "profile": "Korean baby INFANT BOY 2-3 years old LOW-PITCHED cute cheerful shy slow deliberate speech babbling quality slight lisp eager-to-please",
+        "emotional_range": "Shy-nervous Scene 3 Eager-cheerful Scene 4 5 Cheerful Scene 8"
+      }
+    }
+  }
+}

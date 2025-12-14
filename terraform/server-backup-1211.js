@@ -28,76 +28,209 @@ if (!fs.existsSync(TEMP_DIR)) {
 }
 
 // =====================
-// 폰트 경로 설정 (OS별 분기)
+// 폰트 경로 설정 - 헤더/푸터용 + 자막용 분리
 // =====================
-const getFontPath = () => {
-    if (process.platform === "darwin") {
-        // macOS
-        if (fs.existsSync("/System/Library/Fonts/Supplemental/AppleGothic.ttf")) {
-            return "/System/Library/Fonts/Supplemental/AppleGothic.ttf";
+const findFonts = () => {
+    // 헤더/푸터용 폰트 (NanumSquareRound Bold - 둥글고 부드러운 고딕체)
+    const headerFontCandidates = [
+        "/usr/share/fonts/truetype/nanum/NanumSquareRoundEB.ttf", // ExtraBold - 가장 굵음
+        "/usr/share/fonts/truetype/nanum/NanumSquareRoundB.ttf",  // Bold - 둥근 고딕
+        "/usr/share/fonts/truetype/nanum/NanumSquareEB.ttf",      // ExtraBold
+        "/usr/share/fonts/truetype/nanum/NanumSquareB.ttf",       // Bold
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    ];
+
+    // 자막용 폰트 (NanumSquareRound - 둥글고 부드러운 고딕체)
+    const subtitleFontCandidates = [
+        "/usr/share/fonts/truetype/nanum/NanumSquareRoundB.ttf",  // Bold - 둥근 고딕
+        "/usr/share/fonts/truetype/nanum/NanumSquareRoundR.ttf",  // Regular - 둥근 고딕
+        "/usr/share/fonts/truetype/nanum/NanumSquareB.ttf",
+        "/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf",
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    ];
+
+    let headerFont = null;
+    let subtitleFont = null;
+
+    for (const p of headerFontCandidates) {
+        if (fs.existsSync(p)) {
+            headerFont = p;
+            console.log(`[FONT] Header font: ${p}`);
+            break;
         }
-        return "/System/Library/Fonts/AppleSDGothicNeo.ttc"; // Fallback (might need face index)
     }
-    // Linux (VM)
-    return "/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf";
+
+    for (const p of subtitleFontCandidates) {
+        if (fs.existsSync(p)) {
+            subtitleFont = p;
+            console.log(`[FONT] Subtitle font: ${p}`);
+            break;
+        }
+    }
+
+    // 폴백
+    const fallback = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+    return {
+        header: headerFont || fallback,
+        subtitle: subtitleFont || fallback
+    };
 };
 
-const FONT_PATH = getFontPath();
+// font_settings를 PEANUT_STYLE과 병합하는 함수
+function getMergedStyle(fontSettings) {
+    if (!fontSettings) return PEANUT_STYLE;
+    const merged = JSON.parse(JSON.stringify(PEANUT_STYLE));
+    if (fontSettings.header_korean) {
+        if (fontSettings.header_korean.size) merged.header.font_size = fontSettings.header_korean.size;
+        if (fontSettings.header_korean.max_chars_per_line) merged.header.max_chars_per_line = fontSettings.header_korean.max_chars_per_line;
+    }
+    if (fontSettings.header_english) {
+        if (fontSettings.header_english.size) {
+        merged.header_english.font_size = fontSettings.header_english.size;
+        }
+        if (fontSettings.header_english.y_offset !== undefined) {
+            merged.header_english.y_offset = fontSettings.header_english.y_offset;
+        }
+    }
+    if (fontSettings.subtitle_korean) {
+        if (fontSettings.subtitle_korean.size) {
+            merged.subtitle.font_size = fontSettings.subtitle_korean.size;
+            merged.subtitle_interviewer.font_size = fontSettings.subtitle_korean.size;
+        }
+        if (fontSettings.subtitle_korean.max_lines) merged.subtitle.max_lines = fontSettings.subtitle_korean.max_lines;
+    }
+    if (fontSettings.subtitle_english) {
+        if (fontSettings.subtitle_english.size) {
+        merged.subtitle_english.font_size = fontSettings.subtitle_english.size;
+        merged.subtitle_interviewer_english.font_size = fontSettings.subtitle_english.size;
+        }
+        if (fontSettings.subtitle_english.max_lines) {
+            merged.subtitle_english.max_lines = fontSettings.subtitle_english.max_lines;
+            merged.subtitle_interviewer_english.max_lines = fontSettings.subtitle_english.max_lines;
+        }
+    }
+    if (fontSettings.footer_korean && fontSettings.footer_korean.size) {
+        merged.footer.font_size = fontSettings.footer_korean.size;
+    }
+    if (fontSettings.footer_english) {
+        if (fontSettings.footer_english.size) {
+        merged.footer_english.font_size = fontSettings.footer_english.size;
+        }
+        if (fontSettings.footer_english.y_offset !== undefined) {
+            merged.footer_english.y_offset = fontSettings.footer_english.y_offset;
+        }
+    }
+    console.log('[FONT_SETTINGS] Applied:', JSON.stringify({h:merged.header.font_size,he:merged.header_english.font_size,s:merged.subtitle.font_size,se:merged.subtitle_english.font_size,f:merged.footer.font_size,fe:merged.footer_english.font_size,h_max:merged.header.max_chars_per_line}));
+    return merged;
+}
+
+
+const FONTS = findFonts();
+const FONT_PATH = FONTS.header;  // 기존 코드 호환용
+const SUBTITLE_FONT_PATH = FONTS.subtitle;
+console.log(`[FONT] Header: ${FONT_PATH}`);
+console.log(`[FONT] Subtitle: ${SUBTITLE_FONT_PATH}`);
 
 // =====================
-// 땅콩이 스타일 설정 (레이아웃 수정)
+// 땅콩이 스타일 설정 (img_4.png 보리와냥이 스타일)
 // =====================
+// 레이아웃 구조 (1920 기준):
+// - 상단 여백: 50px (2.6%)
+// - 헤더 한글: ~140px (2줄)
+// - 헤더 영문: ~40px
+// - 헤더-영상 간격: 30px
+// - 영상 시작: ~310px (16%)
+// - 영상 높이: 55% (1056px)
+// - 영상 끝: ~1366px (71%)
+// - 영상-채널명 간격: 100px
+// - 채널명: 1466px (76%)
+// - 하단 여백: 충분
 const PEANUT_STYLE = {
-    video_height_percent: 65,
+    video_height_percent: 55, // 영상 높이 55% (1056px) - Crop 45%
+    video_y_percent: 22.7, // 영상 시작 위치 (435px) - 영문-영상 간격 29px
+    video_full_width: false, // 가로 fit 모드 (상하 잘림 방지, 좌우 검은 여백)
     header: {
-        font_size: 68,
-        color: "0xFFD700",
-        border_color: "0x333333",
-        border_width: 5,
-        y_percent: 15, // 4% -> 15% (Safe zone)
+        font_size: 16, // 헤더 폰트 (64에서 축소)
+        color: "0xF5DEB3", // 베이지/골드색
+        border_color: "0x000000",
+        border_width: 8, // 두꺼운 검정 테두리 (5 → 8)
+        shadow_x: 4, // 그림자 X 오프셋
+        shadow_y: 4, // 그림자 Y 오프셋
+        shadow_color: "0x000000@0.7", // 그림자 색상 (반투명 검정)
+        y_percent: 6, // 상단 115px 여백
         max_chars_per_line: 14,
     },
     header_english: {
-        font_size: 32,
-        color: "0xFFFAF0",
-        border_color: "0x333333",
-        border_width: 3,
-        y_offset: 70,
+        font_size: 10, // 영문 폰트 크기
+        color: "0xAAAAAA", // 연한 회색
+        border_color: "0x222222",
+        border_width: 5, // 볼드 효과 (4 → 5)
+        shadow_x: 3,
+        shadow_y: 3,
+        shadow_color: "0x000000@0.5",
+        y_offset: 115, // 한글-영문 간격 115px
     },
     footer: {
-        font_size: 64, // 52 -> 64 (Similar to header)
-        color: "0xFFC000CC", // Darker Amber with ~80% opacity
+        font_size: 72, // 푸터 한글 폰트
+        color: "0x8B7355", // 진하고 흐릿한 베이지
         border_color: "0x000000",
-        border_width: 4,
-        y_percent: 85, // 94% -> 85% (Safe zone)
+        border_width: 8, // 두꺼운 검정 테두리 (5 → 8)
+        shadow_x: 4,
+        shadow_y: 4,
+        shadow_color: "0x000000@0.7",
+        y_percent: 80.7, // 푸터 위치 (영상끝+58px)
+    },
+    footer_english: {
+        font_size: 28, // 영문 푸터 표시
+        color: "0xAAAAAA", // 연한 회색
+        border_color: "0x333333",
+        border_width: 3, // (2 → 3)
+        shadow_x: 2,
+        shadow_y: 2,
+        shadow_color: "0x000000@0.5",
+        y_offset: 80, // 한글-영문 간격
     },
     subtitle: {
-        font_size: 38, // 46 -> 38 (Reduced for long text)
-        color: "0xFFE66D",
-        border_color: "0x333333",
-        border_width: 4,
-        y_percent: 70, // 68% -> 70% (User request)
+        font_size: 30, // 자막 크기 감소 (42 → 30)
+        color: "0xFFFFFF", // 흰색
+        border_color: "0x000000",
+        border_width: 4, // 테두리도 비례 축소 (6 → 4)
+        shadow_x: 2,
+        shadow_y: 2,
+        shadow_color: "0x000000@0.8",
+        y_percent: 55,
     },
     subtitle_english: {
-        font_size: 22, // 28 -> 22 (Reduced for long text)
-        color: "0xFFFAF0",
-        border_color: "0x333333",
-        border_width: 3,
-        y_percent: 76, // 74% -> 76% (User request)
+        font_size: 15, // 영문 자막 크기 (24 → 15)
+        color: "0xFFFFFF", // 흰색
+        border_color: "0x000000",
+        border_width: 2, // 테두리도 비례 축소 (3 → 2)
+        shadow_x: 2,
+        shadow_y: 2,
+        shadow_color: "0x000000@0.6",
+        y_percent: 58, // 한글 자막 바로 아래 (65 → 58)
     },
     subtitle_interviewer: {
-        font_size: 38, // 46 -> 38
-        color: "0x87CEEB",
-        border_color: "0x333333",
-        border_width: 4,
-        y_percent: 70, // User request
+        font_size: 30, // 인터뷰어 자막도 동일하게 (46 → 30)
+        color: "0xFFFFFF",
+        border_color: "0x000000",
+        border_width: 4, // 테두리 비례 축소 (6 → 4)
+        shadow_x: 2,
+        shadow_y: 3,
+        shadow_color: "0x000000@0.8",
+        y_percent: 62,
     },
     subtitle_interviewer_english: {
-        font_size: 22, // 28 -> 22
-        color: "0xFFFAF0",
-        border_color: "0x333333",
-        border_width: 3,
-        y_percent: 76, // User request
+        font_size: 15, // 영문 인터뷰어 자막도 동일하게 (28 → 15)
+        color: "0xFFFFFF",
+        border_color: "0x000000",
+        border_width: 2, // 테두리 비례 축소 (3 → 2)
+        shadow_x: 2,
+        shadow_y: 2,
+        shadow_color: "0x000000@0.6",
+        y_percent: 65,
     },
 };
 
@@ -164,16 +297,19 @@ const MAX_CHARS_PER_LINE_ENG = 25; // 영어 자막 줄바꿈 기준
 // 텍스트 이스케이프 함수 (FFmpeg drawtext용)
 const escapeText = (text, keepEmoji = false) => {
     const cleanText = keepEmoji ? text?.trim() || "" : removeEmojis(text);
-    // 1. 작은따옴표(')를 유니코드 Right Single Quotation Mark(’)로 변경하여 
-    //    Shell 및 FFmpeg 파싱 충돌 원천 차단
+    // FFmpeg drawtext 특수문자 이스케이프
     return cleanText
-        .replace(/'/g, "\u2019")
-        .replace(/\\/g, "\\\\")
-        .replace(/:/g, "\\:")
-        .replace(/\[/g, "\\[")
+        .replace(/\$/g, "달러")       // $ → 달러 (FFmpeg에서 $가 누락되는 문제 해결)
+        .replace(/\|/g, " - ")        // | → 하이픈으로 대체 (FFmpeg 필터 구분자 충돌 방지)
+        .replace(/%/g, "퍼센트")      // % → 퍼센트 (FFmpeg drawtext에서 %는 특수문자, shell 이스케이프 문제)
+        .replace(/'/g, "\u2019")      // 작은따옴표 → 유니코드
+        .replace(/"/g, "\u201D")      // 큰따옴표 → 유니코드
+        .replace(/\\/g, "\\\\")       // 백슬래시
+        .replace(/:/g, "\\:")         // 콜론
+        .replace(/\[/g, "\\[")        // 대괄호
         .replace(/\]/g, "\\]")
-        .replace(/,/g, "\\,")
-        .replace(/;/g, "\\;");
+        .replace(/,/g, "\\,")         // 콤마
+        .replace(/;/g, "\\;");        // 세미콜론
 };
 
 const cleanSubtitleText = (text) => {
@@ -215,10 +351,10 @@ const calculateDynamicFontSize = (text, baseFontSize, screenWidth, maxLines = 3)
 const splitSubtitleLines = (text, maxCharsPerLine) => {
     const cleaned = cleanSubtitleText(text);
     if (!cleaned) return [];
-
+    
     // ★★★ 먼저 명시적 개행(\n)으로 분할 ★★★
     const explicitLines = cleaned.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-
+    
     const allLines = [];
     for (const line of explicitLines) {
         // 각 줄이 maxCharsPerLine 이하면 그대로 추가
@@ -226,7 +362,7 @@ const splitSubtitleLines = (text, maxCharsPerLine) => {
             allLines.push(line);
             continue;
         }
-
+        
         // 긴 줄은 추가 분할
         const MAX_LINES = 3;
         const neededLines = Math.min(Math.ceil(line.length / maxCharsPerLine), MAX_LINES);
@@ -238,7 +374,7 @@ const splitSubtitleLines = (text, maxCharsPerLine) => {
                 allLines.push(remaining.trim());
                 break;
             }
-
+            
             let splitIdx = remaining.lastIndexOf(" ", targetCharsPerLine);
             if (splitIdx === -1 || splitIdx < targetCharsPerLine * 0.3) {
                 const commaIdx = remaining.lastIndexOf(",", targetCharsPerLine);
@@ -250,12 +386,12 @@ const splitSubtitleLines = (text, maxCharsPerLine) => {
                     splitIdx += 1;
                 }
             }
-
+            
             allLines.push(remaining.substring(0, splitIdx).trim());
             remaining = remaining.substring(splitIdx).trim();
         }
     }
-
+    
     return allLines.filter((l) => l.length > 0);
 };
 
@@ -264,30 +400,36 @@ const splitHeaderLines = (text, maxChars = 12) => {
     const cleaned = removeEmojis(text).trim();
     if (cleaned.length <= maxChars) return [cleaned];
 
-    const mid = Math.ceil(cleaned.length / 2);
-    let splitIdx = cleaned.lastIndexOf(" ", mid);
-    if (splitIdx === -1 || splitIdx < 4) splitIdx = cleaned.indexOf(" ", mid);
-    if (splitIdx === -1) splitIdx = mid;
-
-    const line1 = cleaned.substring(0, splitIdx).trim();
-    const line2 = cleaned.substring(splitIdx).trim();
-    return line2 ? [line1, line2] : [line1];
+    // N글자마다 줄바꿈 (공백 기준)
+    const lines = [];
+    let remaining = cleaned;
+    while (remaining.length > 0) {
+        if (remaining.length <= maxChars) {
+            lines.push(remaining.trim());
+            break;
+        }
+        let splitIdx = remaining.lastIndexOf(" ", maxChars);
+        if (splitIdx === -1 || splitIdx < maxChars / 2) splitIdx = maxChars;
+        lines.push(remaining.substring(0, splitIdx).trim());
+        remaining = remaining.substring(splitIdx).trim();
+    }
+    return lines;
 };
 
 const splitEnglishSubtitleLines = (text, maxCharsPerLine) => {
     if (!text) return [];
     const cleaned = text.trim();
-
+    
     // ★★★ 먼저 명시적 개행(\n)으로 분할 ★★★
     const explicitLines = cleaned.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-
+    
     const allLines = [];
     for (const line of explicitLines) {
         if (line.length <= maxCharsPerLine) {
             allLines.push(line);
             continue;
         }
-
+        
         const neededLines = Math.ceil(line.length / maxCharsPerLine);
         const targetCharsPerLine = Math.ceil(line.length / neededLines);
         let remaining = line;
@@ -357,6 +499,7 @@ app.post("/render/shop", async (req, res) => {
             output_bucket,
             output_path,
             folder_name,
+            font_settings,
         } = req.body;
 
         // 매핑: 클라이언트 용어 -> 내부 변수
@@ -514,13 +657,24 @@ app.post("/render/shop", async (req, res) => {
             const baseSubY = Math.round(height * subStyle.y_percent / 100);
             const lineHeight = subStyle.font_size + 8;
 
-            const korLines = splitSubtitleLines(sub.text || "", MAX_CHARS_PER_LINE);
+            const maxLines = subStyle.max_lines || 5;
+            // max_lines가 1이면 줄바꿈 없이 한 줄로 표시
+            let korLines;
+            if (maxLines === 1) {
+                korLines = [removeEmojis(sub.text || "").trim()];
+            } else {
+                korLines = splitSubtitleLines(sub.text || "", MAX_CHARS_PER_LINE);
+                if (korLines.length > maxLines) korLines = korLines.slice(0, maxLines);
+            }
+            console.log(`[DEBUG_SUB] Original: "${sub.text}"`);
+            console.log(`[DEBUG_SUB] Split into ${korLines.length} lines:`, korLines);
             if (korLines.length > 0) {
                 const korStartY = baseSubY;
                 korLines.forEach((line, idx) => {
                     const escapedLine = escapeText(line);
+                    console.log(`[DEBUG_SUB] Line ${idx}: "${line}" -> escaped: "${escapedLine}"`);
                     const lineY = korStartY + (idx * lineHeight);
-                    drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${subStyle.font_size}:fontcolor=${subStyle.color}:borderw=${subStyle.border_width}:bordercolor=${subStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})'`);
+                    drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${SUBTITLE_FONT_PATH}:fontsize=${subStyle.font_size}:fontcolor=${subStyle.color}:borderw=${subStyle.border_width}:bordercolor=${subStyle.border_color}:x=(w-text_w)/2:y=${lineY}${enableFilter}`);
                 });
             }
 
@@ -531,7 +685,7 @@ app.post("/render/shop", async (req, res) => {
                     engLines.forEach((line, idx) => {
                         const escapedLine = escapeText(line);
                         const lineY = engStartY + (idx * (subEngStyle.font_size + 5));
-                        drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${subEngStyle.font_size}:fontcolor=${subEngStyle.color}:borderw=${subEngStyle.border_width}:bordercolor=${subEngStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})'`);
+                        drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${SUBTITLE_FONT_PATH}:fontsize=${subEngStyle.font_size}:fontcolor=${subEngStyle.color}:borderw=${subEngStyle.border_width}:bordercolor=${subEngStyle.border_color}:x=(w-text_w)/2:y=${lineY}${enableFilter}`);
                     });
                 }
             }
@@ -613,14 +767,49 @@ app.post("/render/puppy", async (req, res) => {
             header_text,
             header_text_english,
             footer_text = "땅콩이네",
+            footer_text_english, // 영문 푸터 추가
             subtitle_enabled = true,
             subtitle_english_enabled = false,
+            timed_subtitles = null,
+            subtitle_timing_mode = "timed", // "timed" or "always" // 시간대별 자막 배열 [{start_time, end_time, text_ko, text_en, color}]
+            // ★★★ 비디오에 음성/자막이 이미 포함된 경우 레이아웃만 적용 ★★★
+            skip_subtitle_overlay = false, // true: 자막 오버레이 건너뛰기 (비디오에 자막 포함)
+            use_original_audio = false, // true: 원본 오디오 사용 (비디오에 음성 포함)
             width = 1080,
             height = 1920,
+            // ★★★ origin 모드: 영상이 가로 꽉 채우고 위아래만 여백 ★★★
+            use_origin_size = false,
+            origin_layout = null, // { video_area: {x, y, width, height}, header_area: {y, height}, ... }
             output_bucket,
             output_path,
             folder_name,
+            font_settings,
         } = req.body;
+
+        // 시간 문자열을 초로 변환 (MM:SS.ms 형식)
+        console.log("[DEBUG] font_settings received:", JSON.stringify(font_settings));
+        const currentStyle = getMergedStyle(font_settings);
+
+        const parseTimeToSeconds = (timeStr) => {
+            if (!timeStr) return 0;
+            if (typeof timeStr === 'number') return timeStr;
+            const parts = timeStr.split(':');
+            const minutes = parseInt(parts[0]) || 0;
+            const seconds = parseFloat(parts[1]) || 0;
+            return minutes * 60 + seconds;
+        };
+
+        // 색상 맵핑
+        const colorMap = {
+            'white': '0xFFFFFF',
+            'gold': '0xFFD700',
+            'yellow': '0xFFFF00',
+            'green': '0x00FF00',
+            'silver': '0xC0C0C0',
+            'bronze': '0xCD7F32',
+            'red': '0xFF0000',
+            'blue': '0x0000FF'
+        };
 
         console.log(`[DEBUG_PAYLOAD] subtitle_english_enabled: ${subtitle_english_enabled}`);
         if (videos && videos.length > 0) {
@@ -633,13 +822,23 @@ app.post("/render/puppy", async (req, res) => {
         }
 
         console.log(`[${jobId}] 🚀 Starting OPTIMIZED Puppy render: ${videos.length} videos`);
+        if (skip_subtitle_overlay) console.log(`[${jobId}] ⏭️ Skipping subtitle overlay (video has embedded subtitles)`);
+        if (use_original_audio) console.log(`[${jobId}] 🔊 Using original audio (video has embedded audio)`);
 
-        const SUBTITLE_WIDTH_PERCENT = 90; // 70% -> 90% for more subtitle space
-        const availableWidth = Math.round(width * SUBTITLE_WIDTH_PERCENT / 100);
-        const KOR_CHAR_WIDTH = 40; // 50 -> 40 for smaller char width
-        const ENG_CHAR_WIDTH = 18; // 20 -> 18 for smaller char width
+        // ★★★ 영상 실제 너비에 맞춰 자막 너비 동적 계산 ★★★
+        const videoHeight = Math.round(height * PEANUT_STYLE.video_height_percent / 100);
+        // 9:16 비율 기준 영상 실제 너비 (예: 1056px 높이 → 594px 너비)
+        const actualVideoWidth = Math.round(videoHeight * 9 / 16);
+        // 앞뒤 여유 10% (좌우 각 5%)
+        const SUBTITLE_MARGIN_PERCENT = 10;
+        const availableWidth = Math.round(actualVideoWidth * (100 - SUBTITLE_MARGIN_PERCENT) / 100);
+        console.log(`[SUBTITLE] Video height: ${videoHeight}px, Actual video width: ${actualVideoWidth}px, Subtitle width: ${availableWidth}px`);
+
+        const KOR_CHAR_WIDTH = 46; // 폰트 크기 46px 기준
+        const ENG_CHAR_WIDTH = 18; // 영문 폰트 크기 28px 기준 (약 0.6배)
         const MAX_CHARS_PER_LINE = Math.floor(availableWidth / KOR_CHAR_WIDTH);
         const MAX_CHARS_PER_LINE_ENG = Math.floor(availableWidth / ENG_CHAR_WIDTH);
+        console.log(`[SUBTITLE] Max chars per line - KOR: ${MAX_CHARS_PER_LINE}, ENG: ${MAX_CHARS_PER_LINE_ENG}`);
 
         // =====================
         // 1. 영상 다운로드 및 길이 측정 (병렬)
@@ -659,16 +858,23 @@ app.post("/render/puppy", async (req, res) => {
             });
             fs.writeFileSync(filePath, Buffer.from(response.data));
 
-            // 영상 길이 측정
+            // 영상 길이 및 해상도 측정
             let duration = video.duration || 6;
+            let srcWidth = 1080, srcHeight = 1920;
             try {
-                const { stdout } = await execAsync(
+                const { stdout: durationOut } = await execAsync(
                     `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`
                 );
-                duration = parseFloat(stdout.trim());
+                duration = parseFloat(durationOut.trim());
+
+                const { stdout: sizeOut } = await execAsync(
+                    `ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "${filePath}"`
+                );
+                const [w, h] = sizeOut.trim().split(',').map(Number);
+                if (w && h) { srcWidth = w; srcHeight = h; }
             } catch { }
 
-            return { index: i, filePath, duration, video };
+            return { index: i, filePath, duration, video, srcWidth, srcHeight };
         });
 
         const downloadedVideos = await Promise.all(downloadPromises);
@@ -686,38 +892,71 @@ app.post("/render/puppy", async (req, res) => {
         // =====================
         console.log(`[${jobId}] [2/4] Preparing subtitles...`);
         const subtitles = [];
-        let currentTime = 0;
 
-        for (const { duration, video, index } of downloadedVideos) {
-            const sceneNum = video.index || (index + 1);
-            const narration = video.dialogue?.script || video.dialogue?.interviewer || video.narration || "";
-            const narrationKorean = video.narration_korean || narration;
-            const narrationEnglish = video.dialogue?.script_english || video.narration_english || "";
-            const isInterviewQuestion = video.is_interview_question || video.scene_type === "interview_question";
-            const isPerformance = video.is_performance && !narration;
-
-            console.log(`[DEBUG] Scene ${sceneNum}:`, {
-                narration: narration?.substring(0, 20),
-                narrationEnglish: narrationEnglish?.substring(0, 20),
-                hasDialogue: !!video.dialogue,
-                scriptEnglish: video.dialogue?.script_english
-            });
-
-            if (narration && !isPerformance && subtitle_enabled) {
-                const subStart = currentTime + 0.3;
-                const subEnd = currentTime + duration - 0.3;
-                console.log(`[DEBUG_SUB] Scene ${sceneNum} Index ${index}: Start=${subStart.toFixed(2)}, End=${subEnd.toFixed(2)}, TextKor="${narrationKorean.substring(0, 10)}...", TextEng="${narrationEnglish.substring(0, 10)}..."`);
+        // ★★★ timed_subtitles가 제공되면 시간대별 자막 사용 ★★★
+        if (timed_subtitles && Array.isArray(timed_subtitles) && timed_subtitles.length > 0) {
+            console.log(`[${jobId}] Using timed_subtitles: ${timed_subtitles.length} entries`);
+            for (const sub of timed_subtitles) {
+                const startSec = parseTimeToSeconds(sub.start_time);
+                const endSec = parseTimeToSeconds(sub.end_time);
+                const textKo = sub.text_ko || sub.text || "";
+                const textEn = sub.text_en || sub.text_english || "";
+                const color = colorMap[sub.color] || sub.color || '0xFFFFFF';
 
                 subtitles.push({
-                    start: subStart,
-                    end: subEnd,
-                    text: narrationKorean,
-                    text_english: narrationEnglish,
-                    speaker: isInterviewQuestion ? "interviewer" : (video.speaker || "main"),
-                    scene_index: sceneNum,
+                    start: startSec,
+                    end: endSec,
+                    text: textKo,
+                    text_english: textEn,
+                    color: color,
+                    speaker: sub.speaker || "main",
                 });
+                console.log(`[DEBUG_SUB] Timed: ${startSec.toFixed(2)}-${endSec.toFixed(2)} "${textKo.substring(0, 15)}..."`);
             }
-            currentTime += duration;
+        } else {
+            // 기존 방식: narration 필드에서 자막 생성
+            let currentTime = 0;
+            for (const { duration, video, index } of downloadedVideos) {
+                const sceneNum = video.index || (index + 1);
+                const narration = video.dialogue?.script || video.dialogue?.interviewer || video.narration || "";
+                const narrationKorean = video.narration_korean || narration;
+                const narrationEnglish = video.dialogue?.script_english || video.narration_english || "";
+                const isInterviewQuestion = video.is_interview_question || video.scene_type === "interview_question";
+                const isPerformance = video.is_performance && !narration;
+
+                // ★★★ 비디오별 timed_subtitles 지원 ★★★
+                if (video.timed_subtitles && Array.isArray(video.timed_subtitles) && video.timed_subtitles.length > 0) {
+                    console.log(`[DEBUG_SUB] Video ${sceneNum}: Using timed_subtitles (${video.timed_subtitles.length} entries)`);
+                    for (const sub of video.timed_subtitles) {
+                        const startSec = currentTime + (parseFloat(sub.start) || 0);
+                        const endSec = currentTime + (parseFloat(sub.end) || 0);
+                        const textKo = sub.korean || sub.text_ko || sub.text || "";
+                        const textEn = sub.english || sub.text_en || sub.text_english || "";
+                        
+                        subtitles.push({
+                            start: startSec,
+                            end: endSec,
+                            text: textKo,
+                            text_english: textEn,
+                            speaker: isInterviewQuestion ? "interviewer" : (video.speaker || "main"),
+                            scene_index: sceneNum,
+                        });
+                    }
+                } else if (narration && !isPerformance && subtitle_enabled) {
+                    const subStart = currentTime + 0.3;
+                    const subEnd = currentTime + duration - 0.3;
+
+                    subtitles.push({
+                        start: subStart,
+                        end: subEnd,
+                        text: narrationKorean,
+                        text_english: narrationEnglish,
+                        speaker: isInterviewQuestion ? "interviewer" : (video.speaker || "main"),
+                        scene_index: sceneNum,
+                    });
+                }
+                currentTime += duration;
+            }
         }
 
         // =====================
@@ -744,10 +983,28 @@ app.post("/render/puppy", async (req, res) => {
         console.log(`[${jobId}] [4/4] Running OPTIMIZED FFmpeg render...`);
         const renderStart = Date.now();
 
-        const videoHeight = Math.round(height * PEANUT_STYLE.video_height_percent / 100);
-        const videoY = Math.round((height - videoHeight) / 2);
-        const headerY = Math.round(height * PEANUT_STYLE.header.y_percent / 100);
-        const footerY = Math.round(height * PEANUT_STYLE.footer.y_percent / 100);
+        // ★★★ origin_layout이 제공되면 커스텀 레이아웃 사용 ★★★
+        let videoWidthFinal, videoHeightFinal, videoX, videoY, headerY, footerY;
+
+        if (use_origin_size && origin_layout) {
+            console.log(`[${jobId}] 🎯 Using ORIGIN layout: video ${origin_layout.video_area.width}x${origin_layout.video_area.height} at (${origin_layout.video_area.x}, ${origin_layout.video_area.y})`);
+            videoWidthFinal = origin_layout.video_area.width;
+            videoHeightFinal = origin_layout.video_area.height;
+            videoX = origin_layout.video_area.x;
+            videoY = origin_layout.video_area.y;
+            headerY = origin_layout.header_area?.y || 30;
+            footerY = origin_layout.footer_area?.y || (height - 80);
+        } else {
+            // 기존 PEANUT_STYLE 사용
+            videoWidthFinal = width; // 가로 전체
+            videoHeightFinal = Math.round(height * PEANUT_STYLE.video_height_percent / 100);
+            videoX = 0;
+            videoY = PEANUT_STYLE.video_y_percent
+                ? Math.round(height * PEANUT_STYLE.video_y_percent / 100)
+                : Math.round((height - videoHeightFinal) / 2);
+            headerY = Math.round(height * PEANUT_STYLE.header.y_percent / 100);
+            footerY = Math.round(height * PEANUT_STYLE.footer.y_percent / 100);
+        }
 
         // 입력 파일 목록
         const inputFiles = downloadedVideos.map(v => `-i "${v.filePath}"`).join(" ");
@@ -759,7 +1016,21 @@ app.post("/render/puppy", async (req, res) => {
         let audioConcatInputs = "";
 
         for (let i = 0; i < numVideos; i++) {
-            videoScaleFilters += `[${i}:v]scale=${width}:${videoHeight}:force_original_aspect_ratio=decrease,pad=${width}:${videoHeight}:(ow-iw)/2:(oh-ih)/2:black,setsar=1[v${i}];`;
+            // ★★★ origin_layout 모드: 영상을 지정된 크기로 스케일 (가로 꽉 채움) ★★★
+            if (use_origin_size && origin_layout) {
+                // origin 모드: 영상을 videoWidthFinal x videoHeightFinal로 스케일 (crop으로 채움)
+                videoScaleFilters += `[${i}:v]scale=${videoWidthFinal}:${videoHeightFinal}:force_original_aspect_ratio=decrease,pad=${videoWidthFinal}:${videoHeightFinal}:(ow-iw)/2:(oh-ih)/2:black,setsar=1[v${i}];`;
+            } else if (PEANUT_STYLE.video_full_width) {
+                // video_full_width: true면 가로 전체 채움 (crop), 아니면 기존 방식 (pad)
+                // 영상 영역을 꽉 채우도록 스케일 (비율 유지, 최소 크기 보장) 후 중앙 crop
+                // force_original_aspect_ratio=increase: 가로/세로 중 큰 쪽 기준으로 스케일
+                // 9:16 영상: 가로 기준 스케일 → 세로 crop
+                // 16:9 영상: 세로 기준 스케일 → 가로 crop
+                videoScaleFilters += `[${i}:v]scale=${videoWidthFinal}:${videoHeightFinal}:force_original_aspect_ratio=decrease,pad=${videoWidthFinal}:${videoHeightFinal}:(ow-iw)/2:(oh-ih)/2:black,setsar=1[v${i}];`;
+            } else {
+                // 기존 방식: scale down + pad (검은 여백)
+                videoScaleFilters += `[${i}:v]scale=${videoWidthFinal}:${videoHeightFinal}:force_original_aspect_ratio=decrease,pad=${videoWidthFinal}:${videoHeightFinal}:(ow-iw)/2:(oh-ih)/2:black,setsar=1[v${i}];`;
+            }
             concatInputs += `[v${i}]`;
             audioConcatInputs += `[${i}:a]`;
         }
@@ -767,17 +1038,17 @@ app.post("/render/puppy", async (req, res) => {
         // 비디오 concat
         const concatFilter = `${concatInputs}concat=n=${numVideos}:v=1:a=0[concatv];${audioConcatInputs}concat=n=${numVideos}:v=0:a=1[concata];`;
 
-        // 배경 생성 및 비디오 오버레이
-        const bgFilter = `color=black:s=${width}x${height}:d=${totalDuration}[bg];[bg][concatv]overlay=0:${videoY}[combined];`;
+        // 배경 생성 및 비디오 오버레이 (origin 모드에서는 videoX 사용)
+        const bgFilter = `color=black:s=${width}x${height}:d=${totalDuration}[bg];[bg][concatv]overlay=${videoX}:${videoY}[combined];`;
 
         // =====================
         // 텍스트 필터 배열 생성 (콤마 문제 해결)
         // =====================
         const drawFilters = [];
 
-        // 1. 헤더 필터
-        const titleLinesKorean = splitHeaderLines(header_text || "", PEANUT_STYLE.header.max_chars_per_line);
-        const titleLineHeight = PEANUT_STYLE.header.font_size + 10;
+        // 1. 헤더 필터 (그림자 효과 포함)
+        const titleLinesKorean = splitHeaderLines(header_text || "", currentStyle.header.max_chars_per_line);
+        const titleLineHeight = currentStyle.header.font_size + 10;
         let lastKoreanLineY = headerY;
 
         if (titleLinesKorean.length > 0) {
@@ -785,78 +1056,115 @@ app.post("/render/puppy", async (req, res) => {
                 const escapedLine = escapeText(line);
                 const lineY = headerY + (idx * titleLineHeight);
                 lastKoreanLineY = lineY;
-                drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.header.font_size}:fontcolor=${PEANUT_STYLE.header.color}:borderw=${PEANUT_STYLE.header.border_width}:bordercolor=${PEANUT_STYLE.header.border_color}:x=(w-text_w)/2:y=${lineY}`);
+                const shadowOpts = currentStyle.header.shadow_x ? `:shadowcolor=${currentStyle.header.shadow_color}:shadowx=${currentStyle.header.shadow_x}:shadowy=${currentStyle.header.shadow_y}` : '';
+                drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${currentStyle.header.font_size}:fontcolor=${currentStyle.header.color}:borderw=${currentStyle.header.border_width}:bordercolor=${currentStyle.header.border_color}${shadowOpts}:x=(w-text_w)/2:y=${lineY}`);
             });
         }
 
         if (header_text_english) {
-            const englishY = lastKoreanLineY + PEANUT_STYLE.header_english.y_offset;
+            const englishY = lastKoreanLineY + currentStyle.header_english.y_offset;
             const escapedEnglish = escapeText(header_text_english);
-            drawFilters.push(`drawtext=text='${escapedEnglish}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.header_english.font_size}:fontcolor=${PEANUT_STYLE.header_english.color}:borderw=${PEANUT_STYLE.header_english.border_width}:bordercolor=${PEANUT_STYLE.header_english.border_color}:x=(w-text_w)/2:y=${englishY}`);
+            const shadowOpts = currentStyle.header_english.shadow_x ? `:shadowcolor=${currentStyle.header_english.shadow_color}:shadowx=${currentStyle.header_english.shadow_x}:shadowy=${currentStyle.header_english.shadow_y}` : '';
+            drawFilters.push(`drawtext=text='${escapedEnglish}':fontfile=${FONT_PATH}:fontsize=${currentStyle.header_english.font_size}:fontcolor=${currentStyle.header_english.color}:borderw=${currentStyle.header_english.border_width}:bordercolor=${currentStyle.header_english.border_color}${shadowOpts}:x=(w-text_w)/2:y=${englishY}`);
         }
 
-        // 2. 자막 필터
+        // 2. 자막 필터 (skip_subtitle_overlay가 true면 건너뛰기)
+        // ★★★ 영상 영역 하단 계산 (자막 위치 기준점) ★★★
+        const videoBottom = videoY + videoHeightFinal;
+        const subtitleBottomMargin = 20; // 영상 하단에서 자막까지의 여백
+        const korEngGap = 15; // 한글/영어 자막 사이 여백
+
+        if (!skip_subtitle_overlay) {
         subtitles.forEach((sub) => {
             const isInterviewer = sub.speaker === "interviewer";
-            const subStyle = isInterviewer ? PEANUT_STYLE.subtitle_interviewer : PEANUT_STYLE.subtitle;
-            const subEngStyle = isInterviewer ? PEANUT_STYLE.subtitle_interviewer_english : PEANUT_STYLE.subtitle_english;
-            const baseSubY = Math.round(height * subStyle.y_percent / 100);
-            const baseEngY = Math.round(height * subEngStyle.y_percent / 100);
+            const subStyle = isInterviewer ? currentStyle.subtitle_interviewer : currentStyle.subtitle;
+            const subEngStyle = isInterviewer ? currentStyle.subtitle_interviewer_english : currentStyle.subtitle_english;
 
             // ★★★ 동적 폰트 크기 계산 (자막이 화면에 맞도록) ★★★
-            const korDynamicFont = calculateDynamicFontSize(sub.text, subStyle.font_size, width, 5);
-            const engDynamicFont = calculateDynamicFontSize(sub.text_english, subEngStyle.font_size, width, 3);
+            console.log("[DEBUG] subStyle.font_size:", subStyle.font_size, "text:", sub.text?.substring(0,20));
+            const korDynamicFont = calculateDynamicFontSize(sub.text, subStyle.font_size, actualVideoWidth, 5);
+            const engDynamicFont = calculateDynamicFontSize(sub.text_english, subEngStyle.font_size, actualVideoWidth, 3);
 
             const korFontSize = korDynamicFont.fontSize;
             const engFontSize = engDynamicFont.fontSize;
             const lineHeight = korFontSize + 8;
             const engLineHeight = engFontSize + 5;
 
-            // 동적 폰트 크기에 맞게 MAX_CHARS_PER_LINE 재계산
-            const dynamicMaxChars = Math.floor((width * 0.85) / (korFontSize * 0.7));
-            const dynamicMaxCharsEng = Math.floor((width * 0.85) / (engFontSize * 0.4));
+            // ★★★ 영상 실제 폭(actualVideoWidth) 기준으로 개행 ★★★
+            let korLines = splitSubtitleLines(sub.text || "", MAX_CHARS_PER_LINE);
+            const maxLines = subStyle.max_lines || 5;
+            if (korLines.length > maxLines) korLines = korLines.slice(0, maxLines);
+            const engMaxLines = subEngStyle.max_lines || 3;
+            // max_lines가 1이면 줄바꿈 없이 한 줄로 표시
+            let engLines;
+            if (engMaxLines === 1 && subtitle_english_enabled && sub.text_english) {
+                engLines = [sub.text_english.trim()];
+            } else {
+                engLines = subtitle_english_enabled && sub.text_english
+                    ? splitEnglishSubtitleLines(sub.text_english, MAX_CHARS_PER_LINE_ENG)
+                    : [];
+                if (engLines.length > engMaxLines) engLines = engLines.slice(0, engMaxLines);
+            }
+            // ★★★ 동적 자막 위치 계산: 영어 마지막 줄이 영상 하단에 위치 ★★★
+            const engTotalHeight = engLines.length > 0 ? engLines.length * engLineHeight : 0;
+            const korTotalHeight = korLines.length > 0 ? korLines.length * lineHeight : 0;
 
-            const korLines = splitSubtitleLines(sub.text || "", dynamicMaxChars);
-            if (korLines.length > 0) {
-                const korStartY = korLines.length > 1 ? baseSubY - ((korLines.length - 1) * lineHeight / 2) : baseSubY;
+            // 영어 자막 마지막 줄이 영상 하단 - 여백에 위치
+            const engLastLineY = videoBottom - subtitleBottomMargin - engLineHeight;
+            const engStartY = engLastLineY - ((engLines.length - 1) * engLineHeight);
+
+            // 한글 자막은 영어 자막 위에 + 여백
+            const enableFilter = subtitle_timing_mode === "always" ? "" : `:enable='between(t\\,${sub.start}\\,${sub.end})'`;
+            const korLastLineY = engLines.length > 0
+                ? engStartY - korEngGap - lineHeight
+                : videoBottom - subtitleBottomMargin - lineHeight;
+            const korStartY = korLastLineY - ((korLines.length - 1) * lineHeight);
+
+            // 자막별 색상 지원 (timed_subtitles에서 제공된 경우)
+            const subtitleColor = sub.color || subStyle.color;
+
+            // 한글 자막 렌더링 (그림자 효과 포함)
+            console.log(`[DEBUG_SUB] korLines count: ${korLines.length}, subtitle_enabled: ${subtitle_enabled}`);
+            if (korLines.length > 0 && subtitle_enabled) {
+                const korShadowOpts = subStyle.shadow_x ? `:shadowcolor=${subStyle.shadow_color}:shadowx=${subStyle.shadow_x}:shadowy=${subStyle.shadow_y}` : '';
                 korLines.forEach((line, idx) => {
                     let escapedLine = escapeText(line);
                     if (idx === 0 && isInterviewer) escapedLine = `Q\\: ${escapedLine}`;
                     const lineY = korStartY + (idx * lineHeight);
-                    if (subtitle_enabled) {
-                        drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${korFontSize}:fontcolor=${subStyle.color}:borderw=${subStyle.border_width}:bordercolor=${subStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})'`);
-                    }
+                    console.log(`[DEBUG_SUB] Adding Korean line ${idx}: "${escapedLine}" at Y=${lineY}`);
+                    drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${SUBTITLE_FONT_PATH}:fontsize=${korFontSize}:fontcolor=${subtitleColor}:borderw=${subStyle.border_width}:bordercolor=${subStyle.border_color}${korShadowOpts}:x=(w-text_w)/2:y=${lineY}${enableFilter}`);
                 });
             }
 
-            if (subtitle_english_enabled && sub.text_english) {
-                const engLines = splitEnglishSubtitleLines(sub.text_english, dynamicMaxCharsEng);
-                console.log(`[DEBUG_ENG_GEN] Scene ${sub.scene_index} English lines: ${JSON.stringify(engLines)}, fontSize: ${engFontSize}`);
-
-                if (engLines.length > 0) {
-                    const korLineCount = korLines.length || 1;
-                    const engStartY = baseEngY + ((korLineCount - 1) * lineHeight / 2);
-                    engLines.forEach((line, idx) => {
-                        let escapedLine = escapeText(line);
-                        if (idx === 0 && isInterviewer) escapedLine = `Q\\: ${escapedLine}`;
-                        const lineY = engStartY + (idx * engLineHeight);
-                        const filter = `drawtext=text='${escapedLine}':fontfile=${FONT_PATH}:fontsize=${engFontSize}:fontcolor=${subEngStyle.color}:borderw=${subEngStyle.border_width}:bordercolor=${subEngStyle.border_color}:x=(w-text_w)/2:y=${lineY}:enable='between(t\\,${sub.start}\\,${sub.end})'`;
-                        console.log(`[DEBUG_FILTER_ENG] ${filter}`);
-                        drawFilters.push(filter);
-                    });
-                }
+            // 영어 자막 렌더링 (그림자 효과 포함)
+            if (engLines.length > 0 && subtitle_english_enabled) {
+                const engShadowOpts = subEngStyle.shadow_x ? `:shadowcolor=${subEngStyle.shadow_color}:shadowx=${subEngStyle.shadow_x}:shadowy=${subEngStyle.shadow_y}` : '';
+                engLines.forEach((line, idx) => {
+                    let escapedLine = escapeText(line);
+                    if (idx === 0 && isInterviewer) escapedLine = `Q\\: ${escapedLine}`;
+                    const lineY = engStartY + (idx * engLineHeight);
+                    drawFilters.push(`drawtext=text='${escapedLine}':fontfile=${SUBTITLE_FONT_PATH}:fontsize=${engFontSize}:fontcolor=${subEngStyle.color}:borderw=${subEngStyle.border_width}:bordercolor=${subEngStyle.border_color}${engShadowOpts}:x=(w-text_w)/2:y=${lineY}${enableFilter}`);
+                });
             }
         });
+        } // end if (!skip_subtitle_overlay)
 
-        // 3. 푸터 필터 (하단)
+        // 3. 푸터 필터 (하단, 그림자 효과 포함)
         const escapedChannel = escapeText(footer_text || "땅콩이네", false);
-        // Alpha separated, color 6 hex
-        drawFilters.push(`drawtext=text='${escapedChannel}':fontfile=${FONT_PATH}:fontsize=${PEANUT_STYLE.footer.font_size}:fontcolor=0xFFC000:alpha=0.8:borderw=${PEANUT_STYLE.footer.border_width}:bordercolor=${PEANUT_STYLE.footer.border_color}:x=(w-text_w)/2:y=${footerY}`);
+        const footerShadowOpts = currentStyle.footer.shadow_x ? `:shadowcolor=${currentStyle.footer.shadow_color}:shadowx=${currentStyle.footer.shadow_x}:shadowy=${currentStyle.footer.shadow_y}` : '';
+        drawFilters.push(`drawtext=text='${escapedChannel}':fontfile=${FONT_PATH}:fontsize=${currentStyle.footer.font_size}:fontcolor=${currentStyle.footer.color}:borderw=${currentStyle.footer.border_width}:bordercolor=${currentStyle.footer.border_color}${footerShadowOpts}:x=(w-text_w)/2:y=${footerY}`);
+
+        // 4. 영문 푸터 필터 (한글 푸터 아래, 그림자 효과 포함)
+        if (footer_text_english) {
+            const escapedFooterEng = escapeText(footer_text_english, false);
+            const footerEngY = footerY + currentStyle.footer_english.y_offset;
+            const footerEngShadowOpts = currentStyle.footer_english.shadow_x ? `:shadowcolor=${currentStyle.footer_english.shadow_color}:shadowx=${currentStyle.footer_english.shadow_x}:shadowy=${currentStyle.footer_english.shadow_y}` : '';
+            drawFilters.push(`drawtext=text='${escapedFooterEng}':fontfile=${FONT_PATH}:fontsize=${currentStyle.footer_english.font_size}:fontcolor=${currentStyle.footer_english.color}:borderw=${currentStyle.footer_english.border_width}:bordercolor=${currentStyle.footer_english.border_color}${footerEngShadowOpts}:x=(w-text_w)/2:y=${footerEngY}`);
+        }
 
         // BGM 처리
         let bgmInput = "";
         let audioFilter = "[concata]volume=1[aout]";
-
         if (bgmPath) {
             bgmInput = `-i "${bgmPath}"`;
             const bgmInputIndex = numVideos;
@@ -925,15 +1233,21 @@ app.post("/render/puppy", async (req, res) => {
             job_id: jobId,
             url: publicUrl,
             folder_name: folder_name,
+            font_settings,
             total_duration: totalDuration,
             stats: {
                 video_count: videos.length,
                 has_bgm: !!bgm_url,
                 has_header: !!header_text,
+                has_header_english: !!header_text_english,
                 has_footer: !!footer_text,
-                has_subtitles: subtitle_enabled,
-                has_english_subtitles: subtitle_english_enabled,
-                subtitle_count: subtitles.length,
+                has_footer_english: !!footer_text_english,
+                has_subtitles: subtitle_enabled && !skip_subtitle_overlay,
+                has_english_subtitles: subtitle_english_enabled && !skip_subtitle_overlay,
+                subtitle_count: skip_subtitle_overlay ? 0 : subtitles.length,
+                skip_subtitle_overlay: skip_subtitle_overlay,
+                use_original_audio: use_original_audio,
+                layout_only: skip_subtitle_overlay && use_original_audio, // 레이아웃만 적용 모드
             },
             performance: {
                 total_time_seconds: parseFloat(totalTime),

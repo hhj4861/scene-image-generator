@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🐶 땅콩이 영상 업로더</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #E55A2B;
+            --secondary: #2D3436;
+            --accent: #00B894;
+            --bg: #1A1A2E;
+            --card-bg: #16213E;
+            --text: #EAEAEA;
+            --text-muted: #A0A0A0;
+            --border: #3D3D5C;
+            --success: #00B894;
+            --error: #FF6B6B;
+            --warning: #FDCB6E;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--bg) 0%, #0F0F23 100%);
+            min-height: 100vh;
+            color: var(--text);
+            padding: 16px;
+            padding-bottom: 100px;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 24px 0;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, #FDCB6E 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title .icon {
+            font-size: 20px;
+        }
+
+        /* Input Fields */
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .input-group input[type="text"],
+        .input-group input[type="number"],
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* File Upload Area */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .upload-area.has-files {
+            border-color: var(--success);
+            background: rgba(0, 184, 148, 0.1);
+        }
+
+        .upload-area .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .upload-area p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .upload-area input[type="file"] {
+            display: none;
+        }
+
+        /* File List */
+        .file-list {
+            margin-top: 16px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .file-item .file-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-item .file-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-item .file-size {
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        .file-item .remove-btn {
+            background: var(--error);
+            border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: none;
+            margin-top: 16px;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 4px;
+            transition: width 0.3s;
+            width: 0%;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .submit-btn.loading {
+            background: var(--secondary);
+        }
+
+        /* Status Messages */
+        .status {
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 16px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .status.show {
+            display: block;
+        }
+
+        .status.success {
+            background: rgba(0, 184, 148, 0.2);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .status.error {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        .status.info {
+            background: rgba(253, 203, 110, 0.2);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+        }
+
+        /* Toggle Switch */
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 52px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border);
+            transition: 0.3s;
+            border-radius: 28px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--primary);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Scene Counter */
+        .scene-counter {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .counter-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .counter-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .counter-value {
+            font-size: 24px;
+            font-weight: 700;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Result Section */
+        .result-section {
+            display: none;
+            margin-top: 24px;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        .result-url {
+            background: rgba(0, 184, 148, 0.1);
+            border: 1px solid var(--success);
+            border-radius: 12px;
+            padding: 16px;
+            word-break: break-all;
+            font-size: 13px;
+        }
+
+        .copy-btn {
+            margin-top: 12px;
+            width: 100%;
+            padding: 12px;
+            background: var(--success);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 380px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .card {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🐶 땅콩이 영상 업로더</h1>
+            <p>모바일에서 쉽게 영상 제작하기</p>
+        </div>
+
+        <!-- Project Settings -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">📁</span>
+                프로젝트 설정
+            </div>
+            
+            <div class="input-group">
+                <label>프로젝트 이름 *</label>
+                <input type="text" id="projectName" placeholder="예: 땅콩이와버터" required>
+            </div>
+
+            <div class="input-group">
+                <label>씬 개수</label>
+                <div class="scene-counter">
+                    <button type="button" class="counter-btn" onclick="changeSceneCount(-1)">−</button>
+                    <span class="counter-value" id="sceneCount">8</span>
+                    <button type="button" class="counter-btn" onclick="changeSceneCount(1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Upload -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">🎬</span>
+                영상 업로드
+            </div>
+            
+            <div class="upload-area" id="videoUploadArea" onclick="document.getElementById('videoFiles').click()">
+                <div class="icon">📹</div>
+                <p>터치하여 영상 선택<br><small>씬1.mp4, 씬2.mp4 ... (여러 파일 가능)</small></p>
+                <input type="file" id="videoFiles" accept="video/*" multiple>
+            </div>
+            <div class="file-list" id="videoFileList"></div>
+        </div>
+
+        <!-- Script Upload or Input -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">📝</span>
+                스크립트 설정
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="upload" onclick="switchTab('upload')">파일 업로드</div>
+                <div class="tab" data-tab="manual" onclick="switchTab('manual')">직접 입력</div>
+            </div>
+
+            <!-- Upload Tab -->
+            <div class="tab-content active" id="tab-upload">
+                <div class="upload-area" id="scriptUploadArea" onclick="document.getElementById('scriptFile').click()">
+                    <div class="icon">📄</div>
+                    <p>터치하여 스크립트 선택<br><small>config.json 또는 vedio_script.json</small></p>
+                    <input type="file" id="scriptFile" accept=".json">
+                </div>
+                <div class="file-list" id="scriptFileList"></div>
+            </div>
+
+            <!-- Manual Input Tab -->
+            <div class="tab-content" id="tab-manual">
+                <div class="input-group">
+                    <label>헤더 타이틀 (한글) *</label>
+                    <input type="text" id="headerKorean" placeholder="예: 누나 예뻐요💘 꼬리 흔들렸다..?!">
+                </div>
+                <div class="input-group">
+                    <label>헤더 타이틀 (영어)</label>
+                    <input type="text" id="headerEnglish" placeholder="예: Crazy Flirting by Younger Guy..">
+                </div>
+                <div class="input-group">
+                    <label>푸터 (채널명)</label>
+                    <input type="text" id="footerText" placeholder="예: 수줍은 땅콩 & 버터 🐶">
+                </div>
+                <div class="input-group">
+                    <label>자막 (선택사항)</label>
+                    <textarea id="subtitlesText" placeholder="시간, 한글자막, 영어자막 형식으로 입력&#10;예:&#10;0-3, 안녕하세요, Hello&#10;3-6, 저는 땅콩이에요, I am Peanut"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- BGM & Options -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">🎵</span>
+                BGM & 옵션
+            </div>
+
+            <div class="input-group">
+                <label>BGM URL (선택)</label>
+                <input type="text" id="bgmUrl" placeholder="https://cdn1.suno.ai/...mp3">
+            </div>
+
+            <div class="toggle-group">
+                <span>영어 자막 표시</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="englishSubtitle" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-group">
+                <span>세로 영상 (9:16)</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="forceVertical" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="button" class="submit-btn" id="submitBtn" onclick="startUpload()">
+            <span>🚀</span>
+            <span>업로드 & 렌더링 시작</span>
+        </button>
+
+        <!-- Progress -->
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">준비 중...</div>
+        </div>
+
+        <!-- Status -->
+        <div class="status" id="statusMessage"></div>
+
+        <!-- Result -->
+        <div class="result-section" id="resultSection">
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">✅</span>
+                    렌더링 완료!
+                </div>
+                <div class="result-url" id="resultUrl"></div>
+                <button class="copy-btn" onclick="copyResultUrl()">📋 URL 복사</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            // Pipedream HTTP Trigger URL (업로드 핸들러)
+            UPLOAD_ENDPOINT: 'YOUR_PIPEDREAM_UPLOAD_HANDLER_URL',
+            // Pipedream HTTP Trigger URL (렌더링 트리거)
+            RENDER_ENDPOINT: 'YOUR_PIPEDREAM_RENDER_TRIGGER_URL',
+            // GCS Bucket
+            GCS_BUCKET: 'shorts-videos-storage-mcp-test-457809'
+        };
+
+        // State
+        let videoFiles = [];
+        let scriptFile = null;
+        let sceneCount = 8;
+
+        // Scene Counter
+        function changeSceneCount(delta) {
+            sceneCount = Math.max(1, Math.min(20, sceneCount + delta));
+            document.getElementById('sceneCount').textContent = sceneCount;
+        }
+
+        // Tab Switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabId);
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.toggle('active', content.id === `tab-${tabId}`);
+            });
+        }
+
+        // File Upload Handlers
+        document.getElementById('videoFiles').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            videoFiles = [...videoFiles, ...files];
+            updateVideoFileList();
+        });
+
+        document.getElementById('scriptFile').addEventListener('change', function(e) {
+            scriptFile = e.target.files[0];
+            updateScriptFileList();
+        });
+
+        function updateVideoFileList() {
+            const container = document.getElementById('videoFileList');
+            const uploadArea = document.getElementById('videoUploadArea');
+            
+            if (videoFiles.length > 0) {
+                uploadArea.classList.add('has-files');
+                container.innerHTML = videoFiles.map((file, index) => `
+                    <div class="file-item">
+                        <div class="file-info">
+                            <span>🎬</span>
+                            <span class="file-name">${file.name}</span>
+                            <span class="file-size">${formatFileSize(file.size)}</span>
+                        </div>
+                        <button class="remove-btn" onclick="removeVideoFile(${index})">×</button>
+                    </div>
+                `).join('');
+            } else {
+                uploadArea.classList.remove('has-files');
+                container.innerHTML = '';
+            }
+        }
+
+        function updateScriptFileList() {
+            const container = document.getElementById('scriptFileList');
+            const uploadArea = document.getElementById('scriptUploadArea');
+            
+            if (scriptFile) {
+                uploadArea.classList.add('has-files');
+                container.innerHTML = `
+                    <div class="file-item">
+                        <div class="file-info">
+                            <span>📄</span>
+                            <span class="file-name">${scriptFile.name}</span>
+                            <span class="file-size">${formatFileSize(scriptFile.size)}</span>
+                        </div>
+                        <button class="remove-btn" onclick="removeScriptFile()">×</button>
+                    </div>
+                `;
+            } else {
+                uploadArea.classList.remove('has-files');
+                container.innerHTML = '';
+            }
+        }
+
+        function removeVideoFile(index) {
+            videoFiles.splice(index, 1);
+            updateVideoFileList();
+        }
+
+        function removeScriptFile() {
+            scriptFile = null;
+            document.getElementById('scriptFile').value = '';
+            updateScriptFileList();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        // Drag and Drop
+        ['videoUploadArea', 'scriptUploadArea'].forEach(id => {
+            const area = document.getElementById(id);
+            
+            area.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                area.classList.add('dragover');
+            });
+
+            area.addEventListener('dragleave', () => {
+                area.classList.remove('dragover');
+            });
+
+            area.addEventListener('drop', (e) => {
+                e.preventDefault();
+                area.classList.remove('dragover');
+                
+                const files = Array.from(e.dataTransfer.files);
+                if (id === 'videoUploadArea') {
+                    const videos = files.filter(f => f.type.startsWith('video/'));
+                    videoFiles = [...videoFiles, ...videos];
+                    updateVideoFileList();
+                } else {
+                    const json = files.find(f => f.name.endsWith('.json'));
+                    if (json) {
+                        scriptFile = json;
+                        updateScriptFileList();
+                    }
+                }
+            });
+        });
+
+        // Show Status
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('statusMessage');
+            status.textContent = message;
+            status.className = `status show ${type}`;
+        }
+
+        // Update Progress
+        function updateProgress(percent, text) {
+            const container = document.getElementById('progressContainer');
+            const fill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            container.classList.add('active');
+            fill.style.width = `${percent}%`;
+            progressText.textContent = text;
+        }
+
+        // Parse Manual Subtitles
+        function parseManualSubtitles(text) {
+            if (!text.trim()) return [];
+            
+            const lines = text.trim().split('\n');
+            return lines.map(line => {
+                const parts = line.split(',').map(p => p.trim());
+                if (parts.length >= 2) {
+                    const [timeRange, textKo, textEn = ''] = parts;
+                    const [start, end] = timeRange.split('-').map(t => parseFloat(t.trim()));
+                    return {
+                        start_time: start,
+                        end_time: end,
+                        text_ko: textKo,
+                        text_en: textEn
+                    };
+                }
+                return null;
+            }).filter(Boolean);
+        }
+
+        // Main Upload Function
+        async function startUpload() {
+            const projectName = document.getElementById('projectName').value.trim();
+            
+            if (!projectName) {
+                showStatus('프로젝트 이름을 입력해주세요', 'error');
+                return;
+            }
+
+            if (videoFiles.length === 0) {
+                showStatus('영상 파일을 선택해주세요', 'error');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = '<span>⏳</span><span>업로드 중...</span>';
+
+            try {
+                // Step 1: Upload Videos
+                updateProgress(10, '영상 파일 업로드 중...');
+                
+                const uploadedVideos = [];
+                for (let i = 0; i < videoFiles.length; i++) {
+                    const file = videoFiles[i];
+                    const progress = 10 + (i / videoFiles.length) * 50;
+                    updateProgress(progress, `영상 업로드 중... (${i + 1}/${videoFiles.length})`);
+                    
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('project_name', projectName);
+                    formData.append('file_type', 'video');
+                    formData.append('file_index', i + 1);
+
+                    const response = await fetch(CONFIG.UPLOAD_ENDPOINT, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) throw new Error(`영상 업로드 실패: ${file.name}`);
+                    
+                    const result = await response.json();
+                    uploadedVideos.push({
+                        index: i + 1,
+                        url: result.gcs_url,
+                        filename: file.name
+                    });
+                }
+
+                // Step 2: Upload or Generate Config
+                updateProgress(65, '설정 파일 처리 중...');
+                
+                let configData = null;
+                
+                if (scriptFile) {
+                    // Upload existing config/script file
+                    const formData = new FormData();
+                    formData.append('file', scriptFile);
+                    formData.append('project_name', projectName);
+                    formData.append('file_type', 'config');
+
+                    const response = await fetch(CONFIG.UPLOAD_ENDPOINT, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) throw new Error('설정 파일 업로드 실패');
+                    
+                    const result = await response.json();
+                    configData = result.parsed_config;
+                } else {
+                    // Generate config from manual input
+                    const headerKorean = document.getElementById('headerKorean').value.trim();
+                    const headerEnglish = document.getElementById('headerEnglish').value.trim();
+                    const footerText = document.getElementById('footerText').value.trim();
+                    const subtitlesText = document.getElementById('subtitlesText').value;
+
+                    configData = {
+                        project_name: projectName,
+                        title: {
+                            korean: headerKorean,
+                            english: headerEnglish
+                        },
+                        footer: {
+                            korean: footerText,
+                            english: ''
+                        },
+                        scene_count: sceneCount,
+                        timed_subtitles: parseManualSubtitles(subtitlesText)
+                    };
+                }
+
+                // Step 3: Trigger Rendering
+                updateProgress(80, '렌더링 요청 중...');
+
+                const renderPayload = {
+                    project_name: projectName,
+                    videos: uploadedVideos,
+                    config: configData,
+                    options: {
+                        bgm_url: document.getElementById('bgmUrl').value.trim() || null,
+                        subtitle_english_enabled: document.getElementById('englishSubtitle').checked,
+                        force_vertical: document.getElementById('forceVertical').checked,
+                        scene_count: sceneCount
+                    }
+                };
+
+                const renderResponse = await fetch(CONFIG.RENDER_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(renderPayload)
+                });
+
+                if (!renderResponse.ok) throw new Error('렌더링 요청 실패');
+                
+                const renderResult = await renderResponse.json();
+
+                // Step 4: Show Result
+                updateProgress(100, '완료!');
+                
+                showStatus('🎉 업로드 및 렌더링 요청 완료!', 'success');
+                
+                if (renderResult.status_url || renderResult.job_id) {
+                    document.getElementById('resultUrl').textContent = 
+                        renderResult.output_url || `Job ID: ${renderResult.job_id}\n상태 확인: ${renderResult.status_url}`;
+                    document.getElementById('resultSection').classList.add('show');
+                }
+
+            } catch (error) {
+                console.error('Upload error:', error);
+                showStatus(`오류: ${error.message}`, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+                submitBtn.innerHTML = '<span>🚀</span><span>업로드 & 렌더링 시작</span>';
+            }
+        }
+
+        // Copy Result URL
+        function copyResultUrl() {
+            const url = document.getElementById('resultUrl').textContent;
+            navigator.clipboard.writeText(url).then(() => {
+                showStatus('URL이 복사되었습니다!', 'success');
+            });
+        }
+    </script>
+</body>
+</html>
+
