@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@google-cloud/storage": "^7.18.0",
-    "@google/genai": "^1.30.0",
+    "@google/genai": "^1.33.0",
     "@google/generative-ai": "^0.24.1",
     "archiver": "^7.0.1",
     "axios": "^1.13.2",
@@ -24,7 +24,8 @@
     "googleapis": "^166.0.0",
     "open": "^11.0.0",
     "openai": "^6.9.1",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "wav": "^1.0.2"
   },
   "keywords": [
     "stability-ai",
