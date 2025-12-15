@@ -1,0 +1,198 @@
+{
+  "$return_value": {
+    "folder_name": "stock-amr-w51",
+    "total_scenes": 8,
+    "scenes": [
+      {
+        "video": 1,
+        "title": "Hook - 오프닝",
+        "narration": "나스닥 1.69퍼센트 폭락! 반도체는 끝났고, 우주항공이 뜬다? 이번주 섹터별 승자와 패자, 지금 공개합니다.",
+        "narration_english": "NASDAQ crashed 1.69 percent! Semiconductors done, aerospace rising? This week sector winners and losers revealed now.",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 2.5,
+            "korean": "나스닥 1.69퍼센트 폭락!",
+            "english": "NASDAQ crashed 1.69 percent!"
+          },
+          {
+            "start": 2.5,
+            "end": 5,
+            "korean": "반도체는 끝났고, 우주항공이 뜬다?",
+            "english": "Semiconductors done, aerospace rising?"
+          },
+          {
+            "start": 5,
+            "end": 8,
+            "korean": "이번주 섹터별 승자와 패자, 지금 공개합니다.",
+            "english": "This week sector winners and losers revealed now."
+          }
+        ]
+      },
+      {
+        "video": 2,
+        "title": "반도체 폭락",
+        "narration": "반도체 지수 5퍼센트 폭락! 브로드컴 11퍼센트 추락, 마진율 하락이 핵심입니다!",
+        "narration_english": "Semiconductor index down 5 percent! Broadcom crashed 11 percent, margin decline is the key!",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 2.5,
+            "korean": "반도체 지수 5퍼센트 폭락!",
+            "english": "Semiconductor index down 5 percent!"
+          },
+          {
+            "start": 2.5,
+            "end": 5.5,
+            "korean": "브로드컴 11퍼센트 추락,",
+            "english": "Broadcom crashed 11 percent,"
+          },
+          {
+            "start": 5.5,
+            "end": 8,
+            "korean": "마진율 하락이 핵심입니다!",
+            "english": "Margin decline is the key!"
+          }
+        ]
+      },
+      {
+        "video": 3,
+        "title": "마이크론 반전 열쇠",
+        "narration": "하지만 반전 기회는 있습니다! 화요일 마이크론 실적이 반전 열쇠입니다.",
+        "narration_english": "But there is a reversal chance! Tuesday Micron earnings is the reversal key.",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 3,
+            "korean": "하지만 반전 기회는 있습니다!",
+            "english": "But there is a reversal chance!"
+          },
+          {
+            "start": 3,
+            "end": 8,
+            "korean": "화요일 마이크론 실적이 반전 열쇠입니다.",
+            "english": "Tuesday Micron earnings is the reversal key."
+          }
+        ]
+      },
+      {
+        "video": 4,
+        "title": "우주항공 급부상",
+        "narration": "반면 우주항공은 급부상! 2026년 국방예산 증액 기대감에 로켓랩, AST 스페이스모바일 주목!",
+        "narration_english": "Meanwhile aerospace surging! 2026 defense budget boost expectations, watch Rocketlab and AST SpaceMobile!",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 3,
+            "korean": "반면 우주항공은 급부상!",
+            "english": "Meanwhile aerospace surging!"
+          },
+          {
+            "start": 3,
+            "end": 5.5,
+            "korean": "2026년 국방예산 증액 기대감에",
+            "english": "2026 defense budget boost expectations,"
+          },
+          {
+            "start": 5.5,
+            "end": 8,
+            "korean": "로켓랩, AST 스페이스모바일 주목!",
+            "english": "Watch Rocketlab and AST SpaceMobile!"
+          }
+        ]
+      },
+      {
+        "video": 5,
+        "title": "소비재 + 대마초 강세",
+        "narration": "소비재 의외로 강세! 룰루레몬 호실적 급등, 대마초 관련주 틸레이 44퍼센트 폭등! 정책 변화 기대감입니다!",
+        "narration_english": "Consumer sector surprisingly strong! Lululemon earnings surge, cannabis stock Tilray up 44 percent! Policy change expectations!",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 3,
+            "korean": "소비재 의외로 강세! 룰루레몬 호실적 급등,",
+            "english": "Consumer surprisingly strong! Lululemon surged,"
+          },
+          {
+            "start": 3,
+            "end": 5.5,
+            "korean": "대마초 관련주 틸레이 44퍼센트 폭등!",
+            "english": "Cannabis stock Tilray up 44 percent!"
+          },
+          {
+            "start": 5.5,
+            "end": 8,
+            "korean": "정책 변화 기대감입니다!",
+            "english": "Policy change expectations!"
+          }
+        ]
+      },
+      {
+        "video": 6,
+        "title": "이번주 핵심 일정",
+        "narration": "이번주 핵심! 목요일 새벽 마이크론, 목요일 밤 CPI 발표, 토요일 새벽 세 마녀의 날! 변동성 주의!",
+        "narration_english": "Key dates this week! Thursday dawn Micron, Thursday night CPI release, Saturday dawn Triple Witching Day! Watch for volatility!",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 3,
+            "korean": "이번주 핵심! 목요일 새벽 마이크론,",
+            "english": "Key dates this week! Thursday dawn Micron,"
+          },
+          {
+            "start": 3,
+            "end": 5.5,
+            "korean": "목요일 밤 CPI 발표,",
+            "english": "Thursday night CPI release,"
+          },
+          {
+            "start": 5.5,
+            "end": 8,
+            "korean": "토요일 새벽 세 마녀의 날! 변동성 주의!",
+            "english": "Saturday dawn Triple Witching! Watch volatility!"
+          }
+        ]
+      },
+      {
+        "video": 7,
+        "title": "투자 전략 요약",
+        "narration": "정리! 반도체 주의, 우주항공 과열, 소비재 강세! 추격 매수는 금물입니다!",
+        "narration_english": "Summary! Semiconductors caution, aerospace overheated, consumer strong! Do not chase buy!",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 4,
+            "korean": "정리! 반도체 주의, 우주항공 과열, 소비재 강세!",
+            "english": "Summary! Semi caution, aero overheated, consumer strong!"
+          },
+          {
+            "start": 4,
+            "end": 8,
+            "korean": "추격 매수는 금물입니다!",
+            "english": "Do not chase buy!"
+          }
+        ]
+      },
+      {
+        "video": 8,
+        "title": "면책조항",
+        "narration": "이 영상은 투자 조언이 아닙니다. 모든 투자 판단은 본인 책임입니다.",
+        "narration_english": "This is not financial advice. All investment decisions are your own responsibility.",
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 4,
+            "korean": "이 영상은 투자 조언이 아닙니다.",
+            "english": "This is not financial advice."
+          },
+          {
+            "start": 4,
+            "end": 8,
+            "korean": "모든 투자 판단은 본인 책임입니다.",
+            "english": "All investment decisions are your own responsibility."
+          }
+        ]
+      }
+    ]
+  }
+}

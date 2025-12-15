@@ -1,0 +1,184 @@
+{
+  "project_name": "미국주식 이번주(W51) 전망",
+  "project_id": "stock_w51_new",
+  "title": {
+    "korean": "나스닥 폭락! 섹터별 승자와 패자",
+    "english": "NASDAQ Crash! Sector Winners & Losers"
+  },
+  "footer": {
+    "korean": "투자는 본인 책임입니다",
+    "english": "Investment at your own risk"
+  },
+  "bgm_url": "https://cdn1.suno.ai/3c816844-60e8-4cec-af61-4d360b7b9429.mp3 ",
+  "bgm_volume": 0.15,
+  "scene_count": 1,
+  "force_vertical": true,
+  "subtitle_timing_mode": "timed",
+  "timed_subtitles": [
+    {
+      "start_time": 0,
+      "end_time": 2.2,
+      "text_ko": "나스닥 1.69퍼센트 폭락!",
+      "text_en": "NASDAQ crashed 1.69 percent!"
+    },
+    {
+      "start_time": 2.2,
+      "end_time": 4.4,
+      "text_ko": "반도체는 끝났고, 우주항공이 뜬다?",
+      "text_en": "Semiconductors done, aerospace rising?"
+    },
+    {
+      "start_time": 4.4,
+      "end_time": 7,
+      "text_ko": "이번주 섹터별 승자와 패자, 지금 공개합니다.",
+      "text_en": "This week sector winners and losers revealed now."
+    },
+    {
+      "start_time": 8,
+      "end_time": 9.5,
+      "text_ko": "반도체 지수 5퍼센트 폭락!",
+      "text_en": "Semiconductor index down 5 percent!"
+    },
+    {
+      "start_time": 9.5,
+      "end_time": 12,
+      "text_ko": "브로드컴 11퍼센트 추락,",
+      "text_en": "Broadcom crashed 11 percent,"
+    },
+    {
+      "start_time": 12,
+      "end_time": 14,
+      "text_ko": "마진율 하락이 핵심입니다!",
+      "text_en": "Margin decline is the key!"
+    },
+    {
+      "start_time": 15,
+      "end_time": 17,
+      "text_ko": "하지만 반전 기회는 있습니다!",
+      "text_en": "But there is a reversal chance!"
+    },
+    {
+      "start_time": 17,
+      "end_time": 20,
+      "text_ko": "화요일 마이크론 실적이 반전 열쇠입니다.",
+      "text_en": "Tuesday Micron earnings is the reversal key."
+    },
+    {
+      "start_time": 21.5,
+      "end_time": 23.6,
+      "text_ko": "반면 우주항공은 급부상!",
+      "text_en": "Meanwhile aerospace surging!"
+    },
+    {
+      "start_time": 23.6,
+      "end_time": 25.8,
+      "text_ko": "2026년 국방예산 증액 기대감에",
+      "text_en": "2026 defense budget boost expectations,"
+    },
+    {
+      "start_time": 25.8,
+      "end_time": 28,
+      "text_ko": "로켓랩, AST 스페이스모바일 주목!",
+      "text_en": "Watch Rocketlab and AST SpaceMobile!"
+    },
+    {
+      "start_time": 29,
+      "end_time": 31.5,
+      "text_ko": "소비재 의외로 강세! 룰루레몬 호실적 급등,",
+      "text_en": "Consumer surprisingly strong! Lululemon surged,"
+    },
+    {
+      "start_time": 31.5,
+      "end_time": 34,
+      "text_ko": "대마초 관련주 틸레이 44퍼센트 폭등!",
+      "text_en": "Cannabis stock Tilray up 44 percent!"
+    },
+    {
+      "start_time": 34,
+      "end_time": 36,
+      "text_ko": "정책 변화 기대감입니다!",
+      "text_en": "Policy change expectations!"
+    },
+    {
+      "start_time": 36,
+      "end_time": 38,
+      "text_ko": "이번주 핵심! 목요일 새벽 마이크론,",
+      "text_en": "Key dates this week! Thursday dawn Micron,"
+    },
+    {
+      "start_time": 38,
+      "end_time": 39.8,
+      "text_ko": "목요일 밤 CPI 발표,",
+      "text_en": "Thursday night CPI release,"
+    },
+    {
+      "start_time": 39.8,
+      "end_time": 42,
+      "text_ko": "토요일 새벽 세 마녀의 날! 변동성 주의!",
+      "text_en": "Saturday dawn Triple Witching! Watch volatility!"
+    },
+    {
+      "start_time": 44,
+      "end_time": 46.2,
+      "text_ko": "정리! 반도체 주의, 우주항공 과열, 소비재 강세!",
+      "text_en": "Summary! Semi caution, aero overheated, consumer strong!"
+    },
+    {
+      "start_time": 46.2,
+      "end_time": 50,
+      "text_ko": "추격 매수는 금물입니다!",
+      "text_en": "Do not chase buy!"
+    },
+    {
+      "start_time": 50.5,
+      "end_time": 53,
+      "text_ko": "이 영상은 투자 조언이 아닙니다.",
+      "text_en": "This is not financial advice."
+    },
+    {
+      "start_time": 53,
+      "end_time": 57,
+      "text_ko": "모든 투자 판단은 본인 책임입니다.",
+      "text_en": "All investment decisions are your own responsibility."
+    }
+  ],
+  "layout": {
+    "header_y": 250,
+    "header_height": 100,
+    "video_area_y": 200,
+    "video_area_height": 850,
+    "subtitle_y": 880,
+    "footer_y": 950,
+    "footer_height": 100
+  },
+  "font_settings": {
+    "header_korean": {
+      "font": "NanumSquareRoundOTFEB",
+      "size": 58
+    },
+    "header_english": {
+      "font": "NotoSerif-Regular",
+      "size":30,
+      "y_offset": 75
+    },
+    "subtitle_korean": {
+      "font": "NanumSquareRoundOTFEB",
+      "size": 34,
+      "max_lines": 1
+    },
+    "subtitle_english": {
+      "font": "NotoSerif-Regular",
+      "size": 27,
+      "max_lines": 1
+    },
+    "footer_korean": {
+      "font": "NanumSquareRoundOTFEB",
+      "size": 48
+    },
+    "footer_english": {
+      "font": "NotoSerif-Regular",
+      "size": 30,
+      "y_offset": 55
+    }
+  }
+}

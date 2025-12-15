@@ -1,0 +1,108 @@
+{
+    "series_info": {
+        "series_name": "미국주식 주간전망",
+        "series_name_english": "US Stock Weekly Outlook",
+        "week_number": 51,
+        "week_date_range": "12/16 - 12/20",
+        "episode_title": "나스닥 폭락! 섹터별 승자와 패자",
+        "episode_title_english": "NASDAQ Crash! Sector Winners & Losers"
+    },
+    "title": {
+        "main": "나스닥 1.69% 폭락💥 근데 이 섹터는 44% 폭등?! #Shorts",
+        "short": "반도체 끝? 이번주 뜨는 섹터 공개🔥",
+        "english": "NASDAQ Down 1.69%💥 But This Sector Up 44%?!"
+    },
+    "recommended_titles": [
+        "나스닥 폭락💥 반도체 끝났다? 이번주 진짜 뜨는 섹터는 #Shorts",
+        "브로드컴 11% 추락😱 근데 틸레이 44% 폭등?! 무슨 일이야",
+        "반도체 5% 폭락 vs 우주항공 급등🚀 이번주 승자는? #미국주식",
+        "세 마녀의 날 온다⚠️ 이번주 미국주식 핵심 일정 총정리"
+    ],
+    "description": {
+        "korean": "📈 미국주식 W51 전망 | 12/16 - 12/20\n\n━━━━━━━━━━━━━━━━━━━━\n\n💥 나스닥 1.69% 폭락!\n이번주 섹터별 승자와 패자, 지금 공개합니다.\n\n━━━━━━━━━━━━━━━━━━━━\n\n📉 이번주 패자 - 반도체\n• 반도체 지수 5% 폭락\n• 브로드컴 11% 추락 (마진율 하락이 핵심)\n• 반전 기회: 화요일 마이크론 실적 주목!\n\n📈 이번주 승자 - 우주항공 & 소비재\n• 우주항공 급부상! (2026 국방예산 증액 기대)\n• 주목주: 로켓랩, AST 스페이스모바일\n• 소비재 강세! 룰루레몬 호실적\n• 대마초 관련주 틸레이 44% 폭등! (정책 변화 기대)\n\n━━━━━━━━━━━━━━━━━━━━\n\n📅 이번주 핵심 일정\n• 화요일: 마이크론 실적 발표\n• 목요일: CPI 발표\n• 토요일 새벽: 세 마녀의 날 (변동성 주의!)\n\n━━━━━━━━━━━━━━━━━━━━\n\n✅ 정리\n• 반도체 → 주의 ⚠️\n• 우주항공 → 과열 주의 🚀\n• 소비재 → 강세 💪\n• 추격 매수는 금물! 🚫\n\n━━━━━━━━━━━━━━━━━━━━\n\n⚠️ 주의사항\n이 영상은 투자 조언이 아닙니다.\n모든 투자 판단은 본인 책임입니다.\n\n━━━━━━━━━━━━━━━━━━━━\n\n🔔 구독하고 매주 미국주식 전망 받아보세요!\n\n#미국주식 #나스닥 #반도체 #우주항공 #투자 #주식 #Shorts",
+        "english": "📈 US Stock Week 51 Outlook | Dec 16-20\n\n💥 NASDAQ Down 1.69%!\nSector winners and losers revealed!\n\n📉 Losers: Semiconductors\n• Semiconductor index down 5%\n• Broadcom crashed 11%\n• Watch: Micron earnings Tuesday\n\n📈 Winners: Aerospace & Consumer\n• Aerospace surging (2026 defense budget)\n• Watch: Rocketlab, AST SpaceMobile\n• Consumer strong! Lululemon earnings beat\n• Tilray up 44% (policy change expectations)\n\n📅 Key Dates\n• Tuesday: Micron earnings\n• Thursday: CPI release\n• Saturday: Triple Witching Day\n\n⚠️ Not financial advice.\n\n#USstocks #NASDAQ #Semiconductor #Aerospace #Shorts"
+    },
+    "tags": [
+        "미국주식",
+        "나스닥",
+        "주식투자",
+        "반도체",
+        "브로드컴",
+        "마이크론",
+        "우주항공",
+        "로켓랩",
+        "AST스페이스모바일",
+        "소비재",
+        "룰루레몬",
+        "틸레이",
+        "대마초주식",
+        "세마녀의날",
+        "CPI",
+        "주간전망",
+        "투자",
+        "주식분석",
+        "섹터분석",
+        "US stocks",
+        "NASDAQ",
+        "semiconductor",
+        "aerospace",
+        "Broadcom",
+        "Micron",
+        "Tilray",
+        "triple witching"
+    ],
+    "hashtags": {
+        "primary": [
+            "#미국주식",
+            "#나스닥",
+            "#Shorts"
+        ],
+        "secondary": [
+            "#반도체",
+            "#우주항공",
+            "#브로드컴",
+            "#마이크론",
+            "#틸레이",
+            "#주식투자",
+            "#세마녀의날"
+        ],
+        "english": [
+            "#USstocks",
+            "#NASDAQ",
+            "#Semiconductor",
+            "#Aerospace",
+            "#Shorts"
+        ]
+    },
+    "hashtag_string": "#미국주식 #나스닥 #반도체 #우주항공 #틸레이 #주식투자 #Shorts",
+    "category": "Education",
+    "privacy_status": "public",
+    "made_for_kids": false,
+    "language": "ko",
+    "timestamps": [
+        { "time": "0:00", "label": "나스닥 폭락 현황" },
+        { "time": "0:07", "label": "반도체 섹터 분석" },
+        { "time": "0:14", "label": "반전 기회: 마이크론" },
+        { "time": "0:21", "label": "우주항공 급부상" },
+        { "time": "0:28", "label": "소비재 강세 (틸레이 44%!)" },
+        { "time": "0:35", "label": "이번주 핵심 일정" },
+        { "time": "0:42", "label": "정리 및 주의사항" }
+    ],
+    "thumbnail_text_ideas": [
+        "나스닥 폭락💥\n44% 폭등 섹터?",
+        "반도체 끝?\n우주항공 뜬다🚀",
+        "틸레이 44%↑\n브로드컴 11%↓"
+    ],
+    "key_points": {
+        "headline": "나스닥 1.69% 폭락",
+        "losers": ["반도체 지수 -5%", "브로드컴 -11%"],
+        "winners": ["우주항공 급등", "틸레이 +44%", "룰루레몬 호실적"],
+        "key_dates": ["화요일 마이크론", "목요일 CPI", "토요일 세 마녀의 날"],
+        "summary": "반도체 주의, 우주항공 과열, 소비재 강세, 추격 매수 금물"
+    },
+    "disclaimer": {
+        "korean": "이 영상은 투자 조언이 아닙니다. 모든 투자 판단은 본인 책임입니다.",
+        "english": "This is not financial advice. All investment decisions are your own responsibility."
+    }
+}
+
