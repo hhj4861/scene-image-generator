@@ -34,12 +34,19 @@ export default defineComponent({
     },
 
     // =====================
-    // Webhook 데이터
+    // 입력 데이터 (둘 중 하나 선택)
     // =====================
+    vm_renderer_output: {
+      type: "string",
+      label: "VM Renderer Output (JSON)",
+      description: "같은 워크플로우의 VM Renderer 출력: {{JSON.stringify(steps.Stock_VM_Renderer.$return_value)}}",
+      optional: true,
+    },
     webhook_data: {
       type: "string",
       label: "Webhook Data (JSON)",
-      description: "Webhook으로 받은 전체 데이터: {{JSON.stringify(steps.trigger.event.body)}}",
+      description: "Webhook 트리거 데이터 (별도 워크플로우일 때): {{JSON.stringify(steps.trigger.event.body)}}",
+      optional: true,
     },
 
     // =====================
@@ -128,22 +135,48 @@ export default defineComponent({
   },
 
   async run({ $ }) {
-    console.log("📺 Stock YouTube Upload (Webhook) 시작");
+    console.log("📺 Stock YouTube Upload 시작");
 
     // =====================
-    // 1. Webhook 데이터 파싱
+    // 1. 입력 데이터 파싱 (VM Renderer 출력 우선)
     // =====================
     let data;
-    try {
-      data = typeof this.webhook_data === "string"
-        ? JSON.parse(this.webhook_data)
-        : this.webhook_data;
-    } catch (e) {
-      throw new Error("Webhook 데이터 파싱 실패: " + e.message);
+    let dataSource = "unknown";
+
+    // 1) VM Renderer 스텝 출력 (같은 워크플로우)
+    if (this.vm_renderer_output && this.vm_renderer_output !== "undefined" && this.vm_renderer_output !== "null") {
+      try {
+        data = typeof this.vm_renderer_output === "string"
+          ? JSON.parse(this.vm_renderer_output)
+          : this.vm_renderer_output;
+        dataSource = "vm_renderer_step";
+        console.log("📥 VM Renderer 스텝 출력 사용");
+      } catch (e) {
+        console.log(`⚠️ VM Renderer 출력 파싱 실패: ${e.message}`);
+      }
     }
 
+    // 2) Webhook 데이터 (별도 워크플로우)
+    if (!data && this.webhook_data && this.webhook_data !== "undefined" && this.webhook_data !== "null") {
+      try {
+        data = typeof this.webhook_data === "string"
+          ? JSON.parse(this.webhook_data)
+          : this.webhook_data;
+        dataSource = "webhook";
+        console.log("📥 Webhook 데이터 사용");
+      } catch (e) {
+        console.log(`⚠️ Webhook 데이터 파싱 실패: ${e.message}`);
+      }
+    }
+
+    if (!data) {
+      throw new Error("입력 데이터가 없습니다. vm_renderer_output 또는 webhook_data를 설정하세요.");
+    }
+
+    $.export("data_source", dataSource);
+
     // VM Renderer 출력 구조
-    const videoUrl = data.output_url || data.url;
+    const videoUrl = data.output_url || data.url || data.video_url;
     const folderName = data.folder_name || "unknown";
     const shortsScript = data.shorts_script || {};
     const marketLabel = data.market_label || shortsScript.market_label || "글로벌";

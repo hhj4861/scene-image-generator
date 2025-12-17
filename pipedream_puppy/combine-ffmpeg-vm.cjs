@@ -395,13 +395,13 @@ async function combineVideos() {
 
   // ★ config.json의 timed_subtitles + profile_card 병합된 최종 자막 생성 ★
   // position이 'right'인 경우 right_margin 추가
-  let mergedTimedSubtitles = config.timed_subtitles 
+  let mergedTimedSubtitles = config.timed_subtitles
     ? config.timed_subtitles.map(sub => ({
         ...sub,
         right_margin: sub.right_margin || (sub.position === 'right' ? PROFILE_CARD_CONFIG.rightMargin : undefined)
       }))
     : [];
-  
+
   // profile_card를 timed_subtitles로 변환하여 병합
 
   for (const video of videos) {
@@ -409,7 +409,7 @@ async function combineVideos() {
       const pc = video.profile_card;
       const sceneDuration = 8;
       const sceneStartTime = (video.index - 1) * sceneDuration;
-      
+
       // 프로필 카드 커스텀 설정 (있으면 사용, 없으면 기본값)
       const baseY = pc.base_y || PROFILE_CARD_CONFIG.baseY;
       const lineHeight = pc.line_height || PROFILE_CARD_CONFIG.lineHeight;
@@ -417,11 +417,11 @@ async function combineVideos() {
       const itemFontSize = pc.item_font_size || PROFILE_CARD_CONFIG.itemFontSize;
       const maxChars = pc.max_chars || PROFILE_CARD_CONFIG.maxChars;
       const rightMargin = pc.right_margin || PROFILE_CARD_CONFIG.rightMargin;
-      
+
       // 헤더 추가 (개별 설정 가능)
       const startTime = pc.start_time || 0.5;
       const endTime = pc.end_time || 8;
-      
+
       if (pc.header) {
         mergedTimedSubtitles.push({
           start_time: sceneStartTime + (pc.header_start_time || startTime),
@@ -435,20 +435,20 @@ async function combineVideos() {
           right_margin: rightMargin
         });
       }
-      
+
       // 아이템들 추가 (각 아이템별 개별 설정 가능)
       if (pc.items) {
         pc.items.forEach((item, idx) => {
-          const itemStart = item.start_time 
-            ? sceneStartTime + item.start_time 
+          const itemStart = item.start_time
+            ? sceneStartTime + item.start_time
             : sceneStartTime + startTime + ((idx + 1) * (pc.interval || 1.5));
-          const itemEnd = item.end_time 
-            ? sceneStartTime + item.end_time 
+          const itemEnd = item.end_time
+            ? sceneStartTime + item.end_time
             : sceneStartTime + endTime;
           const itemYOffset = item.y_offset || (baseY + 20 + (lineHeight * (idx + 1)));
           const itemFontSizeOverride = item.font_size || itemFontSize;
           const itemMaxChars = item.max_chars || maxChars;
-          
+
           mergedTimedSubtitles.push({
             start_time: itemStart,
             end_time: itemEnd,
@@ -462,11 +462,11 @@ async function combineVideos() {
           });
         });
       }
-      
+
       console.log(`  [Scene ${video.index}] Added profile card subtitles`);
     }
   }
-  
+
   // 시간순 정렬
   mergedTimedSubtitles.sort((a, b) => a.start_time - b.start_time);
   console.log(`  Total merged subtitles: ${mergedTimedSubtitles.length}`);

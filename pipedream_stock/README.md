@@ -186,3 +186,21 @@ Market: {{JSON.stringify(steps.Stock_Market_Analyzer.$return_value)}}
 - 이 분석은 참고용이며 투자 조언이 아닙니다
 - 실제 투자 결정은 본인의 판단에 따라 진행하세요
 - API 호출 비용이 발생할 수 있습니다
+
+
+// 최고 정확도 (투자용)
+llm_model: "auto"
+llm_priority: "accuracy"
+fmp_plan: "professional"  // 또는 "ultimate"
+fmp_quota_strategy: "strict"
+
+// 균형 (콘텐츠 제작용)
+llm_model: "auto"
+llm_priority: "balanced"
+fmp_plan: "free"
+fmp_quota_strategy: "fallback"
+
+// 정확한 것만 (쿼터 부족 시)
+llm_model: "gemini-2.0-flash"
+fmp_plan: "free"
+fmp_quota_strategy: "skip_unverified"
