@@ -20,6 +20,8 @@ const execAsync = promisify(exec);
 const app = express();
 app.use(express.json({ limit: "100mb" }));
 
+// GCS Storage 초기화 - VM 기본 인증 (metadata service) 사용
+console.log("[GCS] Using default credentials (VM metadata)");
 const storage = new Storage();
 const TEMP_DIR = "/tmp/ffmpeg-render";
 
@@ -451,6 +453,107 @@ const splitEnglishSubtitleLines = (text, maxCharsPerLine) => {
     return allLines.filter((l) => l.length > 0);
 };
 
+// =====================
+// YouTube 오디오 추출 API (yt-dlp + ffmpeg)
+// =====================
+app.post("/extract-audio", async (req, res) => {
+    const jobId = uuidv4();
+    const jobDir = path.join(TEMP_DIR, jobId);
+    const startTime = Date.now();
+
+    try {
+        fs.mkdirSync(jobDir, { recursive: true });
+
+        const {
+            youtube_url,
+            format = "mp3",
+            quality = "128",
+            output_bucket = "shorts-audio-storage-mcp-test-457809",
+        } = req.body;
+
+        if (!youtube_url) {
+            return res.status(400).json({ error: "youtube_url is required" });
+        }
+
+        // YouTube Video ID 추출
+        const videoIdMatch = youtube_url.match(/(?:v=|\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+        const videoId = videoIdMatch ? videoIdMatch[1] : jobId;
+
+        console.log(`[${jobId}] 🎵 Extracting audio from: ${youtube_url}`);
+        console.log(`[${jobId}] Video ID: ${videoId}, Format: ${format}, Quality: ${quality}k`);
+
+        const audioFilePath = path.join(jobDir, `audio.${format}`);
+
+        // yt-dlp로 오디오 추출
+        const ytdlpCmd = `yt-dlp -x --audio-format ${format} --audio-quality ${quality}k -o "${audioFilePath}" "${youtube_url}"`;
+        console.log(`[${jobId}] Running: ${ytdlpCmd}`);
+
+        const ytdlpStart = Date.now();
+        await execAsync(ytdlpCmd, { timeout: 300000 });
+        const ytdlpTime = ((Date.now() - ytdlpStart) / 1000).toFixed(2);
+        console.log(`[${jobId}] yt-dlp completed: ${ytdlpTime}s`);
+
+        // 실제 파일 경로 찾기 (yt-dlp가 확장자를 변경할 수 있음)
+        const files = fs.readdirSync(jobDir);
+        const audioFile = files.find(f => f.startsWith("audio."));
+        if (!audioFile) {
+            throw new Error("Audio file not found after extraction");
+        }
+        const actualAudioPath = path.join(jobDir, audioFile);
+
+        // 오디오 길이 측정
+        let durationSeconds = 0;
+        try {
+            const { stdout } = await execAsync(
+                `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${actualAudioPath}"`
+            );
+            durationSeconds = parseFloat(stdout.trim());
+        } catch (e) {
+            console.log(`[${jobId}] Warning: Could not get duration: ${e.message}`);
+        }
+
+        console.log(`[${jobId}] Audio duration: ${durationSeconds.toFixed(2)}s`);
+
+        // GCS 업로드
+        const outputPath = `youtube-audio/${videoId}_${Date.now()}.${format}`;
+        const bucket = storage.bucket(output_bucket);
+
+        await bucket.upload(actualAudioPath, {
+            destination: outputPath,
+            metadata: { contentType: `audio/${format === "mp3" ? "mpeg" : format}` },
+        });
+
+        const audioUrl = `https://storage.googleapis.com/${output_bucket}/${outputPath}`;
+
+        // 정리
+        fs.rmSync(jobDir, { recursive: true, force: true });
+
+        const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
+        console.log(`[${jobId}] ✅ Audio extraction complete: ${totalTime}s`);
+
+        res.json({
+            success: true,
+            job_id: jobId,
+            video_id: videoId,
+            audio_url: audioUrl,
+            duration_seconds: durationSeconds,
+            format: format,
+            quality: quality,
+            performance: {
+                total_time_seconds: parseFloat(totalTime),
+                ytdlp_time_seconds: parseFloat(ytdlpTime),
+            },
+        });
+
+    } catch (error) {
+        console.error(`[${jobId}] ❌ Error:`, error.message);
+        if (fs.existsSync(jobDir)) {
+            fs.rmSync(jobDir, { recursive: true, force: true });
+        }
+        res.status(500).json({ error: error.message, job_id: jobId });
+    }
+});
+
 // Health check
 app.get("/health", (req, res) => {
     res.json({ status: "ok", ffmpeg: true, optimized: true, timestamp: new Date().toISOString() });
@@ -787,6 +890,9 @@ app.post("/render/puppy", async (req, res) => {
             output_path,
             folder_name,
             font_settings,
+            // ★★★ 크로스페이드 설정 ★★★
+            enable_crossfade = true,
+            crossfade_duration = 0.2,
         } = req.body;
 
         // 시간 문자열을 초로 변환 (MM:SS.ms 형식)
@@ -1074,10 +1180,28 @@ app.post("/render/puppy", async (req, res) => {
             concatInputs += `[v${i}]`;
             
             // ★★★ 비디오별 오디오 처리: 오디오 없으면 anullsrc로 무음 생성 ★★★
+            // ★★★ enable_crossfade: 각 오디오에 페이드 인/아웃 적용으로 끊김 방지 ★★★
             if (hasAudio) {
+                const fadeDur = enable_crossfade ? (crossfade_duration || 0.2) : 0;
+                const videoDur = videoDurations[i];
+
                 if (videoAudioStatus[i]) {
-                    // 오디오 있는 비디오: 해당 오디오 사용
-                    audioConcatInputs += `[${i}:a]`;
+                    // 오디오 있는 비디오
+                    if (fadeDur > 0 && numVideos > 1) {
+                        // 페이드 인/아웃 적용 (첫 번째는 페이드인만, 마지막은 페이드아웃만)
+                        const fadeInFilter = (i > 0) ? `afade=t=in:st=0:d=${fadeDur}` : "";
+                        const fadeOutFilter = (i < numVideos - 1) ? `afade=t=out:st=${Math.max(0, videoDur - fadeDur)}:d=${fadeDur}` : "";
+                        const fadeFilters = [fadeInFilter, fadeOutFilter].filter(f => f).join(",");
+
+                        if (fadeFilters) {
+                            videoScaleFilters += `[${i}:a]${fadeFilters}[a_fade${i}];`;
+                            audioConcatInputs += `[a_fade${i}]`;
+                        } else {
+                            audioConcatInputs += `[${i}:a]`;
+                        }
+                    } else {
+                        audioConcatInputs += `[${i}:a]`;
+                    }
                 } else {
                     // 오디오 없는 비디오: anullsrc로 무음 생성
                     const silentDuration = videoDurations[i];
@@ -1086,6 +1210,10 @@ app.post("/render/puppy", async (req, res) => {
                     console.log(`[${jobId}] 🔇 Video ${i}: Generated ${silentDuration}s silent audio`);
                 }
             }
+        }
+
+        if (enable_crossfade) {
+            console.log(`[${jobId}] 🔀 Crossfade enabled: ${crossfade_duration}s`);
         }
 
         // ★★★ 비디오 concat (오디오 유무에 따라 처리) ★★★
@@ -1433,6 +1561,7 @@ app.listen(PORT, "0.0.0.0", () => {
     console.log(`  GET  /health - Health check`);
     console.log(`  GET  /version - FFmpeg version`);
     console.log(`  GET  /fonts - Available Korean fonts`);
+    console.log(`  POST /extract-audio - YouTube audio extraction (yt-dlp)`);
     console.log(`  POST /render/puppy - Puppy style render (OPTIMIZED)`);
     console.log(`  POST /render/shop - Shopping Shorts style render (NEW)`);
 });

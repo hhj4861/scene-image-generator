@@ -114,6 +114,27 @@ export default defineComponent({
     },
 
     // =====================
+    // 트랜지션 설정 (Crossfade)
+    // =====================
+    enable_crossfade: {
+      type: "boolean",
+      label: "씬 전환 크로스페이드",
+      description: "씬 전환 시 부드러운 페이드 효과 (비디오+오디오)",
+      default: true,
+    },
+    crossfade_duration: {
+      type: "string",
+      label: "크로스페이드 길이 (초)",
+      options: [
+        { label: "0.15초 (빠름)", value: "0.15" },
+        { label: "0.2초 (기본)", value: "0.2" },
+        { label: "0.3초 (부드러움)", value: "0.3" },
+        { label: "0.5초 (느림)", value: "0.5" },
+      ],
+      default: "0.2",
+    },
+
+    // =====================
     // FFmpeg VM 설정
     // =====================
     ffmpeg_vm_url: {
@@ -383,6 +404,20 @@ export default defineComponent({
     let mergedTimedSubtitles = [];
     let subtitleCumulativeTime = 0;
 
+    // 자막이 절대 시간인지 상대 시간인지 감지
+    // Scene 2 이후의 자막 start_time이 해당 씬의 duration보다 크면 절대 시간
+    let isAbsoluteTime = false;
+    if (videos.length >= 2) {
+      const secondVideo = videos[1];
+      if (secondVideo.timed_subtitles && secondVideo.timed_subtitles[0]) {
+        const firstSubStartTime = secondVideo.timed_subtitles[0].start_time || 0;
+        const firstVideoDuration = videos[0].duration || 8;
+        // Scene 2의 첫 자막 start_time이 Scene 1 끝난 시점과 비슷하면 절대 시간
+        isAbsoluteTime = firstSubStartTime >= firstVideoDuration;
+      }
+    }
+    console.log(`📊 자막 타이밍 모드: ${isAbsoluteTime ? "절대 시간" : "상대 시간"}`);
+
     for (let i = 0; i < videos.length; i++) {
       const video = videos[i];
       const sceneStartTime = subtitleCumulativeTime;
@@ -391,9 +426,13 @@ export default defineComponent({
 
       if (video.timed_subtitles) {
         for (const sub of video.timed_subtitles) {
+          const subStartTime = sub.start_time || sub.start || 0;
+          const subEndTime = sub.end_time || sub.end || sceneDuration;
+
           mergedTimedSubtitles.push({
-            start_time: sceneStartTime + (sub.start_time || sub.start || 0),
-            end_time: sceneStartTime + (sub.end_time || sub.end || sceneDuration),
+            // 절대 시간이면 그대로 사용, 상대 시간이면 sceneStartTime 더함
+            start_time: isAbsoluteTime ? subStartTime : sceneStartTime + subStartTime,
+            end_time: isAbsoluteTime ? subEndTime : sceneStartTime + subEndTime,
             text_ko: sub.text_ko || sub.korean || "",
             text_en: sub.text_en || sub.english || "",
             position: sub.position || "center",
@@ -471,6 +510,9 @@ export default defineComponent({
       output_path: `${folderName}/final_stock.mp4`,
       folder_name: folderName,
       font_settings: fontSettings,
+      // 크로스페이드 설정
+      enable_crossfade: this.enable_crossfade !== false,
+      crossfade_duration: parseFloat(this.crossfade_duration || "0.2"),
     };
 
     console.log("\n📤 FFmpeg VM API 요청 중...");

@@ -14,7 +14,11 @@ apt-get install -y ffmpeg
 
 # 한글 폰트 + 이모지 폰트 설치
 echo "Installing Korean fonts and Emoji fonts..."
-apt-get install -y fonts-noto-cjk fonts-nanum fonts-noto-color-emoji unzip wget
+apt-get install -y fonts-noto-cjk fonts-nanum fonts-noto-color-emoji unzip wget python3-pip
+
+# yt-dlp 설치 (YouTube 오디오 추출용)
+echo "Installing yt-dlp..."
+pip3 install --break-system-packages yt-dlp || pip3 install yt-dlp
 
 # 무료 폰트 설치 (카페24 써라운드, 배민 도현체)
 echo "Installing custom Korean fonts..."
@@ -81,6 +85,17 @@ npm install
 # 작업 디렉토리 생성 (/app에서 실행)
 mkdir -p /app
 cd /app
+
+# GCS 인증 설정 - 서비스 계정 키 다운로드
+echo "Downloading GCS credentials..."
+gsutil cp gs://shorts-videos-storage-mcp-test-457809/config/credentials.json /app/credentials.json || echo "Credentials download failed"
+if [ -f /app/credentials.json ]; then
+    export GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
+    echo "GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json" >> /etc/environment
+    echo "export GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json" >> /etc/profile.d/gcs.sh
+    chmod 644 /etc/profile.d/gcs.sh
+    echo "GCS credentials configured"
+fi
 
 # API 서버 코드 - GCS에서 다운로드 (최신 버전 유지)
 echo "Downloading server.js from GCS..."
@@ -1402,9 +1417,37 @@ cd /app
 npm install
 
 # PM2로 서버 시작 (/app/server.js)
+# 포트 3000 사용중인 프로세스 종료
+echo "Checking for existing processes on port 3000..."
+fuser -k 3000/tcp 2>/dev/null || true
+
+# 기존 PM2 프로세스가 있으면 삭제 후 재시작
+pm2 delete ffmpeg-api 2>/dev/null || true
+pm2 kill 2>/dev/null || true
+sleep 2
+
+# PM2로 서버 시작 (VM 기본 인증 사용 - GOOGLE_APPLICATION_CREDENTIALS 미설정)
 pm2 start /app/server.js --name ffmpeg-api
 pm2 save
 pm2 startup systemd -u root --hp /root
+
+# SSH 키 설정 - admin 사용자용
+echo "Setting up SSH keys..."
+mkdir -p /home/admin/.ssh
+chmod 700 /home/admin/.ssh
+
+# GCS에서 authorized_keys 다운로드 (있는 경우)
+gsutil cp gs://shorts-videos-storage-mcp-test-457809/config/authorized_keys /home/admin/.ssh/authorized_keys 2>/dev/null || {
+    # 프로젝트 메타데이터에서 SSH 키 가져오기
+    echo "Getting SSH keys from project metadata..."
+    curl -s "http://metadata.google.internal/computeMetadata/v1/project/attributes/ssh-keys" -H "Metadata-Flavor: Google" | grep -v "^#" > /home/admin/.ssh/authorized_keys 2>/dev/null || true
+}
+
+if [ -f /home/admin/.ssh/authorized_keys ]; then
+    chmod 600 /home/admin/.ssh/authorized_keys
+    chown -R admin:admin /home/admin/.ssh
+    echo "SSH keys configured for admin user"
+fi
 
 echo "=========================================="
 echo "FFmpeg Render Server Setup Complete!"

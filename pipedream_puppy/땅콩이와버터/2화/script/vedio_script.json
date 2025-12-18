@@ -1,0 +1,268 @@
+{
+  "$return_value": {
+    "folder_name": "peanut_butter_ep2",
+    "total_scenes": 10,
+    "script_format": "dating_show",
+    "content_type": "romance_comedy",
+    "resolution": "1080p",
+    "episode": "Ep.2 땅콩버터 로코: 우리 집에서 라면 먹고 갈래?",
+    "scenes": [
+      {
+        "video": 1,
+        "title": "홈 데이트",
+        "duration": "5 seconds (0-5s)",
+        "duration_seconds": 5,
+        "has_audio": false,
+        "dialogue": {
+          "script": "소개팅 후 두 번째 만남. 오늘은 집에서 넷플릭스 데이트",
+          "script_english": "Second date after the first meeting. Netflix and chill at home"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 2.5,
+            "korean": "소개팅 후 두 번째 만남",
+            "english": "Second date after the first meeting"
+          },
+          {
+            "start": 2.5,
+            "end": 5.0,
+            "korean": "오늘은 집에서 넷플릭스 데이트",
+            "english": "Netflix and chill at home"
+          }
+        ]
+      },
+      {
+        "video": 2,
+        "title": "시선 고정",
+        "duration": "4 seconds (6-10s)",
+        "duration_seconds": 4,
+        "has_audio": false,
+        "dialogue": {
+          "script": "영화 안 보고 누나만 보는 연하남",
+          "script_english": "Younger guy only watching his crush"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 4.0,
+            "korean": "영화 안 보고 누나만 보는 연하남",
+            "english": "Younger guy only watching his crush"
+          }
+        ]
+      },
+      {
+        "video": 3,
+        "title": "대사 교환",
+        "duration": "4 seconds (10-14s)",
+        "duration_seconds": 4,
+        "has_audio": true,
+        "speaker": "땅콩, 버터",
+        "dialogue": {
+          "script": "영화 안 봐? 영화보다 누나가 재밌어",
+          "script_english": "Not watching the movie? You are more fun than the movie"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 1.5,
+            "korean": "영화 안 봐?",
+            "english": "Not watching the movie?",
+            "speaker": "땅콩"
+          },
+          {
+            "start": 2.5,
+            "end": 4.0,
+            "korean": "영화보다 누나가 재밌어",
+            "english": "You are more fun than the movie",
+            "speaker": "버터"
+          }
+        ]
+      },
+      {
+        "video": 4,
+        "title": "발 터치",
+        "duration": "4 seconds (14-18s)",
+        "duration_seconds": 4,
+        "has_audio": false,
+        "dialogue": {
+          "script": "버터가 땅콩이 발 위에 자기 발을 툭 올렸어요",
+          "script_english": "Butter put his paw on Peanuts paw"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 4.0,
+            "korean": "버터가 땅콩이 발 위에 자기 발을 툭 올렸어요",
+            "english": "Butter put his paw on Peanuts paw"
+          }
+        ]
+      },
+      {
+        "video": 5,
+        "title": "땅콩 속마음",
+        "duration": "4 seconds (18-22s)",
+        "duration_seconds": 4,
+        "has_audio": true,
+        "speaker": "땅콩",
+        "dialogue": {
+          "script": "자연스러운 스킨십 기술. 어머 얘 선수네",
+          "script_english": "Natural skinship technique. Oh my he is smooth"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 2.0,
+            "korean": "자연스러운 스킨십 기술",
+            "english": "Natural skinship technique"
+          },
+          {
+            "start": 3.0,
+            "end": 4.0,
+            "korean": "어머 얘 선수네",
+            "english": "Oh my he is smooth",
+            "speaker": "땅콩"
+          }
+        ]
+      },
+      {
+        "video": 6,
+        "title": "코가 닿을락 말락",
+        "duration": "4 seconds (22-26s)",
+        "duration_seconds": 4,
+        "has_audio": false,
+        "dialogue": {
+          "script": "코가 닿을락 말락. 분위기 잡는 연하남",
+          "script_english": "Almost nose to nose. Younger guy setting the mood"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 2.0,
+            "korean": "코가 닿을락 말락",
+            "english": "Almost nose to nose"
+          },
+          {
+            "start": 3.0,
+            "end": 4.0,
+            "korean": "분위기 잡는 연하남",
+            "english": "Younger guy setting the mood"
+          }
+        ]
+      },
+      {
+        "video": 7,
+        "title": "키스 타이밍",
+        "duration": "4 seconds (26-30s)",
+        "duration_seconds": 4,
+        "has_audio": false,
+        "dialogue": {
+          "script": "지금 키스 타이밍인가?",
+          "script_english": "Is this the kiss moment?"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 2.0,
+            "korean": "지금 키스 타이밍인가?",
+            "english": "Is this the kiss moment?"
+          }
+        ]
+      },
+      {
+        "video": 8,
+        "title": "재채기",
+        "duration": "4 seconds (30-34s)",
+        "duration_seconds": 4,
+        "has_audio": true,
+        "dialogue": {
+          "script": "에취! 분위기 파괴범 등장",
+          "script_english": "ACHOO! Mood breaker has arrived"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 1.0,
+            "korean": "에취!",
+            "english": "ACHOO!"
+          },
+          {
+            "start": 2.0,
+            "end": 4.0,
+            "korean": "분위기 파괴범 등장",
+            "english": "Mood breaker has arrived"
+          }
+        ]
+      },
+      {
+        "video": 9,
+        "title": "땅콩 실망",
+        "duration": "5 seconds (34-39s)",
+        "duration_seconds": 5,
+        "has_audio": true,
+        "speaker": "땅콩",
+        "dialogue": {
+          "script": "로맨틱은 무슨 콧물이나 닦아. 그럼 그렇지",
+          "script_english": "Romantic? Wipe your nose first. I knew it"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 2.0,
+            "korean": "로맨틱은 무슨 콧물이나 닦아",
+            "english": "Romantic? Wipe your nose first"
+          },
+          {
+            "start": 3.0,
+            "end": 5.0,
+            "korean": "그럼 그렇지",
+            "english": "I knew it",
+            "speaker": "땅콩"
+          }
+        ]
+      },
+      {
+        "video": 10,
+        "title": "그래도 썸 엔딩",
+        "duration": "9 seconds (39-48s)",
+        "duration_seconds": 9,
+        "has_audio": false,
+        "dialogue": {
+          "script": "그래도 다시 돌아와서 어깨에 기대는 버터. 우당탕탕 로코 찍는 중",
+          "script_english": "Butter came back and leaned on Peanut. Chaotic romcom in progress"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0,
+            "end": 3.0,
+            "korean": "그래도 다시 돌아와서 어깨에 기대는 버터",
+            "english": "Butter came back and leaned on Peanut"
+          },
+          {
+            "start": 4.0,
+            "end": 6.0,
+            "korean": "우당탕탕 로코 찍는 중",
+            "english": "Chaotic romcom in progress"
+          },
+          {
+            "start": 7.0,
+            "end": 9.0,
+            "korean": "다음 화 질투의 화신 편 구독하고 지켜봐 주세요",
+            "english": "Next: Jealousy arc. Subscribe and stay tuned"
+          }
+        ]
+      }
+    ],
+    "character_voice_consistency": {
+      "땅콩이": {
+        "profile": "Korean baby INFANT GIRL 2-3 years old LOW-PITCHED soft gentle slow deliberate speech babbling quality slight lisp",
+        "emotional_range": "Curious, surprised, disappointed, accepting"
+      },
+      "버터": {
+        "profile": "Korean baby INFANT BOY 2-3 years old LOW-PITCHED cute cheerful shy slow deliberate speech babbling quality slight lisp eager-to-please",
+        "emotional_range": "Flirty, sweet, clumsy, persistent"
+      }
+    }
+  }
+}
+

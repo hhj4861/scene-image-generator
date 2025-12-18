@@ -1,0 +1,241 @@
+{
+  "episode": "Ep.2 땅콩버터 로코: 우리 집에서 라면 먹고 갈래?",
+  "total_duration": "48 seconds",
+
+  "scene_1": {
+    "scene_name": "홈 데이트",
+    "time_range": "00:00 ~ 00:05",
+    "subtitles": [
+      {
+        "id": 1,
+        "start_time": "00:00:00.000",
+        "end_time": "00:00:02.500",
+        "speaker": "나레이터",
+        "korean": "소개팅 후 두 번째 만남",
+        "english": "Second date after the first meeting",
+        "emphasis": false
+      },
+      {
+        "id": 2,
+        "start_time": "00:00:02.500",
+        "end_time": "00:00:05.000",
+        "speaker": "나레이터",
+        "korean": "오늘은 집에서 넷플릭스 데이트",
+        "english": "Netflix and chill at home",
+        "emphasis": true
+      }
+    ]
+  },
+
+  "scene_2": {
+    "scene_name": "시선 고정",
+    "time_range": "00:06 ~ 00:10",
+    "subtitles": [
+      {
+        "id": 3,
+        "start_time": "00:00:06.000",
+        "end_time": "00:00:10.000",
+        "speaker": "나레이터",
+        "korean": "영화 안 보고 누나만 보는 연하남",
+        "english": "Younger guy only watching his crush",
+        "emphasis": false
+      }
+    ]
+  },
+
+  "scene_3": {
+    "scene_name": "대사 교환",
+    "time_range": "00:10 ~ 00:14",
+    "subtitles": [
+      {
+        "id": 4,
+        "start_time": "00:00:10.000",
+        "end_time": "00:00:11.500",
+        "speaker": "땅콩",
+        "korean": "영화 안 봐",
+        "english": "Not watching the movie",
+        "lip_sync_phonetics": "YUNG-HWA AHN BWA",
+        "emphasis": false
+      },
+      {
+        "id": 5,
+        "start_time": "00:00:12.500",
+        "end_time": "00:00:14.000",
+        "speaker": "버터",
+        "korean": "영화보다 누나가 재밌어",
+        "english": "You are more fun than the movie",
+        "lip_sync_phonetics": "YUNG-HWA-BO-DA NOO-NA-GA JAE-MI-SSO",
+        "emphasis": true
+      }
+    ]
+  },
+
+  "scene_4": {
+    "scene_name": "발 터치",
+    "time_range": "00:14 ~ 00:18",
+    "subtitles": [
+      {
+        "id": 6,
+        "start_time": "00:00:14.000",
+        "end_time": "00:00:18.000",
+        "speaker": "나레이터",
+        "korean": "버터가 땅콩이 발 위에 자기 발을 툭 올렸어요",
+        "english": "Butter put his paw on Peanuts paw",
+        "emphasis": false
+      }
+    ]
+  },
+
+  "scene_5": {
+    "scene_name": "땅콩 속마음",
+    "time_range": "00:18 ~ 00:22",
+    "subtitles": [
+      {
+        "id": 7,
+        "start_time": "00:00:18.000",
+        "end_time": "00:00:20.000",
+        "speaker": "나레이터",
+        "korean": "자연스러운 스킨십 기술",
+        "english": "Natural skinship technique",
+        "emphasis": false
+      },
+      {
+        "id": 8,
+        "start_time": "00:00:21.000",
+        "end_time": "00:00:22.000",
+        "speaker": "땅콩",
+        "type": "inner_thought",
+        "korean": "어머 얘 선수네",
+        "english": "Oh my he is smooth",
+        "lip_sync_phonetics": "UH-MUH YAE SUN-SOO-NEH",
+        "emphasis": true
+      }
+    ]
+  },
+
+  "scene_6": {
+    "scene_name": "코가 닿을락 말락",
+    "time_range": "00:22 ~ 00:26",
+    "subtitles": [
+      {
+        "id": 9,
+        "start_time": "00:00:22.000",
+        "end_time": "00:00:24.000",
+        "speaker": "나레이터",
+        "korean": "코가 닿을락 말락",
+        "english": "Almost nose to nose",
+        "emphasis": false
+      },
+      {
+        "id": 10,
+        "start_time": "00:00:25.000",
+        "end_time": "00:00:26.000",
+        "speaker": "나레이터",
+        "korean": "분위기 잡는 연하남",
+        "english": "Younger guy setting the mood",
+        "emphasis": false
+      }
+    ]
+  },
+
+  "scene_7": {
+    "scene_name": "키스 타이밍",
+    "time_range": "00:26 ~ 00:30",
+    "subtitles": [
+      {
+        "id": 11,
+        "start_time": "00:00:26.000",
+        "end_time": "00:00:28.000",
+        "speaker": "나레이터",
+        "korean": "지금 키스 타이밍인가",
+        "english": "Is this the kiss moment",
+        "emphasis": true
+      }
+    ]
+  },
+
+  "scene_8": {
+    "scene_name": "재채기",
+    "time_range": "00:30 ~ 00:34",
+    "subtitles": [
+      {
+        "id": 12,
+        "start_time": "00:00:30.000",
+        "end_time": "00:00:31.000",
+        "speaker": "SFX",
+        "korean": "에취",
+        "english": "ACHOO",
+        "emphasis": true
+      },
+      {
+        "id": 13,
+        "start_time": "00:00:32.000",
+        "end_time": "00:00:34.000",
+        "speaker": "나레이터",
+        "korean": "분위기 파괴범 등장",
+        "english": "Mood breaker has arrived",
+        "emphasis": false
+      }
+    ]
+  },
+
+  "scene_9": {
+    "scene_name": "땅콩 실망",
+    "time_range": "00:34 ~ 00:39",
+    "subtitles": [
+      {
+        "id": 14,
+        "start_time": "00:00:34.000",
+        "end_time": "00:00:36.000",
+        "speaker": "나레이터",
+        "korean": "로맨틱은 무슨 콧물이나 닦아",
+        "english": "Romantic Wipe your nose first",
+        "emphasis": false
+      },
+      {
+        "id": 15,
+        "start_time": "00:00:37.000",
+        "end_time": "00:00:39.000",
+        "speaker": "땅콩",
+        "korean": "그럼 그렇지",
+        "english": "I knew it",
+        "lip_sync_phonetics": "GEU-RUM GEU-RUH-CHI",
+        "emphasis": true
+      }
+    ]
+  },
+
+  "scene_10": {
+    "scene_name": "그래도 썸 엔딩",
+    "time_range": "00:39 ~ 00:48",
+    "subtitles": [
+      {
+        "id": 16,
+        "start_time": "00:00:39.000",
+        "end_time": "00:00:42.000",
+        "speaker": "나레이터",
+        "korean": "그래도 다시 돌아와서 어깨에 기대는 버터",
+        "english": "Butter came back and leaned on Peanut",
+        "emphasis": false
+      },
+      {
+        "id": 17,
+        "start_time": "00:00:43.000",
+        "end_time": "00:00:45.000",
+        "speaker": "나레이터",
+        "korean": "우당탕탕 로코 찍는 중",
+        "english": "Chaotic romcom in progress",
+        "emphasis": true
+      },
+      {
+        "id": 18,
+        "start_time": "00:00:46.000",
+        "end_time": "00:00:48.000",
+        "speaker": "나레이터",
+        "korean": "다음 화 질투의 화신 편 구독하고 지켜봐 주세요",
+        "english": "Next Jealousy arc Subscribe and stay tuned",
+        "emphasis": true
+      }
+    ]
+  }
+}

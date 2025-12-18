@@ -1,0 +1,95 @@
+{
+  "project_name": "땅콩이와버터_2화",
+  "project_id": "peanut_butter_ep2",
+  "title": {
+    "korean": "넷플리스 데이트",
+    "english": "Wanna eat ramen at my place?"
+  },
+  "footer": {
+    "korean": "땅콩버터 로코 Ep.2 🐶💕",
+    "english": "Peanut Butter Romcom Ep.2"
+  },
+  "bgm_url": "https://cdn1.suno.ai/c61e9224-99f8-443c-98a0-962fed5e7cf9.mp3",
+  "bgm_volume": 0.1,
+  "bgm_volume_no_audio": 0.8,
+  "profile_card_config": {
+    "baseY": 580,
+    "lineHeight": 40,
+    "headerFontSize": 30,
+    "itemFontSize": 20,
+    "maxChars": 30,
+    "rightMargin": 150
+  },
+  "scene_count": 10,
+  "video_file_pattern": "씬{index}.mp4",
+  "subtitle_timing_mode": "timed",
+  "force_vertical": true,
+  "video_scale_mode": "fit",
+  "timed_subtitles": [
+    { "start_time": 0.5, "end_time": 3.5, "text_ko": "소개팅 후 두 번째 만남", "text_en": "Second date after the first meeting", "color": "0x87CEEB"},
+    { "start_time": 3.5, "end_time": 7.0, "text_ko": "오늘은 집에서 넷플릭스 데이트", "text_en": "Netflix and chill at home", "color": "0x87CEEB" },
+
+    { "start_time": 8.5, "end_time": 15.0, "text_ko": "영화 안 보고 누나만 보는 연하남", "text_en": "Younger guy only watching his crush", "color": "0x87CEEB" },
+
+    { "start_time": 16.5, "end_time": 19.0, "text_ko": "영화 안 봐?", "text_en": "Not watching the movie?" },
+    { "start_time": 19.0, "end_time": 21.0, "text_ko": "영화보다 누나가 재밌어", "text_en": "You are more fun than the movie" },
+
+    { "start_time": 26, "end_time": 31.0, "text_ko": "버터가 땅콩이 발 위에 자기 발을 툭 올렸어요", "text_en": "Butter put his paw on Peanuts paw", "color": "0x87CEEB"},
+
+    { "start_time": 32.5, "end_time": 36.0, "text_ko": "자연스러운 스킨십 기술", "text_en": "Natural skinship technique", "color": "0x87CEEB"},
+    { "start_time": 37.0, "end_time": 39.5, "text_ko": "어머 얘 선수네", "text_en": "Oh my he is smooth" },
+
+    { "start_time": 40.5, "end_time": 44.0, "text_ko": "코가 닿을락 말락", "text_en": "Almost nose to nose", "color": "0x87CEEB" },
+    { "start_time": 45.0, "end_time": 47.5, "text_ko": "분위기 잡는 연하남", "text_en": "Younger guy setting the mood", "color": "0x87CEEB" },
+
+    { "start_time": 48.5, "end_time": 55.0, "text_ko": "지금 키스 타이밍인가?", "text_en": "Is this the kiss moment?" },
+
+    { "start_time": 56.5, "end_time": 58.5, "text_ko": "에취!", "text_en": "ACHOO!" },
+    { "start_time": 62, "end_time": 64.0, "text_ko": "분위기 파괴범 등장", "text_en": "Mood breaker has arrived", "color": "0x87CEEB"},
+
+    { "start_time": 68.0, "end_time": 70.5, "text_ko": "로맨틱은 무슨 콧물이나 닦아", "text_en": "Romantic? Wipe your nose first" },
+    { "start_time": 70.5, "end_time": 72.0, "text_ko": "그럼 그렇지", "text_en": "I knew it", "color": "0x87CEEB"},
+
+    { "start_time": 72.5, "end_time": 75.0, "text_ko": "그래도 다시 돌아와서 어깨에 기대는 버터", "text_en": "Butter came back and leaned on Peanut", "color": "0x87CEEB"},
+    { "start_time": 75.0, "end_time": 77.5, "text_ko": "우당탕탕 로코 찍는 중", "text_en": "Chaotic romcom in progress", "color": "0x87CEEB"},
+    { "start_time": 77.5, "end_time": 80.0, "text_ko": "다음 화 질투의 화신 편 구독하고 지켜봐 주세요", "text_en": "Next: Jealousy arc. Subscribe!", "color": "0x87CEEB"}
+  ],
+  "layout": {
+    "header_y": 220,
+    "header_height": 120,
+    "video_area_y": 160,
+    "video_area_height": 850,
+    "subtitle_y": 900,
+    "footer_y": 950,
+    "footer_height": 100
+  },
+  "font_settings": {
+    "header_korean": {
+      "font": "NanumSquareRoundOTFEB",
+      "size": 58
+    },
+    "header_english": {
+      "font": "NotoSerif-Regular",
+      "size": 30,
+      "y_offset": 75
+    },
+    "subtitle_korean": {
+      "font": "NanumSquareRoundOTFEB",
+      "size": 34,
+      "max_lines": 1
+    },
+    "subtitle_english": {
+      "font": "NotoSerif-Regular",
+      "size": 27,
+      "max_lines": 1
+    },
+    "footer_korean": {
+      "size": 48
+    },
+    "footer_english": {
+      "size": 22,
+      "y_offset": 55
+    }
+  }
+}
+

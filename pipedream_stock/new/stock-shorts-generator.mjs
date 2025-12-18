@@ -172,58 +172,120 @@ export default defineComponent({
 
     // ==========================================
     // 나레이션을 분할하여 timed_subtitles 생성 (공통 함수)
-    // 한글/영문 동일 타이밍으로 분할
+    // ★ 음절 수 비율로 타이밍 계산 (TTS 음성과 일치)
+    // ★ 최대 글자수 제한: 20자 초과 시 자동 분할
+    // ★ 최소 표시 시간: 0.5초 (너무 짧은 자막 방지)
+    // ★ 나레이션 시작: 0.2초 (음성 잘림 방지)
     // ==========================================
+    const MAX_SUBTITLE_LENGTH = 20; // 최대 자막 글자수 (약 "12월 17일 글로벌증시 핵심 정리해요!" 길이)
+    const MIN_SUBTITLE_DURATION = 0.5; // 최소 자막 표시 시간 (초)
+    const NARRATION_START_OFFSET = 0.2; // 나레이션 시작 오프셋 (음성 잘림 방지)
+
+    // 음절 수 계산 (TTS 발화 시간 추정용)
+    const countSyllables = (text) => {
+      if (!text) return 0;
+      // 한글: 글자 수 = 음절 수
+      const korean = (text.match(/[가-힣]/g) || []).length;
+      // 숫자: 각 자리수마다 음절 (예: "12" = "십이" = 2음절)
+      const numbers = (text.match(/[0-9]/g) || []).length;
+      // 영어: 대략 3글자 = 1음절
+      const english = Math.ceil((text.match(/[a-zA-Z]/g) || []).length / 3);
+      return korean + numbers + english;
+    };
+
     const splitNarrationToSubtitles = (text, textEn, duration) => {
-      if (!text) return [{ start_time: 0, end_time: duration, text_ko: "", text_en: textEn || "" }];
+      // 실제 나레이션 사용 가능 시간 (0.2초 오프셋 적용)
+      const effectiveDuration = duration - NARRATION_START_OFFSET;
+
+      if (!text) return [{ start_time: NARRATION_START_OFFSET, end_time: duration, text_ko: "", text_en: textEn || "" }];
 
       // 말줄임표(...) 처리: 임시 치환
       const ellipsisPlaceholder = "<<<ELLIPSIS>>>";
       let processedText = text.replace(/\.{2,}/g, ellipsisPlaceholder);
       let processedTextEn = (textEn || "").replace(/\.{2,}/g, ellipsisPlaceholder);
 
-      // 한글: 구분자로 분할 (쉼표, 마침표, 느낌표, 물음표)
+      // 1단계: 구분자로 분할 (쉼표, 마침표, 느낌표, 물음표)
       let partsKo = processedText.split(/(?<=[,，.。!！?？])\s*/)
         .map(p => p.replace(ellipsisPlaceholder, "...").trim())
         .filter(p => p && p.length > 1);
 
-      // 영문: 구분자로 분할
       let partsEn = processedTextEn.split(/(?<=[,!?.])\s*/)
         .map(p => p.replace(ellipsisPlaceholder, "...").trim())
         .filter(p => p && p.length > 1);
 
-      // 한글 분할 안 되면 공백 기준으로 반으로
-      if (partsKo.length <= 1) {
+      // 2단계: 최대 글자수 초과 시 추가 분할
+      const splitLongPart = (part, maxLen) => {
+        if (part.length <= maxLen) return [part];
+
+        const results = [];
+        const words = part.split(/\s+/);
+
+        if (words.length <= 1) {
+          // 공백 없는 긴 문장 → 글자수 기준으로 자르기
+          for (let i = 0; i < part.length; i += maxLen) {
+            results.push(part.substring(i, Math.min(i + maxLen, part.length)));
+          }
+        } else {
+          // 공백 기준으로 분할하되 최대 길이 유지
+          let current = "";
+          for (const word of words) {
+            const test = current ? `${current} ${word}` : word;
+            if (test.length > maxLen && current) {
+              results.push(current);
+              current = word;
+            } else {
+              current = test;
+            }
+          }
+          if (current) results.push(current);
+        }
+        return results;
+      };
+
+      // 한글 파트 추가 분할
+      partsKo = partsKo.flatMap(p => splitLongPart(p, MAX_SUBTITLE_LENGTH));
+
+      // 영문 파트 추가 분할 (영문은 더 긴 글자 허용)
+      partsEn = partsEn.flatMap(p => splitLongPart(p, MAX_SUBTITLE_LENGTH + 15));
+
+      // 3단계: 분할 안 되면 공백 기준으로 반으로
+      if (partsKo.length <= 1 && text.length > MAX_SUBTITLE_LENGTH) {
         const words = text.split(/\s+/);
-        const mid = Math.ceil(words.length / 2);
-        if (words.length >= 4) {
+        if (words.length >= 2) {
+          const mid = Math.ceil(words.length / 2);
           partsKo = [
             words.slice(0, mid).join(" "),
             words.slice(mid).join(" "),
           ];
+          // 다시 최대 길이 체크
+          partsKo = partsKo.flatMap(p => splitLongPart(p, MAX_SUBTITLE_LENGTH));
         }
       }
 
-      // 영문 분할 안 되면 공백 기준으로 반으로
-      if (partsEn.length <= 1 && textEn) {
+      if (partsEn.length <= 1 && textEn && textEn.length > MAX_SUBTITLE_LENGTH + 15) {
         const words = textEn.split(/\s+/);
-        const mid = Math.ceil(words.length / 2);
-        if (words.length >= 4) {
+        if (words.length >= 2) {
+          const mid = Math.ceil(words.length / 2);
           partsEn = [
             words.slice(0, mid).join(" "),
             words.slice(mid).join(" "),
           ];
+          partsEn = partsEn.flatMap(p => splitLongPart(p, MAX_SUBTITLE_LENGTH + 15));
         }
       }
 
-      // 여전히 1개면 그대로 반환
+      // 여전히 1개이고 짧으면 그대로 반환 (0.2초부터 시작)
+      if (partsKo.length <= 1 && text.length <= MAX_SUBTITLE_LENGTH) {
+        return [{ start_time: NARRATION_START_OFFSET, end_time: duration, text_ko: text, text_en: textEn || "" }];
+      }
+
+      // 최소 2개 이상 보장
       if (partsKo.length <= 1) {
-        return [{ start_time: 0, end_time: duration, text_ko: text, text_en: textEn || "" }];
+        partsKo = [text];
       }
 
       // 한글 파트 수에 맞춰 영문도 맞추기
       const partCount = partsKo.length;
-      const segmentDuration = duration / partCount;
 
       // 영문 파트가 한글보다 적으면 마지막 항목 재사용, 많으면 자르기
       while (partsEn.length < partCount) {
@@ -231,12 +293,43 @@ export default defineComponent({
       }
       partsEn = partsEn.slice(0, partCount);
 
-      return partsKo.map((partKo, idx) => ({
-        start_time: Math.round(idx * segmentDuration * 10) / 10,
-        end_time: Math.round((idx + 1) * segmentDuration * 10) / 10,
-        text_ko: partKo.trim(),
-        text_en: partsEn[idx]?.trim() || "",
-      }));
+      // ★ 음절 수 비율로 타이밍 계산 (핵심 개선!)
+      const syllableCounts = partsKo.map(p => countSyllables(p));
+      const totalSyllables = syllableCounts.reduce((a, b) => a + b, 0) || 1;
+
+      // 실제 나레이션 시간 (0.2초 오프셋 제외)
+      const narrationDuration = effectiveDuration;
+
+      // 최소 표시 시간 보장을 위한 계산
+      let rawDurations = partsKo.map((_, idx) => (syllableCounts[idx] / totalSyllables) * narrationDuration);
+
+      // 최소 0.5초 보장
+      let needsRedistribution = rawDurations.some(d => d < MIN_SUBTITLE_DURATION);
+      if (needsRedistribution) {
+        const shortParts = rawDurations.filter(d => d < MIN_SUBTITLE_DURATION).length;
+        const borrowedTime = shortParts * MIN_SUBTITLE_DURATION - rawDurations.filter(d => d < MIN_SUBTITLE_DURATION).reduce((a, b) => a + b, 0);
+        const longPartsTotal = rawDurations.filter(d => d >= MIN_SUBTITLE_DURATION).reduce((a, b) => a + b, 0);
+
+        rawDurations = rawDurations.map(d => {
+          if (d < MIN_SUBTITLE_DURATION) return MIN_SUBTITLE_DURATION;
+          return d - (d / longPartsTotal) * borrowedTime;
+        });
+      }
+
+      // 0.2초부터 시작하여 타이밍 계산
+      let cumTime = NARRATION_START_OFFSET;
+      return partsKo.map((partKo, idx) => {
+        const startTime = cumTime;
+        cumTime += rawDurations[idx];
+        // 마지막 자막은 씬 끝까지
+        const endTime = (idx === partsKo.length - 1) ? duration : cumTime;
+        return {
+          start_time: Math.round(startTime * 10) / 10,
+          end_time: Math.round(endTime * 10) / 10,
+          text_ko: partKo.trim(),
+          text_en: partsEn[idx]?.trim() || "",
+        };
+      });
     };
 
     // ==========================================
@@ -513,6 +606,7 @@ ${topPicks.slice(0, 3).map((t, i) => `${i + 1}. ${t.ticker} (${t.company_name_kr
 2. 종목 환각: [허용된 종목] 외 다른 종목 언급 금지!
 3. 뉴스 환각: [핵심 포인트]에 없는 뉴스/이슈 금지!
 4. 각 key_point는 반드시 40음절(8초) 이내로 요약!
+5. 🚫 visual_description에 한글 텍스트 절대 금지! 영어만 사용!
 
 ★★★ 구조: 총 ${totalScenes}씬, ${totalDuration}초 ★★★
 
@@ -637,7 +731,11 @@ ${hasRecommendations ? `3. 🔗 PART 전환:
 4. 종목 추천은 반드시 제공된 topPicks 데이터만 사용!` : `3. ❌ 종목 추천 금지! topPicks 데이터가 없으므로 어떤 종목도 언급하지 마세요!
 4. 마지막 key_point 씬에서 바로 마무리로 연결`}
 5. 숫자/종목/뉴스 환각 금지
-6. visual_description은 영어로, 텍스트 삽입 금지
+6. 🎬 visual_description 필수 규칙 (영어만!):
+   - 한글 텍스트 절대 금지! 영어만 사용!
+   - 프리젠터는 대사가 끝나면 입을 다물고 정면 응시 (idle pose, mouth closed)
+   - 대사 중에만 말하는 표정, 대사 끝나면 차분한 표정으로 전환
+   - 예: "speaking with confident expression, transitions to calm idle pose at end"
 7. 마지막 씬: "본 영상은 투자 권유가 아닙니다" (is_disclaimer: true)
 8. 캐릭터/목소리 일관성 유지
 `;
@@ -673,20 +771,13 @@ ${hasRecommendations ? `3. 🔗 PART 전환:
         const startTime = currentTime;
         currentTime += duration;
 
-        // timed_subtitles 자동 생성/분할 (LLM이 생성하지 않았거나 단일 자막인 경우)
-        let timedSubtitles = scene.timed_subtitles;
-        const needsSplit = !timedSubtitles || timedSubtitles.length === 0 ||
-          (timedSubtitles.length === 1 && timedSubtitles[0].start_time === 0 &&
-           timedSubtitles[0].end_time >= duration - 0.5);
-
-        if (needsSplit) {
-          timedSubtitles = splitNarrationToSubtitles(
-            scene.narration || "",
-            scene.narration_english || "",
-            duration
-          );
-          console.log(`   📝 Scene ${idx + 1} timed_subtitles 분할 생성 (${timedSubtitles.length}개)`);
-        }
+        // ★ timed_subtitles 항상 재생성 (LLM 생성 자막 무시, 음절 비율 + 0.2초 시작 적용)
+        const timedSubtitles = splitNarrationToSubtitles(
+          scene.narration || "",
+          scene.narration_english || "",
+          duration
+        );
+        console.log(`   📝 Scene ${idx + 1} timed_subtitles 생성 (${timedSubtitles.length}개, 0.2초 시작)`)
 
         // narration_english 없으면 빈 문자열로 설정
         const narrationEnglish = scene.narration_english || "";

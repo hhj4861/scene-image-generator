@@ -805,6 +805,13 @@ AUDIO:`;
 
         veoPrompt += `
 
+PRESENTER BEHAVIOR (CRITICAL):
+- Speech starts at 0.2 seconds (NOT immediately) - prevents audio clipping at scene start
+- Mouth movements ONLY during speech - lips MUST be closed when not speaking
+- When narration ends, presenter transitions to calm idle pose with mouth closed
+- Natural breathing and subtle movements, but NO lip movement after speech ends
+- If scene duration exceeds speech length, presenter waits calmly with closed mouth
+
 TECHNICAL SPECS:
 - Resolution: ${this.aspect_ratio === "16:9" ? "1920x1080px" : this.aspect_ratio === "9:16" ? "1080x1920px" : "1080x1080px"} (${this.aspect_ratio})
 - Frame rate: 30fps
