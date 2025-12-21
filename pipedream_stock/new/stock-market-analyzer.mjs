@@ -68,31 +68,37 @@ export default defineComponent({
 
     // 텍스트 내용에 따른 마켓 레벨 자동 감지 함수
     const detectMarketType = (text) => {
-      if (!text) return this.market_type;
+      if (!text) {
+        console.log(`📊 마켓 감지: 텍스트 없음, 기본값 사용 (${this.market_type})`);
+        return this.market_type;
+      }
       const t = text.toLowerCase();
       
-      // 한국 시장 키워드
-      const krKeywords = ["한국", "코스피", "코스닥", "국내", "원화", "한국증시", "국내증시", "kospi", "kosdaq", "삼성전자", "sk하이닉스", "현대차"];
+      // 한국 시장 키워드 (더 많은 키워드 추가)
+      const krKeywords = ["한국", "코스피", "코스닥", "국내", "원화", "한국증시", "국내증시", "kospi", "kosdaq", 
+                          "삼성전자", "sk하이닉스", "현대차", "한국은행", "원/달러", "서울", "증권", 
+                          "대주주", "양도세", "코리아", "국내 증시", "w51", "w52"];
       // 미국 시장 키워드
-      const usKeywords = ["미국", "s&p", "나스닥", "다우", "월가", "연준", "fed", "nasdaq", "dow", "wall street", "테슬라", "애플", "마이크로소프트"];
+      const usKeywords = ["s&p", "나스닥", "다우", "월가", "연준", "fed", "nasdaq", "dow", "wall street", 
+                          "테슬라", "애플", "마이크로소프트", "엔비디아", "아마존", "구글", "페이스북", "메타"];
       
       const krCount = krKeywords.reduce((cnt, kw) => cnt + (t.split(kw).length - 1), 0);
       const usCount = usKeywords.reduce((cnt, kw) => cnt + (t.split(kw).length - 1), 0);
       
-      console.log(`📊 마켓 감지: 한국=${krCount}, 미국=${usCount}`);
-      
-      // 한국 키워드가 압도적으로 많으면 한국
-      if (krCount > usCount * 2) return "kr";
-      // 미국 키워드가 압도적으로 많으면 미국
-      if (usCount > krCount * 2) return "us";
+      let result = this.market_type;
+      // 한국 키워드가 더 많으면 한국 (2배 기준 완화 -> 1.5배)
+      if (krCount > usCount * 1.5) result = "kr";
+      // 미국 키워드가 더 많으면 미국
+      else if (usCount > krCount * 1.5) result = "us";
       // 둘 다 있으면 글로벌
-      if (krCount > 0 && usCount > 0) return "global";
+      else if (krCount > 0 && usCount > 0) result = "global";
       // 한국만 있으면 한국
-      if (krCount > 0) return "kr";
+      else if (krCount > 0) result = "kr";
       // 미국만 있으면 미국
-      if (usCount > 0) return "us";
-      // 기본값
-      return this.market_type;
+      else if (usCount > 0) result = "us";
+      
+      console.log(`📊 마켓 감지: 한국=${krCount}, 미국=${usCount} → ${result}`);
+      return result;
     };
 
     // 마켓 레벨 (나중에 텍스트 분석 후 재결정)
@@ -207,21 +213,34 @@ export default defineComponent({
       // weekly_outlook 구조인 경우 특별 처리
       const keyPointsStructure = this.key_points_structure || "auto";
       
-      // ★★★ 기존 key_points가 이미 좋으면 스킵 ★★★
+      // ★★★ 기존 key_points 검사 ★★★
       const existingKP = parsed.key_points || [];
       const hasNumbers = existingKP.some(kp => /\d+\.?\d*%|\$\d+|\d+조|\d+억/.test(kp));
       const hasWeekLabel = existingKP.some(kp => /\[W\d+/.test(kp));
       const hasGoodLength = existingKP.every(kp => kp.length >= 100); // 100자 이상
+      const hasDailyLabel = existingKP.some(kp => /\[시장 현황\]|\[주목 포인트\]/.test(kp));
+      
+      // ★★★ daily_market인데 [W??] 형식이 있으면 무조건 재생성! ★★★
+      if (keyPointsStructure !== "weekly_outlook" && hasWeekLabel) {
+        console.log(`⚠️ [KeyPoints] daily_market인데 [W??] 형식 감지됨 - 재생성 필요!`);
+      }
       
       // weekly_outlook: 수치 + 주차 라벨 필수
-      // 그 외: 수치 + 적절한 길이면 OK
+      // weekly_outlook이 아닌데 [W??] 형식이면 잘못된 것 → 재생성 필요
+      const hasWrongFormat = keyPointsStructure !== "weekly_outlook" && hasWeekLabel;
+      
+      // 품질 검사
       const isAlreadyGood = keyPointsStructure === "weekly_outlook" 
         ? (hasNumbers && hasWeekLabel) 
-        : (hasNumbers && hasGoodLength);
+        : (hasNumbers && hasGoodLength && !hasWrongFormat && (hasDailyLabel || !hasWeekLabel));
       
-      if (isAlreadyGood) {
+      if (hasWrongFormat) {
+        console.log(`⚠️ [KeyPoints] daily_market인데 [W??] 형식 사용됨 - 재생성 강제!`);
+      }
+      
+      if (isAlreadyGood && !hasWrongFormat) {
         console.log(`[KeyPoints] 기존 key_points 품질 우수 - 재생성 스킵`);
-        console.log(`   구조: ${keyPointsStructure}, 수치: ${hasNumbers}, 주차: ${hasWeekLabel}, 길이OK: ${hasGoodLength}`);
+        console.log(`   구조: ${keyPointsStructure}, 수치: ${hasNumbers}, 주차: ${hasWeekLabel}, 일간라벨: ${hasDailyLabel}`);
         console.log(`   예시: ${existingKP[0]?.substring(0, 60)}...`);
         return;  // 재생성하지 않음
       }
@@ -341,6 +360,19 @@ ${langInstr}`;
           console.log(`[KeyPoints] ${r.key_points.length}개 생성:`, r.key_points.map(kp => kp.substring(0, 30) + "...").join(" | "));
         }
       } catch (e) { console.error(`[KeyPoints] 실패: ${e.message}`); }
+      
+      // ★★★ 단순 후처리: weekly_outlook 아닐 때 [W??] → [시장 현황/주목 포인트] 변환 ★★★
+      if (keyPointsStructure !== "weekly_outlook" && parsed.key_points?.length) {
+        parsed.key_points = parsed.key_points.map((kp, i) => {
+          if (/\[W\d+\s*(요약|전망|정리)\]/.test(kp)) {
+            const newLabel = i === 0 ? "[시장 현황]" : "[주목 포인트]";
+            const fixed = kp.replace(/\[W\d+\s*(요약|전망|정리)\]/, newLabel);
+            console.log(`[KeyPoints] 형식 변환: [W??] → ${newLabel}`);
+            return fixed;
+          }
+          return kp;
+        });
+      }
     };
 
     // ========== GCS 파일 읽기 ==========
@@ -374,6 +406,14 @@ ${langInstr}`;
       if (!url) return { type: "none" };
       const pl = url.match(/[?&]list=([a-zA-Z0-9_-]+)/);
       if (pl && !url.includes("v=")) return { type: "playlist", playlistId: pl[1] };
+      
+      // Shorts URL 지원 (youtube.com/shorts/VIDEO_ID)
+      const shortsMatch = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/);
+      if (shortsMatch?.[1]) {
+        console.log(`[YouTube] Shorts 영상 감지: ${shortsMatch[1]}`);
+        return { type: "video", videoId: shortsMatch[1], isShorts: true };
+      }
+      
       for (const p of [/(?:v=|\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/, /^([a-zA-Z0-9_-]{11})$/]) {
         const m = url.match(p);
         if (m?.[1]) return { type: "video", videoId: m[1] };
@@ -426,16 +466,120 @@ ${langInstr}`;
     };
 
     const getPlaylistVideos = async (playlistId) => {
-      const r = await axios($, { url: `https://www.youtube.com/playlist?list=${playlistId}`, method: "GET", headers: { "User-Agent": "Mozilla/5.0" } });
+      console.log(`[Playlist] 조회 시작: ${playlistId}`);
+      const r = await axios($, { 
+        url: `https://www.youtube.com/playlist?list=${playlistId}`, 
+        method: "GET", 
+        headers: { 
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7"
+        } 
+      });
       const html = typeof r === "string" ? r : r.data || "";
+      console.log(`[Playlist] HTML 길이: ${html.length}`);
+      
       const title = html.match(/<title>([^<]+)<\/title>/)?.[1]?.replace(" - YouTube", "").trim() || "Playlist";
       const videos = [], seen = new Set();
-      const re = /"videoId":"([a-zA-Z0-9_-]{11})"[^}]*?"title":\{"runs":\[\{"text":"([^"]+)"\}\]/g;
-      let m;
-      while ((m = re.exec(html))) {
-        if (!seen.has(m[1])) { seen.add(m[1]); videos.push({ videoId: m[1], title: m[2] }); }
+      
+      // 패턴 1: ytInitialData에서 추출 (가장 정확)
+      const ytData = html.match(/var ytInitialData = ({.*?});/s);
+      if (ytData) {
+        try {
+          const data = JSON.parse(ytData[1]);
+          const contents = data?.contents?.twoColumnBrowseResultsRenderer?.tabs?.[0]?.tabRenderer?.content?.sectionListRenderer?.contents?.[0]?.itemSectionRenderer?.contents?.[0]?.playlistVideoListRenderer?.contents || [];
+          contents.forEach(item => {
+            const vid = item?.playlistVideoRenderer?.videoId;
+            const vTitle = item?.playlistVideoRenderer?.title?.runs?.[0]?.text || item?.playlistVideoRenderer?.title?.simpleText;
+            const publishedText = item?.playlistVideoRenderer?.videoInfo?.runs?.[0]?.text || "";
+            if (vid && !seen.has(vid)) { 
+              seen.add(vid); 
+              videos.push({ videoId: vid, title: vTitle || "Unknown", publishedText }); 
+            }
+          });
+          console.log(`[Playlist] ytInitialData에서 ${videos.length}개 영상 추출`);
+        } catch (e) { console.log(`[Playlist] ytInitialData 파싱 실패: ${e.message}`); }
       }
+      
+      // 패턴 2: 정규식으로 추출
+      if (!videos.length) {
+        console.log(`[Playlist] 패턴1 실패, 정규식 시도...`);
+        let re = /"videoId":"([a-zA-Z0-9_-]{11})"[^}]*?"title":\{"runs":\[\{"text":"([^"]+)"\}\]/g;
+        let m;
+        while ((m = re.exec(html))) {
+          if (!seen.has(m[1])) { seen.add(m[1]); videos.push({ videoId: m[1], title: m[2] }); }
+        }
+      }
+      
+      // 패턴 3: videoId만 추출
+      if (!videos.length) {
+        console.log(`[Playlist] 패턴2 실패, videoId만 추출...`);
+        let re = /"videoId":"([a-zA-Z0-9_-]{11})"/g;
+        let m;
+        while ((m = re.exec(html))) {
+          if (!seen.has(m[1])) { seen.add(m[1]); videos.push({ videoId: m[1], title: `Video` }); }
+        }
+      }
+      
+      console.log(`[Playlist] 총 ${videos.length}개 영상 발견`);
       return { playlistTitle: title, videos: videos.slice(0, 50) };
+    };
+    
+    // 플레이리스트에서 분석일에 맞는 영상 찾기
+    const findPlaylistVideoForDate = async (videos, targetDate) => {
+      if (!videos.length) return null;
+      console.log(`[Playlist] 분석일 ${targetDate}에 맞는 영상 검색 중...`);
+      
+      // 1. 제목에서 날짜 패턴 찾기 (예: 12/21, 12.21, 12월 21일, 2024-12-21)
+      const datePatterns = [
+        new RegExp(`${targetDate.slice(5).replace("-", "[./]?")}`), // 12-21 → 12[./]?21
+        new RegExp(`${parseInt(targetDate.slice(5, 7))}[월./]\\s*${parseInt(targetDate.slice(8, 10))}[일]?`), // 12월 21일
+        new RegExp(targetDate), // 2024-12-21
+      ];
+      
+      for (const video of videos) {
+        for (const pattern of datePatterns) {
+          if (pattern.test(video.title)) {
+            console.log(`[Playlist] 날짜 매칭 영상 발견: ${video.title}`);
+            return video;
+          }
+        }
+      }
+      
+      // 2. 각 영상의 실제 발행일 확인 (상위 5개만)
+      console.log(`[Playlist] 제목에서 날짜 못 찾음, 상위 5개 영상 발행일 확인...`);
+      for (const video of videos.slice(0, 5)) {
+        try {
+          const meta = await fetchVideoMetadataWithDate(video.videoId);
+          if (meta.published === targetDate) {
+            console.log(`[Playlist] 발행일 매칭 영상 발견: ${video.title} (${meta.published})`);
+            return video;
+          }
+        } catch (e) { /* 무시 */ }
+      }
+      
+      // 3. 첫 번째(최신) 영상 반환
+      console.log(`[Playlist] 날짜 매칭 실패, 최신 영상 사용: ${videos[0].title}`);
+      return videos[0];
+    };
+    
+    // 영상 메타데이터 + 발행일 조회
+    const fetchVideoMetadataWithDate = async (videoId) => {
+      try {
+        const r = await axios($, { 
+          url: `https://www.youtube.com/watch?v=${videoId}`, 
+          method: "GET", 
+          headers: { "User-Agent": "Mozilla/5.0" } 
+        });
+        const html = typeof r === "string" ? r : r.data || "";
+        const titleMatch = html.match(/<title>([^<]+)<\/title>/);
+        const title = titleMatch?.[1]?.replace(" - YouTube", "").trim() || "Unknown";
+        
+        // 발행일 추출
+        const dateMatch = html.match(/"publishDate":"(\d{4}-\d{2}-\d{2})"/);
+        const published = dateMatch?.[1] || null;
+        
+        return { title, published };
+      } catch { return { title: "Unknown", published: null }; }
     };
 
     const findVideoForDate = async (channelId, date) => {
@@ -602,6 +746,11 @@ ${isKorean ? "한국어로, 친근한 말투(~해요, ~이에요)로 작성." : 
 
       const articles = results.flat().slice(0, 20);
       const context = articles.map(a => `[${a.focus}] ${a.title}\n${a.snippet}`).join("\n\n");
+      
+      // 뉴스 콘텐츠 기반 마켓 타입 자동 감지
+      detectedMarketType = detectMarketType(context);
+      marketLabel = getMarketLabel();
+      console.log(`[News] 감지된 마켓: ${detectedMarketType} (${marketLabel})`);
 
       const prompt = `전문 금융 애널리스트로서 뉴스 분석.\n\n분석일: ${analysisDate}\n시장: ${marketLabel}\n\n===== 뉴스 =====\n${context}\n====================\n\nJSON 형식으로 응답:\n\`\`\`json\n{"summary": "요약", "key_points": ["포인트"], "market_outlook": {"sentiment": "neutral", "confidence": 70}, "sector_analysis": [], "risk_factors": [], "opportunities": []}\n\`\`\`\n\n${langInstr}`;
       const parsed = parseJson(await callGemini(prompt, 0.2));
@@ -656,9 +805,13 @@ ${isKorean ? "한국어로, 친근한 말투(~해요, ~이에요)로 작성." : 
         sourceType = "youtube_playlist";
         const pl = await getPlaylistVideos(info.playlistId);
         if (!pl.videos.length) throw new Error("No videos in playlist");
-        const video = pl.videos[0];
+        
+        // 분석일에 맞는 영상 찾기
+        const video = await findPlaylistVideoForDate(pl.videos, analysisDate);
+        console.log(`[Playlist] 선택된 영상: ${video.title} (${video.videoId})`);
+        
         sourceUrl = `https://www.youtube.com/watch?v=${video.videoId}`;
-        analysisResult = await analyzeYouTubeVideo(video.videoId, { source_type: "playlist", playlist_id: info.playlistId });
+        analysisResult = await analyzeYouTubeVideo(video.videoId, { source_type: "playlist", playlist_id: info.playlistId, playlist_title: pl.playlistTitle });
 
       } else {
         throw new Error(`Invalid YouTube URL: ${this.youtube_url}`);
