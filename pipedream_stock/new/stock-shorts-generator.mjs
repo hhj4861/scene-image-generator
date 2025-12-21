@@ -70,8 +70,9 @@ export default defineComponent({
     const marketAnalysis = marketData?.analysis || marketData?.market_analysis || marketData || {};
     const videoInfo = marketAnalysis?.video_info || marketData?.video_info || {};
     const analysisDate = marketData?.analysis_date || new Date().toISOString().split("T")[0];
-    const marketLabelMap = { us: "미국", kr: "한국" };
+    const marketLabelMap = { us: "미국", kr: "한국", global: "글로벌" };
     const marketLabel = marketData?.market_label || marketLabelMap[marketData?.market_type] || "글로벌";
+    console.log(`📍 마켓 레이블: ${marketLabel} (type: ${marketData?.market_type})`);
     const keyPointsStructure = marketData?.key_points_structure || marketAnalysis?.key_points_structure || "auto";
     const isWeeklyOutlook = keyPointsStructure === "weekly_outlook";
     if (isWeeklyOutlook) console.log(`📅 [Weekly Outlook 모드] PART1(핵심포인트)만 구성`);
