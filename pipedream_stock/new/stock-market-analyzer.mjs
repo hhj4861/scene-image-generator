@@ -64,8 +64,41 @@ export default defineComponent({
 
   async run({ $ }) {
     const analysisDate = this.analysis_date || new Date().toISOString().split("T")[0];
-    const marketLabel = { us: "미국", kr: "한국", global: "글로벌" }[this.market_type];
     const isKorean = this.output_language === "korean";
+
+    // 텍스트 내용에 따른 마켓 레벨 자동 감지 함수
+    const detectMarketType = (text) => {
+      if (!text) return this.market_type;
+      const t = text.toLowerCase();
+      
+      // 한국 시장 키워드
+      const krKeywords = ["한국", "코스피", "코스닥", "국내", "원화", "한국증시", "국내증시", "kospi", "kosdaq", "삼성전자", "sk하이닉스", "현대차"];
+      // 미국 시장 키워드
+      const usKeywords = ["미국", "s&p", "나스닥", "다우", "월가", "연준", "fed", "nasdaq", "dow", "wall street", "테슬라", "애플", "마이크로소프트"];
+      
+      const krCount = krKeywords.reduce((cnt, kw) => cnt + (t.split(kw).length - 1), 0);
+      const usCount = usKeywords.reduce((cnt, kw) => cnt + (t.split(kw).length - 1), 0);
+      
+      console.log(`📊 마켓 감지: 한국=${krCount}, 미국=${usCount}`);
+      
+      // 한국 키워드가 압도적으로 많으면 한국
+      if (krCount > usCount * 2) return "kr";
+      // 미국 키워드가 압도적으로 많으면 미국
+      if (usCount > krCount * 2) return "us";
+      // 둘 다 있으면 글로벌
+      if (krCount > 0 && usCount > 0) return "global";
+      // 한국만 있으면 한국
+      if (krCount > 0) return "kr";
+      // 미국만 있으면 미국
+      if (usCount > 0) return "us";
+      // 기본값
+      return this.market_type;
+    };
+
+    // 마켓 레벨 (나중에 텍스트 분석 후 재결정)
+    let detectedMarketType = this.market_type;
+    const getMarketLabel = () => ({ us: "미국", kr: "한국", global: "글로벌" }[detectedMarketType]);
+    let marketLabel = getMarketLabel();
     const langInstr = isKorean ? "한국어로 작성. 친근한 말투(~해요, ~이에요)." : "Write in English.";
 
     // ========== 테스트 모드 ==========
@@ -535,6 +568,12 @@ ${isKorean ? "한국어로, 친근한 말투(~해요, ~이에요)로 작성." : 
       let transcript = transcriptResult.transcript;
       if (transcript.length > maxLen) transcript = transcript.substring(0, maxLen) + "... (생략)";
 
+      // 콘텐츠 기반 마켓 타입 자동 감지
+      const combinedText = `${metadata.title || ""} ${transcript}`;
+      detectedMarketType = detectMarketType(combinedText);
+      marketLabel = getMarketLabel();
+      console.log(`[YouTube] 감지된 마켓: ${detectedMarketType} (${marketLabel})`);
+
       const prompt = buildAnalysisPrompt(transcript, "youtube", metadata);
       const result = await callGemini(prompt);
       const parsed = parseJson(result);
@@ -574,9 +613,15 @@ ${isKorean ? "한국어로, 친근한 말투(~해요, ~이에요)로 작성." : 
       $.export("source", "gcs");
       console.log(`[GCS] 분석 시작: ${content.length}자`);
 
+      // 콘텐츠 기반 마켓 타입 자동 감지
+      detectedMarketType = detectMarketType(content);
+      marketLabel = getMarketLabel();
+      console.log(`[GCS] 감지된 마켓: ${detectedMarketType} (${marketLabel})`);
+
       const prompt = buildAnalysisPrompt(content, "gcs");
       const parsed = parseJson(await callGemini(prompt));
       parsed.gcs_info = { bucket: this.gcs_bucket, file_path: this.gcs_file_path, content_length: content.length };
+      parsed.detected_market = { type: detectedMarketType, label: marketLabel };
       await regenerateKeyPoints(parsed);
       return parsed;
     };
@@ -633,8 +678,9 @@ ${isKorean ? "한국어로, 친근한 말투(~해요, ~이에요)로 작성." : 
     
     const result = { 
       analysis_date: analysisDate, 
-      market_type: this.market_type, 
-      market_label: marketLabel, 
+      market_type: detectedMarketType,  // 자동 감지된 마켓 타입
+      market_label: marketLabel,        // 감지된 마켓 레이블
+      original_market_type: this.market_type,  // 사용자 설정값 (참고용)
       source: sourceType, 
       source_url: sourceUrl, 
       analysis: analysisResult, 
