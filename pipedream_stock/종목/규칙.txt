@@ -1,0 +1,145 @@
+# 종목 분석 영상 제작 프로세스
+
+## 1단계: 음성 추출
+- 원본 영상에서 FFmpeg로 음성 추출
+```bash
+ffmpeg -i video/videoplayback.mp4 -vn -acodec libmp3lame -q:a 2 audio.mp3
+```
+
+## 2단계: Whisper 트랜스크립션
+- OpenAI Whisper API로 음성을 텍스트로 변환
+- `whisper_transcribe.mjs` 실행
+- 결과: `transcript.txt`, `whisper_result.json` (타임스탬프 포함)
+
+## 3단계: 쇼츠 대본 작성
+- 원본 대본을 60~120초 분량으로 요약
+- 핵심 포인트만 추출하여 `shorts_script.txt` 생성
+
+## 4단계: 영상 구간 추출
+- Whisper 타임스탬프를 참고하여 필요한 구간 선정
+- `edit_shorts.sh` 스크립트로 구간별 세그먼트 추출
+```bash
+ffmpeg -y -ss [시작시간] -to [종료시간] -i "$VIDEO" -c copy "$TEMP_DIR/seg01.mp4"
+```
+
+## 5단계: 세그먼트 파일 정리
+- 추출된 세그먼트를 scene 파일로 복사
+```bash
+cp video/temp_segments/seg01.mp4 video/scene1.mp4
+```
+
+## 6단계: vedio_script.json 생성
+- `script/vedio_script.json` 파일 생성
+- 각 씬별 대사, 타임스탬프 자막 정의
+- 형식 참고: `pipedream_puppy/땅콩이와버터/3화/script/vedio_script.json`
+
+## 7단계: config.json 생성
+- 프로젝트 설정 파일 생성
+- 필수 항목:
+  - project_name, project_id
+  - title (korean, english)
+  - footer (korean, english)
+  - scene_count
+  - video_file_pattern
+  - timed_subtitles (전체 영상 기준 타임스탬프)
+  - layout, font_settings
+- 형식 참고: `pipedream_puppy/땅콩이와버터/3화/config.json`
+
+## 8단계: FFmpeg VM 렌더링
+- `combine-ffmpeg-vm.cjs`로 최종 영상 렌더링
+```bash
+cd pipedream_puppy
+node combine-ffmpeg-vm.cjs "../pipedream_stock/종목/[종목명]"
+```
+- 결과: GCS에 업로드된 최종 영상 URL이 `output_url.txt`에 저장
+
+---
+
+## 폴더 구조
+```
+pipedream_stock/종목/[종목명]/
+├── audio.mp3                    # 추출된 음성
+├── transcript.txt               # Whisper 변환 텍스트
+├── whisper_result.json          # Whisper 결과 (타임스탬프)
+├── shorts_script.txt            # 쇼츠용 요약 대본
+├── edit_shorts.sh               # 영상 편집 스크립트
+├── config.json                  # 프로젝트 설정
+├── output_url.txt               # 최종 영상 URL
+├── script/
+│   └── vedio_script.json        # 씬별 대본
+├── video/
+│   ├── videoplayback.mp4        # 원본 영상
+│   ├── scene1.mp4 ~ sceneN.mp4  # 씬별 영상
+│   ├── shorts_60s.mp4           # 단순 병합본
+│   └── temp_segments/           # 임시 세그먼트
+└── whisper_transcribe.mjs       # Whisper 스크립트
+```
+
+---
+
+## 자막 규칙
+
+### 1. 자막 내용
+- **자막은 원본 음성 내용을 그대로 노출**해야 함
+- 요약하거나 축약하지 않고, 실제 말하는 내용 그대로 표시
+- 영어 자막은 완전한 영어로 번역 (한글 단어 섞이면 안됨)
+  - 예: "달러" → "dollars", "퍼센트" → "percent"
+
+### 2. 자막 길이 분리
+- 자막 텍스트가 영상 너비(720px)를 초과하면 **반드시 분리**
+- 한글 기준 약 25~30자 이내로 분리
+- 분리 시 의미 단위로 끊어서 자연스럽게 연결
+
+**분리 예시:**
+```
+// 원본 (너무 김)
+"보수적으로 보는 쪽은 155달러에서 165달러 정도가 괜찮은 매수 구간이라고 보고요"
+
+// 분리 후
+자막1: "보수적으로 보는 쪽은 155달러에서 165달러 정도가"
+자막2: "괜찮은 매수 구간이라고 보고요"
+```
+
+### 3. 타임스탬프 설정
+- 각 자막의 start/end 시간은 실제 음성 타이밍과 일치해야 함
+- 자막 분리 시 각각 다른 타임스탬프 부여
+
+---
+
+## 참고 사항
+- Whisper가 Gemini보다 한국어 정확도 높음
+- 자막 색상 권장:
+  - 0x87CEEB (하늘색): 일반/도입
+  - 0xFFD700 (금색): 성장/포인트
+  - 0x98FB98 (연두색): 긍정/전략
+  - 0xFF6B6B (빨강): 위험/경고
+- 영상 해상도: 720x1280 (세로 9:16)
+
+---
+
+## YouTube 메타데이터
+
+### config.json에 youtube_metadata 필드 추가
+```json
+"youtube_metadata": {
+  "title": "영상 제목 #shorts",
+  "description": "영상 설명...",
+  "hashtags": ["해시태그1", "해시태그2", ...]
+}
+```
+
+### 제목 작성 규칙
+- 호기심 유발하는 질문형 또는 강렬한 문구
+- 핵심 키워드 포함 (종목명, 수치 등)
+- 끝에 `#shorts` 추가
+
+### 설명 작성 규칙
+- 영상 핵심 내용 요약 (수치 포함)
+- 위험 요소와 전략 포인트 명시
+- 마지막에 투자 면책 문구 추가
+  - 예: "※ 본 영상은 투자 권유가 아닌 정보 공유 목적입니다."
+
+### 해시태그 권장
+- 종목 관련: 종목명(한글/영문), 티커
+- 카테고리: 미국주식, AI주식, 성장주, 테크주
+- 일반: shorts, 주식투자, 주식분석, 투자전략

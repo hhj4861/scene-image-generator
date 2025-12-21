@@ -1,0 +1,172 @@
+{
+  "$return_value": {
+    "folder_name": "w52_korea_market",
+    "total_scenes": 10,
+    "script_format": "stock_analysis",
+    "content_type": "market_outlook",
+    "resolution": "1080p",
+    "episode": "W52 한국증시 전망",
+    "scenes": [
+      {
+        "video": 1,
+        "title": "산타랠리 질문",
+        "duration_seconds": 15.32,
+        "has_audio": true,
+        "dialogue": {
+          "script": "맞습니다. 코스피가 벌써 4천을 코앞에 두고 있죠. 근데 진짜 궁금한 건 이거잖아요. 그래서 올해 산타랠리, 오는 거야, 마는 거야? 바로 이번 주가 그 중요한 방향을 결정짓는 분수령이 될 겁니다.",
+          "script_english": "KOSPI is already near 4000 points. But the real question is: will the Santa rally come this year or not? This week will be the watershed moment."
+        },
+        "timed_subtitles": [
+          { "start": 0.00, "end": 4.10, "korean": "맞습니다. 코스피가 벌써 4천을 코앞에 두고 있죠.", "english": "KOSPI is already near 4000 points.", "speaker": "narrator" },
+          { "start": 4.10, "end": 7.60, "korean": "근데 진짜 궁금한 건 이거잖아요.", "english": "But the real question is this.", "speaker": "narrator" },
+          { "start": 7.60, "end": 10.30, "korean": "그래서 올해 산타랠리, 오는 거야, 마는 거야?", "english": "Will the Santa rally come or not?", "speaker": "narrator" },
+          { "start": 10.30, "end": 15.00, "korean": "바로 이번 주가 그 중요한 방향을 결정짓는 분수령이 될 겁니다.", "english": "This week will be the watershed moment.", "speaker": "narrator" }
+        ]
+      },
+      {
+        "video": 2,
+        "title": "지난주 증시 정리",
+        "duration_seconds": 19.52,
+        "has_audio": true,
+        "dialogue": {
+          "script": "지난주 시장은요. 정말 팽팽한 줄다리기 그 자체였습니다. 한쪽에서는 이거 AI 너무 과열된 거 아니야? 하는 거품 우려가 있었고요. 다른 한쪽에서는 아 이제 인플레이션은 잡히는구나 하는 안도감이 있었죠. 이 두 힘이 4천선 앞에서 정말 치열하게 맞붙었습니다.",
+          "script_english": "Last week's market was a tense tug-of-war. On one side, concerns about AI bubble, on the other, relief that inflation is being controlled. These two forces clashed fiercely at the 4000 level."
+        },
+        "timed_subtitles": [
+          { "start": 0.00, "end": 5.00, "korean": "지난주 시장은요. 정말 팽팽한 줄다리기 그 자체였습니다.", "english": "Last week was a tense tug-of-war.", "speaker": "narrator" },
+          { "start": 5.00, "end": 10.00, "korean": "한쪽에서는 AI 너무 과열된 거 아니야? 하는 거품 우려가 있었고요.", "english": "One side had AI bubble concerns.", "speaker": "narrator" },
+          { "start": 10.00, "end": 15.00, "korean": "다른 한쪽에서는 아 이제 인플레이션은 잡히는구나 하는 안도감이 있었죠.", "english": "The other had relief about inflation control.", "speaker": "narrator" },
+          { "start": 15.00, "end": 19.50, "korean": "이 두 힘이 4천선 앞에서 정말 치열하게 맞붙었습니다.", "english": "These forces clashed at the 4000 level.", "speaker": "narrator" }
+        ]
+      },
+      {
+        "video": 3,
+        "title": "예상 밴드",
+        "duration_seconds": 13.22,
+        "has_audio": true,
+        "dialogue": {
+          "script": "증권가에서 내놓은 이번 주, 52주 차 코스피 예상 밴드가 바로 3850에서 4200 포인트 사이입니다. 여기가 바로 앞으로 며칠 동안 우리가 지켜봐야 할 주된 전쟁터가 되는 셈이죠.",
+          "script_english": "Week 52 KOSPI forecast: 3850 to 4200 points. This is the main battlefield for the next few days."
+        },
+        "timed_subtitles": [
+          { "start": 0.00, "end": 6.50, "korean": "증권가에서 내놓은 이번 주, 52주 차 코스피 예상 밴드가 바로 3850에서 4200 포인트 사이입니다.", "english": "Week 52 KOSPI forecast: 3850 to 4200 points.", "speaker": "narrator" },
+          { "start": 6.50, "end": 13.00, "korean": "여기가 바로 앞으로 며칠 동안 우리가 지켜봐야 할 주된 전쟁터가 되는 셈이죠.", "english": "This is the main battlefield for days ahead.", "speaker": "narrator" }
+        ]
+      },
+      {
+        "video": 4,
+        "title": "두 가지 관문",
+        "duration_seconds": 21.02,
+        "has_audio": true,
+        "dialogue": {
+          "script": "산타랠리로 가는 길에 두 개의 아주 중요한 관문이 있습니다. 체크 포인트 같은 거죠. 이 두 날짜는 달력에 꼭 표시해 두셔야 해요. 바로 12월 22일에 있을 미국 PCE 물가지수 발표, 그리고 또 하나는 12월 26일 대주주 양도세랑 배당 기준일입니다. 이 두 가지 이벤트가 이번 주 시장의 흐름을 좌우할 가장 큰 변수가 될 겁니다.",
+          "script_english": "Two crucial checkpoints on the road to Santa rally. Mark these dates: December 22 US PCE index, December 26 tax and dividend record date."
+        },
+        "timed_subtitles": [
+          { "start": 0.00, "end": 5.00, "korean": "산타랠리로 가는 길에 두 개의 아주 중요한 관문이 있습니다.", "english": "Two crucial checkpoints to Santa rally.", "speaker": "narrator" },
+          { "start": 5.00, "end": 10.00, "korean": "이 두 날짜는 달력에 꼭 표시해 두셔야 해요.", "english": "Mark these dates on your calendar.", "speaker": "narrator" },
+          { "start": 10.00, "end": 15.50, "korean": "바로 12월 22일 미국 PCE 물가지수 발표, 12월 26일 대주주 양도세랑 배당 기준일입니다.", "english": "December 22 US PCE, December 26 tax and dividend date.", "speaker": "narrator" },
+          { "start": 15.50, "end": 21.00, "korean": "이 두 가지 이벤트가 이번 주 시장의 흐름을 좌우할 가장 큰 변수가 될 겁니다.", "english": "These will be the biggest variables this week.", "speaker": "narrator" }
+        ]
+      },
+      {
+        "video": 5,
+        "title": "PCE 중요성",
+        "duration_seconds": 15.02,
+        "has_audio": true,
+        "dialogue": {
+          "script": "이게 왜 중요하냐면요. 미 연준이 물가를 볼 때 가장 신뢰하는 지표 중 하나거든요. 따라서 이 숫자가 시장 기대치랑 얼마나 차이나느냐에 따라서 기술주에 대한 투자심리가 확 살아나거나 아니면 확 얼어붙을 수 있습니다.",
+          "script_english": "Why is this important? It's the Fed's most trusted inflation indicator. Tech sentiment could soar or freeze based on this number."
+        },
+        "timed_subtitles": [
+          { "start": 0.00, "end": 6.00, "korean": "이게 왜 중요하냐면요. 미 연준이 물가를 볼 때 가장 신뢰하는 지표 중 하나거든요.", "english": "Why? It's the Fed's most trusted inflation indicator.", "speaker": "narrator" },
+          { "start": 6.00, "end": 15.00, "korean": "이 숫자가 시장 기대치랑 얼마나 차이나느냐에 따라서 기술주에 대한 투자심리가 확 살아나거나 확 얼어붙을 수 있습니다.", "english": "Tech sentiment could soar or freeze based on this.", "speaker": "narrator" }
+        ]
+      },
+      {
+        "video": 6,
+        "title": "세금 영향",
+        "duration_seconds": 12.02,
+        "has_audio": true,
+        "dialogue": {
+          "script": "이날의 기준으로 대주주냐 아니냐가 결정되거든요. 그래서 세금을 좀 피하려는 큰 손들의 매물이 특히 장 막판에 확 쏟아져 나올 수 있다는 점, 이건 꼭 기억하셔야 합니다.",
+          "script_english": "This date determines major shareholder status. Large investors avoiding taxes may dump shares near market close."
+        },
+        "timed_subtitles": [
+          { "start": 0.00, "end": 4.00, "korean": "이날의 기준으로 대주주냐 아니냐가 결정되거든요.", "english": "This date determines major shareholder status.", "speaker": "narrator" },
+          { "start": 4.00, "end": 12.00, "korean": "세금을 피하려는 큰 손들의 매물이 장 막판에 확 쏟아져 나올 수 있다는 점, 꼭 기억하셔야 합니다.", "english": "Large investors may dump shares near close to avoid taxes.", "speaker": "narrator" }
+        ]
+      },
+      {
+        "video": 7,
+        "title": "보물 지도 전환",
+        "duration_seconds": 10.52,
+        "has_audio": true,
+        "dialogue": {
+          "script": "자 지금까지는 우리가 좀 조심해야 할 것들, 넘어야 할 산에 대해서 얘기를 나눴잖아요. 그럼 이제부터는 좀 신나는 얘기를 해보죠. 바로 보물 지도를 한번 펼쳐볼 시간입니다. 이런 불확실성 속에서도 기회는 분명히 있으니까요.",
+          "script_english": "So far we talked about risks. Now let's talk about opportunities. Time to open the treasure map. Even in uncertainty, opportunities exist."
+        },
+        "timed_subtitles": [
+          { "start": 0.00, "end": 3.00, "korean": "자 지금까지는 조심해야 할 것들에 대해서 얘기를 나눴잖아요.", "english": "So far we talked about risks.", "speaker": "narrator" },
+          { "start": 3.00, "end": 6.50, "korean": "그럼 이제부터는 좀 신나는 얘기를 해보죠.", "english": "Now let's talk about exciting things.", "speaker": "narrator" },
+          { "start": 6.50, "end": 10.50, "korean": "바로 보물 지도를 한번 펼쳐볼 시간입니다.", "english": "Time to open the treasure map.", "speaker": "narrator" }
+        ]
+      },
+      {
+        "video": 8,
+        "title": "투자 기회 1",
+        "duration_seconds": 22.02,
+        "has_audio": true,
+        "dialogue": {
+          "script": "첫 번째 보물이 숨겨진 곳은 바로 성장주 그리고 정책 관련 테마입니다. 특히 요즘 가장 핫한 AI 반도체, 그 중에서도 HBM, 이쪽의 메가사이클은 뭐 계속해서 지켜봐야겠죠. 그리고 또 정보 정책 방향에 따라서 로봇이나 에너지 저장장치, ESS 같은 분야도 언제든 주목받을 수 있습니다.",
+          "script_english": "First treasure: growth stocks and policy themes. Especially AI semiconductors, HBM mega cycle. Also robots and ESS could get attention based on policy direction."
+        },
+        "timed_subtitles": [
+          { "start": 0.00, "end": 6.00, "korean": "첫 번째 보물이 숨겨진 곳은 바로 성장주 그리고 정책 관련 테마입니다.", "english": "First treasure: growth stocks and policy themes.", "speaker": "narrator" },
+          { "start": 6.00, "end": 14.00, "korean": "특히 요즘 가장 핫한 AI 반도체, 그 중에서도 HBM, 이쪽의 메가사이클은 계속해서 지켜봐야겠죠.", "english": "Especially AI semiconductors, particularly HBM mega cycle.", "speaker": "narrator" },
+          { "start": 14.00, "end": 22.00, "korean": "그리고 정책 방향에 따라서 로봇이나 에너지 저장장치, ESS 같은 분야도 언제든 주목받을 수 있습니다.", "english": "Robots and ESS could also get attention based on policy.", "speaker": "narrator" }
+        ]
+      },
+      {
+        "video": 9,
+        "title": "투자 기회 2",
+        "duration_seconds": 16.02,
+        "has_audio": true,
+        "dialogue": {
+          "script": "두 번째 보물 지도는 가치와 모멘텀 플레이입니다. 특히 연말되면 늘 그렇듯이 세금 혜택이 있는 고배당주들, 이거 빼놓을 수 없죠. 그리고 최근에 기술 수출 소식으로 분위기가 아주 도운 제약, 바이오 섹터도 강력한 모멘텀을 받고 있어서 시장의 한축이 될 가능성이 충분합니다.",
+          "script_english": "Second treasure: value and momentum plays. High dividend stocks with tax benefits. Pharma and bio sectors have strong momentum from tech export news."
+        },
+        "timed_subtitles": [
+          { "start": 0.00, "end": 4.00, "korean": "두 번째 보물 지도는 가치와 모멘텀 플레이입니다.", "english": "Second treasure: value and momentum plays.", "speaker": "narrator" },
+          { "start": 4.00, "end": 9.00, "korean": "특히 연말되면 늘 그렇듯이 세금 혜택이 있는 고배당주들, 이거 빼놓을 수 없죠.", "english": "High dividend stocks with tax benefits are essential.", "speaker": "narrator" },
+          { "start": 9.00, "end": 16.00, "korean": "그리고 최근에 기술 수출 소식으로 분위기가 아주 도운 제약, 바이오 섹터도 강력한 모멘텀을 받고 있습니다.", "english": "Pharma and bio have strong momentum from tech export news.", "speaker": "narrator" }
+        ]
+      },
+      {
+        "video": 10,
+        "title": "마무리 비유",
+        "duration_seconds": 53.02,
+        "has_audio": true,
+        "dialogue": {
+          "script": "자 그럼 지금까지 나온 이 모든 이야기들을 딱 한 문장으로 아주 기억하기 쉽게 정리해드릴게요. 이게 이번 주 시장을 관통하는 핵심 비유가 될 겁니다. 바로 이겁니다. 크리스마스 파티 직전에 대청소. 어떠세요? 지금 시장 상황을 정말 절묘하게 표현하지 않나요? 다시 한번 생각해보세요. 파티 전 대청소. 이게 무슨 말이냐면요. 곧 열릴 파티, 그러니까 산타랠리에 대한 기대감과 설렘은 분명히 있어요. 그런데 동시에 파티를 제대로 즐기려면 집 정리를 싹 해야 하잖아요. 마찬가지로 우리 포트폴리오에서 불필요한 것들을 털어내고 정리해야 하는 시기라는 거죠. 희망과 정리가 공존하는 딱 그런 시간입니다. 여러분의 포트폴리오는 과연 이 멋진 연말 파티를 맞이할 준비가 다 되셨나요?",
+          "script_english": "Let me summarize everything in one phrase: Cleaning before the Christmas party. The Santa rally excitement is there, but we need to clean our portfolios first. Hope and cleanup coexist. Is your portfolio ready for the year-end party?"
+        },
+        "timed_subtitles": [
+          { "start": 0.00, "end": 5.00, "korean": "지금까지 나온 이 모든 이야기들을 딱 한 문장으로 정리해드릴게요.", "english": "Let me summarize everything in one phrase.", "speaker": "narrator" },
+          { "start": 5.00, "end": 10.00, "korean": "이게 이번 주 시장을 관통하는 핵심 비유가 될 겁니다.", "english": "This will be the key metaphor for this week's market.", "speaker": "narrator" },
+          { "start": 10.00, "end": 15.00, "korean": "바로 이겁니다. 크리스마스 파티 직전에 대청소.", "english": "Here it is: Cleaning before the Christmas party.", "speaker": "narrator" },
+          { "start": 15.00, "end": 22.00, "korean": "어떠세요? 지금 시장 상황을 정말 절묘하게 표현하지 않나요? 파티 전 대청소.", "english": "Doesn't it perfectly describe the market? Cleaning before the party.", "speaker": "narrator" },
+          { "start": 22.00, "end": 30.00, "korean": "이게 무슨 말이냐면요. 곧 열릴 파티, 그러니까 산타랠리에 대한 기대감과 설렘은 분명히 있어요.", "english": "The excitement for the Santa rally party is definitely there.", "speaker": "narrator" },
+          { "start": 30.00, "end": 38.00, "korean": "그런데 동시에 파티를 제대로 즐기려면 집 정리를 싹 해야 하잖아요.", "english": "But to enjoy the party, we need to clean up first.", "speaker": "narrator" },
+          { "start": 38.00, "end": 45.00, "korean": "마찬가지로 우리 포트폴리오에서 불필요한 것들을 털어내고 정리해야 하는 시기라는 거죠.", "english": "Similarly, it's time to clean up our portfolios.", "speaker": "narrator" },
+          { "start": 45.00, "end": 48.00, "korean": "희망과 정리가 공존하는 딱 그런 시간입니다.", "english": "A time when hope and cleanup coexist.", "speaker": "narrator" },
+          { "start": 48.00, "end": 53.00, "korean": "여러분의 포트폴리오는 과연 이 멋진 연말 파티를 맞이할 준비가 다 되셨나요?", "english": "Is your portfolio ready for the year-end party?", "speaker": "narrator" }
+        ]
+      }
+    ],
+    "whisper_transcription": {
+      "full_text": "W52 한국증시 전망",
+      "total_duration": 197.72
+    }
+  }
+}

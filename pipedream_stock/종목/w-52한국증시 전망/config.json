@@ -1,0 +1,108 @@
+{
+  "project_name": "W52_한국증시_전망",
+  "project_id": "w52_korea_market",
+  "title": {
+    "korean": "산타랠리, 오는 거야 마는 거야?",
+    "english": "Santa Rally: Coming or Not?"
+  },
+  "footer": {
+    "korean": "투자 정보 공유",
+    "english": "Investment Information Sharing"
+  },
+  "bgm_url": "",
+  "bgm_volume": 0.1,
+  "bgm_volume_no_audio": 0.5,
+  "profile_card_config": {
+    "baseY": 580,
+    "lineHeight": 40,
+    "headerFontSize": 30,
+    "itemFontSize": 20,
+    "maxChars": 30,
+    "rightMargin": 150
+  },
+  "scene_count": 9,
+  "video_file_pattern": "scene{index}.mp4",
+  "subtitle_timing_mode": "timed",
+  "force_vertical": true,
+  "video_scale_mode": "fit",
+  "timed_subtitles": [
+    { "start_time": 0.00, "end_time": 3.70, "text_ko": "올해 산타랠리, 오는 거야, 마는 거야?", "text_en": "Will the Santa rally come or not?", "color": "0xFFD700" },
+    { "start_time": 3.70, "end_time": 8.70, "text_ko": "이번 주가 중요한 방향을 결정짓는 분수령", "text_en": "This week is the watershed moment", "color": "0xFFD700" },
+
+    { "start_time": 8.72, "end_time": 13.70, "text_ko": "지난주 시장은 정말 팽팽한 줄다리기 그 자체", "text_en": "Last week was a tense tug-of-war", "color": "0x87CEEB" },
+    { "start_time": 13.70, "end_time": 18.70, "text_ko": "AI 거품 우려 vs 인플레이션 안도감", "text_en": "AI bubble concerns vs inflation relief", "color": "0x87CEEB" },
+    { "start_time": 18.70, "end_time": 23.70, "text_ko": "다른 한쪽에서는 인플레이션은 잡히는구나", "text_en": "The other side: inflation is controlled", "color": "0x87CEEB" },
+    { "start_time": 23.70, "end_time": 28.20, "text_ko": "이 두 힘이 4천선 앞에서 치열하게 맞붙었습니다", "text_en": "These forces clashed at the 4000 level", "color": "0x87CEEB" },
+
+    { "start_time": 28.24, "end_time": 33.20, "text_ko": "산타랠리로 가는 길에 두 개의 중요한 관문", "text_en": "Two crucial checkpoints to Santa rally", "color": "0xFF6B6B" },
+    { "start_time": 33.20, "end_time": 38.20, "text_ko": "이 두 날짜는 달력에 꼭 표시하세요", "text_en": "Mark these dates on your calendar", "color": "0xFF6B6B" },
+    { "start_time": 38.20, "end_time": 43.70, "text_ko": "12월 22일 미국 PCE 물가지수 발표", "text_en": "December 22: US PCE index release", "color": "0xFFD700" },
+    { "start_time": 43.70, "end_time": 49.20, "text_ko": "12월 26일 대주주 양도세, 배당 기준일", "text_en": "December 26: Tax and dividend record date", "color": "0xFFD700" },
+
+    { "start_time": 49.26, "end_time": 55.20, "text_ko": "미 연준이 물가를 볼 때 가장 신뢰하는 지표", "text_en": "The Fed's most trusted inflation indicator", "color": "0x87CEEB" },
+    { "start_time": 55.20, "end_time": 64.20, "text_ko": "기술주 투자심리가 확 살거나 얼어붙을 수 있음", "text_en": "Tech sentiment could soar or freeze", "color": "0xFF6B6B" },
+
+    { "start_time": 64.28, "end_time": 68.20, "text_ko": "이날 기준으로 대주주냐 아니냐가 결정", "text_en": "This date determines major shareholder status", "color": "0xFF6B6B" },
+    { "start_time": 68.20, "end_time": 76.20, "text_ko": "큰 손들의 매물이 장 막판에 쏟아질 수 있음", "text_en": "Large investors may dump shares near close", "color": "0xFF6B6B" },
+
+    { "start_time": 76.30, "end_time": 79.20, "text_ko": "지금까지는 조심해야 할 것들에 대해 얘기했죠", "text_en": "So far we talked about risks", "color": "0x87CEEB" },
+    { "start_time": 79.20, "end_time": 82.70, "text_ko": "이제부터는 좀 신나는 얘기를 해보죠", "text_en": "Now let's talk about exciting things", "color": "0x87CEEB" },
+    { "start_time": 82.70, "end_time": 86.80, "text_ko": "바로 보물 지도를 펼쳐볼 시간입니다", "text_en": "Time to open the treasure map", "color": "0xFFD700" },
+
+    { "start_time": 86.82, "end_time": 92.80, "text_ko": "첫 번째 보물: 성장주, 정책 관련 테마", "text_en": "First treasure: Growth stocks, policy themes", "color": "0x98FB98" },
+    { "start_time": 92.80, "end_time": 100.80, "text_ko": "AI 반도체, 특히 HBM 메가사이클 주목", "text_en": "Watch AI semiconductors, especially HBM", "color": "0x98FB98" },
+    { "start_time": 100.80, "end_time": 108.80, "text_ko": "로봇, ESS 같은 분야도 정책에 따라 주목", "text_en": "Robots and ESS could get attention based on policy", "color": "0x98FB98" },
+
+    { "start_time": 108.84, "end_time": 112.80, "text_ko": "두 번째 보물: 가치와 모멘텀 플레이", "text_en": "Second treasure: Value and momentum plays", "color": "0x98FB98" },
+    { "start_time": 112.80, "end_time": 117.80, "text_ko": "세금 혜택이 있는 고배당주", "text_en": "High dividend stocks with tax benefits", "color": "0x98FB98" },
+    { "start_time": 117.80, "end_time": 124.80, "text_ko": "제약, 바이오 섹터도 강력한 모멘텀", "text_en": "Pharma and bio have strong momentum", "color": "0x98FB98" },
+
+    { "start_time": 124.70, "end_time": 127.70, "text_ko": "이번 주 시장을 관통하는 핵심 비유", "text_en": "The key metaphor for this week's market", "color": "0xFFD700" },
+    { "start_time": 127.70, "end_time": 132.70, "text_ko": "바로 이겁니다. 크리스마스 파티 직전에 대청소", "text_en": "Here it is: Cleaning before the Christmas party", "color": "0xFFD700" },
+    { "start_time": 132.70, "end_time": 139.70, "text_ko": "산타랠리에 대한 기대감과 설렘은 분명히 있어요", "text_en": "The excitement for Santa rally is there", "color": "0x87CEEB" },
+    { "start_time": 139.70, "end_time": 143.70, "text_ko": "희망과 정리가 공존하는 딱 그런 시간입니다", "text_en": "A time when hope and cleanup coexist", "color": "0xFFD700" },
+    { "start_time": 143.70, "end_time": 154.70, "text_ko": "여러분의 포트폴리오는 연말 파티를 맞이할 준비가 되셨나요?", "text_en": "Is your portfolio ready for the year-end party?", "color": "0xFFD700" }
+  ],
+  "layout": {
+    "header_y": 220,
+    "header_height": 130,
+    "video_area_y": 180,
+    "video_area_height": 850,
+    "subtitle_y": 900,
+    "footer_y": 950,
+    "footer_height": 110
+  },
+  "youtube_metadata": {
+    "title": "산타랠리, 오는 거야 마는 거야? 코스피 4000 돌파? #shorts",
+    "description": "W52 한국증시 전망\n\n지난주 시장: AI 거품 우려 vs 인플레이션 안도감\n두 힘이 4천선 앞에서 치열하게 맞붙었습니다\n\n중요 체크포인트:\n- 12월 22일: 미국 PCE 물가지수 발표\n- 12월 26일: 대주주 양도세, 배당 기준일\n\n투자 기회:\n1. 성장주/정책 테마: AI 반도체, HBM, 로봇, ESS\n2. 가치/모멘텀: 고배당주, 제약/바이오\n\n크리스마스 파티 직전 대청소!\n희망과 정리가 공존하는 시간입니다.\n\n여러분의 포트폴리오는 연말 파티를 맞이할 준비가 되셨나요?\n\n※ 본 영상은 투자 권유가 아닌 정보 공유 목적입니다.",
+    "hashtags": "#코스피, #산타랠리, #한국증시, #주식투자, #PCE, #HBM, #AI반도체, #성장주, #배당주, #바이오, #로봇, #ESS, #shorts, #주식분석, #투자전략, #연말증시"
+  },
+  "font_settings": {
+    "header_korean": {
+      "font": "NanumSquareRoundOTFEB",
+      "size": 58
+    },
+    "header_english": {
+      "font": "NotoSerif-Regular",
+      "size": 30,
+      "y_offset": 75
+    },
+    "subtitle_korean": {
+      "font": "NanumSquareRoundOTFEB",
+      "size": 32,
+      "max_lines": 1
+    },
+    "subtitle_english": {
+      "font": "NotoSerif-Regular",
+      "size": 24,
+      "max_lines": 1
+    },
+    "footer_korean": {
+      "size": 44
+    },
+    "footer_english": {
+      "size": 22,
+      "y_offset": 65
+    }
+  }
+}
