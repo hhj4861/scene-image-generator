@@ -47,8 +47,15 @@ export default defineComponent({
     num_tickers: {
       type: "integer",
       label: "추천 종목 수",
-      description: "섹터당 추천할 종목 개수 (3-5개)",
-      default: 3,
+      description: "총 추천할 종목 개수 (기본: 10개, FMP 부족 시 LLM으로 보충)",
+      default: 10,
+      optional: true,
+    },
+    top_picks_count: {
+      type: "integer",
+      label: "Top Picks 수",
+      description: "최종 선별할 상위 종목 수 (conviction_score 순)",
+      default: 2,
       optional: true,
     },
     analysis_criteria: {
@@ -222,6 +229,28 @@ export default defineComponent({
       } catch (e) {
         console.log("Failed to parse market_analysis_output:", e.message);
       }
+    }
+
+    // ==========================================
+    // ★ Weekly Outlook 모드: 종목 분석 스킵
+    // ==========================================
+    if (marketData?.skip_ticker_analysis === true) {
+      const skipReason = marketData?.key_points_structure === "weekly_outlook" 
+        ? "Weekly Outlook 모드 - 종목 분석 불필요" 
+        : "Market Analyzer에서 종목 분석 스킵 플래그 설정됨";
+      console.log(`⏭️ [SKIP] ${skipReason}`);
+      
+      const skipResult = {
+        skipped: true,
+        skip_reason: skipReason,
+        key_points_structure: marketData?.key_points_structure,
+        analysis_date: marketData?.analysis_date || new Date().toISOString().split("T")[0],
+        market_type: marketData?.market_type,
+        recommended_tickers: [],
+        top_picks: [],
+      };
+      $.export("ticker_analysis", skipResult);
+      return skipResult;
     }
 
     const marketType = sectorData?.market_type || marketData?.market_type || this.market_type || "us";
@@ -1061,6 +1090,155 @@ ${this.output_language === "korean" ? "모든 내용은 한국어로 작성해�
       console.log(`[Quality Filter] ${skippedByQuality}개 종목 제외 (낮은 conviction_score 또는 Watch/Hold/Sell)`);
     }
 
+    // ==========================================
+    // conviction_score 조정 (리스크, 검증 여부 반영)
+    // ==========================================
+    const SCORE_ADJUSTMENT = {
+      unverified_penalty: 10,       // 미검증 종목 -10점
+      risk_penalty_per_item: 3,     // 리스크 1개당 -3점
+      max_risk_penalty: 15,         // 리스크 감점 최대 -15점
+      fmp_data_missing_penalty: 5,  // FMP 재무데이터 null 시 -5점
+    };
+
+    filteredTickers = filteredTickers.map(ticker => {
+      const originalScore = ticker.conviction_score || ticker.score || 0;
+      let adjustedScore = originalScore;
+      const adjustmentReasons = [];
+
+      // 1. 미검증 종목 감점
+      if (!ticker._verified) {
+        adjustedScore -= SCORE_ADJUSTMENT.unverified_penalty;
+        adjustmentReasons.push(`미검증 -${SCORE_ADJUSTMENT.unverified_penalty}점`);
+      }
+
+      // 2. 리스크 개수에 따른 감점
+      const risks = ticker.risks || [];
+      if (risks.length > 0) {
+        const riskPenalty = Math.min(
+          risks.length * SCORE_ADJUSTMENT.risk_penalty_per_item,
+          SCORE_ADJUSTMENT.max_risk_penalty
+        );
+        adjustedScore -= riskPenalty;
+        adjustmentReasons.push(`리스크 ${risks.length}개 -${riskPenalty}점`);
+      }
+
+      // 3. FMP 데이터 불완전 시 감점 (pe_ratio, revenue_growth 등이 null)
+      if (ticker.fmp_verified && ticker.fmp_data) {
+        const criticalFields = ['pe_ratio', 'revenue_growth', 'earnings_growth'];
+        const missingFields = criticalFields.filter(f => 
+          ticker.fmp_data[f] === null || ticker.fmp_data[f] === undefined
+        );
+        if (missingFields.length >= 2) {
+          adjustedScore -= SCORE_ADJUSTMENT.fmp_data_missing_penalty;
+          adjustmentReasons.push(`재무데이터 불완전 -${SCORE_ADJUSTMENT.fmp_data_missing_penalty}점`);
+        }
+      }
+
+      // 최소 점수 보장 (0 이상)
+      adjustedScore = Math.max(0, adjustedScore);
+
+      if (adjustmentReasons.length > 0) {
+        console.log(`[Score Adjust] ${ticker.ticker}: ${originalScore}점 → ${adjustedScore}점 (${adjustmentReasons.join(", ")})`);
+      }
+
+      return {
+        ...ticker,
+        conviction_score_original: originalScore,
+        conviction_score: adjustedScore,
+        conviction_score_adjustment: adjustmentReasons.length > 0 ? adjustmentReasons.join(", ") : null,
+      };
+    });
+
+    // 조정 후 70점 미만 종목 재필터링
+    const beforeRefilter = filteredTickers.length;
+    filteredTickers = filteredTickers.filter(t => t.conviction_score >= RECOMMENDATION_FILTER.min_conviction_score);
+    const refiltered = beforeRefilter - filteredTickers.length;
+    if (refiltered > 0) {
+      console.log(`[Score Adjust] 조정 후 ${refiltered}개 종목 제외 (조정 점수 < 70)`);
+    }
+
+    // ==========================================
+    // 종목 수 부족 시 LLM으로 추가 조회
+    // ==========================================
+    const targetTickerCount = this.num_tickers || 10;
+    if (filteredTickers.length < targetTickerCount) {
+      const needed = targetTickerCount - filteredTickers.length;
+      console.log(`[LLM Supplement] 종목 ${filteredTickers.length}개 < 목표 ${targetTickerCount}개. ${needed}개 추가 조회 중...`);
+      
+      const existingTickers = filteredTickers.map(t => t.ticker?.toUpperCase());
+      const supplementPrompt = `
+당신은 전문 주식 애널리스트입니다. 다음 섹터에서 추가로 ${needed}개의 유망 종목을 추천해주세요.
+
+===== 분석 조건 =====
+시장: ${marketLabel}
+분석일: ${analysisDate}
+분석한 섹터: ${sortedResults.map(r => r.sector_name).join(", ")}
+이미 추천된 종목 (제외): ${existingTickers.join(", ")}
+
+★★★ 중요 ★★★
+1. 위에 이미 추천된 종목은 절대 중복 추천하지 마세요!
+2. conviction_score는 70~100 사이로 솔직하게 평가하세요.
+3. 반드시 정확히 ${needed}개 종목을 추천하세요!
+
+다음 JSON 형식으로 응답하세요:
+\`\`\`json
+{
+  "supplementary_tickers": [
+    {
+      "ticker": "티커",
+      "company_name": "회사명",
+      "company_name_kr": "한글 회사명",
+      "sector": "섹터명",
+      "recommendation": "Buy/Strong Buy",
+      "conviction_score": 75,
+      "investment_thesis": "투자 논거",
+      "data_source": "LLM_SUPPLEMENT"
+    }
+  ]
+}
+\`\`\`
+`;
+
+      try {
+        const supplementResult = await callLLM(supplementPrompt, 0.3);
+        let supplementParsed;
+        try {
+          const jsonMatch = supplementResult.match(/```json\s*([\s\S]*?)\s*```/);
+          supplementParsed = JSON.parse(jsonMatch ? jsonMatch[1] : supplementResult);
+        } catch (e) {
+          supplementParsed = { supplementary_tickers: [] };
+        }
+
+        if (supplementParsed.supplementary_tickers && supplementParsed.supplementary_tickers.length > 0) {
+          const validSupplements = supplementParsed.supplementary_tickers
+            .filter(t => !existingTickers.includes(t.ticker?.toUpperCase()))
+            .map(t => {
+              const originalScore = t.conviction_score || 0;
+              // LLM Supplement 종목은 미검증이므로 -10점 자동 적용
+              const adjustedScore = Math.max(0, originalScore - SCORE_ADJUSTMENT.unverified_penalty);
+              
+              console.log(`[LLM Supplement Score] ${t.ticker}: ${originalScore}점 → ${adjustedScore}점 (미검증 -${SCORE_ADJUSTMENT.unverified_penalty}점)`);
+              
+              return {
+                ...t,
+                conviction_score_original: originalScore,
+                conviction_score: adjustedScore,
+                conviction_score_adjustment: `미검증 -${SCORE_ADJUSTMENT.unverified_penalty}점`,
+                _verified: false,
+                fmp_verified: false,
+                data_source: "LLM_SUPPLEMENT",
+              };
+            })
+            .filter(t => t.conviction_score >= RECOMMENDATION_FILTER.min_conviction_score);
+          
+          filteredTickers = [...filteredTickers, ...validSupplements];
+          console.log(`[LLM Supplement] ${validSupplements.length}개 종목 추가됨: ${validSupplements.map(t => `${t.ticker}(${t.conviction_score}점)`).join(", ")}`);
+        }
+      } catch (e) {
+        console.error(`[LLM Supplement] 추가 조회 실패: ${e.message}`);
+      }
+    }
+
     // 2단계: 쿼터 전략에 따른 추가 필터링
     let skippedUnverified = 0;
     
@@ -1075,19 +1253,36 @@ ${this.output_language === "korean" ? "모든 내용은 한국어로 작성해�
       }
     }
 
-    // 상위 종목 종합 순위 (검증된 종목 + 영상 언급 종목 우선)
+    // 상위 종목 종합 순위 (conviction_score 순으로 정렬)
+    const topPicksCount = this.top_picks_count || 2;
+    const TOP_PICKS_MIN_SCORE = 80; // top_picks 최소 점수
+
     const topPicks = filteredTickers
+      .filter(t => (t.conviction_score || t.score || 0) >= TOP_PICKS_MIN_SCORE) // 80점 이상만
       .sort((a, b) => {
-        // 1. 검증된 종목(실제 데이터 있음) 우선
+        // 1순위: conviction_score 높은 순
+        const scoreA = a.conviction_score || a.score || 0;
+        const scoreB = b.conviction_score || b.score || 0;
+        if (scoreB !== scoreA) return scoreB - scoreA;
+        // 2순위: 검증된 종목 우선
         if (a._verified && !b._verified) return -1;
         if (!a._verified && b._verified) return 1;
-        // 2. 영상 언급 종목 우선
+        // 3순위: 영상 언급 종목 우선
         if (a.mentioned_in_video && !b.mentioned_in_video) return -1;
         if (!a.mentioned_in_video && b.mentioned_in_video) return 1;
-        // 3. 확신 점수 순
-        return (b.conviction_score || b.score || 0) - (a.conviction_score || a.score || 0);
+        return 0;
       })
-      .slice(0, 5);
+      .slice(0, topPicksCount)
+      .map(t => ({
+        ...t,
+        conviction_score_display: `${t.conviction_score || t.score || 0}점`,
+      }));
+    
+    if (topPicks.length > 0) {
+      console.log(`[Top Picks] conviction_score ${TOP_PICKS_MIN_SCORE}점 이상, 상위 ${topPicksCount}개 선별:`, topPicks.map(t => `${t.ticker}(${t.conviction_score}점)`).join(", "));
+    } else {
+      console.log(`[Top Picks] conviction_score ${TOP_PICKS_MIN_SCORE}점 이상 종목 없음 - top_picks 비어있음`);
+    }
 
     // 데이터 품질 통계
     const verifiedCount = filteredTickers.filter(t => t._verified).length;
@@ -1140,7 +1335,10 @@ ${this.output_language === "korean" ? "모든 내용은 한국어로 작성해�
       llm_model: this.llm_model,
       sector_analyses: sortedResults.map(({ index, ...rest }) => rest),
       top_picks: topPicks,
-      all_recommended_tickers: filteredTickers,
+      all_recommended_tickers: filteredTickers.map(t => ({
+        ...t,
+        conviction_score_display: `${t.conviction_score || t.score || 0}점`,
+      })),
       excluded_unverified_tickers: quotaStrategy === "skip_unverified" ? allTickers.filter(t => !t._verified) : [],
       summary: {
         total_sectors_analyzed: sortedResults.length,

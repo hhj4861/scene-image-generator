@@ -626,14 +626,40 @@ export default defineComponent({
         console.warn(`⚠️ 씬 ${scenesWithImages.length}개 > 총 쿼터 ${totalQuota}개! 일부 씬이 생성되지 않을 수 있습니다.`);
       }
 
-      // API 키 선택 함수
-      const getApiKeyForIndex = (index) => {
-        const keyIndex = Math.floor(index / quotaPerKey);
-        if (keyIndex >= veoApiKeys.length) {
-          console.warn(`⚠️ 씬 ${index + 1}: 쿼터 초과, 마지막 키 재사용 (실패 가능성 있음)`);
+      // ========================================
+      // 429 에러 처리를 위한 키 관리
+      // ========================================
+      const rateLimitedKeys = new Set(); // 429 발생한 키들
+      const keyUsageCount = {}; // 키별 사용 횟수
+      veoApiKeys.forEach(key => { keyUsageCount[key] = 0; });
+
+      // API 키 선택 함수 (쿼터 기반 + 429 회피)
+      const getApiKeyForIndex = (index, excludeKey = null) => {
+        // excludeKey가 있으면 429 발생한 키 (재시도 시)
+        if (excludeKey) {
+          rateLimitedKeys.add(excludeKey);
+          console.log(`🚫 키 #${veoApiKeys.indexOf(excludeKey) + 1} 429 발생, 제외`);
+        }
+
+        // 사용 가능한 키들 (429 발생하지 않은 키)
+        const availableKeys = veoApiKeys.filter(k => !rateLimitedKeys.has(k));
+        if (availableKeys.length === 0) {
+          console.warn(`⚠️ 모든 키가 429! 마지막 키 재사용`);
           return veoApiKeys[veoApiKeys.length - 1];
         }
-        return veoApiKeys[keyIndex];
+
+        // 기본: 쿼터 기반 선택
+        const keyIndex = Math.floor(index / quotaPerKey);
+        const targetKey = veoApiKeys[keyIndex] || veoApiKeys[veoApiKeys.length - 1];
+
+        // 429 발생한 키면 다음 사용 가능한 키 선택
+        if (rateLimitedKeys.has(targetKey)) {
+          // 사용량이 가장 적은 키 선택
+          const sortedAvailable = availableKeys.sort((a, b) => keyUsageCount[a] - keyUsageCount[b]);
+          return sortedAvailable[0];
+        }
+
+        return targetKey;
       };
 
       // ========================================
@@ -811,44 +837,94 @@ TECHNICAL SPECS:
 - Duration: ${duration} seconds
 - Expression: ${emotionDesc}
 
-IMPORTANT: English text only. NO Korean text (한글), NO garbled/broken characters on screen.`;
+CRITICAL TEXT RULES:
+- ✅ English text ONLY is allowed on screen
+- ❌ ABSOLUTELY NO Korean text (한글/Hangul) anywhere in the video
+- ❌ NO garbled, broken, or distorted characters
+- ❌ NO Chinese/Japanese characters
+- Any on-screen text must be clean, readable English only
+- If uncertain, display NO text at all`;
 
         console.log(`🎬 Scene ${sceneNum} 배경: ${matchedKeyword.keyword}`);
 
-        // API 키 순환 선택
-        const currentApiKey = getApiKeyForIndex(i);
-        const keyIndex = Math.floor(i / quotaPerKey) + 1;
-        console.log(`\n🎬 [${i + 1}/${scenesWithImages.length}] Scene ${sceneNum} 요청 중... (키 #${keyIndex})`);
+        // ========================================
+        // 429 재시도 로직 포함 요청
+        // ========================================
+        let currentApiKey = getApiKeyForIndex(i);
+        let keyIndex = veoApiKeys.indexOf(currentApiKey) + 1;
+        let retryCount = 0;
+        const maxRetries = veoApiKeys.length; // 최대 키 개수만큼 재시도
+        let requestSuccess = false;
 
-        try {
-          const veoResp = await axios($, {
-            url: `https://generativelanguage.googleapis.com/v1beta/models/${this.veo_model}:predictLongRunning`,
-            method: "POST",
-            headers: { "x-goog-api-key": currentApiKey, "Content-Type": "application/json" },
-            data: {
-              instances: [{
-                prompt: veoPrompt,
-                image: { bytesBase64Encoded: imageBase64, mimeType: "image/png" },
-              }],
-              parameters: {
-                aspectRatio: this.aspect_ratio,
-                durationSeconds: duration,
-                personGeneration: "allow_adult",
+        while (retryCount < maxRetries && !requestSuccess) {
+          console.log(`\n🎬 [${i + 1}/${scenesWithImages.length}] Scene ${sceneNum} 요청 중... (키 #${keyIndex}${retryCount > 0 ? `, 재시도 ${retryCount}` : ""})`);
+
+          try {
+            const veoResp = await axios($, {
+              url: `https://generativelanguage.googleapis.com/v1beta/models/${this.veo_model}:predictLongRunning`,
+              method: "POST",
+              headers: { "x-goog-api-key": currentApiKey, "Content-Type": "application/json" },
+              data: {
+                instances: [{
+                  prompt: veoPrompt,
+                  image: { bytesBase64Encoded: imageBase64, mimeType: "image/png" },
+                }],
+                parameters: {
+                  aspectRatio: this.aspect_ratio,
+                  durationSeconds: duration,
+                  personGeneration: "allow_adult",
+                },
               },
-            },
-          });
+            });
 
-          const operationName = veoResp.name;
-          if (operationName) {
-            pendingOperations.push({ sceneNum, operationName, duration, apiKey: currentApiKey });
-            console.log(`✅ Scene ${sceneNum} 요청 완료: ${operationName.split('/').pop()}`);
-          } else {
-            console.error(`❌ Scene ${sceneNum} operation name 없음`);
-            videoResults.push({ scene_number: sceneNum, success: false, error: "No operation name" });
+            const operationName = veoResp.name;
+            if (operationName) {
+              pendingOperations.push({ sceneNum, operationName, duration, apiKey: currentApiKey });
+              keyUsageCount[currentApiKey]++; // 사용 횟수 증가
+              console.log(`✅ Scene ${sceneNum} 요청 완료: ${operationName.split('/').pop()}`);
+              requestSuccess = true;
+            } else {
+              console.error(`❌ Scene ${sceneNum} operation name 없음`);
+              videoResults.push({ scene_number: sceneNum, success: false, error: "No operation name" });
+              requestSuccess = true; // 루프 탈출 (재시도 불필요한 에러)
+            }
+          } catch (e) {
+            // 429 감지 (Pipedream axios 다양한 에러 형식 대응)
+            const errorStr = JSON.stringify(e);
+            const msgStr = e.message || "";
+            const dataStr = JSON.stringify(e.response?.data || e.data || {});
+            const status = e.response?.status || e.status || e.response?.data?.error?.code;
+
+            const is429 = status === 429 ||
+                          msgStr.includes("429") ||
+                          msgStr.includes("RESOURCE_EXHAUSTED") ||
+                          msgStr.includes("quota") ||
+                          dataStr.includes("429") ||
+                          dataStr.includes("RESOURCE_EXHAUSTED") ||
+                          errorStr.includes("RESOURCE_EXHAUSTED");
+
+            // 현재 키 제외하고 남은 사용 가능한 키 수
+            const availableKeysCount = veoApiKeys.filter(k => !rateLimitedKeys.has(k) && k !== currentApiKey).length;
+            console.log(`🔍 에러 감지 - status: ${status}, is429: ${is429}, 현재 키 제외 남은 키: ${availableKeysCount}`);
+
+            if (is429 && availableKeysCount > 0) {
+              // 429 에러: 다른 키로 재시도
+              console.warn(`⚠️ Scene ${sceneNum} 429 에러 (키 #${keyIndex}), 서브키로 재시도...`);
+              currentApiKey = getApiKeyForIndex(i, currentApiKey); // 현재 키 제외하고 새 키 선택
+              keyIndex = veoApiKeys.indexOf(currentApiKey) + 1;
+              retryCount++;
+
+              // 429 후 잠시 대기 (10초)
+              console.log(`⏳ 429 대기: 10초...`);
+              await new Promise(r => setTimeout(r, 10000));
+            } else {
+              // 다른 에러 또는 모든 키 실패
+              const errorMsg = is429 ? `429 QUOTA EXCEEDED (모든 키 소진)` : msgStr;
+              console.error(`❌ Scene ${sceneNum} 요청 실패:`, errorMsg);
+              videoResults.push({ scene_number: sceneNum, success: false, error: errorMsg });
+              requestSuccess = true; // 루프 탈출
+            }
           }
-        } catch (e) {
-          console.error(`❌ Scene ${sceneNum} 요청 실패:`, e.message);
-          videoResults.push({ scene_number: sceneNum, success: false, error: e.message });
         }
 
         // RPM 제한 대기 (마지막 요청 제외)
@@ -965,8 +1041,8 @@ IMPORTANT: English text only. NO Korean text (한글), NO garbled/broken charact
             await new Promise(r => setTimeout(r, VEO_DELAY_MS));
 
             try {
-              // 간소화된 프롬프트로 재시도
-              const retryPrompt = `Professional presenter speaking in a modern studio. Natural expressions and gestures. Speaking in Korean. Clean background with subtle graphics. No text overlays.`;
+              // 간소화된 프롬프트로 재시도 (한글 텍스트 금지 강조)
+              const retryPrompt = `Professional presenter speaking in a modern studio. Natural expressions and gestures. Speaking in Korean. Clean background with subtle graphics. IMPORTANT: NO Korean text (한글) on screen. English text only if needed, otherwise no text overlays.`;
 
               const retryResp = await axios($, {
                 url: `https://generativelanguage.googleapis.com/v1beta/models/${this.veo_model}:predictLongRunning`,

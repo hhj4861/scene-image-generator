@@ -13,6 +13,12 @@ export default defineComponent({
       label: "Webhook Data (JSON)",
       description: "Webhook으로 받은 전체 데이터: {{JSON.stringify(steps.trigger.event.body)}}",
     },
+    test_script_json: {
+      type: "string",
+      label: "테스트용 스크립트 (JSON)",
+      description: "로컬 테스트용 스크립트 JSON. 입력 시 webhook_data 대신 사용됨. 예: pipedream_stock/validation/script/script.json 내용",
+      optional: true,
+    },
 
     // =====================
     // 생성 모드
@@ -79,11 +85,22 @@ export default defineComponent({
       type: "string",
       label: "말하기 속도",
       options: [
-        { label: "느림 (정확한 발음)", value: "slow" },
-        { label: "보통", value: "normal" },
-        { label: "빠름 (뉴스 스타일)", value: "fast" },
+        { label: "느림 0.9x (정확한 발음)", value: "slow" },
+        { label: "보통 1.0x", value: "normal" },
+        { label: "약간빠름 1.1x (추천)", value: "slightly_fast" },
+        { label: "빠름 1.2x (뉴스 스타일)", value: "fast" },
       ],
-      default: "slow",
+      default: "slightly_fast",
+    },
+    voice_gender: {
+      type: "string",
+      label: "보이스 성별",
+      description: "나레이션 목소리 성별 선택",
+      options: [
+        { label: "남성", value: "male" },
+        { label: "여성", value: "female" },
+      ],
+      default: "male",
     },
     aspect_ratio: {
       type: "string",
@@ -138,41 +155,159 @@ export default defineComponent({
   },
 
   methods: {
-    // 한국어 → 로마자 발음 변환 (Revised Romanization)
-    generatePronunciationGuide(text) {
-      // 초성, 중성, 종성 매핑
-      const cho = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
-      const jung = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae", "oe", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i"];
-      const jong = ["", "k", "kk", "ks", "n", "nj", "nh", "t", "l", "lk", "lm", "lb", "ls", "lt", "lp", "lh", "m", "p", "ps", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
+    // 숫자 한 자리 → 한글
+    digitToKorean(digit) {
+      const digits = ["영", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
+      return digits[parseInt(digit)] || digit;
+    },
 
+    // 정수 → 한글 (500 → 오백, 2000 → 이천, 11 → 십일)
+    numberToKorean(numStr) {
+      const num = parseInt(numStr);
+      if (isNaN(num) || num === 0) return "영";
+      
+      const units = ["", "만", "억", "조"];
+      const smallUnits = ["", "십", "백", "천"];
+      const digits = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
+      
       let result = "";
-      for (const char of text) {
-        const code = char.charCodeAt(0);
-        // 한글 유니코드 범위: 0xAC00 ~ 0xD7A3
-        if (code >= 0xAC00 && code <= 0xD7A3) {
-          const syllable = code - 0xAC00;
-          const choIdx = Math.floor(syllable / 588);
-          const jungIdx = Math.floor((syllable % 588) / 28);
-          const jongIdx = syllable % 28;
-          result += cho[choIdx] + jung[jungIdx] + jong[jongIdx];
-        } else if (char === " " || char === "," || char === "!" || char === "?") {
-          result += char;
-        } else {
-          result += char; // 영어, 숫자 등은 그대로
+      const numString = num.toString();
+      const len = numString.length;
+      
+      for (let i = 0; i < len; i++) {
+        const d = parseInt(numString[i]);
+        const pos = len - 1 - i;
+        const unitIdx = Math.floor(pos / 4);
+        const smallUnitIdx = pos % 4;
+        
+        if (d !== 0) {
+          // 1인 경우 십, 백, 천 앞에서는 "일" 생략
+          if (d === 1 && smallUnitIdx > 0) {
+            result += smallUnits[smallUnitIdx];
+          } else {
+            result += digits[d] + smallUnits[smallUnitIdx];
+          }
+        }
+        
+        // 만, 억, 조 단위 추가
+        if (smallUnitIdx === 0 && unitIdx > 0) {
+          const groupStart = Math.max(0, i - 3);
+          const groupDigits = numString.substring(groupStart, i + 1);
+          if (parseInt(groupDigits) > 0) {
+            result += units[unitIdx];
+          }
         }
       }
+      
+      return result || "영";
+    },
+
+    // 소수점 숫자 → 한글 (56.65 → 오십육 점 육오, 2.7 → 이 점 칠)
+    decimalToKorean(numStr) {
+      const parts = numStr.split(".");
+      if (parts.length !== 2) return this.numberToKorean(numStr);
+      
+      const intPart = parts[0];
+      let decPart = parts[1];
+      
+      // 끝자리 0 제거 (0.10 → 0.1, 0.50 → 0.5)
+      decPart = decPart.replace(/0+$/, "") || "0";
+      
+      // 정수부 변환 (56 → 오십육)
+      const intKor = this.numberToKorean(intPart);
+      // 소수부 변환 (65 → 육오, 각 자리수)
+      const decKor = [...decPart].map(d => this.digitToKorean(d)).join("");
+      
+      // ★ 띄어쓰기 추가: "오십육점육오" → "오십육 점 육오"
+      return `${intKor} 점 ${decKor}`;
+    },
+
+    // 나레이션을 완전한 한글로 변환 (TTS용)
+    convertToKoreanNarration(text) {
+      // ★★★ 1단계: 영어 약어 → 한국어 ★★★
+      const englishToKorean = {
+        "S&P": "에스앤피", "NASDAQ": "나스닥", "KOSPI": "코스피", "KOSDAQ": "코스닥",
+        "DOW": "다우", "NYSE": "뉴욕증권거래소", "FTSE": "풋시",
+        "CPI": "씨피아이", "GDP": "지디피", "PCE": "피씨이", "PPI": "피피아이",
+        "Fed": "연준", "FED": "연준", "FOMC": "에프오엠씨", "BOJ": "비오제이", "BoJ": "비오제이",
+        "ECB": "이씨비", "IMF": "아이엠에프",
+        "AI": "에이아이", "EPS": "이피에스", "PER": "피이알", "ROE": "알오이",
+        "ETF": "이티에프", "IPO": "아이피오", "WTI": "더블유티아이",
+        "USD": "달러", "EUR": "유로", "JPY": "엔", "CNY": "위안",
+      };
+
+      let result = text;
+      for (const [eng, kor] of Object.entries(englishToKorean)) {
+        result = result.replace(new RegExp(eng, "gi"), kor);
+      }
+
+      // ★★★ 2단계: +/-숫자% → 숫자%로 변환 (기호 제거) ★★★
+      // +0.10% 상승 → 0.10% 상승 (상승/하락이 방향을 나타내므로 +/- 불필요)
+      result = result.replace(/[+\-](\d+\.?\d*%)/g, "$1");
+
+      // ★★★ 3단계: 일반 숫자% → 한글 ★★★
+      result = result.replace(/(\d+\.?\d*)%/g, (match, num) => {
+        if (num.includes(".")) {
+          return this.decimalToKorean(num) + "퍼";
+        }
+        return [...num].map(d => this.digitToKorean(d)).join("") + "퍼";
+      });
+
+      // ★★★ 3-1단계: 숫자퍼센트 → 한글 (대본에서 이미 변환된 경우) ★★★
+      result = result.replace(/(\d+\.\d+)(퍼센트|퍼)/g, (match, num, suffix) => {
+        return this.decimalToKorean(num) + "퍼";
+      });
+
+      // ★★★ 3-2단계: 숫자달러 → 한글 (대본에서 이미 변환된 경우) ★★★
+      result = result.replace(/(\d+\.\d+)달러/g, (match, num) => {
+        return this.decimalToKorean(num) + "달러";
+      });
+
+      // ★★★ 4단계: $숫자 → 숫자달러 ★★★
+      result = result.replace(/\$(\d+\.?\d*)/g, (match, num) => {
+        if (num.includes(".")) {
+          return this.decimalToKorean(num) + "달러";
+        }
+        return num + "달러";
+      });
+
+      // ★★★ 5단계: 남은 단독 % → 퍼, $ → 달러 ★★★
+      result = result.replace(/%/g, "퍼");
+      result = result.replace(/\$/g, "달러");
+
+      // ★★★ 6단계: 숫자+한글 → 한글 숫자 + 띄어쓰기 + 한글 (10월 → 십 월, 11월 → 십일 월) ★★★
+      result = result.replace(/(\d+)([가-힣])/g, (match, num, hangul) => {
+        return this.numberToKorean(num) + " " + hangul;
+      });
+
+      // ★★★ 7단계: 남은 단독 숫자 → 한글 ★★★
+      result = result.replace(/\d+/g, (match) => this.numberToKorean(match));
+
       return result;
+    },
+
+    // 발음 가이드 생성 (한글 그대로)
+    generatePronunciationGuide(text) {
+      return this.convertToKoreanNarration(text);
     },
   },
 
   async run({ $ }) {
-    // 데이터 파싱 (웹훅 데이터)
+    // 데이터 파싱 (테스트 스크립트 우선, 없으면 웹훅 데이터)
     let data;
+    const sourceLabel = this.test_script_json ? "테스트 스크립트" : "Webhook";
     try {
-      data = typeof this.webhook_data === "string"
-        ? JSON.parse(this.webhook_data) : this.webhook_data;
+      const rawData = this.test_script_json || this.webhook_data;
+      data = typeof rawData === "string" ? JSON.parse(rawData) : rawData;
+      console.log(`📋 ${sourceLabel} 데이터 사용`);
     } catch (e) {
-      throw new Error("Webhook 데이터 파싱 실패: " + e.message);
+      throw new Error(`${sourceLabel} 데이터 파싱 실패: ` + e.message);
+    }
+
+    // ★ 전체 webhook response 구조 자동 감지 (event.body 추출)
+    if (data.event?.body) {
+      console.log(`📦 전체 webhook 구조 감지 → event.body 추출`);
+      data = data.event.body;
     }
 
     const shortsScript = data.shorts_script || data;
@@ -182,6 +317,15 @@ export default defineComponent({
 
     if (!scenes.length) throw new Error("씬이 없습니다.");
 
+    // ★ 디버깅 로그 (즉시 출력)
+    console.log(`\n========== 디버깅 정보 ==========`);
+    console.log(`📅 분석일: ${analysisDate}`);
+    console.log(`🌍 시장: ${marketLabel}`);
+    console.log(`📊 전체 씬 수: ${scenes.length}개`);
+    console.log(`🔍 씬 필터 입력값: "${this.scene_filter || '(없음)'}"`);
+    console.log(`🧪 _test_mode: ${data._test_mode}`);
+    console.log(`==================================\n`);
+
     // GCS 설정
     const { google } = await import("googleapis");
     const { Readable } = await import("stream");
@@ -190,6 +334,32 @@ export default defineComponent({
       scopes: ["https://www.googleapis.com/auth/devstorage.read_write"],
     });
     const storage = google.storage({ version: "v1", auth });
+
+    // ★★★ GCS 파일 존재 여부 체크 함수 ★★★
+    const checkGcsFileExists = async (bucketName, fileName) => {
+      try {
+        await storage.objects.get({ bucket: bucketName, object: fileName });
+        return true;
+      } catch (e) {
+        if (e.code === 404 || e.status === 404) return false;
+        // 404 외 에러는 존재하지 않는 것으로 간주
+        return false;
+      }
+    };
+
+    // ★★★ GCS에서 기존 파일 다운로드 함수 ★★★
+    const downloadFromGcs = async (bucketName, fileName) => {
+      try {
+        const resp = await storage.objects.get({
+          bucket: bucketName,
+          object: fileName,
+          alt: "media",
+        }, { responseType: "arraybuffer" });
+        return Buffer.from(resp.data).toString("base64");
+      } catch (e) {
+        return null;
+      }
+    };
 
     // 폴더명 생성 (한글 → 영어 변환)
     const marketLabelToEnglish = {
@@ -222,9 +392,12 @@ export default defineComponent({
     const isTestMode = data._test_mode === true;
 
     // 테스트 모드일 때는 scene_filter 무시
-    if (this.scene_filter && !isTestMode) {
+    const hasSceneFilter = !!(this.scene_filter && !isTestMode);  // ★ 씬 필터 여부 저장
+    
+    if (hasSceneFilter) {
       const filter = parseFilter(this.scene_filter);
       targetScenes = scenes.filter(s => filter.has(s.scene_number));
+      console.log(`🔄 씬 필터 활성화 - 선택된 씬은 GCS 존재 여부와 관계없이 재생성됩니다!`);
     }
 
     if (isTestMode) {
@@ -246,67 +419,18 @@ export default defineComponent({
     };
 
     // ==========================================
-    // 캐릭터 설정 (presenter 정보 기반)
+    // 배경 영상 설정 (사람 없음 - 배경/그래픽만)
     // ==========================================
+    console.log(`🎨 배경 전용 모드: 사람 없이 배경/그래픽만 생성`);
+
+    // presenter 정보 (나레이션 목소리 지정용)
+    // voice_gender prop이 설정되어 있으면 우선 사용, 아니면 스크립트의 presenter.gender 사용
     const presenter = shortsScript.presenter || {};
-    const presenterGender = presenter.gender || "male";
-    const presenterAge = presenter.age || "late_20s";
-
-    // 민감한 단어 필터링 (안전 정책 우회)
-    const sanitizeAppearance = (text) => {
-      if (!text) return "";
-      return text
-        .replace(/beautiful/gi, "professional")
-        .replace(/handsome/gi, "professional")
-        .replace(/sexy/gi, "elegant")
-        .replace(/hot/gi, "confident")
-        .replace(/gorgeous/gi, "professional")
-        .replace(/stunning/gi, "professional")
-        .replace(/attractive/gi, "professional")
-        .replace(/red lipstick/gi, "natural makeup")
-        .replace(/feminine appearance/gi, "professional appearance")
-        .replace(/masculine appearance/gi, "professional appearance");
-    };
-
-    const presenterAppearance = sanitizeAppearance(presenter.appearance) || "";
-
-    const genderDescriptions = {
-      male: {
-        keywords: "MAN, MALE ONLY, professional young man, clean features",
-        appearance: presenterAppearance || "male presenter, clean-shaven, short black hair, navy suit with white shirt",
-        critical: "CRITICAL: MALE MAN only, NOT female, no woman, centered single subject",
-      },
-      female: {
-        keywords: "WOMAN, FEMALE ONLY, professional young woman, soft features",
-        appearance: presenterAppearance || "female presenter, long straight black hair, elegant beige dress, pearl earrings, NATURAL MAKEUP with NUDE/PINK lip color (NOT red), professional appearance",
-        critical: "CRITICAL: FEMALE WOMAN only, NOT male, no man, centered single subject. LIPS MUST BE natural nude or soft pink color, absolutely NO red lipstick",
-      },
-    };
-
-    const genderDesc = genderDescriptions[presenterGender] || genderDescriptions.female;
-    const characterDescription = `
-      ${genderDesc.keywords}.
-      Single person portrait, centered composition, ONE person only.
-      Professional ${presenterGender === "male" ? "male" : "female"} presenter in ${presenterAge.replace("_", " ")},
-      ${genderDesc.appearance}.
-      Upper body shot, looking at camera, professional studio lighting.
-      ${genderDesc.critical}.
-    `.trim();
-
-    console.log(`👤 Presenter: ${presenter.name || "Unknown"} (${presenterGender}, ${presenterAge})`);
+    const presenterGender = this.voice_gender || presenter.gender || "male";
+    console.log(`🎤 보이스 성별: ${presenterGender}`);
+    console.log(`🎙️ 나레이션 목소리: ${presenterGender === "male" ? "남성" : "여성"}`);
     console.log(`📂 폴더: ${folderName}`);
     console.log(`🎥 Veo 모델: ${this.veo_model}`);
-
-    // 감정/배경 매핑
-    const emotionMap = {
-      friendly: "warm friendly smile, welcoming expression",
-      serious: "serious focused expression, professional demeanor",
-      curious: "curious interested expression, slight head tilt",
-      confident: "confident assured expression, strong posture",
-      excited: "excited enthusiastic expression, bright eyes",
-      cautious: "cautious warning expression, raised eyebrow",
-      neutral: "calm neutral expression",
-    };
 
     // 배경 매핑 - 텍스트/모니터/차트 등을 제외한 단순 배경으로 변경
     const backgroundMap = {
@@ -356,10 +480,9 @@ export default defineComponent({
     }
 
     // ==========================================
-    // STEP 1: 모든 씬 이미지 생성 (Imagen - 캐릭터 일관성 유지)
+    // STEP 1: 모든 씬 배경 이미지 생성 (Imagen - 사람 없음)
     // ==========================================
     const sceneImages = {}; // { scene_number: base64 }
-    let referenceImageBase64 = null; // 첫 번째 씬 이미지 (reference용)
 
     // 커스텀 이미지 URL이 있으면 Imagen 생성 대신 다운로드
     const hasCustomUrls = Object.keys(customImageUrls).length > 0 || singleImageUrl;
@@ -402,76 +525,257 @@ export default defineComponent({
 
       console.log(`📊 커스텀 이미지 다운로드 완료: ${imageResults.filter(r => r.success).length}/${targetScenes.length}`);
     } else if (!this.skip_image_generation) {
-      console.log(`\n🖼️ === STEP 1: 이미지 생성 (${targetScenes.length}개 씬, 캐릭터 일관성 유지) ===`);
+      console.log(`\n🖼️ === STEP 1: 배경 이미지 생성 (${targetScenes.length}개 씬, 사람 없음) ===`);
+
+      // ★★★ LLM 기반 영어 키워드 추출 함수 ★★★
+      const extractEnglishKeywordsWithLLM = async (narration) => {
+        if (!narration) return [];
+        
+        try {
+          const prompt = `You are a financial image text overlay generator. Extract company names, tickers, brands, or key financial terms from the Korean narration and convert them to proper English for image display.
+
+NARRATION:
+"${narration}"
+
+RULES:
+1. Extract ONLY proper nouns: company names, stock tickers, brand names, index names, sector names
+2. Convert Korean names to official English names (e.g., 테슬라→TESLA, 엔비디아→NVIDIA, 골드만삭스→GOLDMAN SACHS)
+3. Keep already-English terms as-is (e.g., AI, AMD, TSMC)
+4. EXCLUDE: 연준, Fed, 정부, 중앙은행 (political/sensitive terms - not suitable for images)
+5. EXCLUDE: Korean companies if market is US (e.g., 삼성전자, SK하이닉스)
+6. Return MAX 2 keywords, prioritize by importance
+7. Use UPPERCASE for brand visibility
+
+RESPOND WITH ONLY A JSON ARRAY (no explanation):
+["KEYWORD1", "KEYWORD2"]
+
+If no suitable keywords found, respond: []`;
+
+          const resp = await axios($, {
+            url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`,
+            method: "POST",
+            headers: { 
+              "Content-Type": "application/json", 
+              "x-goog-api-key": this.gemini_api_key 
+            },
+            data: {
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: { temperature: 0.1, maxOutputTokens: 100 },
+            },
+          });
+
+          const result = resp.candidates[0].content.parts[0].text.trim();
+          // JSON 배열 파싱
+          const match = result.match(/\[.*\]/s);
+          if (match) {
+            const keywords = JSON.parse(match[0]);
+            return keywords.filter(k => k && typeof k === 'string').slice(0, 2);
+          }
+          return [];
+        } catch (e) {
+          console.log(`   ⚠️ LLM 키워드 추출 실패: ${e.message}`);
+          return [];
+        }
+      };
+
+      // ★★★ 모든 씬의 영어 키워드를 한번에 추출 (배치 처리로 API 호출 최소화) ★★★
+      const extractAllEnglishKeywords = async (scenes) => {
+        const narrations = scenes.map(s => `[Scene ${s.scene_number}] ${s.narration || ""}`).join("\n");
+        
+        try {
+          const prompt = `You are a financial image text overlay generator. For each scene, extract company names, tickers, brands, or key financial terms from the Korean narration and convert them to proper English.
+
+SCENES:
+${narrations}
+
+RULES:
+1. Extract ONLY proper nouns: company names, stock tickers, brand names, index names, sector names
+2. Convert Korean names to official English names (e.g., 테슬라→TESLA, 엔비디아→NVIDIA, 골드만삭스→GOLDMAN SACHS)
+3. Keep already-English terms as-is (e.g., AI, AMD, TSMC)
+4. EXCLUDE: 연준, Fed, 정부, 중앙은행, 트럼프, 바이든 (political/sensitive terms)
+5. EXCLUDE: Korean companies if they don't trade on US exchanges (e.g., 삼성전자, SK하이닉스 → exclude)
+6. Return MAX 2 keywords per scene, prioritize by importance
+7. Use UPPERCASE for brand visibility
+
+RESPOND WITH ONLY A JSON OBJECT (no explanation):
+{
+  "1": ["KEYWORD1", "KEYWORD2"],
+  "2": ["KEYWORD"],
+  "3": []
+}
+
+If a scene has no suitable keywords, use empty array [].`;
+
+          const resp = await axios($, {
+            url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`,
+            method: "POST",
+            headers: { 
+              "Content-Type": "application/json", 
+              "x-goog-api-key": this.gemini_api_key 
+            },
+            data: {
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: { temperature: 0.1, maxOutputTokens: 500 },
+            },
+          });
+
+          const result = resp.candidates[0].content.parts[0].text.trim();
+          // JSON 객체 파싱
+          const match = result.match(/\{[\s\S]*\}/);
+          if (match) {
+            const keywordsMap = JSON.parse(match[0]);
+            console.log(`   🔤 영어 키워드 추출 완료:`, JSON.stringify(keywordsMap));
+            return keywordsMap;
+          }
+          return {};
+        } catch (e) {
+          console.log(`   ⚠️ LLM 배치 키워드 추출 실패: ${e.message}`);
+          return {};
+        }
+      };
+
+      // 먼저 모든 씬의 영어 키워드를 배치로 추출
+      console.log(`   🔤 LLM으로 영어 키워드 추출 중...`);
+      const allEnglishKeywords = await extractAllEnglishKeywords(targetScenes);
 
       for (let i = 0; i < targetScenes.length; i++) {
         const scene = targetScenes[i];
         const sceneNum = scene.scene_number;
-        const visual = scene.visual_description || "";
         const background = scene.background || "modern studio";
-        const emotion = scene.emotion || "neutral";
-        const isFirstScene = i === 0;
+        const narration = scene.narration || "";
 
-        const emotionDesc = emotionMap[emotion] || emotion;
         const backgroundDesc = backgroundMap[background] || background;
+        const sceneType = scene.part || "key_point";
 
-        // 프롬프트 생성 - 텍스트 금지를 최우선으로 강조
-        let prompt = `[CRITICAL - TEXT-FREE IMAGE ONLY] `;
-        prompt += `ABSOLUTE PROHIBITION: NO Korean text (한글/Hangul), NO English text, NO Chinese characters, NO Japanese text, NO numbers, NO symbols, NO letters of ANY language. `;
-        prompt += `FORBIDDEN ELEMENTS: monitors, screens, displays, signs, banners, watermarks, logos, tickers, captions, subtitles, name tags, labels, buttons, UI elements. `;
-        prompt += `The background MUST be completely clean - either solid color gradient OR heavily blurred bokeh with ZERO readable elements. `;
-        prompt += `Generate ONLY: person + clean background. Nothing else. `;
-
-        if (!isFirstScene && referenceImageBase64) {
-          // 씬2부터: reference 이미지의 동일 인물 강조
-          prompt += `SAME EXACT PERSON as the reference image. Maintain identical face, hair, clothing, and appearance. `;
+        // ★★★ GCS에 이미 존재하는 이미지 스킵 (씬 필터 있으면 무조건 재생성) ★★★
+        const imageFileName = `${folderName}/scene_${String(sceneNum).padStart(2, "0")}.png`;
+        
+        if (!hasSceneFilter) {  // ★ 씬 필터 없을 때만 GCS 체크
+          const imageExists = await checkGcsFileExists(this.gcs_bucket_name, imageFileName);
+          
+          if (imageExists) {
+            console.log(`⏭️ Scene ${sceneNum} 이미지 이미 존재 - 스킵 (GCS에서 다운로드)`);
+            const existingImageBase64 = await downloadFromGcs(this.gcs_bucket_name, imageFileName);
+            if (existingImageBase64) {
+              sceneImages[sceneNum] = existingImageBase64;
+              imageResults.push({
+                scene_number: sceneNum,
+                duration: normalizeDuration(scene.duration),
+                success: true,
+                skipped: true,
+                gcs_url: `https://storage.googleapis.com/${this.gcs_bucket_name}/${imageFileName}`,
+              });
+              continue;  // 다음 씬으로
+            }
+            console.log(`   ⚠️ 기존 이미지 다운로드 실패 - 재생성`);
+          }
+        } else {
+          console.log(`🔄 Scene ${sceneNum} 씬 필터로 선택됨 - 무조건 재생성`);
         }
 
-        prompt += `${characterDescription} `;
-        prompt += `In ${this.aspect_ratio} vertical format. `;
-        prompt += `Expression: ${emotionDesc}. Action: ${visual}. `;
-        prompt += `Background: ${backgroundDesc} - must be PURE solid color or heavily blurred with NO visible text or objects. `;
-        prompt += `High quality, professional studio lighting, 4K quality, shallow depth of field, bokeh background. `;
-        prompt += `MAKEUP: Natural makeup only, NO red lipstick, NO bold lipstick colors, subtle neutral tones only. `;
-        prompt += `FINAL CHECK: If ANY text, letters, Korean characters, Hangul, numbers, words, or readable content appears ANYWHERE in the image, the generation has FAILED.`;
+        // ★★★ 배치로 추출한 영어 키워드 사용 ★★★
+        const englishKeywords = allEnglishKeywords[String(sceneNum)] || [];
+        const keywordOverlay = englishKeywords.length > 0
+          ? `Include stylized English text overlay: "${englishKeywords.join(" | ")}" in modern sans-serif font, subtle glow effect. `
+          : "";
+
+        if (englishKeywords.length > 0) {
+          console.log(`   🔤 씬${sceneNum} 영어 키워드: ${englishKeywords.join(", ")}`);
+        }
+
+        // ★★★ 프롬프트 생성 - 텍스트 완전 금지! ★★★
+        let prompt = `[CRITICAL RULES - COMPLETELY TEXT-FREE IMAGE] `;
+        prompt += `TEXT: ABSOLUTELY NO TEXT, NO LETTERS, NO CHARACTERS, NO WORDS in ANY language. `;
+        prompt += `PEOPLE: NO people, NO humans, NO faces, NO hands, NO body parts - pure background ONLY. `;
+        prompt += `OUTPUT: Clean visual background with abstract shapes, gradients, lights - ZERO text elements. `;
+
+        // ★★★ Imagen 금지어 필터링 (정치/민감 주제) ★★★
+        const sanitizeImagePrompt = (promptText) => {
+          if (!promptText) return promptText;
+          const replacements = {
+            // 국기
+            "U.S. flag": "Wall Street skyline",
+            "American flag": "financial district cityscape",
+            "Chinese flag": "Asian financial market visualization",
+            "flag": "abstract geometric pattern",
+            // 정치/무역
+            "tariff": "global trade",
+            "trade war": "international commerce",
+            "sanctions": "economic policy",
+            "government policy": "economic indicators",
+            "political": "economic",
+            // 중앙은행/금리
+            "Federal Reserve building": "abstract banking concept",
+            "Federal Reserve": "central banking visualization",
+            "Fed building": "financial institution concept",
+            "central bank building": "abstract finance architecture",
+            "monetary policy": "interest rate visualization",
+            "interest rate charts": "abstract financial graphs",
+            // 위기
+            "financial crisis": "market volatility",
+            "economic crisis": "market downturn",
+            "crisis": "market uncertainty",
+            "crash": "market correction",
+            "collapse": "market decline",
+            // 전쟁
+            "war": "global tension",
+            "military": "defense sector",
+            "conflict": "market uncertainty",
+            "invasion": "geopolitical event",
+          };
+
+          let sanitized = promptText;
+          for (const [forbidden, replacement] of Object.entries(replacements)) {
+            sanitized = sanitized.replace(new RegExp(forbidden, "gi"), replacement);
+          }
+          return sanitized;
+        };
+
+        // 대본에 image_prompt가 있으면 사용, 없으면 기본 프롬프트
+        let backgroundPrompt = "";
+
+        if (scene.image_prompt && scene.image_prompt.trim()) {
+          // 대본에서 생성된 image_prompt 사용 (금지어 필터링)
+          backgroundPrompt = sanitizeImagePrompt(scene.image_prompt);
+          if (backgroundPrompt !== scene.image_prompt) {
+            console.log(`   ⚠️ 금지어 필터링됨`);
+          }
+          console.log(`   📝 대본 image_prompt 사용: ${backgroundPrompt.substring(0, 50)}...`);
+        } else {
+          // 기본 프롬프트 (씬 타입별)
+          if (sceneType === "opening") {
+            backgroundPrompt = `Abstract financial background, glowing blue and purple gradient, dynamic light streaks, futuristic stock market visualization, digital data flow`;
+          } else if (sceneType === "key_point") {
+            backgroundPrompt = `Professional news studio background, blurred stock charts, abstract financial graphs without numbers, blue and green gradient lighting, bokeh lights, cinematic atmosphere`;
+          } else if (sceneType === "recommendation") {
+            backgroundPrompt = `Upward trending abstract graph, golden and green glowing particles, success and growth visualization, dynamic lighting`;
+          } else if (sceneType === "closing" || sceneType === "disclaimer") {
+            backgroundPrompt = `Clean minimal gradient background, soft blue to purple transition, subtle lens flare, professional and calming atmosphere`;
+          } else {
+            backgroundPrompt = `${backgroundDesc} - abstract visualization, professional lighting`;
+          }
+          console.log(`   📝 기본 프롬프트 사용 (${sceneType})`);
+        }
+
+        prompt += `Generate ONLY: ${backgroundPrompt}. `;
+        // 키워드 오버레이 제거 - 텍스트 완전 금지
+        prompt += `In ${this.aspect_ratio} format for YouTube Shorts. `;
+        prompt += `Style: Cinematic, high quality, 4K, professional color grading, depth of field. `;
+        prompt += `[FINAL CHECK] 1) NO people/faces/hands/body 2) COMPLETELY TEXT-FREE - ZERO letters, ZERO characters, ZERO words in ANY language`;
 
         try {
-          console.log(`🖼️ Scene ${sceneNum} 이미지 생성 중... ${isFirstScene ? "(기준 이미지)" : "(reference 사용)"}`);
+          console.log(`🖼️ Scene ${sceneNum} 배경 이미지 생성 중... (사람 없음)`);
           console.log(`📝 프롬프트 길이: ${prompt.length}자`);
 
-          // API 요청 데이터 구성 (personGeneration 필수 - 인물 생성 허용)
-          let requestData;
-
-          if (!isFirstScene && referenceImageBase64) {
-            // 씬2부터: reference 이미지 사용 시도
-            requestData = {
-              instances: [{
-                prompt,
-                referenceImages: [{
-                  referenceId: 1,
-                  referenceType: "REFERENCE_TYPE_SUBJECT",
-                  referenceImage: {
-                    bytesBase64Encoded: referenceImageBase64,
-                  },
-                }],
-              }],
-              parameters: {
-                sampleCount: 1,
-                aspectRatio: this.aspect_ratio,
-                personGeneration: "allow_adult",
-              },
-            };
-          } else {
-            // 첫 씬: reference 없이 생성
-            requestData = {
-              instances: [{ prompt }],
-              parameters: {
-                sampleCount: 1,
-                aspectRatio: this.aspect_ratio,
-                personGeneration: "allow_adult",
-              },
-            };
-          }
+          // API 요청 데이터 구성 (사람 없이 배경만 생성)
+          const requestData = {
+            instances: [{ prompt }],
+            parameters: {
+              sampleCount: 1,
+              aspectRatio: this.aspect_ratio,
+              // personGeneration: "dont_allow" - API에서 현재 지원하지 않음
+            },
+          };
 
           let imagenResp;
 
@@ -488,25 +792,7 @@ export default defineComponent({
             if (refError.response?.data) {
               console.error(`   응답 데이터:`, JSON.stringify(refError.response.data).substring(0, 1000));
             }
-            // reference 이미지 실패 시 기본 방식으로 재시도
-            if (!isFirstScene && referenceImageBase64) {
-              console.warn(`⚠️ Reference 방식 실패, 기본 방식으로 재시도...`);
-              imagenResp = await axios($, {
-                url: `https://generativelanguage.googleapis.com/v1beta/models/${this.imagen_model}:predict`,
-                method: "POST",
-                headers: { "x-goog-api-key": this.gemini_api_key, "Content-Type": "application/json" },
-                data: {
-                  instances: [{ prompt }],
-                  parameters: {
-                    sampleCount: 1,
-                    aspectRatio: this.aspect_ratio,
-                    personGeneration: "allow_adult",
-                  },
-                },
-              });
-            } else {
-              throw refError;
-            }
+            throw refError;
           }
 
           // 응답 구조 상세 로깅
@@ -525,12 +811,6 @@ export default defineComponent({
           }
 
           sceneImages[sceneNum] = imageBase64;
-
-          // 첫 번째 씬 이미지를 reference로 저장
-          if (isFirstScene) {
-            referenceImageBase64 = imageBase64;
-            console.log(`📌 Scene ${sceneNum} 이미지를 reference로 저장`);
-          }
 
           // GCS 업로드
           let imageUrl = null;
@@ -551,7 +831,6 @@ export default defineComponent({
             scene_number: sceneNum,
             duration: normalizeDuration(scene.duration),
             image_url: imageUrl,
-            is_reference: isFirstScene,
             success: true,
           });
           console.log(`✅ Scene ${sceneNum} 이미지 완료`);
@@ -642,23 +921,41 @@ export default defineComponent({
       console.log(`\n📤 Phase 1: 모든 요청 전송 시작...`);
       const pendingOperations = []; // { sceneNum, operationName, duration, apiKey }
 
+      // ★★★ 스킵된 씬 목록 (GCS에 이미 존재) ★★★
+      const skippedVideoScenes = [];
+
       for (let i = 0; i < scenesWithImages.length; i++) {
         const scene = scenesWithImages[i];
         const sceneNum = scene.scene_number;
         const duration = normalizeDuration(scene.duration);
-        const visual = scene.visual_description || "";
         const narration = scene.narration || "";
-        const emotion = scene.emotion || "neutral";
-        const background = scene.background || "modern studio";
+
+        // ★★★ GCS에 이미 존재하는 비디오 스킵 (씬 필터 있으면 무조건 재생성) ★★★
+        const videoFileName = `${folderName}/scene_${String(sceneNum).padStart(2, "0")}.mp4`;
+        
+        if (!hasSceneFilter) {  // ★ 씬 필터 없을 때만 GCS 체크
+          const videoExists = await checkGcsFileExists(this.gcs_video_bucket_name, videoFileName);
+          
+          if (videoExists) {
+            console.log(`⏭️ Scene ${sceneNum} 비디오 이미 존재 - 스킵`);
+            skippedVideoScenes.push({
+              scene_number: sceneNum,
+              duration: duration,
+              video_url: `https://storage.googleapis.com/${this.gcs_video_bucket_name}/${videoFileName}`,
+              success: true,
+              skipped: true,
+            });
+            continue;  // 다음 씬으로
+          }
+        } else {
+          console.log(`🔄 Scene ${sceneNum} 비디오 씬 필터로 선택됨 - 무조건 재생성`);
+        }
 
         const imageBase64 = sceneImages[sceneNum];
         if (!imageBase64) {
           console.warn(`⚠️ Scene ${sceneNum} 이미지 없음, 스킵`);
           continue;
         }
-
-        const emotionDesc = emotionMap[emotion] || emotion;
-        const backgroundDesc = backgroundMap[background] || background;
 
         // ========================================
         // 금기어 필터링 (Veo 정책 우회)
@@ -762,100 +1059,155 @@ export default defineComponent({
           };
         }
 
-        // 감정에 따른 카메라/애니메이션 설정
-        const emotionToCamera = {
-          friendly: "Static shot with gentle zoom-in",
-          serious: "Static shot, steady and professional",
-          curious: "Slight dolly movement, engaging",
-          confident: "Static shot with subtle zoom-in settling",
-          excited: "Dynamic slight movement, energetic",
-          cautious: "Static shot, measured and careful",
-          neutral: "Clean static shot",
+        // 배경 애니메이션 카메라 설정
+        const sceneType = scene.part || "key_point";
+        const cameraMove = sceneType === "opening" ? "Slow zoom out from center"
+          : sceneType === "closing" ? "Gentle zoom in"
+          : "Subtle pan or static with parallax";
+
+        // 배경 전용 Veo 프롬프트 생성 (JSON 형태 - narrator_voice 포함)
+        const resolution = this.aspect_ratio === "16:9" ? "1920x1080px"
+          : this.aspect_ratio === "9:16" ? "1080x1920px"
+          : "1080x1080px";
+
+        // 말하기 속도 및 voice_style 설정
+        const genderText = presenterGender === "male" ? "male" : "female";
+        const speakingRateMap = {
+          "slow": "0.9",
+          "normal": "1.0",
+          "slightly_fast": "1.1",
+          "fast": "1.2"
         };
-        const cameraMove = emotionToCamera[emotion] || "Static shot";
+        const speakingRate = speakingRateMap[this.speaking_speed] || "1.1";
+        const voiceStyle = this.speaking_speed === "slow"
+          ? `Adult Korean ${genderText} voice, warm professional tone, speak slowly and clearly, rate ${speakingRate}x`
+          : this.speaking_speed === "fast"
+          ? `Adult Korean ${genderText} voice, confident news anchor tone, brisk pace, rate ${speakingRate}x`
+          : `Adult Korean ${genderText} voice, warm friendly tone, slightly fast pace, rate ${speakingRate}x`;
 
-        // 프로페셔널 Veo 프롬프트 생성 (Google Flow 스타일)
-        let veoPrompt = `Scene ${sceneNum} (${duration}s): ${scene.part || "content"}
+        // ★★★ 나레이션을 완전한 한글로 변환 (TTS용) ★★★
+        // S&P 500 → 에스앤피 오백, +0.10% → 영점일퍼, CPI → 씨피아이 등
+        const koreanNarration = this.convertToKoreanNarration(sanitizedNarration);
 
-VISUAL: Keep the EXACT same person from the input image. Professional news presenter in modern broadcast studio. Clean background with ${matchedKeyword.bg} displayed on screens behind. ${emotionDesc}.
+        // JSON 형태 프롬프트 구성
+        const veoPromptObj = {
+          scene_id: `STOCK_S${sceneNum}`,
+          duration: `0-${duration}s`,
+          // ★★★ 화면과 오디오 언어 분리 ★★★
+          visual_language: "NO TEXT ON SCREEN - completely text-free background animation",
+          audio_language: "KOREAN ONLY - narrator speaks in Korean",
+          description: `Single frame shot, ${matchedKeyword.bg}, professional financial news background animation, subtle motion effects, NO PEOPLE, COMPLETELY TEXT-FREE SCREEN`,
+          camera: cameraMove,
+          text_overlay: "NONE - completely text-free",
+          animation: `Subtle particle effects, light rays, floating bokeh lights, gentle gradient color shifts, smooth transitions, professional motion graphics style`,
+          audio: this.disable_veo_audio ? {
+            bgm: "None",
+            sfx: "None",
+            narrator_voice: null,
+            character_voice: "None"
+          } : {
+            bgm: "Soft background music",
+            sfx: "None",
+            narrator_voice: {
+              text: koreanNarration,
+              language: "ko-KR",
+              voice_gender: presenterGender === "male" ? "MALE" : "FEMALE"
+            },
+            character_voice: "None"
+          },
+          audio_timeline: this.disable_veo_audio ? {
+            [`0.0s - ${duration}s`]: "Silent background animation"
+          } : {
+            "0.0s - 0.5s": "Scene fade in",
+            [`0.5s - ${duration - 0.5}s`]: `[KOREAN AUDIO] ${koreanNarration}`,
+            [`${duration - 0.5}s - ${duration}s`]: "Scene transition"
+          },
+          consistency: "Maintain exact appearance from reference image, no blur edges, full frame must match throughout, NO PEOPLE, NO FACES, NO HANDS",
+          technical: `${resolution}, 30fps, ${this.aspect_ratio}, professional broadcast quality`,
+          rules: [
+            "VISUAL: No text on screen, text-free background only",
+            "AUDIO: Korean narrator reads the provided Korean text",
+            "No people, no faces, no hands in video"
+          ]
+        };
 
-CAMERA: ${cameraMove} in first 1 second.
-
-TEXT OVERLAYS (English only, 2 elements):
-1. "${matchedKeyword.keyword}" (0.5s) - top right corner, ${matchedKeyword.color}, bold 48px
-2. Scene indicator subtle watermark bottom left
-
-ANIMATION:
-- Keyword text fade-in with slight glow effect
-- Background screens with subtle motion graphics
-- All transitions smooth 0.3s
-
-AUDIO:`;
-
-        if (this.disable_veo_audio) {
-          veoPrompt += `
-- Silent video, no speech audio
-- Natural lip movements and professional gestures`;
-        } else {
-          veoPrompt += `
-- Narration (KR): "${sanitizedNarration}"
-- Voice: Professional Korean ${presenterGender === "male" ? "male" : "female"} voice, -14 LUFS
-- Natural speech with appropriate pauses`;
-        }
-
-        veoPrompt += `
-
-PRESENTER BEHAVIOR (CRITICAL):
-- Speech starts at 0.2 seconds (NOT immediately) - prevents audio clipping at scene start
-- Mouth movements ONLY during speech - lips MUST be closed when not speaking
-- When narration ends, presenter transitions to calm idle pose with mouth closed
-- Natural breathing and subtle movements, but NO lip movement after speech ends
-- If scene duration exceeds speech length, presenter waits calmly with closed mouth
-
-TECHNICAL SPECS:
-- Resolution: ${this.aspect_ratio === "16:9" ? "1920x1080px" : this.aspect_ratio === "9:16" ? "1080x1920px" : "1080x1080px"} (${this.aspect_ratio})
-- Frame rate: 30fps
-- Duration: ${duration} seconds
-- Expression: ${emotionDesc}
-
-IMPORTANT: English text only. NO Korean text (한글), NO garbled/broken characters on screen.`;
+        const veoPrompt = JSON.stringify(veoPromptObj, null, 2);
 
         console.log(`🎬 Scene ${sceneNum} 배경: ${matchedKeyword.keyword}`);
+        if (!this.disable_veo_audio && koreanNarration) {
+          console.log(`🎙️ Scene ${sceneNum} 나레이션(한글): ${koreanNarration.substring(0, 80)}${koreanNarration.length > 80 ? "..." : ""}`);
+        }
 
-        // API 키 순환 선택
-        const currentApiKey = getApiKeyForIndex(i);
-        const keyIndex = Math.floor(i / quotaPerKey) + 1;
-        console.log(`\n🎬 [${i + 1}/${scenesWithImages.length}] Scene ${sceneNum} 요청 중... (키 #${keyIndex})`);
+        // ★★★ 429 에러 시 자동 키 전환 로직 ★★★
+        // 현재 키 인덱스 계산 (0부터 시작)
+        let currentKeyIndex = Math.floor(i / quotaPerKey);
+        if (currentKeyIndex >= veoApiKeys.length) currentKeyIndex = veoApiKeys.length - 1;
+        
+        let currentApiKey = veoApiKeys[currentKeyIndex];
+        let attemptedKeys = new Set(); // 시도한 키 추적
+        attemptedKeys.add(currentKeyIndex);
+        
+        console.log(`\n🎬 [${i + 1}/${scenesWithImages.length}] Scene ${sceneNum} 요청 중... (키 #${currentKeyIndex + 1}/${veoApiKeys.length})`);
 
-        try {
-          const veoResp = await axios($, {
-            url: `https://generativelanguage.googleapis.com/v1beta/models/${this.veo_model}:predictLongRunning`,
-            method: "POST",
-            headers: { "x-goog-api-key": currentApiKey, "Content-Type": "application/json" },
-            data: {
-              instances: [{
-                prompt: veoPrompt,
-                image: { bytesBase64Encoded: imageBase64, mimeType: "image/png" },
-              }],
-              parameters: {
-                aspectRatio: this.aspect_ratio,
-                durationSeconds: duration,
-                personGeneration: "allow_adult",
+        while (attemptedKeys.size <= veoApiKeys.length) {
+          try {
+            const veoResp = await axios($, {
+              url: `https://generativelanguage.googleapis.com/v1beta/models/${this.veo_model}:predictLongRunning`,
+              method: "POST",
+              headers: { "x-goog-api-key": currentApiKey, "Content-Type": "application/json" },
+              data: {
+                instances: [{
+                  prompt: veoPrompt,
+                  image: { bytesBase64Encoded: imageBase64, mimeType: "image/png" },
+                }],
+                parameters: {
+                  aspectRatio: this.aspect_ratio,
+                  durationSeconds: duration,
+                },
               },
-            },
-          });
+            });
 
-          const operationName = veoResp.name;
-          if (operationName) {
-            pendingOperations.push({ sceneNum, operationName, duration, apiKey: currentApiKey });
-            console.log(`✅ Scene ${sceneNum} 요청 완료: ${operationName.split('/').pop()}`);
-          } else {
-            console.error(`❌ Scene ${sceneNum} operation name 없음`);
-            videoResults.push({ scene_number: sceneNum, success: false, error: "No operation name" });
+            const operationName = veoResp.name;
+            if (operationName) {
+              pendingOperations.push({ sceneNum, operationName, duration, apiKey: currentApiKey });
+              console.log(`✅ Scene ${sceneNum} 요청 완료: ${operationName.split('/').pop()}`);
+            } else {
+              console.error(`❌ Scene ${sceneNum} operation name 없음`);
+              videoResults.push({ scene_number: sceneNum, success: false, error: "No operation name" });
+            }
+            break; // 성공 시 루프 탈출
+            
+          } catch (e) {
+            const status = e.response?.status || e.status;
+            const errorMsg = e.response?.data?.error?.message || e.message;
+            
+            // 429 (Quota Exceeded) 또는 503 (Service Unavailable) 또는 RESOURCE_EXHAUSTED 시 다른 키로 재시도
+            const isQuotaError = status === 429 || status === 503 || 
+                                 errorMsg?.includes("quota") || 
+                                 errorMsg?.includes("RESOURCE_EXHAUSTED") ||
+                                 errorMsg?.includes("exhausted");
+            
+            if (isQuotaError && attemptedKeys.size < veoApiKeys.length) {
+              // 아직 시도하지 않은 다음 키 찾기
+              let nextKeyIndex = (currentKeyIndex + 1) % veoApiKeys.length;
+              while (attemptedKeys.has(nextKeyIndex) && attemptedKeys.size < veoApiKeys.length) {
+                nextKeyIndex = (nextKeyIndex + 1) % veoApiKeys.length;
+              }
+              
+              attemptedKeys.add(nextKeyIndex);
+              currentKeyIndex = nextKeyIndex;
+              currentApiKey = veoApiKeys[currentKeyIndex];
+              
+              console.warn(`⚠️ Scene ${sceneNum} 쿼터 초과 (${status || 'quota'}) - 키 #${currentKeyIndex + 1}로 전환 (${attemptedKeys.size}/${veoApiKeys.length} 키 시도)`);
+              await new Promise(r => setTimeout(r, 3000)); // 3초 대기 후 재시도
+              continue;
+            }
+            
+            // 다른 오류 또는 모든 키 소진
+            console.error(`❌ Scene ${sceneNum} 요청 실패 (${attemptedKeys.size}개 키 시도):`, errorMsg);
+            videoResults.push({ scene_number: sceneNum, success: false, error: errorMsg });
+            break;
           }
-        } catch (e) {
-          console.error(`❌ Scene ${sceneNum} 요청 실패:`, e.message);
-          videoResults.push({ scene_number: sceneNum, success: false, error: e.message });
         }
 
         // RPM 제한 대기 (마지막 요청 제외)
@@ -972,8 +1324,8 @@ IMPORTANT: English text only. NO Korean text (한글), NO garbled/broken charact
             await new Promise(r => setTimeout(r, VEO_DELAY_MS));
 
             try {
-              // 간소화된 프롬프트로 재시도
-              const retryPrompt = `Professional presenter speaking in a modern studio. Natural expressions and gestures. Speaking in Korean. Clean background with subtle graphics. No text overlays.`;
+              // 간소화된 배경 애니메이션 프롬프트로 재시도
+              const retryPrompt = `Animate background with subtle motion. Gentle particle effects, light rays, bokeh lights. Professional motion graphics. NO people, NO humans, NO faces.`;
 
               const retryResp = await axios($, {
                 url: `https://generativelanguage.googleapis.com/v1beta/models/${this.veo_model}:predictLongRunning`,
@@ -987,7 +1339,7 @@ IMPORTANT: English text only. NO Korean text (한글), NO garbled/broken charact
                   parameters: {
                     aspectRatio: this.aspect_ratio,
                     durationSeconds: originalOp.duration,
-                    personGeneration: "allow_adult",
+                    // personGeneration: "dont_allow" - API에서 현재 지원하지 않음
                   },
                 },
               });
@@ -1051,6 +1403,12 @@ IMPORTANT: English text only. NO Korean text (한글), NO garbled/broken charact
             videoResults.push({ scene_number: sceneNum, success: false, error: errorMsg });
           }
         }
+
+        // ★★★ 스킵된 비디오 씬들을 결과에 추가 ★★★
+        if (skippedVideoScenes.length > 0) {
+          console.log(`\n📋 GCS 기존 비디오 사용: ${skippedVideoScenes.length}개 씬`);
+          videoResults.push(...skippedVideoScenes);
+        }
       }
     } else {
       console.log(`⏭️ 비디오 생성 스킵됨`);
@@ -1059,9 +1417,16 @@ IMPORTANT: English text only. NO Korean text (한글), NO garbled/broken charact
     // ==========================================
     // 결과 반환
     // ==========================================
+    const imgSuccess = imageResults.filter(r => r.success).length;
+    const imgSkipped = imageResults.filter(r => r.skipped).length;
+    const imgGenerated = imgSuccess - imgSkipped;
+    const vidSuccess = videoResults.filter(r => r.success).length;
+    const vidSkipped = videoResults.filter(r => r.skipped).length;
+    const vidGenerated = vidSuccess - vidSkipped;
+
     console.log(`\n📊 === 최종 결과 ===`);
-    console.log(`이미지: ${imageResults.filter(r => r.success).length}/${targetScenes.length}`);
-    console.log(`비디오: ${videoResults.filter(r => r.success).length}/${targetScenes.length}`);
+    console.log(`이미지: ${imgSuccess}/${targetScenes.length} (새로 생성: ${imgGenerated}, 기존 사용: ${imgSkipped})`);
+    console.log(`비디오: ${vidSuccess}/${targetScenes.length} (새로 생성: ${vidGenerated}, 기존 사용: ${vidSkipped})`);
 
     const result = {
       folder_name: folderName,
@@ -1069,12 +1434,16 @@ IMPORTANT: English text only. NO Korean text (한글), NO garbled/broken charact
       market_label: marketLabel,
       shorts_script: shortsScript,
       images: {
-        generated: imageResults.filter(r => r.success).length,
+        total: imgSuccess,
+        generated: imgGenerated,
+        skipped: imgSkipped,
         failed: imageResults.filter(r => !r.success).length,
         results: imageResults,
       },
       videos: {
-        generated: videoResults.filter(r => r.success).length,
+        total: vidSuccess,
+        generated: vidGenerated,
+        skipped: vidSkipped,
         failed: videoResults.filter(r => !r.success).length,
         results: videoResults,
       },
@@ -1082,7 +1451,7 @@ IMPORTANT: English text only. NO Korean text (한글), NO garbled/broken charact
     };
 
     $.export("video_generation", result);
-    $.export("$summary", `이미지: ${result.images.generated}개, 비디오: ${result.videos.generated}개`);
+    $.export("$summary", `이미지: ${imgSuccess}개 (신규${imgGenerated}/기존${imgSkipped}), 비디오: ${vidSuccess}개 (신규${vidGenerated}/기존${vidSkipped})`);
     return result;
   },
 });

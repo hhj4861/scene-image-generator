@@ -157,6 +157,28 @@ export default defineComponent({
       }
     }
 
+    // ==========================================
+    // ★ Weekly Outlook 모드: 섹터 분석 스킵
+    // ==========================================
+    if (marketData?.skip_ticker_analysis === true) {
+      const skipReason = marketData?.key_points_structure === "weekly_outlook" 
+        ? "Weekly Outlook 모드 - 섹터 분석 불필요" 
+        : "Market Analyzer에서 섹터 분석 스킵 플래그 설정됨";
+      console.log(`⏭️ [SKIP] ${skipReason}`);
+      
+      const skipResult = {
+        skipped: true,
+        skip_reason: skipReason,
+        key_points_structure: marketData?.key_points_structure,
+        analysis_date: marketData?.analysis_date || new Date().toISOString().split("T")[0],
+        market_type: marketData?.market_type,
+        recommended_sectors: [],
+        sectors: [],
+      };
+      $.export("sector_analysis", skipResult);
+      return skipResult;
+    }
+
     const marketType = marketData?.market_type || this.market_type || "us";
     const marketLabels = { us: "미국", kr: "한국", global: "글로벌" };
     const marketLabel = marketLabels[marketType];

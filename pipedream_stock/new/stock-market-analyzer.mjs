@@ -5,1122 +5,643 @@ export default defineComponent({
   description: "주식 시장 현황 분석기 - YouTube 영상/채널 분석 또는 최신 뉴스 기반 현황 정리",
 
   props: {
-    // =====================
-    // 테스트 모드 설정
-    // =====================
-    test_mode: {
-      type: "boolean",
-      label: "테스트 모드",
-      description: "테스트 모드 활성화 시 Mock 데이터로 2개 key_points만 생성 (전체 파이프라인 테스트용)",
-      default: false,
-      optional: true,
-    },
-    test_key_points_count: {
-      type: "integer",
-      label: "테스트 key_points 수",
-      description: "테스트 모드에서 생성할 key_points 수 (기본: 2)",
-      default: 2,
-      optional: true,
-    },
-
-    // =====================
-    // 입력 소스 설정
-    // =====================
-    youtube_url: {
-      type: "string",
-      label: "YouTube URL (Optional)",
-      description: "YouTube 영상 URL 또는 채널 URL. 채널 URL 입력 시 분석 기준일에 업로드된 최신 영상을 자동으로 찾아 분석합니다. 비워두면 뉴스 기반 분석.",
-      optional: true,
-    },
-    analysis_date: {
-      type: "string",
-      label: "분석 기준일",
-      description: "YYYY-MM-DD 형식. 비워두면 오늘 날짜 사용. 채널 URL 입력 시 해당 날짜에 업로드된 영상을 찾습니다.",
-      optional: true,
-    },
+    test_mode: { type: "boolean", label: "테스트 모드", description: "Mock 데이터로 테스트", default: false, optional: true },
+    test_key_points_count: { type: "integer", label: "테스트 key_points 수", default: 2, optional: true },
+    youtube_url: { type: "string", label: "YouTube URL (Optional)", description: "YouTube 영상/채널/플레이리스트 URL", optional: true },
+    analysis_date: { type: "string", label: "분석 기준일", description: "YYYY-MM-DD 형식", optional: true },
     market_type: {
-      type: "string",
-      label: "시장 유형",
-      description: "분석할 시장 선택",
-      options: [
-        { label: "미국 (US Market)", value: "us" },
-        { label: "한국 (Korean Market)", value: "kr" },
-        { label: "글로벌 (Global)", value: "global" },
-      ],
-      default: "us",
+      type: "string", label: "시장 유형", default: "us",
+      options: [{ label: "미국", value: "us" }, { label: "한국", value: "kr" }, { label: "글로벌", value: "global" }],
     },
     analysis_focus: {
-      type: "string[]",
-      label: "분석 초점",
-      description: "중점적으로 분석할 영역 선택 (복수 선택 가능)",
+      type: "string[]", label: "분석 초점", default: ["macro", "tech", "ai_semi"], optional: true,
       options: [
-        { label: "거시경제 (Macro)", value: "macro" },
-        { label: "금리/채권 (Interest Rate)", value: "interest" },
-        { label: "기술주 (Tech)", value: "tech" },
-        { label: "에너지 (Energy)", value: "energy" },
-        { label: "헬스케어 (Healthcare)", value: "healthcare" },
-        { label: "금융 (Finance)", value: "finance" },
-        { label: "소비재 (Consumer)", value: "consumer" },
-        { label: "AI/반도체 (AI/Semiconductor)", value: "ai_semi" },
+        { label: "거시경제", value: "macro" }, { label: "금리/채권", value: "interest" },
+        { label: "기술주", value: "tech" }, { label: "에너지", value: "energy" },
+        { label: "헬스케어", value: "healthcare" }, { label: "금융", value: "finance" },
+        { label: "소비재", value: "consumer" }, { label: "AI/반도체", value: "ai_semi" },
       ],
-      default: ["macro", "tech", "ai_semi"],
-      optional: true,
     },
-
-    // =====================
-    // API Keys
-    // =====================
-    gemini_api_key: {
-      type: "string",
-      label: "Gemini API Key",
-      description: "Google Gemini API Key (https://aistudio.google.com)",
-      secret: true,
+    gemini_api_key: { type: "string", label: "Gemini API Key", secret: true },
+    serper_api_key: { type: "string", label: "Serper API Key", secret: true, optional: true },
+    youtube_api_key: { type: "string", label: "YouTube API Key", secret: true, optional: true },
+    openai_api_key: { type: "string", label: "OpenAI API Key", secret: true, optional: true },
+    ffmpeg_vm_url: { type: "string", label: "FFmpeg VM URL", default: "http://34.64.168.173:3000", optional: true },
+    gcs_bucket: { type: "string", label: "GCS Bucket Name", optional: true },
+    gcs_file_path: { type: "string", label: "GCS File Path", optional: true },
+    gcs_service_account_json: { type: "string", label: "GCS Service Account JSON", secret: true, optional: true },
+    key_points_structure: {
+      type: "string", label: "Key Points 구조", default: "auto", optional: true,
+      options: [{ label: "자동", value: "auto" }, { label: "주간 전망", value: "weekly_outlook" }, { label: "커스텀", value: "custom" }],
     },
-    serper_api_key: {
-      type: "string",
-      label: "Serper API Key",
-      description: "뉴스 검색용 Serper API Key (https://serper.dev). YouTube URL 없을 때 필수.",
-      secret: true,
-      optional: true,
-    },
-    youtube_api_key: {
-      type: "string",
-      label: "YouTube API Key (Optional)",
-      description: "YouTube Data API Key. 채널에서 영상 검색 시 더 정확한 결과를 제공합니다.",
-      secret: true,
-      optional: true,
-    },
-    openai_api_key: {
-      type: "string",
-      label: "OpenAI API Key (For Whisper)",
-      description: "OpenAI API Key for Whisper speech-to-text. Required for videos without captions. (~$0.006/min)",
-      secret: true,
-      optional: true,
-    },
-    ffmpeg_vm_url: {
-      type: "string",
-      label: "FFmpeg VM URL",
-      description: "FFmpeg VM server URL for audio extraction. Default: http://34.64.168.173:3000",
-      default: "http://34.64.168.173:3000",
-      optional: true,
-    },
-
-    // =====================
-    // LLM 설정
-    // =====================
+    key_points_custom_structure: { type: "string", label: "커스텀 Key Points 구조", optional: true },
     llm_model: {
-      type: "string",
-      label: "LLM Model",
+      type: "string", label: "LLM Model", default: "gemini-2.0-flash",
       options: [
-        { label: "Gemini 2.0 Flash (Fast)", value: "gemini-2.0-flash" },
-        { label: "Gemini 1.5 Pro (Best)", value: "gemini-1.5-pro" },
-        { label: "Gemini 2.0 Flash Thinking (Reasoning)", value: "gemini-2.0-flash-thinking-exp" },
+        { label: "Gemini 2.0 Flash", value: "gemini-2.0-flash" },
+        { label: "Gemini 1.5 Pro", value: "gemini-1.5-pro" },
+        { label: "Gemini 2.5 Pro", value: "gemini-2.5-pro" },
       ],
-      default: "gemini-2.0-flash",
     },
-
-    // =====================
-    // 출력 설정
-    // =====================
+    key_points_model: {
+      type: "string", label: "Key Points 모델", default: "same", optional: true,
+      options: [
+        { label: "기본 모델과 동일", value: "same" },
+        { label: "Gemini 2.5 Flash (추천)", value: "gemini-2.5-flash" },
+        { label: "Gemini 2.5 Pro", value: "gemini-2.5-pro" },
+        { label: "Gemini 2.5 Flash", value: "gemini-2.5-flash" },
+        { label: "GPT-4o", value: "gpt-4o" },
+        { label: "GPT-4o Mini", value: "gpt-4o-mini" },
+      ],
+    },
     output_language: {
-      type: "string",
-      label: "출력 언어",
-      options: [
-        { label: "한국어", value: "korean" },
-        { label: "English", value: "english" },
-      ],
-      default: "korean",
+      type: "string", label: "출력 언어", default: "korean",
+      options: [{ label: "한국어", value: "korean" }, { label: "English", value: "english" }],
     },
-
-    // =====================
-    // 성능 최적화 설정
-    // =====================
-    fast_mode: {
-      type: "boolean",
-      label: "Fast Mode",
-      description: "병렬 처리 + 짧은 transcript로 속도 향상 (정확도 약간 감소)",
-      default: true,
-      optional: true,
-    },
-    max_transcript_length: {
-      type: "integer",
-      label: "Max Transcript Length",
-      description: "분석할 최대 텍스트 길이 (기본: 15000자, Fast Mode: 8000자)",
-      default: 15000,
-      optional: true,
-    },
+    fast_mode: { type: "boolean", label: "Fast Mode", default: true, optional: true },
+    max_transcript_length: { type: "integer", label: "Max Transcript Length", default: 15000, optional: true },
   },
 
   async run({ $ }) {
     const analysisDate = this.analysis_date || new Date().toISOString().split("T")[0];
-    const marketLabels = { us: "미국", kr: "한국", global: "글로벌" };
-    const marketLabel = marketLabels[this.market_type];
+    const marketLabel = { us: "미국", kr: "한국", global: "글로벌" }[this.market_type];
+    const isKorean = this.output_language === "korean";
+    const langInstr = isKorean ? "한국어로 작성. 친근한 말투(~해요, ~이에요)." : "Write in English.";
 
-    // ==========================================
-    // 테스트 모드: Mock 데이터로 빠르게 반환
-    // ==========================================
+    // ========== 테스트 모드 ==========
     if (this.test_mode) {
-      console.log("🧪 테스트 모드 활성화 - Mock 데이터 생성");
-
-      // 테스트용 key_points 풀
-      const TEST_KEY_POINTS_POOL = [
-        "미국 11월 고용 보고서 결과 혼조세, 비농업 부문 고용은 증가했지만 실업률이 4년 만에 최고치를 기록하며 금리 인하에 대한 불확실성을 키웠습니다.",
-        "테슬라가 무인 로봇 택시 이슈와 목표가 상향 조정에 힘입어 급등하며 시가총액 순위 7위에 안착, 자율주행 시장 경쟁 심화가 예상됩니다.",
-        "AI 버블 논쟁 속에서 과거 버블 붕괴 직전 중앙은행의 통화 긴축이 선행되었다는 점을 상기하며, 현재 연준의 완화 사이클이 지속되는 동안 AI 관련주 강세가 이어질 수 있다는 분석이 나왔습니다.",
-        "소비재 섹터가 조용한 강세를 보이고 있으며, 방산 및 항공우주 섹터도 국방비 지출 확대 모멘텀에 힘입어 긍정적인 전망이 제시되어 포트폴리오 다변화 전략이 필요합니다.",
-        "WTI 유가가 급락하며 에너지 기업들의 실적 및 현금 흐름 악화 우려가 제기되었고, 이는 주가 하락으로 이어질 수 있다는 점에 주의해야 합니다.",
-        "마이크론 실적 발표를 앞두고 목표가가 상향 조정되는 등 기대감이 높지만, 과거 실적 발표 후 주가 하락 흐름과 위스퍼넘버에 대한 경계심도 존재합니다.",
-        "데이터센터 건설 관련 규제 완화 기대감이 형성되면서 관련 종목들의 주가가 상승 전환하거나 낙폭을 줄이는 등 긍정적인 영향을 미치고 있습니다.",
-        "반도체 업황 둔화 우려가 커지면서 관련 종목들의 주가가 하락세를 보이고 있어 투자자들의 주의가 필요합니다.",
+      console.log("🧪 테스트 모드");
+      const pool = [
+        "미국 11월 고용 보고서 결과 혼조세, 실업률 4년 만에 최고치로 금리 인하 불확실성 증가.",
+        "테슬라 무인 로봇택시 이슈로 급등, 시총 7위 안착. 자율주행 시장 경쟁 심화 예상.",
+        "AI 버블 논쟁 속 연준 완화 사이클 지속 시 AI 관련주 강세 지속 가능성 분석.",
+        "소비재·방산 섹터 조용한 강세, 포트폴리오 다변화 전략 필요.",
       ];
-
-      // 랜덤으로 key_points 선택
-      const keyPointsCount = this.test_key_points_count || 2;
-      const shuffled = [...TEST_KEY_POINTS_POOL].sort(() => Math.random() - 0.5);
-      const selectedKeyPoints = shuffled.slice(0, keyPointsCount);
-
-      console.log(`📊 테스트 key_points: ${keyPointsCount}개 선택됨`);
-      selectedKeyPoints.forEach((kp, i) => {
-        console.log(`   ${i + 1}. ${kp.substring(0, 50)}...`);
-      });
-
-      // Mock 분석 결과
-      const mockAnalysis = {
-        executive_summary: `[테스트] ${analysisDate} ${marketLabel} 시장 분석 요약입니다. 테스트 모드로 실행 중입니다.`,
-        key_points: selectedKeyPoints,
-        market_outlook: {
-          sentiment: "neutral",
-          confidence: 70,
-          short_term: "혼조세",
-          medium_term: "상승 가능",
-        },
-        recommended_sectors: [
-          { sector_name: "기술", recommendation: "비중확대", reason: "AI 성장 지속" },
-          { sector_name: "소비재", recommendation: "비중확대", reason: "강한 소비 수요" },
-        ],
-        top_picks: [
-          { ticker: "TSLA", company_name: "Tesla Inc", company_name_kr: "테슬라", sector: "기술", recommendation: "매수", investment_thesis: "자율주행 기술 리더십" },
-          { ticker: "NVDA", company_name: "NVIDIA Corp", company_name_kr: "엔비디아", sector: "반도체", recommendation: "매수", investment_thesis: "AI 칩 시장 독점" },
-        ],
-        risk_factors: ["금리 불확실성", "지정학적 리스크", "밸류에이션 부담"],
+      const count = this.test_key_points_count || 2;
+      const keyPoints = [...pool].sort(() => Math.random() - 0.5).slice(0, count);
+      const mock = {
+        executive_summary: `[테스트] ${analysisDate} ${marketLabel} 시장 분석`,
+        key_points: keyPoints,
+        market_outlook: { sentiment: "neutral", confidence: 70 },
         hook_line: `${marketLabel} 증시 핵심 뉴스!`,
-        narrative_summary: `오늘 ${marketLabel} 시장은 혼조세를 보이고 있습니다. 테스트 데이터입니다.`,
       };
-
-      const testResult = {
-        analysis_date: analysisDate,
-        market_type: this.market_type,
-        market_label: marketLabel,
-        source: "test_mode",
-        video_info: {
-          title: "[테스트] Mock 데이터",
-          channel: "Test Channel",
-          url: null,
-        },
-        analysis: mockAnalysis,
-        _test_mode: true,
-        _key_points_count: keyPointsCount,
-        generated_at: new Date().toISOString(),
-      };
-
-      $.export("analysis", mockAnalysis);
-      $.export("$summary", `[테스트] ${marketLabel} 분석 완료 (key_points: ${keyPointsCount}개)`);
-      return testResult;
+      $.export("analysis", mock);
+      return { analysis_date: analysisDate, market_type: this.market_type, source: "test_mode", analysis: mock };
     }
 
-    // ==========================================
-    // LLM Caller
-    // ==========================================
-    const callGemini = async (prompt, temperature = 0.3) => {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.llm_model}:generateContent`;
-      const resp = await axios($, {
-        url,
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-goog-api-key": this.gemini_api_key },
-        data: {
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature, maxOutputTokens: 8192 },
-        },
-      });
-      return resp.candidates[0].content.parts[0].text;
+    // ========== 공통 유틸리티 ==========
+    const parseJson = (text) => {
+      try {
+        const m = text.match(/```json\s*([\s\S]*?)\s*```/);
+        return JSON.parse(m ? m[1] : text);
+      } catch { return { summary: text, key_points: [], raw: true }; }
     };
 
-    // ==========================================
-    // URL 유형 판별 (영상 vs 채널 vs 플레이리스트)
-    // ==========================================
+    const callGemini = async (prompt, temp = 0.3, model = null) => {
+      const m = model || this.llm_model;
+      const r = await axios($, {
+        url: `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-goog-api-key": this.gemini_api_key },
+        data: { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: temp, maxOutputTokens: 8192 } },
+      });
+      return r.candidates[0].content.parts[0].text;
+    };
+
+    const callOpenAI = async (prompt, temp = 0.3, model = "gpt-4o") => {
+      if (!this.openai_api_key) throw new Error("OpenAI API Key 필요");
+      const r = await axios($, {
+        url: "https://api.openai.com/v1/chat/completions",
+        method: "POST",
+        headers: { Authorization: `Bearer ${this.openai_api_key}`, "Content-Type": "application/json" },
+        data: { model, messages: [{ role: "user", content: prompt }], temperature: temp, max_tokens: 4096 },
+      });
+      return r.choices[0].message.content;
+    };
+
+    const callKeyPointsModel = async (prompt, temp = 0.3) => {
+      const m = this.key_points_model || "same";
+      if (m === "same") return callGemini(prompt, temp);
+      if (m.startsWith("gpt-")) return callOpenAI(prompt, temp, m);
+      return callGemini(prompt, temp, m);
+    };
+
+    // 주차 계산 함수 (ISO week number)
+    const getWeekNumber = (dateStr) => {
+      const date = new Date(dateStr);
+      const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+      const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+      return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+    };
+
+    const getKeyPointsInstruction = () => {
+      const s = this.key_points_structure || "auto";
+      if (s === "weekly_outlook") {
+        console.log(`[Weekly Outlook] 원문 주차 번호 사용 모드`);
+        
+        return `"key_points": [
+    "1️⃣ [W?? 요약] 원문에서 주차번호 추출! 지난주 시장 흐름 - ★모든 수치 필수 포함★ S&P 500 +X.XX%, 나스닥 +X.XX%, 다우 -X.XX% 등 (200-300자)",
+    "2️⃣ [W?? 전망] 원문에서 주차번호 추출! 이번주 전망 - ★모든 수치 필수 포함★ PCE 예상치, 금리 저항선 등 (200-300자)"
+  ],
+  ★★★ key_points 필수 규칙 ★★★
+  - 주차번호: 원문에 "W51", "W52", "제51주" 등 있으면 그대로 사용!
+  - 수치 필수: CPI 2.7%, 실업률 4.6%, S&P +0.10%, 마이크론 +17% 등 원문의 모든 숫자 포함!
+  - ❌ "소폭 상승" → 숫자 누락! ✅ "+0.10% 상승"
+  - ❌ "금리 인상" → 숫자 누락! ✅ "0.75%로 인상"`;
+      }
+      if (s === "custom" && this.key_points_custom_structure) {
+        const parts = this.key_points_custom_structure.split("|").map((p, i) => `"${i + 1}️⃣ ${p.trim()} 200-300자"`);
+        return `"key_points": [${parts.join(", ")}],`;
+      }
+      // auto (daily_market 등) - 일간 분석 형식
+      console.log(`[Daily Market] 일간 분석 형식 사용`);
+      return `"key_points": [
+    "1️⃣ [시장 현황] 오늘/금일 시장 핵심 이슈 - ★수치 필수★ CPI X.X%, EPS 가이던스, 주가 변동률 등 (200-300자)",
+    "2️⃣ [주목 포인트] 투자자 주목 사항 - ★수치 필수★ 만기일 규모, 목표가, 기업 가치 등 (200-300자)"
+  ],
+  ★★★ 일간 분석 필수 규칙 (DAILY_MARKET) ★★★
+  - ❌ 금지: "[W?? 요약]", "[W?? 전망]" 형식 사용 금지!
+  - ❌ 금지: "지난주", "이번 주" 표현 사용 금지!
+  - ✅ 사용: "[시장 현황]", "[주목 포인트]" 형식 사용!
+  - ✅ 사용: "오늘", "금일", "이번 금요일" 등 일간 표현!
+  - 수치 필수: CPI 2.7%, 주가 +10.1%, 7조 달러 규모 등 원문의 모든 숫자 포함!`;
+    };
+
+    const regenerateKeyPoints = async (parsed, context) => {
+      const m = this.key_points_model || "same";
+      if (m === "same" || !parsed.all_topics_scored?.length) return;
+      
+      // weekly_outlook 구조인 경우 특별 처리
+      const keyPointsStructure = this.key_points_structure || "auto";
+      
+      // ★★★ 기존 key_points가 이미 좋으면 스킵 ★★★
+      const existingKP = parsed.key_points || [];
+      const hasNumbers = existingKP.some(kp => /\d+\.?\d*%|\$\d+|\d+조|\d+억/.test(kp));
+      const hasWeekLabel = existingKP.some(kp => /\[W\d+/.test(kp));
+      const hasGoodLength = existingKP.every(kp => kp.length >= 100); // 100자 이상
+      
+      // weekly_outlook: 수치 + 주차 라벨 필수
+      // 그 외: 수치 + 적절한 길이면 OK
+      const isAlreadyGood = keyPointsStructure === "weekly_outlook" 
+        ? (hasNumbers && hasWeekLabel) 
+        : (hasNumbers && hasGoodLength);
+      
+      if (isAlreadyGood) {
+        console.log(`[KeyPoints] 기존 key_points 품질 우수 - 재생성 스킵`);
+        console.log(`   구조: ${keyPointsStructure}, 수치: ${hasNumbers}, 주차: ${hasWeekLabel}, 길이OK: ${hasGoodLength}`);
+        console.log(`   예시: ${existingKP[0]?.substring(0, 60)}...`);
+        return;  // 재생성하지 않음
+      }
+      
+      console.log(`[KeyPoints] 고성능 모델로 재생성: ${m}`);
+      console.log(`   구조: ${keyPointsStructure}, 수치: ${hasNumbers}, 주차: ${hasWeekLabel}, 길이OK: ${hasGoodLength}`);
+      let structureInstruction = "";
+      
+      if (keyPointsStructure === "weekly_outlook") {
+        structureInstruction = `
+★★★ 중요: 반드시 아래 구조로 작성하세요! ★★★
+key_points는 정확히 2개여야 합니다:
+- key_points[0]: 원문에 명시된 주차 번호로 "[W?? 요약]" 시작 (지난주 내용)
+- key_points[1]: 원문에 명시된 주차 번호로 "[W?? 전망]" 시작 (이번주/차주 내용)
+
+🚨🚨🚨 주차 번호는 원문에서 추출! 🚨🚨🚨
+- 원문에 "W51", "W52", "제51주", "제52주" 등 주차 번호가 있으면 그대로 사용!
+- 예: 원문에 "W51 증시 요약"이 있으면 → "[W51 요약]"으로 시작!
+- 예: 원문에 "W52 전망"이 있으면 → "[W52 전망]"으로 시작!
+- ❌ 임의로 주차 번호 변경 금지! 원문 주차 번호 그대로!
+
+🚨🚨🚨 구체적 수치 필수 포함! 🚨🚨🚨
+원문에 있는 모든 숫자/비율을 반드시 포함하세요!
+- ❌ "CPI가 예상치를 하회" → 숫자 누락!
+- ✅ "CPI가 전년 대비 2.7%를 기록하며 예상치(3.1%)를 하회"
+- ❌ "실업률 상승" → 숫자 누락!
+- ✅ "실업률이 4.6%로 상승"
+- ❌ "일본은행 금리 인상" → 숫자 누락!
+- ✅ "일본은행이 30년 만에 최고치인 0.75%로 인상"
+- ❌ "마이크론 급등, 나이키 급락" → 숫자 누락!
+- ✅ "마이크론 17% 급등, 나이키 10.5% 급락"
+- ❌ "S&P 상승, 다우 하락" → 숫자 누락!
+- ✅ "S&P 500 +0.10%, 나스닥 +0.50%, 다우 -0.70%, 러셀 -0.90%"
+
+🚨🚨🚨 주차별 내용 구분 필수! 🚨🚨🚨
+- key_points[0]: 원문의 "지난주", "요약", 과거형 내용만!
+- key_points[1]: 원문의 "이번주", "전망", 미래형 내용만!
+- ❌ 지난주 내용을 전망에 넣기 금지!
+- ❌ 이번주 내용을 요약에 넣기 금지!
+
+예시:
+{
+  "key_points": [
+    "[W51 요약] 지난주 미국 증시는 CPI가 전년 대비 2.7%(근원 2.6%)로 예상치(3.1%)를 하회하며 혼조세를 보였어요. S&P 500 +0.10%, 나스닥 +0.50% 상승했지만 다우 -0.70%, 러셀 -0.90% 하락했죠. 실업률은 4.6%로 상승했고, 일본은행은 30년 만에 최고치인 0.75%로 금리를 인상했어요...",
+    "[W52 전망] 이번주는 PCE 물가지수(예상 2.8%~2.9%) 발표가 핵심이에요. 10년물 국채 금리가 4.2% 저항선을 돌파하면..."
+  ]
+}`;
+        console.log(`[KeyPoints] weekly_outlook 구조 적용 (원문 주차 번호 사용)`);
+      } else {
+        // daily_market / auto - 일간 분석 형식
+        structureInstruction = `★★★ 일간 분석 형식 (DAILY_MARKET) ★★★
+key_points는 정확히 2개:
+- key_points[0]: "[시장 현황]"으로 시작. 오늘/금일 핵심 이슈 (200-300자)
+- key_points[1]: "[주목 포인트]"로 시작. 투자자 주목 사항 (200-300자)
+
+🚨🚨🚨 금지 표현 🚨🚨🚨
+- ❌ "[W?? 요약]", "[W?? 전망]" 형식 절대 금지!
+- ❌ "지난주", "이번 주" 표현 절대 금지!
+- ✅ "[시장 현황]", "[주목 포인트]" 사용!
+- ✅ "오늘", "금일", "이번 금요일" 등 일간 표현!
+
+🚨🚨🚨 수치 필수 🚨🚨🚨
+- CPI 전월비 0.3%, 전년비 2.7%, 코어 CPI 2.6% 등 원문 수치 그대로!
+- 마이크론 +10.1%, 목표가 500달러, 7조 달러 규모 등!
+
+예시:
+{
+  "key_points": [
+    "[시장 현황] 오늘 시장에서 CPI가 전월비 0.3%, 전년비 2.7%로 발표되며...",
+    "[주목 포인트] 이번 금요일 7조 달러 규모 선물옵션 만기일이 예정되어..."
+  ]
+}`;
+        console.log(`[KeyPoints] daily_market 구조 적용 (일간 표현 사용)`);
+      }
+      
+      // ★★★ 기존 key_points에 수치가 있으면 그것을 기반으로! ★★★
+      const existingKeyPoints = parsed.key_points || [];
+      const kpHasNumbers = existingKeyPoints.some(kp => /\d+\.?\d*%|\$\d+|\d+조|\d+억/.test(kp));
+      
+      if (kpHasNumbers && keyPointsStructure === "weekly_outlook") {
+        console.log(`[KeyPoints] 기존 key_points에 수치 포함됨 - 형식만 개선`);
+      }
+      
+      const prompt = `주식 애널리스트로서 key_points 개선.
+
+${kpHasNumbers ? `★★★ 기존 key_points (수치 포함됨 - 반드시 유지!) ★★★
+${JSON.stringify(existingKeyPoints, null, 2)}
+
+위 key_points의 모든 숫자/비율을 그대로 유지하면서 형식만 개선하세요!
+- S&P 500 +0.10% → 그대로!
+- CPI 2.7% → 그대로!
+- 실업률 4.6% → 그대로!
+- 마이크론 17% → 그대로!
+❌ 숫자를 삭제하거나 "소폭 상승" 같은 표현으로 바꾸면 안 됨!
+` : `주제 점수 (kpHasNumbers=${kpHasNumbers}):
+${JSON.stringify(parsed.all_topics_scored)}
+
+요약:
+${parsed.summary || parsed.narrative_summary || ""}`}
+
+${structureInstruction}
+
+JSON으로만 응답:
+\`\`\`json
+{"key_points": ["...", "..."], "selection_reason": "..."}
+\`\`\`
+
+${langInstr}`;
+
+      try {
+        const r = parseJson(await callKeyPointsModel(prompt, 0.2));
+        if (r.key_points?.length) {
+          parsed.key_points_original = parsed.key_points;
+          parsed.key_points = r.key_points;
+          parsed.key_points_model = m;
+          parsed.key_points_structure = keyPointsStructure;
+          console.log(`[KeyPoints] ${r.key_points.length}개 생성:`, r.key_points.map(kp => kp.substring(0, 30) + "...").join(" | "));
+        }
+      } catch (e) { console.error(`[KeyPoints] 실패: ${e.message}`); }
+    };
+
+    // ========== GCS 파일 읽기 ==========
+    const fetchGcsTextFile = async () => {
+      if (!this.gcs_bucket || !this.gcs_file_path) return null;
+      console.log(`[GCS] Reading: gs://${this.gcs_bucket}/${this.gcs_file_path}`);
+      try {
+        let token = null;
+        if (this.gcs_service_account_json) {
+          const sa = typeof this.gcs_service_account_json === "string" ? JSON.parse(this.gcs_service_account_json) : this.gcs_service_account_json;
+          const b64 = (o) => Buffer.from(JSON.stringify(o)).toString("base64").replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+          const now = Math.floor(Date.now() / 1000);
+          const h = { alg: "RS256", typ: "JWT" };
+          const c = { iss: sa.client_email, scope: "https://www.googleapis.com/auth/devstorage.read_only", aud: "https://oauth2.googleapis.com/token", exp: now + 3600, iat: now };
+          const unsigned = `${b64(h)}.${b64(c)}`;
+          const crypto = await import("crypto");
+          const sig = crypto.createSign("RSA-SHA256").update(unsigned).sign(sa.private_key, "base64").replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+          const jwt = `${unsigned}.${sig}`;
+          const tr = await axios($, { url: "https://oauth2.googleapis.com/token", method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, data: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}` });
+          token = tr.access_token;
+        }
+        const r = await axios($, { url: `https://storage.googleapis.com/storage/v1/b/${this.gcs_bucket}/o/${encodeURIComponent(this.gcs_file_path)}?alt=media`, method: "GET", headers: token ? { Authorization: `Bearer ${token}` } : {}, responseType: "text" });
+        const content = typeof r === "string" ? r : r.data || "";
+        console.log(`[GCS] Loaded: ${content.length} chars`);
+        return content;
+      } catch (e) { console.error(`[GCS] Error: ${e.message}`); return null; }
+    };
+
+    // ========== YouTube 유틸리티 ==========
     const parseYouTubeUrl = (url) => {
       if (!url) return { type: "none" };
-
-      // 플레이리스트 URL 패턴 (먼저 체크 - v= 파라미터가 함께 있을 수 있음)
-      const playlistMatch = url.match(/[?&]list=([a-zA-Z0-9_-]+)/);
-      if (playlistMatch && !url.includes("v=")) {
-        // 순수 플레이리스트 URL (영상 없이)
-        return { type: "playlist", playlistId: playlistMatch[1] };
+      const pl = url.match(/[?&]list=([a-zA-Z0-9_-]+)/);
+      if (pl && !url.includes("v=")) return { type: "playlist", playlistId: pl[1] };
+      for (const p of [/(?:v=|\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/, /^([a-zA-Z0-9_-]{11})$/]) {
+        const m = url.match(p);
+        if (m?.[1]) return { type: "video", videoId: m[1] };
       }
-
-      // 영상 URL 패턴
-      const videoPatterns = [
-        /(?:v=|\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
-        /^([a-zA-Z0-9_-]{11})$/,  // 직접 Video ID
-      ];
-
-      for (const pattern of videoPatterns) {
-        const match = url.match(pattern);
-        if (match && match[1]) {
-          return { type: "video", videoId: match[1] };
-        }
-      }
-
-      // 채널 URL 패턴
-      const channelPatterns = [
+      for (const { regex, type } of [
         { regex: /youtube\.com\/channel\/([a-zA-Z0-9_-]+)/, type: "channel_id" },
         { regex: /youtube\.com\/@([a-zA-Z0-9_-]+)/, type: "handle" },
         { regex: /youtube\.com\/c\/([a-zA-Z0-9_-]+)/, type: "custom" },
         { regex: /youtube\.com\/user\/([a-zA-Z0-9_-]+)/, type: "user" },
-      ];
-
-      for (const { regex, type } of channelPatterns) {
-        const match = url.match(regex);
-        if (match && match[1]) {
-          return { type: "channel", subType: type, identifier: match[1] };
-        }
+      ]) {
+        const m = url.match(regex);
+        if (m?.[1]) return { type: "channel", subType: type, identifier: m[1] };
       }
-
       return { type: "unknown" };
     };
 
-    // ==========================================
-    // 채널 ID 추출 (handle/@username → channel ID)
-    // ==========================================
-    const getChannelId = async (channelInfo) => {
-      // 이미 channel_id인 경우
-      if (channelInfo.subType === "channel_id") {
-        return channelInfo.identifier;
-      }
-
-      // YouTube Data API로 채널 ID 가져오기
+    const getChannelId = async (info) => {
+      if (info.subType === "channel_id") return info.identifier;
       if (this.youtube_api_key) {
         try {
-          let searchParam;
-          if (channelInfo.subType === "handle") {
-            searchParam = `forHandle=@${channelInfo.identifier}`;
-          } else {
-            searchParam = `forUsername=${channelInfo.identifier}`;
-          }
-
-          const resp = await axios($, {
-            url: `https://www.googleapis.com/youtube/v3/channels?${searchParam}&part=id&key=${this.youtube_api_key}`,
-            method: "GET",
-          });
-
-          if (resp.items && resp.items.length > 0) {
-            return resp.items[0].id;
-          }
-        } catch (e) {
-          console.log(`YouTube API failed: ${e.message}, trying HTML parsing...`);
-        }
+          const param = info.subType === "handle" ? `forHandle=@${info.identifier}` : `forUsername=${info.identifier}`;
+          const r = await axios($, { url: `https://www.googleapis.com/youtube/v3/channels?${param}&part=id&key=${this.youtube_api_key}`, method: "GET" });
+          if (r.items?.[0]?.id) return r.items[0].id;
+        } catch {}
       }
-
-      // HTML 파싱으로 채널 ID 추출
-      try {
-        let channelUrl;
-        if (channelInfo.subType === "handle") {
-          channelUrl = `https://www.youtube.com/@${channelInfo.identifier}`;
-        } else if (channelInfo.subType === "custom") {
-          channelUrl = `https://www.youtube.com/c/${channelInfo.identifier}`;
-        } else {
-          channelUrl = `https://www.youtube.com/user/${channelInfo.identifier}`;
-        }
-
-        const resp = await axios($, {
-          url: channelUrl,
-          method: "GET",
-          headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-          },
-        });
-
-        const html = typeof resp === "string" ? resp : resp.data || "";
-
-        // 여러 패턴으로 channel ID 추출 시도
-        const patterns = [
-          /"channelId":"(UC[a-zA-Z0-9_-]+)"/,
-          /channel_id=([a-zA-Z0-9_-]+)/,
-          /"externalId":"(UC[a-zA-Z0-9_-]+)"/,
-          /data-channel-external-id="([a-zA-Z0-9_-]+)"/,
-        ];
-
-        for (const pattern of patterns) {
-          const match = html.match(pattern);
-          if (match && match[1]) {
-            return match[1];
-          }
-        }
-
-        throw new Error("Could not find channel ID in page");
-      } catch (e) {
-        throw new Error(`Failed to get channel ID: ${e.message}`);
+      const urlMap = { handle: `https://www.youtube.com/@${info.identifier}`, custom: `https://www.youtube.com/c/${info.identifier}`, user: `https://www.youtube.com/user/${info.identifier}` };
+      const r = await axios($, { url: urlMap[info.subType], method: "GET", headers: { "User-Agent": "Mozilla/5.0" } });
+      const html = typeof r === "string" ? r : r.data || "";
+      for (const p of [/"channelId":"(UC[a-zA-Z0-9_-]+)"/, /"externalId":"(UC[a-zA-Z0-9_-]+)"/]) {
+        const m = html.match(p);
+        if (m?.[1]) return m[1];
       }
+      throw new Error("Channel ID not found");
     };
 
-    // ==========================================
-    // RSS 피드에서 채널 영상 목록 가져오기
-    // ==========================================
     const getChannelVideos = async (channelId) => {
-      const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-
-      try {
-        const resp = await axios($, {
-          url: rssUrl,
-          method: "GET",
-        });
-
-        const xml = typeof resp === "string" ? resp : resp.data || "";
-
-        // 영상 정보 추출
-        const videos = [];
-        const entryRegex = /<entry>([\s\S]*?)<\/entry>/g;
-        let match;
-
-        while ((match = entryRegex.exec(xml)) !== null) {
-          const entry = match[1];
-
-          const videoIdMatch = entry.match(/<yt:videoId>([^<]+)<\/yt:videoId>/);
-          const titleMatch = entry.match(/<title>([^<]+)<\/title>/);
-          const publishedMatch = entry.match(/<published>([^<]+)<\/published>/);
-          const authorMatch = entry.match(/<name>([^<]+)<\/name>/);
-
-          if (videoIdMatch && titleMatch && publishedMatch) {
-            const publishedDate = publishedMatch[1].split("T")[0];  // YYYY-MM-DD
-
-            videos.push({
-              videoId: videoIdMatch[1],
-              title: titleMatch[1],
-              published: publishedDate,
-              publishedFull: publishedMatch[1],
-              author: authorMatch ? authorMatch[1] : "Unknown",
-            });
-          }
-        }
-
-        return videos;
-      } catch (e) {
-        throw new Error(`Failed to fetch channel RSS: ${e.message}`);
+      const r = await axios($, { url: `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`, method: "GET" });
+      const xml = typeof r === "string" ? r : r.data || "";
+      const videos = [];
+      const re = /<entry>([\s\S]*?)<\/entry>/g;
+      let m;
+      while ((m = re.exec(xml))) {
+        const e = m[1];
+        const vid = e.match(/<yt:videoId>([^<]+)<\/yt:videoId>/)?.[1];
+        const title = e.match(/<title>([^<]+)<\/title>/)?.[1];
+        const pub = e.match(/<published>([^<]+)<\/published>/)?.[1];
+        if (vid && title && pub) videos.push({ videoId: vid, title, published: pub.split("T")[0] });
       }
+      return videos;
     };
 
-    // ==========================================
-    // 플레이리스트에서 영상 목록 가져오기 (HTML 파싱)
-    // ==========================================
     const getPlaylistVideos = async (playlistId) => {
-      console.log(`[Playlist] Fetching videos from playlist: ${playlistId}`);
-
-      try {
-        const playlistUrl = `https://www.youtube.com/playlist?list=${playlistId}`;
-        const resp = await axios($, {
-          url: playlistUrl,
-          method: "GET",
-          headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-            "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-          },
-        });
-
-        const html = typeof resp === "string" ? resp : resp.data || "";
-
-        // 플레이리스트 제목 추출
-        const titleMatch = html.match(/<title>([^<]+)<\/title>/);
-        const playlistTitle = titleMatch ? titleMatch[1].replace(" - YouTube", "").trim() : "Unknown Playlist";
-
-        // 영상 정보 추출 (ytInitialData에서)
-        const videos = [];
-
-        // videoId와 title 추출 패턴
-        const videoPattern = /"videoId":"([a-zA-Z0-9_-]{11})"[^}]*?"title":\{"runs":\[\{"text":"([^"]+)"\}\]/g;
-        let match;
-
-        const seenIds = new Set();
-        while ((match = videoPattern.exec(html)) !== null) {
-          const videoId = match[1];
-          const title = match[2];
-
-          if (!seenIds.has(videoId)) {
-            seenIds.add(videoId);
-            videos.push({
-              videoId,
-              title,
-              playlistId,
-            });
-          }
-        }
-
-        // 대체 패턴 (간단한 형식)
-        if (videos.length === 0) {
-          const simplePattern = /"videoId":"([a-zA-Z0-9_-]{11})"/g;
-          while ((match = simplePattern.exec(html)) !== null) {
-            const videoId = match[1];
-            if (!seenIds.has(videoId) && videoId !== playlistId) {
-              seenIds.add(videoId);
-              videos.push({
-                videoId,
-                title: `Video ${videos.length + 1}`,
-                playlistId,
-              });
-            }
-          }
-        }
-
-        console.log(`[Playlist] Found ${videos.length} videos in playlist: ${playlistTitle}`);
-
-        return {
-          playlistTitle,
-          videos: videos.slice(0, 50),  // 최대 50개
-        };
-      } catch (e) {
-        throw new Error(`Failed to fetch playlist: ${e.message}`);
+      const r = await axios($, { url: `https://www.youtube.com/playlist?list=${playlistId}`, method: "GET", headers: { "User-Agent": "Mozilla/5.0" } });
+      const html = typeof r === "string" ? r : r.data || "";
+      const title = html.match(/<title>([^<]+)<\/title>/)?.[1]?.replace(" - YouTube", "").trim() || "Playlist";
+      const videos = [], seen = new Set();
+      const re = /"videoId":"([a-zA-Z0-9_-]{11})"[^}]*?"title":\{"runs":\[\{"text":"([^"]+)"\}\]/g;
+      let m;
+      while ((m = re.exec(html))) {
+        if (!seen.has(m[1])) { seen.add(m[1]); videos.push({ videoId: m[1], title: m[2] }); }
       }
+      return { playlistTitle: title, videos: videos.slice(0, 50) };
     };
 
-    // ==========================================
-    // 분석일 기준 최신 영상 찾기
-    // ==========================================
-    const findVideoForDate = async (channelId, targetDate) => {
+    const findVideoForDate = async (channelId, date) => {
       const videos = await getChannelVideos(channelId);
-
-      if (videos.length === 0) {
-        throw new Error("No videos found in channel");
-      }
-
-      // 분석일에 업로드된 영상 찾기
-      const videosOnDate = videos.filter((v) => v.published === targetDate);
-
-      if (videosOnDate.length > 0) {
-        // 해당 날짜 영상 중 가장 최신 (첫 번째)
-        console.log(`[Channel] Found ${videosOnDate.length} video(s) on ${targetDate}`);
-        return videosOnDate[0];
-      }
-
-      // 해당 날짜 영상이 없으면 가장 최근 영상 사용
-      console.log(`[Channel] No video on ${targetDate}, using latest video (${videos[0].published})`);
-      return videos[0];
+      if (!videos.length) throw new Error("No videos found");
+      return videos.find(v => v.published === date) || videos[0];
     };
 
-    // ==========================================
-    // YouTube 자막(Transcript) 추출 함수
-    // ==========================================
     const fetchYouTubeTranscript = async (videoId) => {
       try {
-        const videoPageUrl = `https://www.youtube.com/watch?v=${videoId}`;
-        const pageResponse = await axios($, {
-          url: videoPageUrl,
-          method: "GET",
-          headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-            "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-          },
-        });
-
-        const html = typeof pageResponse === "string" ? pageResponse : pageResponse.data || "";
-
-        const captionMatch = html.match(/"captionTracks":\s*(\[.*?\])/s);
-        if (!captionMatch) {
-          throw new Error("No captions found for this video");
-        }
-
-        let captionTracks;
-        try {
-          captionTracks = JSON.parse(captionMatch[1]);
-        } catch (e) {
-          throw new Error("Failed to parse caption tracks");
-        }
-
-        if (!captionTracks || captionTracks.length === 0) {
-          throw new Error("No caption tracks available");
-        }
-
-        let selectedTrack = captionTracks.find((t) => t.languageCode === "ko") ||
-          captionTracks.find((t) => t.languageCode === "en") ||
-          captionTracks[0];
-
-        const captionUrl = selectedTrack.baseUrl;
-        const captionResponse = await axios($, {
-          url: captionUrl,
-          method: "GET",
-        });
-
-        const captionXml = typeof captionResponse === "string" ? captionResponse : captionResponse.data || "";
-
-        const textMatches = captionXml.matchAll(/<text[^>]*>([^<]*)<\/text>/g);
-        const transcriptParts = [];
-        for (const match of textMatches) {
-          const text = match[1]
-            .replace(/&amp;/g, "&")
-            .replace(/&lt;/g, "<")
-            .replace(/&gt;/g, ">")
-            .replace(/&quot;/g, '"')
-            .replace(/&#39;/g, "'")
-            .replace(/\n/g, " ")
-            .trim();
-          if (text) transcriptParts.push(text);
-        }
-
-        return {
-          success: true,
-          language: selectedTrack.languageCode,
-          transcript: transcriptParts.join(" "),
-        };
-      } catch (error) {
-        return {
-          success: false,
-          error: error.message,
-          transcript: null,
-        };
-      }
+        const r = await axios($, { url: `https://www.youtube.com/watch?v=${videoId}`, method: "GET", headers: { "User-Agent": "Mozilla/5.0", "Accept-Language": "ko-KR,ko;q=0.9" } });
+        const html = typeof r === "string" ? r : r.data || "";
+        const cm = html.match(/"captionTracks":\s*(\[.*?\])/s);
+        if (!cm) throw new Error("No captions");
+        const tracks = JSON.parse(cm[1]);
+        if (!tracks?.length) throw new Error("No tracks");
+        const track = tracks.find(t => t.languageCode === "ko") || tracks.find(t => t.languageCode === "en") || tracks[0];
+        const cr = await axios($, { url: track.baseUrl, method: "GET" });
+        const xml = typeof cr === "string" ? cr : cr.data || "";
+        const parts = [...xml.matchAll(/<text[^>]*>([^<]*)<\/text>/g)].map(m => m[1].replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").trim()).filter(Boolean);
+        return { success: true, language: track.languageCode, transcript: parts.join(" ") };
+      } catch (e) { return { success: false, error: e.message, transcript: null }; }
     };
 
-    // ==========================================
-    // YouTube 비디오 메타데이터 가져오기
-    // ==========================================
     const fetchVideoMetadata = async (videoId) => {
       try {
-        const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
-        const resp = await axios($, { url: oembedUrl, method: "GET" });
-        return {
-          title: resp.title,
-          author: resp.author_name,
-          thumbnail: resp.thumbnail_url,
-        };
-      } catch (e) {
-        return { title: "Unknown", author: "Unknown", thumbnail: null };
-      }
+        const r = await axios($, { url: `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`, method: "GET" });
+        return { title: r.title, author: r.author_name };
+      } catch { return { title: "Unknown", author: "Unknown" }; }
     };
 
-    // ==========================================
-    // FFmpeg VM으로 YouTube 오디오 추출
-    // ==========================================
     const extractAudioFromVM = async (videoId) => {
-      const vmUrl = this.ffmpeg_vm_url || "http://34.64.168.173:3000";
-
-      console.log(`[VM] Extracting audio from YouTube video: ${videoId}`);
-
-      const resp = await axios($, {
-        url: `${vmUrl}/extract-audio`,
+      const r = await axios($, {
+        url: `${this.ffmpeg_vm_url || "http://34.64.168.173:3000"}/extract-audio`,
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        data: {
-          youtube_url: `https://www.youtube.com/watch?v=${videoId}`,
-          format: "mp3",
-          quality: "128",
-        },
+        data: { youtube_url: `https://www.youtube.com/watch?v=${videoId}`, format: "mp3", quality: "128" },
         timeout: 300000,
       });
-
-      return {
-        success: true,
-        audio_url: resp.audio_url,
-        duration_seconds: resp.duration_seconds,
-        video_id: resp.video_id,
-      };
+      return { audio_url: r.audio_url, duration_seconds: r.duration_seconds };
     };
 
-    // ==========================================
-    // Whisper API로 오디오를 텍스트로 변환
-    // ==========================================
     const transcribeWithWhisper = async (audioUrl) => {
-      if (!this.openai_api_key) {
-        throw new Error("OpenAI API Key가 필요합니다. Whisper로 음성을 텍스트로 변환하려면 openai_api_key를 설정하세요.");
-      }
-
-      console.log(`[Whisper] Downloading audio from: ${audioUrl}`);
-
-      const audioResponse = await axios($, {
-        url: audioUrl,
-        method: "GET",
-        responseType: "arraybuffer",
-        timeout: 120000,
-      });
-
+      if (!this.openai_api_key) throw new Error("OpenAI API Key 필요");
+      const ar = await axios($, { url: audioUrl, method: "GET", responseType: "arraybuffer", timeout: 120000 });
       const FormData = (await import("form-data")).default;
       const form = new FormData();
-      form.append("file", Buffer.from(audioResponse), {
-        filename: "audio.mp3",
-        contentType: "audio/mpeg",
-      });
+      form.append("file", Buffer.from(ar), { filename: "audio.mp3", contentType: "audio/mpeg" });
       form.append("model", "whisper-1");
       form.append("language", "ko");
       form.append("response_format", "text");
-
-      console.log(`[Whisper] Sending to OpenAI Whisper API...`);
-
-      const whisperResp = await axios($, {
-        url: "https://api.openai.com/v1/audio/transcriptions",
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${this.openai_api_key}`,
-          ...form.getHeaders(),
-        },
-        data: form,
-        timeout: 300000,
-      });
-
-      return {
-        success: true,
-        transcript: typeof whisperResp === "string" ? whisperResp : whisperResp.text || whisperResp,
-        language: "ko",
-        method: "whisper",
-      };
+      const r = await axios($, { url: "https://api.openai.com/v1/audio/transcriptions", method: "POST", headers: { Authorization: `Bearer ${this.openai_api_key}`, ...form.getHeaders() }, data: form, timeout: 300000 });
+      return { success: true, transcript: typeof r === "string" ? r : r.text || r, language: "ko" };
     };
 
-    // ==========================================
-    // YouTube 분석 함수 (videoId 직접 받음)
-    // ==========================================
-    const analyzeYouTubeVideo = async (videoId, sourceInfo = {}) => {
-      $.export("source", "youtube");
-      $.export("video_id", videoId);
+    // ========== 분석 프롬프트 ==========
+    const buildAnalysisPrompt = (content, contentType, metadata = {}) => {
+      const keyPointsInstr = getKeyPointsInstruction();
+      return `당신은 주식 유튜브 콘텐츠 작가입니다. 1분 쇼츠 영상용 대본으로 정리해주세요.
 
-      const startTime = Date.now();
-      const fastMode = this.fast_mode !== false; // 기본값 true
+===== 정보 =====
+${contentType === "youtube" ? `제목: ${metadata.title}\n채널: ${metadata.author}` : "소스: GCS 텍스트"}
+분석일: ${analysisDate}, 시장: ${marketLabel}
 
-      // 🚀 Fast Mode: 병렬 처리
-      let metadata, transcriptResult;
-
-      if (fastMode) {
-        console.log(`[Fast Mode] 병렬 처리 시작...`);
-        const [metadataResult, transcriptResultParallel] = await Promise.all([
-          fetchVideoMetadata(videoId),
-          fetchYouTubeTranscript(videoId),
-        ]);
-        metadata = metadataResult;
-        transcriptResult = transcriptResultParallel;
-        console.log(`[Fast Mode] 메타데이터+자막 완료: ${Date.now() - startTime}ms`);
-      } else {
-        metadata = await fetchVideoMetadata(videoId);
-        transcriptResult = await fetchYouTubeTranscript(videoId);
-      }
-
-      $.export("video_metadata", metadata);
-      let transcriptMethod = "caption";
-
-      // 2차 시도: 자막이 없으면 VM + Whisper 사용
-      if (!transcriptResult.success || !transcriptResult.transcript) {
-        console.log(`[YouTube] 자막 없음, Whisper 사용 시도...`);
-        $.export("transcript_method", "whisper");
-
-        if (!this.openai_api_key) {
-          throw new Error(
-            `YouTube 영상에 자막이 없습니다. Whisper로 음성을 텍스트로 변환하려면 OpenAI API Key를 설정하세요.\n` +
-            `비용: 약 $0.006/분 (10분 영상 = ~$0.06 = ~₩90)`
-          );
-        }
-
-        try {
-          const vmStartTime = Date.now();
-          const audioResult = await extractAudioFromVM(videoId);
-          const vmTime = Date.now() - vmStartTime;
-          console.log(`[VM] Audio extracted: ${audioResult.duration_seconds?.toFixed(1)}s (${vmTime}ms)`);
-          $.export("audio_duration", audioResult.duration_seconds);
-          $.export("vm_time_ms", vmTime);
-
-          const whisperStartTime = Date.now();
-          transcriptResult = await transcribeWithWhisper(audioResult.audio_url);
-          const whisperTime = Date.now() - whisperStartTime;
-          transcriptMethod = "whisper";
-
-          console.log(`[Whisper] Transcript length: ${transcriptResult.transcript?.length || 0} chars (${whisperTime}ms)`);
-          $.export("whisper_time_ms", whisperTime);
-        } catch (vmError) {
-          throw new Error(
-            `YouTube 영상 분석 실패:\n` +
-            `- 자막: ${transcriptResult.error || "없음"}\n` +
-            `- Whisper: ${vmError.message}\n\n` +
-            `VM 서버에 /extract-audio 엔드포인트가 있는지 확인하세요.`
-          );
-        }
-      } else {
-        $.export("transcript_method", "caption");
-        console.log(`[Caption] 자막 사용: ${transcriptResult.transcript?.length || 0}자`);
-      }
-
-      $.export("transcript_status", transcriptResult.success ? "success" : "failed");
-
-      // 🚀 Fast Mode: 더 짧은 transcript 사용
-      const maxTranscriptLength = fastMode
-        ? (this.max_transcript_length || 8000)
-        : (this.max_transcript_length || 15000);
-
-      let transcript = transcriptResult.transcript;
-      if (transcript.length > maxTranscriptLength) {
-        transcript = transcript.substring(0, maxTranscriptLength) + "... (이하 생략)";
-      }
-
-      console.log(`[Transcript] 길이: ${transcript.length}자 (max: ${maxTranscriptLength})`);
-      const transcriptTime = Date.now() - startTime;
-
-      const prompt = `
-당신은 주식 유튜브 콘텐츠 작가입니다. 다음은 주식/금융 관련 YouTube 영상의 ${transcriptMethod === "whisper" ? "음성 텍스트 변환 결과" : "자막"}입니다.
-이 내용을 1분 분량 유튜브 쇼츠 영상용 대본으로 만들 수 있도록 상세하게 정리해주세요.
-
-===== 영상 정보 =====
-제목: ${metadata.title}
-채널: ${metadata.author}
-분석 기준일: ${analysisDate}
-시장: ${marketLabel}
-
-===== 영상 내용 (${transcriptResult.language}) =====
-${transcript}
+===== 내용 =====
+${content.substring(0, 15000)}${content.length > 15000 ? "... (생략)" : ""}
 ====================
 
-다음 JSON 형식으로 응답해주세요 (모든 필드를 상세하게 작성):
+JSON 형식으로 응답:
 \`\`\`json
 {
-  "narrative_summary": "여러분 오늘은 ${marketLabel}증시의 [주요 주제]를 분석해봤어요. [영상의 핵심 내용을 5-7문장으로 상세하게 서술. 특정 인물/전문가 이름은 제외하고 내용만 전달. 시장 상황, 주요 이슈, 추천 섹터/종목, 주의사항 등을 자연스럽게 연결하여 서술. 최소 300자 이상으로 작성]",
-  "summary": "영상 핵심 요약 (300자 이상, 객관적이고 상세한 서술)",
-  "key_points": [
-    "핵심 포인트 1 (각 포인트는 50자 이상으로 구체적으로)",
-    "핵심 포인트 2",
-    "핵심 포인트 3",
-    "핵심 포인트 4",
-    "핵심 포인트 5",
-    "핵심 포인트 6 (최소 6개 이상)"
-  ],
-  "market_outlook": {
-    "sentiment": "bullish/bearish/neutral",
-    "confidence": 0-100,
-    "reasoning": "판단 근거 (100자 이상으로 상세히)"
-  },
-  "mentioned_sectors": [
-    {
-      "sector": "섹터명",
-      "outlook": "positive/negative/neutral",
-      "reason": "이유 (50자 이상)",
-      "key_stocks": ["관련 종목1", "관련 종목2"]
-    }
-  ],
-  "mentioned_tickers": [
-    {
-      "ticker": "티커",
-      "name": "종목명",
-      "action": "buy/sell/hold",
-      "reason": "추천 이유 (30자 이상)",
-      "detail": "상세 분석 내용 (50자 이상, 목표가, 현재 상황, 전망 등)",
-      "catalyst": "상승/하락 촉매",
-      "risk": "주의할 점"
-    }
-  ],
-  "risk_factors": [
-    "리스크 1 (각 30자 이상으로 구체적으로)",
-    "리스크 2",
-    "리스크 3 (최소 3개 이상)"
-  ],
-  "opportunities": [
-    "기회 요인 1 (각 30자 이상으로 구체적으로)",
-    "기회 요인 2",
-    "기회 요인 3 (최소 3개 이상)"
-  ],
-  "timeline": "단기/중기/장기 전망과 구체적인 시점",
-  "hook_line": "시청자 관심을 끄는 임팩트 있는 한 줄 (예: 테슬라 신고가 돌파! 지금이 기회일까요?)",
+  "analysis_type": "daily_market|outlook|issue|sector|stock",
+  "narrative_summary": "여러분 오늘은 ${marketLabel}증시의... (300자+)",
+  "summary": "핵심 요약 (300자+)",
+  "all_topics_scored": [{"topic": "주제", "importance_score": 1-10, "score_reason": "이유"}],
+  ${keyPointsInstr}
+  "market_outlook": {"sentiment": "bullish/bearish/neutral", "confidence": 0-100, "reasoning": "근거"},
+  "mentioned_sectors": [{"sector": "섹터", "outlook": "positive/negative/neutral", "reason": "이유", "key_stocks": ["종목"]}],
+  "mentioned_tickers": [{"ticker": "티커", "name": "종목명", "action": "buy/sell/hold", "reason": "이유"}],
+  "risk_factors": ["리스크1", "리스크2"],
+  "opportunities": ["기회1", "기회2"],
+  "hook_line": "임팩트 있는 한 줄",
   "shorts_script_points": [
-    {
-      "order": 1,
-      "topic": "오프닝 훅",
-      "script": "오프닝 대사 (10-15자)",
-      "duration_hint": "3초"
-    },
-    {
-      "order": 2,
-      "topic": "시장 현황",
-      "script": "시장 현황 설명 대사 (40-60자)",
-      "duration_hint": "10초"
-    },
-    {
-      "order": 3,
-      "topic": "핵심 이슈 1",
-      "script": "첫 번째 핵심 이슈 설명 (40-60자)",
-      "duration_hint": "10초"
-    },
-    {
-      "order": 4,
-      "topic": "핵심 이슈 2",
-      "script": "두 번째 핵심 이슈 설명 (40-60자)",
-      "duration_hint": "10초"
-    },
-    {
-      "order": 5,
-      "topic": "추천 종목/섹터",
-      "script": "추천 내용 설명 (40-60자)",
-      "duration_hint": "10초"
-    },
-    {
-      "order": 6,
-      "topic": "주의사항",
-      "script": "주의할 점 설명 (30-40자)",
-      "duration_hint": "7초"
-    },
-    {
-      "order": 7,
-      "topic": "마무리",
-      "script": "마무리 멘트 + CTA (20-30자)",
-      "duration_hint": "5초"
-    },
-    {
-      "order": 8,
-      "topic": "투자 경고",
-      "script": "본 영상은 투자 권유가 아니에요",
-      "duration_hint": "5초"
-    }
+    {"order": 1, "topic": "오프닝", "script": "대사", "duration_hint": "3초"},
+    {"order": 2, "topic": "시장현황", "script": "대사", "duration_hint": "10초"}
   ]
 }
 \`\`\`
 
-${this.output_language === "korean" ? "모든 내용은 한국어로 작성해주세요." : "Write everything in English."}
+${isKorean ? "한국어로, 친근한 말투(~해요, ~이에요)로 작성." : "Write in English."}
 
-중요 규칙:
-1. narrative_summary는 "여러분 오늘은 ${marketLabel}증시의"로 시작하세요
-2. 특정 전문가/애널리스트/유튜버 이름은 제외하고 내용만 전달하세요 (예: "HSL 파트너스 이형수 대표는" → 제외)
-3. 친근하고 이해하기 쉬운 말투로 작성하세요 (~해요, ~이에요 체)
-4. 반드시 유효한 JSON만 출력하세요
-5. 영상에서 언급된 내용만 기반으로 분석하세요
-6. shorts_script_points는 1분(60초) 분량의 쇼츠 대본용으로, 총 8개 씬으로 구성하세요
-7. 각 씬의 script는 영상 자막/나레이션 대본입니다 - 전문적이면서도 이해하기 쉽게 작성하세요
-8. 모든 필드를 빠짐없이 상세하게 작성하세요 - 내용이 짧으면 안됩니다
-`;
+★★★ 수치 필수 포함 규칙 ★★★
+- key_points에 원문의 모든 숫자/비율을 그대로 포함하세요!
+- ❌ "S&P 상승" → ✅ "S&P 500 +0.10% 상승"
+- ❌ "CPI 하회" → ✅ "CPI 2.7%로 예상치 3.1% 하회"
+- ❌ "실업률 상승" → ✅ "실업률 4.6%로 상승"
+- ❌ "금리 인상" → ✅ "0.75%로 금리 인상"
+- ❌ "마이크론 급등" → ✅ "마이크론 17% 급등"
+- 주차번호도 원문 그대로: W51, W52, 제51주 등
 
-      console.log(`[Gemini] 분석 요청 시작...`);
-      const geminiStartTime = Date.now();
-      const analysisResult = await callGemini(prompt);
-      const geminiTime = Date.now() - geminiStartTime;
-      console.log(`[Gemini] 분석 완료: ${geminiTime}ms`);
+중요: 전문가 이름 제외, narrative_summary는 "여러분 오늘은 ${marketLabel}증시의"로 시작.`;
+    };
 
-      const totalTime = Date.now() - startTime;
-      console.log(`[Total] 전체 소요 시간: ${totalTime}ms (Transcript: ${transcriptTime}ms, Gemini: ${geminiTime}ms)`);
-      $.export("timing", { total_ms: totalTime, transcript_ms: transcriptTime, gemini_ms: geminiTime });
+    // ========== YouTube 분석 ==========
+    const analyzeYouTubeVideo = async (videoId, sourceInfo = {}) => {
+      $.export("source", "youtube");
+      $.export("video_id", videoId);
+      const start = Date.now();
+      const fast = this.fast_mode !== false;
 
-      let parsed;
-      try {
-        const jsonMatch = analysisResult.match(/```json\s*([\s\S]*?)\s*```/);
-        parsed = JSON.parse(jsonMatch ? jsonMatch[1] : analysisResult);
-      } catch (e) {
-        parsed = { summary: analysisResult, key_points: [], raw: true };
+      let metadata, transcriptResult;
+      if (fast) {
+        [metadata, transcriptResult] = await Promise.all([fetchVideoMetadata(videoId), fetchYouTubeTranscript(videoId)]);
+      } else {
+        metadata = await fetchVideoMetadata(videoId);
+        transcriptResult = await fetchYouTubeTranscript(videoId);
+      }
+      $.export("video_metadata", metadata);
+
+      let transcriptMethod = "caption";
+      if (!transcriptResult.success || !transcriptResult.transcript) {
+        console.log("[YouTube] 자막 없음, Whisper 시도...");
+        if (!this.openai_api_key) throw new Error("자막 없음. Whisper 사용하려면 OpenAI API Key 필요.");
+        const audio = await extractAudioFromVM(videoId);
+        transcriptResult = await transcribeWithWhisper(audio.audio_url);
+        transcriptMethod = "whisper";
       }
 
-      parsed.video_info = {
-        title: metadata.title,
-        author: metadata.author,
-        video_id: videoId,
-        video_url: `https://www.youtube.com/watch?v=${videoId}`,
-        transcript_language: transcriptResult.language,
-        transcript_method: transcriptMethod,
-        ...sourceInfo,
-      };
+      const maxLen = fast ? (this.max_transcript_length || 8000) : (this.max_transcript_length || 15000);
+      let transcript = transcriptResult.transcript;
+      if (transcript.length > maxLen) transcript = transcript.substring(0, maxLen) + "... (생략)";
 
+      const prompt = buildAnalysisPrompt(transcript, "youtube", metadata);
+      const result = await callGemini(prompt);
+      const parsed = parseJson(result);
+
+      parsed.video_info = { title: metadata.title, author: metadata.author, video_id: videoId, video_url: `https://www.youtube.com/watch?v=${videoId}`, transcript_method: transcriptMethod, ...sourceInfo };
+      await regenerateKeyPoints(parsed);
+
+      console.log(`[YouTube] 완료: ${Date.now() - start}ms`);
       return parsed;
     };
 
-    // ==========================================
-    // 뉴스 기반 분석 함수
-    // ==========================================
+    // ========== 뉴스 분석 ==========
     const analyzeNews = async () => {
       $.export("source", "news");
+      if (!this.serper_api_key) throw new Error("Serper API Key 필요");
 
-      if (!this.serper_api_key) {
-        throw new Error("Serper API Key is required for news-based analysis");
-      }
+      const focus = { macro: "economy GDP inflation", interest: "interest rate fed bond", tech: "tech stocks FAANG", energy: "oil energy", healthcare: "healthcare pharma", finance: "bank financial", consumer: "consumer retail", ai_semi: "AI semiconductor nvidia" };
+      const market = { us: "US stock market S&P 500", kr: "Korea KOSPI", global: "global stock market" };
 
-      const focusKeywords = {
-        macro: "economy GDP inflation unemployment",
-        interest: "interest rate fed treasury bond yield",
-        tech: "technology stocks FAANG big tech",
-        energy: "oil energy stocks crude",
-        healthcare: "healthcare pharma biotech stocks",
-        finance: "bank stocks financial sector",
-        consumer: "consumer spending retail stocks",
-        ai_semi: "AI artificial intelligence semiconductor nvidia",
-      };
+      const results = await Promise.all((this.analysis_focus || ["macro"]).map(async (f) => {
+        try {
+          const r = await axios($, { url: "https://google.serper.dev/news", method: "POST", headers: { "X-API-KEY": this.serper_api_key, "Content-Type": "application/json" }, data: { q: `${market[this.market_type]} ${focus[f]} ${analysisDate}`, num: 5 } });
+          return (r.news || []).map(a => ({ focus: f, title: a.title, snippet: a.snippet }));
+        } catch { return []; }
+      }));
 
-      const marketKeywords = {
-        us: "US stock market S&P 500",
-        kr: "Korea KOSPI stock market",
-        global: "global stock market",
-      };
+      const articles = results.flat().slice(0, 20);
+      const context = articles.map(a => `[${a.focus}] ${a.title}\n${a.snippet}`).join("\n\n");
 
-      const searchQueries = (this.analysis_focus || ["macro"]).map(
-        (focus) => `${marketKeywords[this.market_type]} ${focusKeywords[focus]} ${analysisDate}`
-      );
-
-      const newsResults = await Promise.all(
-        searchQueries.map(async (query, index) => {
-          try {
-            const resp = await axios($, {
-              url: "https://google.serper.dev/news",
-              method: "POST",
-              headers: {
-                "X-API-KEY": this.serper_api_key,
-                "Content-Type": "application/json",
-              },
-              data: { q: query, num: 5 },
-            });
-            return { focus: this.analysis_focus[index], articles: resp.news || [] };
-          } catch (e) {
-            return { focus: this.analysis_focus[index], articles: [], error: e.message };
-          }
-        })
-      );
-
-      const allArticles = newsResults.flatMap((r) =>
-        r.articles.map((a) => ({
-          focus: r.focus,
-          title: a.title,
-          snippet: a.snippet,
-          source: a.source,
-          date: a.date,
-        }))
-      );
-
-      const newsContext = allArticles
-        .slice(0, 20)
-        .map((a) => `[${a.focus}] ${a.title}\n${a.snippet}`)
-        .join("\n\n");
-
-      const prompt = `
-당신은 전문 금융 애널리스트입니다. 다음 최신 뉴스들을 종합하여 주식 시장 현황을 분석해주세요.
-
-분석 기준일: ${analysisDate}
-시장: ${marketLabel}
-분석 초점: ${(this.analysis_focus || []).join(", ")}
-
-===== 최신 뉴스 =====
-${newsContext}
-====================
-
-다음 JSON 형식으로 응답해주세요:
-\`\`\`json
-{
-  "summary": "시장 현황 요약 (300자 이내)",
-  "key_points": ["핵심 포인트 1", "핵심 포인트 2", ...],
-  "market_outlook": {
-    "sentiment": "bullish/bearish/neutral",
-    "confidence": 0-100,
-    "reasoning": "판단 근거"
-  },
-  "sector_analysis": [
-    {"sector": "섹터명", "outlook": "positive/negative/neutral", "reason": "이유", "hot_keywords": ["키워드1", "키워드2"]}
-  ],
-  "macro_indicators": {
-    "interest_rate": "현재 금리 상황",
-    "inflation": "인플레이션 상황",
-    "employment": "고용 상황",
-    "gdp": "경제 성장 상황"
-  },
-  "risk_factors": ["리스크 1", "리스크 2"],
-  "opportunities": ["기회 요인 1", "기회 요인 2"],
-  "recommended_focus_sectors": ["추천 섹터 1", "추천 섹터 2"],
-  "timeline": "단기/중기/장기 전망"
-}
-\`\`\`
-
-${this.output_language === "korean" ? "모든 내용은 한국어로 작성해주세요." : "Write everything in English."}
-중요: 반드시 유효한 JSON만 출력하세요.
-`;
-
-      const analysisResult = await callGemini(prompt, 0.2);
-
-      let parsed;
-      try {
-        const jsonMatch = analysisResult.match(/```json\s*([\s\S]*?)\s*```/);
-        parsed = JSON.parse(jsonMatch ? jsonMatch[1] : analysisResult);
-      } catch (e) {
-        parsed = { summary: analysisResult, key_points: [], raw: true };
-      }
-
-      return { ...parsed, news_sources: allArticles };
+      const prompt = `전문 금융 애널리스트로서 뉴스 분석.\n\n분석일: ${analysisDate}\n시장: ${marketLabel}\n\n===== 뉴스 =====\n${context}\n====================\n\nJSON 형식으로 응답:\n\`\`\`json\n{"summary": "요약", "key_points": ["포인트"], "market_outlook": {"sentiment": "neutral", "confidence": 70}, "sector_analysis": [], "risk_factors": [], "opportunities": []}\n\`\`\`\n\n${langInstr}`;
+      const parsed = parseJson(await callGemini(prompt, 0.2));
+      return { ...parsed, news_sources: articles };
     };
 
-    // ==========================================
-    // 메인 실행 로직
-    // ==========================================
-    let analysisResult;
-    let sourceType = "news";
-    let sourceUrl = null;
+    // ========== GCS 분석 ==========
+    const analyzeGcsText = async (content) => {
+      $.export("source", "gcs");
+      console.log(`[GCS] 분석 시작: ${content.length}자`);
 
-    if (this.youtube_url) {
-      const urlInfo = parseYouTubeUrl(this.youtube_url);
-      console.log(`[URL] Parsed: ${JSON.stringify(urlInfo)}`);
+      const prompt = buildAnalysisPrompt(content, "gcs");
+      const parsed = parseJson(await callGemini(prompt));
+      parsed.gcs_info = { bucket: this.gcs_bucket, file_path: this.gcs_file_path, content_length: content.length };
+      await regenerateKeyPoints(parsed);
+      return parsed;
+    };
 
-      if (urlInfo.type === "video") {
-        // 영상 URL → 직접 분석
+    // ========== 메인 실행 ==========
+    let analysisResult, sourceType = "news", sourceUrl = null;
+    const gcsContent = await fetchGcsTextFile();
+
+    if (this.gcs_bucket && this.gcs_file_path && gcsContent) {
+      console.log(`[Priority] 1순위: GCS`);
+      sourceType = "gcs";
+      sourceUrl = `gs://${this.gcs_bucket}/${this.gcs_file_path}`;
+      analysisResult = await analyzeGcsText(gcsContent);
+
+    } else if (this.youtube_url) {
+      const info = parseYouTubeUrl(this.youtube_url);
+      console.log(`[Priority] 2순위: YouTube (${info.type})`);
+
+      if (info.type === "video") {
         sourceType = "youtube_video";
-        sourceUrl = `https://www.youtube.com/watch?v=${urlInfo.videoId}`;
-        analysisResult = await analyzeYouTubeVideo(urlInfo.videoId);
+        sourceUrl = `https://www.youtube.com/watch?v=${info.videoId}`;
+        analysisResult = await analyzeYouTubeVideo(info.videoId);
 
-      } else if (urlInfo.type === "channel") {
-        // 채널 URL → 분석일 기준 영상 찾기
+      } else if (info.type === "channel") {
         sourceType = "youtube_channel";
-        console.log(`[Channel] Getting channel ID for ${urlInfo.subType}: ${urlInfo.identifier}`);
-
-        const channelId = await getChannelId(urlInfo);
-        console.log(`[Channel] Channel ID: ${channelId}`);
-        $.export("channel_id", channelId);
-
+        const channelId = await getChannelId(info);
         const video = await findVideoForDate(channelId, analysisDate);
-        console.log(`[Channel] Selected video: ${video.title} (${video.published})`);
-        $.export("selected_video", video);
-
         sourceUrl = `https://www.youtube.com/watch?v=${video.videoId}`;
-        analysisResult = await analyzeYouTubeVideo(video.videoId, {
-          source_type: "channel",
-          channel_id: channelId,
-          video_published: video.published,
-          selected_for_date: analysisDate,
-        });
+        analysisResult = await analyzeYouTubeVideo(video.videoId, { source_type: "channel", channel_id: channelId });
 
-      } else if (urlInfo.type === "playlist") {
-        // 플레이리스트 URL → 첫 번째 영상 분석
+      } else if (info.type === "playlist") {
         sourceType = "youtube_playlist";
-        console.log(`[Playlist] Playlist ID: ${urlInfo.playlistId}`);
-        $.export("playlist_id", urlInfo.playlistId);
-
-        const playlistData = await getPlaylistVideos(urlInfo.playlistId);
-        console.log(`[Playlist] Title: ${playlistData.playlistTitle}`);
-        $.export("playlist_title", playlistData.playlistTitle);
-        $.export("playlist_videos_count", playlistData.videos.length);
-
-        if (playlistData.videos.length === 0) {
-          throw new Error("No videos found in playlist");
-        }
-
-        // 첫 번째 영상 (가장 최신) 선택
-        const video = playlistData.videos[0];
-        console.log(`[Playlist] Selected video: ${video.title}`);
-        $.export("selected_video", video);
-
+        const pl = await getPlaylistVideos(info.playlistId);
+        if (!pl.videos.length) throw new Error("No videos in playlist");
+        const video = pl.videos[0];
         sourceUrl = `https://www.youtube.com/watch?v=${video.videoId}`;
-        analysisResult = await analyzeYouTubeVideo(video.videoId, {
-          source_type: "playlist",
-          playlist_id: urlInfo.playlistId,
-          playlist_title: playlistData.playlistTitle,
-          video_index: 0,
-          total_videos: playlistData.videos.length,
-        });
+        analysisResult = await analyzeYouTubeVideo(video.videoId, { source_type: "playlist", playlist_id: info.playlistId });
 
       } else {
-        throw new Error(`Invalid YouTube URL format: ${this.youtube_url}\nSupported formats: video URL, channel URL (@handle, /channel/, /c/, /user/), playlist URL (?list=)`);
+        throw new Error(`Invalid YouTube URL: ${this.youtube_url}`);
       }
+
     } else {
-      // YouTube URL 없음 → 뉴스 기반 분석
+      console.log(`[Priority] 3순위: 뉴스`);
       analysisResult = await analyzeNews();
     }
 
-    // 결과 구조화
-    const result = {
-      analysis_date: analysisDate,
-      market_type: this.market_type,
-      market_label: marketLabel,
-      source: sourceType,
-      source_url: sourceUrl,
-      analysis: analysisResult,
-      generated_at: new Date().toISOString(),
+    const keyPointsStructure = this.key_points_structure || "auto";
+    const skipTickerAnalysis = keyPointsStructure === "weekly_outlook";
+    
+    if (skipTickerAnalysis) {
+      console.log(`[Weekly Outlook] 섹터/종목 분석 스킵 플래그 설정`);
+    }
+    
+    const result = { 
+      analysis_date: analysisDate, 
+      market_type: this.market_type, 
+      market_label: marketLabel, 
+      source: sourceType, 
+      source_url: sourceUrl, 
+      analysis: analysisResult, 
+      key_points_structure: keyPointsStructure,
+      skip_ticker_analysis: skipTickerAnalysis,
+      generated_at: new Date().toISOString() 
     };
-
     $.export("market_analysis", result);
     return result;
   },

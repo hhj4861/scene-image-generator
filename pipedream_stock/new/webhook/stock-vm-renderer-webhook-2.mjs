@@ -180,11 +180,22 @@ export default defineComponent({
     const folderName = data.folder_name || "unknown";
     const videoResults = data.videos?.results || [];
 
+    // BGM URL: props 우선, webhook 데이터 fallback
+    const bgmUrl = this.bgm_url || data.bgm_url || data.bgm_result?.bgm_url || data.bgm?.url || shortsScript.bgm_url || "";
+
     if (!scenes.length) throw new Error("씬이 없습니다.");
 
     console.log(`🎬 Stock VM Renderer (Webhook V2) 시작`);
     console.log(`📂 폴더: ${folderName}`);
     console.log(`🎥 씬 수: ${scenes.length}`);
+    console.log(`🎵 BGM URL: ${bgmUrl || "없음"}`);
+    if (bgmUrl) {
+      const bgmSource = this.bgm_url ? "props" :
+                        data.bgm_url ? "data.bgm_url" :
+                        data.bgm_result?.bgm_url ? "data.bgm_result.bgm_url" :
+                        data.bgm?.url ? "data.bgm.url" : "shorts_script.bgm_url";
+      console.log(`   └─ 소스: ${bgmSource}`);
+    }
 
     // 디버그: 스크립트 데이터 확인
     console.log(`\n📝 === 스크립트 데이터 확인 ===`);
@@ -404,6 +415,54 @@ export default defineComponent({
     let mergedTimedSubtitles = [];
     let subtitleCumulativeTime = 0;
 
+    // 긴 자막 분리 함수 (한글 20자 기준)
+    const MAX_SUBTITLE_LENGTH = 20;
+    const splitLongSubtitle = (sub, startTime, endTime) => {
+      const textKo = sub.text_ko || sub.korean || "";
+      const textEn = sub.text_en || sub.english || "";
+      
+      if (textKo.length <= MAX_SUBTITLE_LENGTH) {
+        return [{ ...sub, start_time: startTime, end_time: endTime, text_ko: textKo, text_en: textEn }];
+      }
+
+      // 쉼표나 자연스러운 분리점 찾기
+      const splitPatterns = [", ", ",", " "];
+      let splitIndex = -1;
+      let bestSplitIndex = Math.floor(textKo.length / 2);
+
+      for (const pattern of splitPatterns) {
+        const idx = textKo.indexOf(pattern, Math.floor(textKo.length * 0.3));
+        if (idx > 0 && idx < textKo.length * 0.7) {
+          splitIndex = pattern === ", " ? idx + 2 : (pattern === "," ? idx + 1 : idx);
+          break;
+        }
+      }
+      
+      if (splitIndex === -1) {
+        // 공백 기준으로 가장 가까운 위치 찾기
+        const spaceIdx = textKo.indexOf(" ", bestSplitIndex);
+        splitIndex = spaceIdx > 0 ? spaceIdx + 1 : bestSplitIndex;
+      }
+
+      const part1Ko = textKo.substring(0, splitIndex).trim();
+      const part2Ko = textKo.substring(splitIndex).trim();
+      
+      // 영문도 비슷한 비율로 분리
+      const enRatio = splitIndex / textKo.length;
+      const enSplitIdx = Math.floor(textEn.length * enRatio);
+      const enSpaceIdx = textEn.indexOf(" ", enSplitIdx);
+      const actualEnSplit = enSpaceIdx > 0 ? enSpaceIdx : enSplitIdx;
+      const part1En = textEn.substring(0, actualEnSplit).trim();
+      const part2En = textEn.substring(actualEnSplit).trim();
+
+      const midTime = startTime + (endTime - startTime) * (splitIndex / textKo.length);
+
+      return [
+        { ...sub, start_time: startTime, end_time: midTime, text_ko: part1Ko, text_en: part1En },
+        { ...sub, start_time: midTime, end_time: endTime, text_ko: part2Ko, text_en: part2En },
+      ];
+    };
+
     // 자막이 절대 시간인지 상대 시간인지 감지
     // Scene 2 이후의 자막 start_time이 해당 씬의 duration보다 크면 절대 시간
     let isAbsoluteTime = false;
@@ -429,24 +488,33 @@ export default defineComponent({
           const subStartTime = sub.start_time || sub.start || 0;
           const subEndTime = sub.end_time || sub.end || sceneDuration;
 
-          mergedTimedSubtitles.push({
-            // 절대 시간이면 그대로 사용, 상대 시간이면 sceneStartTime 더함
-            start_time: isAbsoluteTime ? subStartTime : sceneStartTime + subStartTime,
-            end_time: isAbsoluteTime ? subEndTime : sceneStartTime + subEndTime,
-            text_ko: sub.text_ko || sub.korean || "",
-            text_en: sub.text_en || sub.english || "",
-            position: sub.position || "center",
-            y_offset: sub.y_offset,
-            font_size: sub.font_size,
-            original_scene: video.original_index,
-          });
+          // 절대 시간 계산
+          const absStartTime = isAbsoluteTime ? subStartTime : sceneStartTime + subStartTime;
+          const absEndTime = isAbsoluteTime ? subEndTime : sceneStartTime + subEndTime;
+
+          // 긴 자막 분리
+          const splitSubs = splitLongSubtitle(sub, absStartTime, absEndTime);
+          
+          for (const splitSub of splitSubs) {
+            mergedTimedSubtitles.push({
+              start_time: splitSub.start_time,
+              end_time: splitSub.end_time,
+              text_ko: splitSub.text_ko || "",
+              text_en: splitSub.text_en || "",
+              position: sub.position || "center",
+              y_offset: sub.y_offset,
+              font_size: sub.font_size,
+              color: sub.color,
+              original_scene: video.original_index,
+            });
+          }
         }
       }
     }
 
     // 시간순 정렬
     mergedTimedSubtitles.sort((a, b) => a.start_time - b.start_time);
-    console.log(`📝 병합된 자막: ${mergedTimedSubtitles.length}개`);
+    console.log(`📝 병합된 자막: ${mergedTimedSubtitles.length}개 (긴 자막 자동 분리 적용)`);
 
     // 디버그: 자막 내용 출력
     if (mergedTimedSubtitles.length > 0) {
@@ -496,7 +564,7 @@ export default defineComponent({
       subtitle_english_enabled: hasEnglishSubtitles,
       subtitle_timing_mode: this.subtitle_timing_mode,
       timed_subtitles: mergedTimedSubtitles.length > 0 ? mergedTimedSubtitles : null,
-      bgm_url: this.bgm_url || "",
+      bgm_url: bgmUrl,
       bgm_volume: parseFloat(this.bgm_volume),
       bgm_volume_no_audio: parseFloat(this.bgm_volume_no_audio),
       scene_audio_map: sceneAudioMap,
