@@ -611,6 +611,7 @@ ${this.output_language === "korean" ? "모든 내용은 한국어로 작성해�
       earnings_beat_bonus: 5, earnings_growth_bonus: 3, revenue_growth_bonus: 3,
       technical_bullish_bonus: 4, above_ma_bonus: 2, catalyst_bonus: 3, max_catalyst_bonus: 9,
       policy_positive_bonus: 5, options_bullish_bonus: 3, positive_mention_bonus: 5,
+      year_high_drop_20_penalty: 5, year_high_drop_30_penalty: 10, year_high_drop_40_penalty: 15,
     };
 
     filteredTickers = filteredTickers.map(ticker => {
@@ -635,6 +636,22 @@ ${this.output_language === "korean" ? "모든 내용은 한국어로 작성해�
           adjustedScore += SCORE_ADJUSTMENT.earnings_beat_bonus;
           adjustmentReasons.push(`어닝서프라이즈 +${SCORE_ADJUSTMENT.earnings_beat_bonus}점`);
           bonusDetails.earnings_surprise = fmpData.earnings_surprise;
+        }
+        if (fmpData.price_to_year_high_pct !== null && fmpData.price_to_year_high_pct !== undefined) {
+          const dropPct = parseFloat(fmpData.price_to_year_high_pct);
+          if (dropPct <= -40) {
+            adjustedScore -= SCORE_ADJUSTMENT.year_high_drop_40_penalty;
+            adjustmentReasons.push(`52주고점대비${dropPct.toFixed(0)}% -${SCORE_ADJUSTMENT.year_high_drop_40_penalty}점`);
+            bonusDetails.year_high_drop = dropPct;
+          } else if (dropPct <= -30) {
+            adjustedScore -= SCORE_ADJUSTMENT.year_high_drop_30_penalty;
+            adjustmentReasons.push(`52주고점대비${dropPct.toFixed(0)}% -${SCORE_ADJUSTMENT.year_high_drop_30_penalty}점`);
+            bonusDetails.year_high_drop = dropPct;
+          } else if (dropPct <= -20) {
+            adjustedScore -= SCORE_ADJUSTMENT.year_high_drop_20_penalty;
+            adjustmentReasons.push(`52주고점대비${dropPct.toFixed(0)}% -${SCORE_ADJUSTMENT.year_high_drop_20_penalty}점`);
+            bonusDetails.year_high_drop = dropPct;
+          }
         }
       }
 
@@ -909,7 +926,7 @@ ${this.output_language === "korean" ? "모든 내용은 한국어로 작성해�
           policy_positive: "+5점 (정책 수혜)", options_bullish: "+3점 (콜옵션 우위)",
           positive_mention: "+5점 (긍정적 언급)",
         },
-        penalty_factors: { unverified: "-5점 (미검증 종목)", risk_per_item: "-2점/개 (최대 -10점)", fmp_data_missing: "-3점 (재무데이터 불완전)" },
+        penalty_factors: { unverified: "-5점 (미검증 종목)", risk_per_item: "-2점/개 (최대 -10점)", fmp_data_missing: "-3점 (재무데이터 불완전)", year_high_drop_20: "-5점 (52주고점대비 -20% 이상)", year_high_drop_30: "-10점 (52주고점대비 -30% 이상)", year_high_drop_40: "-15점 (52주고점대비 -40% 이상)" },
       },
       positive_stocks_summary: { count: positiveKeyStocks.size, tickers: [...positiveKeyStocks], korean_names: [...positiveKeyStocksKr] },
       reference_only_tickers: referenceOnlyTickers,
