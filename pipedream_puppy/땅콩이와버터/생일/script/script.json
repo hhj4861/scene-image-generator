@@ -1,0 +1,1175 @@
+{
+  "action": "generate_video_from_image",
+  "project_context": {
+    "scene_id": "scene_1",
+    "input_image_source": "generated_image_scene_1"
+  },
+  "constraints": {
+    "no_text_overlay": true,
+    "no_watermark": true
+  },
+  "video_prompt": {
+    "motion_description": "Precise lip-sync control required within 8 seconds. 0-1s: Static. 1-5s: ONLY Left dog (Peanut) moves mouth. 5-6s: Static. 6-8s: ONLY Right dog (Butter) moves mouth.",
+    "motion_strength": "low"
+  },
+  "audio_track": {
+    "voices_config": {
+      "peanut": { "id": "korean_female_toddler_character", "description": "Low pitch, slow tempo, 2-3y girl" },
+      "butter": { "id": "korean_male_toddler_character", "description": "Low pitch, slow tempo, 2-3y boy" }
+    },
+    "timeline": [
+      {
+        "start_time": "0.0s",
+        "end_time": "1.0s",
+        "speaker": "none",
+        "text": "[Silence/Pause]",
+        "lip_sync_required": false,
+        "lip_sync_target": "none"
+      },
+      {
+        "start_time": "1.0s",
+        "end_time": "5.0s",
+        "speaker": "peanut",
+        "text": "오늘은 아주 중요한 날이에요, 국가 공휴일로 지정해야 돼요!",
+        "lip_sync_required": true,
+        "lip_sync_target": "dog_on_left",
+        "lip_sync_style": "slow_toddler_speech"
+      },
+      {
+        "start_time": "5.0s",
+        "end_time": "6.0s",
+        "speaker": "none",
+        "text": "[Silence/Pause]",
+        "lip_sync_required": false,
+        "lip_sync_target": "none"
+      },
+      {
+        "start_time": "6.0s",
+        "end_time": "8.0s",
+        "speaker": "butter",
+        "text": "응응 맞지 맞지",
+        "lip_sync_required": true,
+        "lip_sync_target": "dog_on_right",
+        "lip_sync_style": "slow_toddler_speech"
+      }
+    ]
+  },
+  "output_settings": {
+    "duration": "8.0s",
+    "resolution": "1080x1920",
+    "fps": 30
+  }
+}
+,
+{
+"action": "generate_video_from_image",
+"project_context": {
+"scene_id": "scene_2",
+"input_image_source": "generated_image_scene_2"
+},
+"constraints": {
+"no_text_overlay": true,
+"no_watermark": true
+},
+"video_prompt": {
+"motion_description": "Precise lip-sync control required within 8 seconds. 0-1s: Both dogs static. 1-4s: ONLY the Pomeranian on the left moves mouth. Poodle on right is static. 4-5s: Both static. 5-8s: ONLY the Poodle on the right moves mouth. Pomeranian on left is static.",
+"motion_strength": "low"
+},
+"audio_track": {
+"timeline": [
+{
+"start_time": "0.0s",
+"end_time": "1.0s",
+"speaker": "none",
+"text": "[Silence/Pause]",
+"lip_sync_required": false,
+"lip_sync_target": "none",
+"facial_expression": "mouth_closed_tightly"
+},
+{
+"start_time": "1.0s",
+"end_time": "4.0s",
+"speaker": "peanut",
+"text": "미모? 완벽.",
+"voice_settings": {
+"id": "korean_female_toddler_character",
+"description": "Low pitch, slow tempo, 2-3 year old girl, admiring tone",
+"emotion": "calm_admiration"
+},
+"lip_sync_required": true,
+"lip_sync_target": "dog_on_left",
+"visual_cue": "The Pomeranian on the left touching the screen",
+"lip_sync_style": "slow_chewing_motion_for_toddler_speech"
+},
+{
+"start_time": "4.0s",
+"end_time": "5.0s",
+"speaker": "none",
+"text": "[Silence/Pause]",
+"lip_sync_required": false,
+"lip_sync_target": "none",
+"facial_expression": "mouth_closed_tightly"
+},
+{
+"start_time": "5.0s",
+"end_time": "8.0s",
+"speaker": "butter",
+"text": "간식? 무한 리필. 함미는 그저 빛!",
+"voice_settings": {
+"id": "korean_male_toddler_character",
+"description": "Low pitch, slow tempo, 2-3 year old boy, excited tone",
+"emotion": "happy_excited"
+},
+"lip_sync_required": true,
+"lip_sync_target": "dog_on_right",
+"visual_cue": "The Toy Poodle on the right looking happy",
+"lip_sync_style": "fast_happy_barks_motion"
+}
+]
+},
+"output_settings": {
+"duration": "8.0s",
+"resolution": "1080x1920",
+"fps": 30
+}
+},
+{
+"action": "generate_video_from_image",
+"project_context": {
+"scene_id": "scene_3",
+"input_image_source": "generated_image_scene_3_swapped"
+},
+"constraints": {
+"no_text_overlay": true,
+"no_watermark": true
+},
+"video_prompt": {
+"motion_description": "Precise lip-sync control required. 0-1s: Both static. 1-4s: Right Poodle speaks, Left Pomeranian silent. 4-5s: Both static. 5-8s: Left Pomeranian speaks, Right Poodle silent.",
+"motion_strength": "low"
+},
+"audio_track": {
+"timeline": [
+{
+"start_time": "0.0s",
+"end_time": "1.0s",
+"speaker": "none",
+"text": "[Silence]",
+"visual_execution_plan": {
+"active_subject": "none",
+"passive_subject": "both_dogs",
+"instruction": "BOTH dog_on_left AND dog_on_right must keep mouths TIGHTLY CLOSED."
+}
+},
+{
+"start_time": "1.0s",
+"end_time": "4.0s",
+"speaker": "butter",
+"text": "평생 충성 맹세! 단, 유효기간은 24시간입니다.",
+"voice_settings": {
+"id": "korean_male_toddler_character",
+"description": "Low pitch, slow tempo, 2-3y boy, serious tone"
+},
+// [사용자 요청 반영] 말하는 대상과 입 다무는 대상을 동시 명시
+"visual_execution_plan": {
+"active_subject": {
+"target": "dog_on_right (Butter)",
+"action": "moves mouth for lip-sync",
+"pose": "maintain saluting pose"
+},
+"passive_subject": {
+"target": "dog_on_left (Peanut)",
+"action": "KEEPS MOUTH CLOSED completely",
+"pose": "maintain belly-up pose"
+}
+},
+"lip_sync_style": "slow_chewing_motion"
+},
+{
+"start_time": "4.0s",
+"end_time": "5.0s",
+"speaker": "none",
+"text": "[Silence]",
+"visual_execution_plan": {
+"active_subject": "none",
+"passive_subject": "both_dogs",
+"instruction": "BOTH dog_on_left AND dog_on_right must keep mouths TIGHTLY CLOSED."
+}
+},
+{
+"start_time": "5.0s",
+"end_time": "8.0s",
+"speaker": "peanut",
+"text": "함미 사랑해여!!",
+"voice_settings": {
+"id": "korean_female_toddler_character",
+"description": "Low pitch, slow tempo, 2-3y girl, happy tone"
+},
+// [사용자 요청 반영] 반대 상황 명시
+"visual_execution_plan": {
+"active_subject": {
+"target": "dog_on_left (Peanut)",
+"action": "moves mouth for lip-sync",
+"pose": "maintain belly-up pose"
+},
+"passive_subject": {
+"target": "dog_on_right (Butter)",
+"action": "KEEPS MOUTH CLOSED completely",
+"pose": "maintain saluting pose"
+}
+},
+"lip_sync_style": "happy_toddler_speech"
+}
+]
+},
+"output_settings": {
+"duration": "8.0s",
+"resolution": "1080x1920",
+"fps": 30
+}
+},
+{
+"action": "generate_video_from_image",
+"project_context": {
+"scene_id": "scene_4",
+"input_image_source": "generated_image_scene_4a_greeting",
+"description": "땅콩이와 버터가 할머니께 생신 축하 인사를 전함"
+},
+"constraints": {
+"no_text_overlay": true,
+"no_watermark": true
+},
+"video_prompt": {
+"motion_description": "Precise lip-sync with EXCLUSIVE mouth movement. 0-2s: LEFT DOG (Peanut) speaks with slow mouth movements, gentle head nod. RIGHT DOG (Butter) keeps mouth CLOSED. 2-3s: Both dogs remain still with mouths closed. 3-6s: RIGHT DOG (Butter) speaks slowly with small mumbling mouth movements. LEFT DOG (Peanut) keeps mouth CLOSED. 6-7s: Both dogs remain still with mouths closed, looking expectantly.",
+"motion_strength": "medium"
+},
+"audio_track": {
+"timeline": [
+{
+"start_time": "0.0s",
+"end_time": "2.0s",
+"speaker": "peanut",
+"text": "할머니! 생신축하드려요!",
+"voice_settings": {
+"id": "korean_female_toddler_slow",
+"description": "2-3살 여자 아기 목소리. 톤은 낮고 차분하며, 속도는 느림. 또박또박 말하려고 노력하는 귀여운 느낌.",
+"tone": "cute_low_slow",
+"pitch": "low",
+"speed": "slow",
+"voice_consistency": {
+"maintain_throughout": true,
+"instruction": "처음부터 끝까지 동일한 목소리 톤, 피치, 속도 유지"
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "dog_on_left (Peanut)",
+"speaking_mouth": "OPEN - lip-sync active",
+"silent_dog": "dog_on_right (Butter)",
+"silent_mouth": "CLOSED - must remain shut, no movement",
+"strict_rule": "ONLY Peanut moves mouth. Butter mouth stays CLOSED."
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "dog_on_left (Peanut)",
+"action": "lip-sync with slow small mouth movements, gentle head nod",
+"pose": "soft and attentive, looking at camera"
+},
+"passive_subject": {
+"target": "dog_on_right (Butter)",
+"action": "static stare, mouth CLOSED, no lip movement",
+"pose": "compliant and still"
+}
+},
+"lip_sync_style": "toddler_slow_speech"
+},
+{
+"start_time": "2.0s",
+"end_time": "3.0s",
+"type": "pause",
+"description": "화자 전환 전 1초 정적. 두 강아지 모두 입 다물고 가만히 있음.",
+"lip_sync_rules": {
+"speaking_dog": "none",
+"peanut_mouth": "CLOSED",
+"butter_mouth": "CLOSED",
+"strict_rule": "BOTH dogs keep mouths CLOSED. No lip movement."
+},
+"visual_execution_plan": {
+"active_subject": null,
+"passive_subject": {
+"target": "both dogs",
+"action": "remain still, slight idle breathing, mouths CLOSED",
+"pose": "waiting"
+}
+}
+},
+{
+"start_time": "3.0s",
+"end_time": "6.0s",
+"speaker": "butter",
+"text": "아프지.. 말고.. 건강.. 하세여..",
+"voice_settings": {
+"id": "korean_male_toddler_slow",
+"description": "2-3살 남자 아기 목소리. 톤은 낮고 느리며, 혀 짧은 발음으로 웅얼거림. 진지하게 말하려고 노력하는 느낌.",
+"tone": "cute_mumbling_sincere",
+"pitch": "low",
+"speed": "very_slow",
+"voice_consistency": {
+"maintain_throughout": true,
+"fixed_pitch": "low (constant, do NOT change)",
+"fixed_speed": "very_slow (constant, do NOT speed up)",
+"fixed_tone": "mumbling, sincere, slow (constant throughout)",
+"instruction": "전체 대사 동안 목소리 톤, 피치, 속도 절대 변경 금지. 처음 '아프지..'부터 마지막 '하세여..'까지 동일한 낮고 느린 웅얼거리는 목소리 유지.",
+"warning": "DO NOT change voice mid-sentence. Keep same low, slow, mumbling voice from start to end."
+},
+"speech_pattern": {
+"pause_between_words": "long (..) pause between words",
+"articulation": "slurred, baby-like pronunciation (하세여)",
+"consistency": "same pattern throughout entire text"
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "dog_on_right (Butter)",
+"speaking_mouth": "OPEN - lip-sync active",
+"silent_dog": "dog_on_left (Peanut)",
+"silent_mouth": "CLOSED - must remain shut, no movement",
+"strict_rule": "ONLY Butter moves mouth. Peanut mouth stays CLOSED."
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "dog_on_right (Butter)",
+"action": "lip-sync with small slow mouth movements, slow blinking",
+"pose": "serious, sincere look"
+},
+"passive_subject": {
+"target": "dog_on_left (Peanut)",
+"action": "remains motionless, mouth CLOSED, no lip movement",
+"pose": "still listening, nodding slightly"
+}
+},
+"lip_sync_style": "toddler_mumbling_slow"
+},
+{
+"start_time": "6.0s",
+"end_time": "7.0s",
+"type": "pause",
+"description": "다음 씬 연결 전 1초 정적. 두 강아지 모두 입 다물고 기대하는 표정.",
+"lip_sync_rules": {
+"speaking_dog": "none",
+"peanut_mouth": "CLOSED",
+"butter_mouth": "CLOSED",
+"strict_rule": "BOTH dogs keep mouths CLOSED. No lip movement."
+},
+"visual_execution_plan": {
+"active_subject": null,
+"passive_subject": {
+"target": "both dogs",
+"action": "remain still, slight idle breathing, mouths CLOSED, expectant look",
+"pose": "waiting, ready for next part"
+}
+}
+}
+]
+},
+"output_settings": {
+"duration": "7.0s",
+"resolution": "1080x1920",
+"fps": 30
+}
+},
+{
+"action": "generate_video_from_image",
+"project_context": {
+"scene_id": "scene_5",
+"input_image_source": "generated_image_scene_4a_greeting",
+"description": "땅콩이와 버터가 할머니께 생신 축하 인사를 전함"
+},
+"constraints": {
+"no_text_overlay": true,
+"no_watermark": true
+},
+"video_prompt": {
+"motion_description": "Precise lip-sync with EXCLUSIVE mouth movement. 0-2s: LEFT DOG (Peanut) speaks with slow mouth movements, gentle head nod. RIGHT DOG (Butter) keeps mouth CLOSED. 2-3s: Both dogs remain still with mouths closed. 3-6s: RIGHT DOG (Butter) speaks slowly with small mumbling mouth movements. LEFT DOG (Peanut) keeps mouth CLOSED. 6-7s: Both dogs remain still with mouths closed, looking expectantly.",
+"motion_strength": "medium"
+},
+"audio_track": {
+"timeline": [
+{
+"start_time": "0.0s",
+"end_time": "2.0s",
+"speaker": "peanut",
+"text": "할머니! 생신축하드려요!",
+"voice_settings": {
+"id": "korean_female_toddler_slow",
+"description": "2-3살 여자 아기 목소리. 톤은 낮고 차분하며, 속도는 느림. 또박또박 말하려고 노력하는 귀여운 느낌.",
+"tone": "cute_low_slow",
+"pitch": "low",
+"speed": "slow",
+"voice_consistency": {
+"maintain_throughout": true,
+"instruction": "처음부터 끝까지 동일한 목소리 톤, 피치, 속도 유지"
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "dog_on_left (Peanut)",
+"speaking_mouth": "OPEN - lip-sync active",
+"silent_dog": "dog_on_right (Butter)",
+"silent_mouth": "CLOSED - must remain shut, no movement",
+"strict_rule": "ONLY Peanut moves mouth. Butter mouth stays CLOSED."
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "dog_on_left (Peanut)",
+"action": "lip-sync with slow small mouth movements, gentle head nod",
+"pose": "soft and attentive, looking at camera"
+},
+"passive_subject": {
+"target": "dog_on_right (Butter)",
+"action": "static stare, mouth CLOSED, no lip movement",
+"pose": "compliant and still"
+}
+},
+"lip_sync_style": "toddler_slow_speech"
+},
+{
+"start_time": "2.0s",
+"end_time": "3.0s",
+"type": "pause",
+"description": "화자 전환 전 1초 정적. 두 강아지 모두 입 다물고 가만히 있음.",
+"lip_sync_rules": {
+"speaking_dog": "none",
+"peanut_mouth": "CLOSED",
+"butter_mouth": "CLOSED",
+"strict_rule": "BOTH dogs keep mouths CLOSED. No lip movement."
+},
+"visual_execution_plan": {
+"active_subject": null,
+"passive_subject": {
+"target": "both dogs",
+"action": "remain still, slight idle breathing, mouths CLOSED",
+"pose": "waiting"
+}
+}
+},
+{
+"start_time": "3.0s",
+"end_time": "6.0s",
+"speaker": "butter",
+"text": "아프지.. 말고.. 건강.. 하세여..",
+"voice_settings": {
+"id": "korean_male_toddler_slow",
+"description": "2-3살 남자 아기 목소리. 톤은 낮고 느리며, 혀 짧은 발음으로 웅얼거림. 진지하게 말하려고 노력하는 느낌.",
+"tone": "cute_mumbling_sincere",
+"pitch": "low",
+"speed": "very_slow",
+"voice_consistency": {
+"maintain_throughout": true,
+"fixed_pitch": "low (constant, do NOT change)",
+"fixed_speed": "very_slow (constant, do NOT speed up)",
+"fixed_tone": "mumbling, sincere, slow (constant throughout)",
+"instruction": "전체 대사 동안 목소리 톤, 피치, 속도 절대 변경 금지. 처음 '아프지..'부터 마지막 '하세여..'까지 동일한 낮고 느린 웅얼거리는 목소리 유지.",
+"warning": "DO NOT change voice mid-sentence. Keep same low, slow, mumbling voice from start to end."
+},
+"speech_pattern": {
+"pause_between_words": "long (..) pause between words",
+"articulation": "slurred, baby-like pronunciation (하세여)",
+"consistency": "same pattern throughout entire text"
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "dog_on_right (Butter)",
+"speaking_mouth": "OPEN - lip-sync active",
+"silent_dog": "dog_on_left (Peanut)",
+"silent_mouth": "CLOSED - must remain shut, no movement",
+"strict_rule": "ONLY Butter moves mouth. Peanut mouth stays CLOSED."
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "dog_on_right (Butter)",
+"action": "lip-sync with small slow mouth movements, slow blinking",
+"pose": "serious, sincere look"
+},
+"passive_subject": {
+"target": "dog_on_left (Peanut)",
+"action": "remains motionless, mouth CLOSED, no lip movement",
+"pose": "still listening, nodding slightly"
+}
+},
+"lip_sync_style": "toddler_mumbling_slow"
+},
+{
+"start_time": "6.0s",
+"end_time": "7.0s",
+"type": "pause",
+"description": "다음 씬 연결 전 1초 정적. 두 강아지 모두 입 다물고 기대하는 표정.",
+"lip_sync_rules": {
+"speaking_dog": "none",
+"peanut_mouth": "CLOSED",
+"butter_mouth": "CLOSED",
+"strict_rule": "BOTH dogs keep mouths CLOSED. No lip movement."
+},
+"visual_execution_plan": {
+"active_subject": null,
+"passive_subject": {
+"target": "both dogs",
+"action": "remain still, slight idle breathing, mouths CLOSED, expectant look",
+"pose": "waiting, ready for next part"
+}
+}
+}
+]
+},
+"output_settings": {
+"duration": "7.0s",
+"resolution": "1080x1920",
+"fps": 30
+}
+},
+{
+"action": "generate_video_from_image",
+"project_context": {
+"scene_id": "scene_6",
+"input_image_source": "generated_image_scene_4b_announcement",
+"description": "땅콩이가 축하쇼를 예고함"
+},
+"constraints": {
+"no_text_overlay": true,
+"no_watermark": true
+},
+"video_prompt": {
+"motion_description": "Precise lip-sync with EXCLUSIVE mouth movement. 0-4s: LEFT DOG (Peanut) speaks with slow mouth movements, slightly excited head movements, eyes sparkling. RIGHT DOG (Butter) keeps mouth CLOSED, looking at Peanut then at camera.",
+"motion_strength": "medium"
+},
+"audio_track": {
+"timeline": [
+{
+"start_time": "0.0s",
+"end_time": "4.0s",
+"speaker": "peanut",
+"text": "건강을.. 기원하며.. 축하쇼를.. 준비했어요!", //건강을.. 2초, 기원하며..2초, 축하쇼를.. 2초, 준비했어요! 2초
+"voice_settings": {
+"id": "korean_female_toddler_slow",
+"description": "2-3살 여자 아기 목소리. 톤은 낮고 차분하며, 속도는 느림. 기대에 찬 느낌으로 또박또박 말하려고 노력함.",
+"tone": "cute_low_slow_excited",
+"pitch": "low",
+"speed": "slow",
+"voice_consistency": {
+"maintain_throughout": true,
+"fixed_pitch": "low (constant, do NOT change)",
+"fixed_speed": "slow (constant, do NOT speed up)",
+"instruction": "전체 대사 동안 목소리 톤, 피치, 속도 절대 변경 금지. 처음 '건강을..'부터 마지막 '준비했어요!'까지 동일한 낮고 느린 목소리 유지.",
+"warning": "DO NOT change voice mid-sentence. Keep same low, slow voice from start to end."
+},
+"speech_pattern": {
+"pause_between_words": "medium (..) pause between phrases",
+"articulation": "clear but slow, toddler pronunciation",
+"consistency": "same pattern throughout entire text"
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "dog_on_left (Peanut)",
+"speaking_mouth": "OPEN - lip-sync active",
+"silent_dog": "dog_on_right (Butter)",
+"silent_mouth": "CLOSED - must remain shut, no movement",
+"strict_rule": "ONLY Peanut moves mouth. Butter mouth stays CLOSED."
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "dog_on_left (Peanut)",
+"action": "lip-sync with slow mouth movements, slightly excited head bob, eyes sparkling",
+"pose": "eager and excited, announcing something special"
+},
+"passive_subject": {
+"target": "dog_on_right (Butter)",
+"action": "looks at Peanut briefly, then at camera, mouth CLOSED, no lip movement",
+"pose": "attentive, slightly curious, supportive"
+}
+},
+"lip_sync_style": "toddler_slow_speech"
+}
+]
+},
+"output_settings": {
+"duration": "4.0s",
+"resolution": "1080x1920",
+"fps": 30
+}
+},
+{
+"action": "generate_video_from_image",
+"project_context": {
+"scene_id": "scene_7",
+"input_image_source": "generated_image_scene_3_celebration_show",
+"timeline_position": "16s - 24s (celebration show performance)"
+},
+"constraints": {
+"no_text_overlay": true,
+"no_watermark": true
+},
+"video_prompt": {
+"motion_description": "Cute dog trick performance show. 0-2s: Both dogs raise front paws up in 'give paw' pose, sitting upright. 2-4s: Both dogs stand up on all fours and spin 360 degrees in opposite directions (Peanut clockwise, Butter counter-clockwise), then face camera. 4-6s: Both dogs jump up simultaneously in the air with all four paws off ground, then land gracefully. 6-8s: Both dogs stand on hind legs facing each other and do high-five with front paws touching, then turn to face camera with proud expressions.",
+"motion_strength": "medium-high"
+},
+"audio_track": {
+"voice_timing_note": "NO voice audio in this scene. Background music and sound effects only.",
+"timeline": [
+{
+"start_time": "0.0s",
+"end_time": "2.0s",
+"type": "trick_paw_raise",
+"speaker": "none",
+"voice": "none",
+"description": "손! 자세. 두 강아지가 앉은 자세에서 앞발을 동시에 들어올림.",
+"audio": {
+"voice": "NONE - no voice in this segment",
+"background_music": {
+"type": "upbeat circus/performance tune",
+"volume": "medium"
+},
+"sound_effect": {
+"type": "cute sparkle/twinkle sound",
+"timing": "when paws raise"
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "none",
+"peanut_mouth": "CLOSED - performing trick, NO voice",
+"butter_mouth": "CLOSED - performing trick, NO voice",
+"strict_rule": "No speaking. No voice audio. Both dogs keep mouths CLOSED."
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "both dogs",
+"action": "sitting position, raise both front paws up simultaneously in 'give paw' pose"
+},
+"dog_on_left": {
+"target": "Peanut (lighter fur)",
+"action": "sit upright, raise front paws up proudly, eager happy expression",
+"mouth": "CLOSED",
+"pose": "sitting, front paws raised"
+},
+"dog_on_right": {
+"target": "Butter (darker fur)",
+"action": "sit upright, raise front paws up (slightly slower, more deliberate), focused expression",
+"mouth": "CLOSED",
+"pose": "sitting, front paws raised"
+}
+}
+},
+{
+"start_time": "2.0s",
+"end_time": "4.0s",
+"type": "trick_spin",
+"speaker": "none",
+"voice": "none",
+"description": "돌아! 자세. 두 강아지가 일어나서 서로 반대 방향으로 제자리 회전.",
+"audio": {
+"voice": "NONE - no voice in this segment",
+"background_music": {
+"type": "upbeat circus/performance tune continues",
+"volume": "medium"
+},
+"sound_effect": {
+"type": "whoosh spinning sound",
+"timing": "during spin"
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "none",
+"peanut_mouth": "CLOSED - spinning, NO voice",
+"butter_mouth": "CLOSED - spinning, NO voice",
+"strict_rule": "No speaking. No voice audio. Both dogs keep mouths CLOSED while spinning."
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "both dogs",
+"action": "stand on all fours, spin 360 degrees in opposite directions, then face camera"
+},
+"dog_on_left": {
+"target": "Peanut (lighter fur)",
+"action": "stand up, spin 360 degrees CLOCKWISE, excited expression, then face camera",
+"mouth": "CLOSED",
+"spin_direction": "clockwise"
+},
+"dog_on_right": {
+"target": "Butter (darker fur)",
+"action": "stand up, spin 360 degrees COUNTER-CLOCKWISE, focused expression, then face camera",
+"mouth": "CLOSED",
+"spin_direction": "counter-clockwise"
+}
+}
+},
+{
+"start_time": "4.0s",
+"end_time": "6.0s",
+"type": "trick_jump",
+"speaker": "none",
+"voice": "none",
+"description": "점프! 두 강아지가 동시에 점프하고 착지.",
+"audio": {
+"voice": "NONE - no voice in this segment",
+"background_music": {
+"type": "upbeat circus/performance tune climax",
+"volume": "medium-high"
+},
+"sound_effect": {
+"type": "boing jump sound + soft landing sound",
+"timing": "at jump peak and landing"
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "none",
+"peanut_mouth": "CLOSED or slightly open (excitement), NO voice",
+"butter_mouth": "CLOSED - jumping, NO voice",
+"strict_rule": "No speaking. No voice audio. Mouths mostly closed during jump."
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "both dogs",
+"action": "jump up simultaneously with all four paws off ground, then land gracefully"
+},
+"dog_on_left": {
+"target": "Peanut (lighter fur)",
+"action": "crouch slightly, jump up high with all paws off ground, happy excited expression, land softly",
+"mouth": "slightly open with excitement",
+"jump_height": "high, energetic"
+},
+"dog_on_right": {
+"target": "Butter (darker fur)",
+"action": "crouch slightly, jump up with all paws off ground, focused determined expression, land gracefully",
+"mouth": "CLOSED",
+"jump_height": "medium-high, controlled"
+}
+}
+},
+{
+"start_time": "6.0s",
+"end_time": "8.0s",
+"type": "trick_high_five",
+"speaker": "none",
+"voice": "none",
+"description": "하이파이브! 두 강아지가 뒷다리로 서서 서로 마주보고 앞발 하이파이브, 그 후 카메라 보며 뿌듯한 표정.",
+"audio": {
+"voice": "NONE - no voice in this segment",
+"background_music": {
+"type": "triumphant finale music",
+"volume": "medium-high"
+},
+"sound_effect": {
+"type": "high-five clap sound + celebration chime",
+"timing": "when paws touch"
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "none",
+"peanut_mouth": "CLOSED or happy smile, NO voice",
+"butter_mouth": "CLOSED or slight smile, NO voice",
+"strict_rule": "No speaking. No voice audio. Happy expressions but no voice."
+},
+"paw_preservation_rules": {
+"critical": true,
+"instruction": "MUST maintain DOG PAWS throughout high-five. Do NOT transform paws.",
+"paw_requirements": {
+"shape": "dog paw shape - rounded with visible toe beans",
+"texture": "furry dog paw with soft paw pads",
+"prohibited": "NO transformation, keep original dog paw appearance"
+}
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "both dogs",
+"action": "stand on hind legs facing each other, touch front paws together in high-five, then turn to face camera with proud expressions"
+},
+"dog_on_left": {
+"target": "Peanut (lighter fur)",
+"action": "stand on hind legs, face Butter, high-five with right paw, then turn to camera with big proud smile",
+"mouth": "happy smile",
+"paws": "DOG PAWS - maintain paw pads and fur",
+"final_expression": "proud, accomplished, happy"
+},
+"dog_on_right": {
+"target": "Butter (darker fur)",
+"action": "stand on hind legs, face Peanut, high-five with left paw, then turn to camera with subtle proud expression",
+"mouth": "slight smile (rare for Butter)",
+"paws": "DOG PAWS - maintain paw pads and fur",
+"final_expression": "proud, satisfied, slight smile"
+}
+}
+}
+]
+},
+"output_settings": {
+"duration": "8.0s",
+"resolution": "1080x1920",
+"fps": 30
+}
+},
+{
+"action": "generate_video_from_image",
+"project_context": {
+"scene_id": "scene_8",
+"input_image_source": "generated_image_scene_3b_dynamic_show",
+"timeline_position": "after scene_3_celebration_show (dynamic performance)"
+},
+"constraints": {
+"no_text_overlay": true,
+"no_watermark": true
+},
+"video_prompt": {
+"motion_description": "Dynamic and energetic dog trick performance. 0-2s: LEFT DOG (Peanut) does play bow (front legs down, butt up, tail wagging excitedly), then RIGHT DOG (Butter) mirrors the play bow. 2-4s: Both dogs roll over simultaneously (full 360 degree roll on ground), showing bellies briefly, then back to standing. 4-6s: Both dogs run in a circle chasing each other playfully (Peanut chases Butter clockwise around the frame), then stop facing camera. 6-8s: Both dogs do 'bang! play dead' trick - dramatically fall to side with legs up, pause, then pop back up to sitting position with proud faces.",
+"motion_strength": "high"
+},
+"audio_track": {
+"voice_timing_note": "NO voice audio in this scene. Background music and sound effects only.",
+"timeline": [
+{
+"start_time": "0.0s",
+"end_time": "2.0s",
+"type": "trick_play_bow",
+"speaker": "none",
+"voice": "none",
+"description": "플레이 바우 (엎드려뻗쳐 놀자 자세). 땅콩이가 먼저 하고, 버터가 따라함.",
+"audio": {
+"voice": "NONE - no voice in this segment",
+"background_music": {
+"type": "playful energetic tune",
+"volume": "medium"
+},
+"sound_effect": {
+"type": "cute boing/spring sound",
+"timing": "when dogs bow down"
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "none",
+"peanut_mouth": "OPEN slightly (playful panting), NO voice",
+"butter_mouth": "CLOSED or slight open, NO voice",
+"strict_rule": "No speaking. No voice audio. Playful expressions only."
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "both dogs",
+"action": "play bow sequence - front legs stretched forward on ground, butt raised high, tail wagging"
+},
+"dog_on_left": {
+"target": "Peanut (lighter fur)",
+"action": "0-1s: do play bow first (front down, butt up, tail wagging fast), playful excited expression, tongue out",
+"mouth": "open, tongue out, playful panting",
+"pose": "play bow - inviting play"
+},
+"dog_on_right": {
+"target": "Butter (darker fur)",
+"action": "1-2s: mirror play bow (front down, butt up, tail wagging slower), slightly reluctant but participating expression",
+"mouth": "slightly open",
+"pose": "play bow - following along"
+}
+}
+},
+{
+"start_time": "2.0s",
+"end_time": "4.0s",
+"type": "trick_roll_over",
+"speaker": "none",
+"voice": "none",
+"description": "데굴데굴 구르기! 두 강아지가 동시에 옆으로 굴러서 한 바퀴 회전.",
+"audio": {
+"voice": "NONE - no voice in this segment",
+"background_music": {
+"type": "playful energetic tune continues",
+"volume": "medium"
+},
+"sound_effect": {
+"type": "rolling/tumbling sound + cute squeak",
+"timing": "during roll"
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "none",
+"peanut_mouth": "CLOSED during roll",
+"butter_mouth": "CLOSED during roll",
+"strict_rule": "No speaking. No voice audio. Mouths closed during rolling."
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "both dogs",
+"action": "lie down, roll over 360 degrees on ground (showing belly), then stand back up"
+},
+"dog_on_left": {
+"target": "Peanut (lighter fur)",
+"action": "lie down on side, roll over completely showing belly (legs wiggling in air), roll back to standing, happy dizzy expression",
+"mouth": "CLOSED",
+"roll_direction": "rolling to the left",
+"belly_moment": "brief cute belly exposure with paws in air"
+},
+"dog_on_right": {
+"target": "Butter (darker fur)",
+"action": "lie down on side, roll over completely showing belly (legs up), roll back to standing with dignified composure",
+"mouth": "CLOSED",
+"roll_direction": "rolling to the right",
+"belly_moment": "brief belly exposure, trying to maintain dignity"
+}
+}
+},
+{
+"start_time": "4.0s",
+"end_time": "6.0s",
+"type": "trick_chase_circle",
+"speaker": "none",
+"voice": "none",
+"description": "쫓기 놀이! 땅콩이가 버터를 쫓으며 원형으로 뛰어다님.",
+"audio": {
+"voice": "NONE - no voice in this segment",
+"background_music": {
+"type": "fast playful chase music",
+"volume": "medium-high"
+},
+"sound_effect": {
+"type": "pitter-patter running paws + playful whoosh",
+"timing": "throughout chase"
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "none",
+"peanut_mouth": "OPEN (excited panting while running)",
+"butter_mouth": "OPEN slightly (running)",
+"strict_rule": "No speaking. No voice audio. Open mouths from running/panting only."
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "both dogs",
+"action": "run in circle around frame - Butter runs first, Peanut chases behind, both complete one full circle, then stop facing camera"
+},
+"dog_on_left": {
+"target": "Peanut (lighter fur)",
+"action": "chase Butter in clockwise circle, running with excited happy expression, ears flopping, tongue out, then stop and face camera",
+"mouth": "open, tongue out, panting from running",
+"movement": "chasing behind Butter, playful energy"
+},
+"dog_on_right": {
+"target": "Butter (darker fur)",
+"action": "run in clockwise circle (being chased by Peanut), slightly annoyed but playing along expression, then stop and face camera",
+"mouth": "slightly open from running",
+"movement": "running ahead, looking back occasionally"
+}
+}
+},
+{
+"start_time": "6.0s",
+"end_time": "8.0s",
+"type": "trick_play_dead",
+"speaker": "none",
+"voice": "none",
+"description": "빵! 쓰러져! 두 강아지가 드라마틱하게 옆으로 쓰러졌다가 다시 일어남.",
+"audio": {
+"voice": "NONE - no voice in this segment",
+"background_music": {
+"type": "dramatic pause then triumphant return",
+"volume": "medium"
+},
+"sound_effect": {
+"type": "dramatic thud + pause + ta-da fanfare",
+"timing": "thud when falling, fanfare when getting up"
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "none",
+"peanut_mouth": "CLOSED (playing dead), then OPEN smile (getting up)",
+"butter_mouth": "CLOSED (playing dead), then slight smile (getting up)",
+"strict_rule": "No speaking. No voice audio. Dramatic expressions only."
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "both dogs",
+"action": "dramatically fall to side with legs up (playing dead), hold pose briefly, then pop back up to sitting with proud expressions"
+},
+"dog_on_left": {
+"target": "Peanut (lighter fur)",
+"action": "6-7s: dramatically fall to left side, legs up stiff, eyes closed (playing dead). 7-8s: pop back up to sitting, big proud smile, tail wagging",
+"mouth": "closed while dead, big smile when up",
+"death_pose": "lying on side, legs up, dramatic 'dead' expression",
+"revival": "quick pop up, triumphant smile"
+},
+"dog_on_right": {
+"target": "Butter (darker fur)",
+"action": "6-7s: dramatically fall to right side, legs up, eyes closed (playing dead with dignity). 7-8s: pop back up to sitting, subtle proud expression",
+"mouth": "closed while dead, slight smile when up",
+"death_pose": "lying on side, legs up, dignified 'dead' expression",
+"revival": "composed pop up, satisfied expression"
+}
+}
+}
+]
+},
+"output_settings": {
+"duration": "8.0s",
+"resolution": "1080x1920",
+"fps": 30
+}
+},
+
+{
+"action": "generate_video_from_image",
+"project_context": {
+"scene_id": "scene_9",
+"input_image_source": "generated_image_scene_3_ending_celebration",
+"timeline_position": "24s - 30s (final scene)"
+},
+"constraints": {
+"no_text_overlay": true,
+"no_watermark": true
+},
+"video_prompt": {
+"motion_description": "Celebratory dance and laughing ending. 0-2.5s: Both dogs wiggle their butts side to side in a cute dance, tails wagging energetically, heads bobbing slightly. NO VOICE. 2.5-5s: Both dogs spin around playfully (360 degree turn), then face camera again. NO VOICE. 5-6s: Both dogs laugh 'hehehehehe' together with happy squinting eyes, mouths open in a smile, slight body shaking from laughter. VOICE STARTS HERE.",
+"motion_strength": "medium-high"
+},
+"audio_track": {
+"voice_timing_note": "IMPORTANT: Voice audio ONLY plays during 5.0s-6.0s. First 5 seconds have NO voice, only background music.",
+"timeline": [
+{
+"start_time": "0.0s",
+"end_time": "2.5s",
+"type": "dance_motion",
+"speaker": "none",
+"voice": "none",
+"description": "엉덩이 춤. 두 강아지가 엉덩이를 좌우로 흔들며 귀여운 춤을 춤. 음성 없음.",
+"audio": {
+"voice": "NONE - no voice in this segment",
+"background_music": {
+"type": "cheerful birthday tune",
+"volume": "medium"
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "none",
+"peanut_mouth": "CLOSED - dancing only, NO voice",
+"butter_mouth": "CLOSED - dancing only, NO voice",
+"strict_rule": "No speaking. No voice audio. Both dogs keep mouths CLOSED while dancing."
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "both dogs",
+"action": "butt wiggle dance side to side, tails wagging energetically, heads bobbing"
+},
+"dog_on_left": {
+"target": "Peanut (lighter fur)",
+"action": "wiggle butt left and right, tail wagging fast, happy expression",
+"mouth": "CLOSED"
+},
+"dog_on_right": {
+"target": "Butter (darker fur)",
+"action": "wiggle butt left and right, tail wagging, slightly serious but participating",
+"mouth": "CLOSED"
+}
+}
+},
+{
+"start_time": "2.5s",
+"end_time": "5.0s",
+"type": "spin_motion",
+"speaker": "none",
+"voice": "none",
+"description": "빙글빙글 도는 모션. 두 강아지가 제자리에서 한 바퀴 회전 후 다시 카메라를 바라봄. 음성 없음.",
+"audio": {
+"voice": "NONE - no voice in this segment",
+"background_music": {
+"type": "cheerful birthday tune continues",
+"volume": "medium"
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "none",
+"peanut_mouth": "CLOSED - spinning only, NO voice",
+"butter_mouth": "CLOSED - spinning only, NO voice",
+"strict_rule": "No speaking. No voice audio. Both dogs keep mouths CLOSED while spinning."
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "both dogs",
+"action": "spin 360 degrees in place, then face camera again"
+},
+"dog_on_left": {
+"target": "Peanut (lighter fur)",
+"action": "playful 360 spin, excited expression, then face camera",
+"mouth": "CLOSED"
+},
+"dog_on_right": {
+"target": "Butter (darker fur)",
+"action": "360 spin (slightly slower, more dignified), then face camera",
+"mouth": "CLOSED"
+}
+}
+},
+{
+"start_time": "5.0s",
+"end_time": "6.0s",
+"type": "laughing_ending",
+"speaker": "both_dogs",
+"text": "헤헤헤헤헤",
+"audio": {
+"voice": "PLAY - voice starts at exactly 5.0s",
+"voice_start_time": "5.0s",
+"voice_end_time": "6.0s",
+"background_music": {
+"type": "cheerful birthday tune climax",
+"volume": "low (to let voice be heard)"
+}
+},
+"voice_settings": {
+"id": "korean_toddler_giggle",
+"description": "귀여운 아기 웃음소리. 두 마리가 동시에 '헤헤헤헤헤' 하고 웃음. 밝고 순수한 킥킥거리는 웃음.",
+"tone": "cheerful_giggle",
+"pitch": "medium-high",
+"speed": "medium",
+"synchronization": "both dogs laugh simultaneously",
+"timing": {
+"voice_start": "5.0s (MUST start at 5.0s, NOT before)",
+"voice_end": "6.0s",
+"instruction": "음성은 반드시 5.0초에 시작. 그 전에는 음성 없음."
+},
+"voice_consistency": {
+"maintain_throughout": true,
+"instruction": "밝고 귀여운 '헤헤헤헤헤' 웃음소리. 5.0초부터 동시에 웃음."
+}
+},
+"lip_sync_rules": {
+"speaking_dog": "both",
+"peanut_mouth": "OPEN - laughing smile (starts at 5.0s)",
+"butter_mouth": "OPEN - laughing smile (starts at 5.0s)",
+"strict_rule": "BOTH dogs open mouths simultaneously at 5.0s in a laughing smile. Synchronized giggle. Voice plays ONLY in this segment."
+},
+"visual_execution_plan": {
+"active_subject": {
+"target": "both dogs",
+"action": "synchronized laughing starting at 5.0s, mouths open in happy smile, eyes squinting with joy, slight body shake from giggling"
+},
+"dog_on_left": {
+"target": "Peanut (lighter fur)",
+"action": "laughing with mouth open in smile, eyes squinting happily, head tilts slightly, body shakes gently from laughter",
+"mouth": "OPEN at 5.0s - happy laughing smile 헤헤헤헤헤",
+"expression": "joyful, eyes squinting, big smile"
+},
+"dog_on_right": {
+"target": "Butter (darker fur)",
+"action": "laughing with mouth open in smile, eyes squinting (even Butter can't help but laugh), slight body shake",
+"mouth": "OPEN at 5.0s - happy laughing smile 헤헤헤헤헤",
+"expression": "unexpectedly joyful, eyes squinting, genuine smile"
+}
+},
+"lip_sync_style": "synchronized_laughter"
+}
+]
+},
+"output_settings": {
+"duration": "6.0s",
+"resolution": "1080x1920",
+"fps": 30
+},
+"post_production_notes": {
+"subtitle_overlay": {
+"add_separately": true,
+"text": "🎂 생신 축하드려요! 🎂\n\n아프지 말고 건강하세요 ❤️\n- 개손주 땅콩, 버터 올림 -\n\n(용돈도 환영해요 💸)",
+"timing": "display throughout scene (0-6s)",
+"style": "cute handwritten font, centered, white text with soft shadow",
+"instruction": "자막은 영상 생성 후 별도 편집 툴에서 추가"
+}
+}
+}
+

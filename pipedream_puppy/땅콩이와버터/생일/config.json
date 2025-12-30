@@ -1,0 +1,98 @@
+{
+  "project_name": "땅콩이와버터_생일",
+  "project_id": "peanut_butter_birthday",
+  "title": {
+    "korean": "할머니 생신 축하해요!",
+    "english": "Happy Birthday Grandma!"
+  },
+  "footer": {
+    "korean": "개손주 땅콩 & 버터 올림",
+    "english": "From grandpuppies Peanut & Butter"
+  },
+  "bgm_url": "https://cdn1.suno.ai/9eae9084-c960-4c24-8ae2-222eaf2ea3f5.mp3",
+  "bgm_volume": 0.1,
+  "bgm_volume_no_audio": 0.8,
+  "profile_card_config": {
+    "baseY": 580,
+    "lineHeight": 40,
+    "headerFontSize": 30,
+    "itemFontSize": 20,
+    "maxChars": 30,
+    "rightMargin": 150
+  },
+  "scene_count": 9,
+  "video_file_pattern": "씬{index}.mp4",
+  "subtitle_timing_mode": "timed",
+  "force_vertical": true,
+  "video_scale_mode": "fit",
+  "timed_subtitles": [
+    { "start_time": 1.0, "end_time": 5.0, "text_ko": "오늘은 아주 중요한 날이에요, 국가 공휴일로 지정해야 돼요!", "text_en": "Today is a very important day, it should be a national holiday!" },
+    { "start_time": 6.0, "end_time": 8.0, "text_ko": "응응 맞지 맞지", "text_en": "Yes yes, that's right" },
+
+    { "start_time": 9.0, "end_time": 12.0, "text_ko": "미모? 완벽.", "text_en": "Beauty? Perfect." },
+    { "start_time": 13.0, "end_time": 16.0, "text_ko": "간식? 무한 리필. 함미는 그저 빛!", "text_en": "Snacks? Unlimited refills. Grandma is just light!" },
+
+    { "start_time": 17.0, "end_time": 20.0, "text_ko": "평생 충성 맹세! 단, 유효기간은 24시간입니다.", "text_en": "Lifetime loyalty pledge! But valid for 24 hours only." },
+    { "start_time": 21.0, "end_time": 24.0, "text_ko": "함미 사랑해여!!", "text_en": "Love you Grandma!!" },
+
+    { "start_time": 24.0, "end_time": 26.0, "text_ko": "할머니! 생신축하드려요!", "text_en": "Grandma! Happy Birthday!" },
+    { "start_time": 27.0, "end_time": 30.0, "text_ko": "아프지.. 말고.. 건강.. 하세여..", "text_en": "Don't.. be sick.. stay.. healthy.." },
+
+    { "start_time": 31.0, "end_time": 33.0, "text_ko": "할머니! 생신축하드려요!", "text_en": "Grandma! Happy Birthday!" },
+    { "start_time": 34.0, "end_time": 37.0, "text_ko": "아프지.. 말고.. 건강.. 하세여..", "text_en": "Don't.. be sick.. stay.. healthy.." },
+
+    { "start_time": 38.0, "end_time": 42.0, "text_ko": "건강을.. 기원하며.. 축하쇼를.. 준비했어요!", "text_en": "Wishing for your health, we prepared a celebration show!" },
+
+    { "start_time": 42.0, "end_time": 44.0, "text_ko": "손!", "text_en": "Paw!", "color": "0x87CEEB" },
+    { "start_time": 44.0, "end_time": 46.0, "text_ko": "돌아!", "text_en": "Spin!", "color": "0x87CEEB" },
+    { "start_time": 46.0, "end_time": 48.0, "text_ko": "점프!", "text_en": "Jump!", "color": "0x87CEEB" },
+    { "start_time": 48.0, "end_time": 50.0, "text_ko": "하이파이브!", "text_en": "High-five!", "color": "0x87CEEB" },
+
+    { "start_time": 50.0, "end_time": 51.0, "text_ko": "숙여!", "text_en": "Play bow!", "color": "0x87CEEB" },
+    { "start_time": 51.0, "end_time": 52.0, "text_ko": "빵야!", "text_en": "Roll over!", "color": "0x87CEEB" },
+    { "start_time": 52.0, "end_time": 54.0, "text_ko": "쫓기 놀이!", "text_en": "Chase!", "color": "0x87CEEB" },
+    { "start_time": 55.0, "end_time": 56.0, "text_ko": "빵! 쓰러져!", "text_en": "Bang! Play dead!", "color": "0x87CEEB" },
+    { "start_time": 56.0, "end_time": 58.0, "text_ko": "앉아!", "text_en": "Sit!", "color": "0x87CEEB" },
+
+    { "start_time": 58.0, "end_time": 60.5, "text_ko": "생신을 진심으로", "text_en": "Happy birthday sincerely", "color": "0xFFB7C5" },
+    { "start_time": 60.5, "end_time": 63.0, "text_ko": "축하드립니다 :)", "text_en": "Congratulations :)", "color": "0xFFB7C5" },
+    { "start_time": 63.0, "end_time": 64.0, "text_ko": "헤헤헤헤헤", "text_en": "Hehehehe" }
+  ],
+  "layout": {
+    "header_y": 220,
+    "header_height": 120,
+    "video_area_y": 160,
+    "video_area_height": 850,
+    "subtitle_y": 900,
+    "footer_y": 950,
+    "footer_height": 100
+  },
+  "font_settings": {
+    "header_korean": {
+      "font": "NanumSquareRoundOTFEB",
+      "size": 58
+    },
+    "header_english": {
+      "font": "NotoSerif-Regular",
+      "size": 30,
+      "y_offset": 75
+    },
+    "subtitle_korean": {
+      "font": "NanumSquareRoundOTFEB",
+      "size": 34,
+      "max_lines": 1
+    },
+    "subtitle_english": {
+      "font": "NotoSerif-Regular",
+      "size": 27,
+      "max_lines": 1
+    },
+    "footer_korean": {
+      "size": 48
+    },
+    "footer_english": {
+      "size": 22,
+      "y_offset": 55
+    }
+  }
+}

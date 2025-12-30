@@ -1,0 +1,290 @@
+{
+  "$return_value": {
+    "folder_name": "peanut_butter_birthday",
+    "total_scenes": 9,
+    "script_format": "birthday_celebration",
+    "content_type": "family_celebration",
+    "resolution": "1080p",
+    "episode": "땅콩버터: 할머니 생신 축하 영상",
+    "scenes": [
+      {
+        "video": 1,
+        "title": "중요한 날",
+        "duration": "8 seconds (0-8s)",
+        "duration_seconds": 8,
+        "has_audio": true,
+        "speaker": "땅콩, 버터",
+        "dialogue": {
+          "script": "오늘은 아주 중요한 날이에요, 국가 공휴일로 지정해야 돼요! 응응 맞지 맞지",
+          "script_english": "Today is a very important day, it should be a national holiday! Yes yes, that's right"
+        },
+        "timed_subtitles": [
+          {
+            "start": 1.0,
+            "end": 5.0,
+            "korean": "오늘은 아주 중요한 날이에요, 국가 공휴일로 지정해야 돼요!",
+            "english": "Today is a very important day, it should be a national holiday!",
+            "speaker": "땅콩"
+          },
+          {
+            "start": 6.0,
+            "end": 8.0,
+            "korean": "응응 맞지 맞지",
+            "english": "Yes yes, that's right",
+            "speaker": "버터"
+          }
+        ]
+      },
+      {
+        "video": 2,
+        "title": "할머니 찬양",
+        "duration": "8 seconds (8-16s)",
+        "duration_seconds": 8,
+        "has_audio": true,
+        "speaker": "땅콩, 버터",
+        "dialogue": {
+          "script": "미모? 완벽. 간식? 무한 리필. 함미는 그저 빛!",
+          "script_english": "Beauty? Perfect. Snacks? Unlimited refills. Grandma is just light!"
+        },
+        "timed_subtitles": [
+          {
+            "start": 1.0,
+            "end": 4.0,
+            "korean": "미모? 완벽.",
+            "english": "Beauty? Perfect.",
+            "speaker": "땅콩"
+          },
+          {
+            "start": 5.0,
+            "end": 8.0,
+            "korean": "간식? 무한 리필. 함미는 그저 빛!",
+            "english": "Snacks? Unlimited refills. Grandma is just light!",
+            "speaker": "버터"
+          }
+        ]
+      },
+      {
+        "video": 3,
+        "title": "충성 맹세",
+        "duration": "8 seconds (16-24s)",
+        "duration_seconds": 8,
+        "has_audio": true,
+        "speaker": "버터, 땅콩",
+        "dialogue": {
+          "script": "평생 충성 맹세! 단, 유효기간은 24시간입니다. 함미 사랑해여!!",
+          "script_english": "Lifetime loyalty pledge! But valid for 24 hours only. Love you Grandma!!"
+        },
+        "timed_subtitles": [
+          {
+            "start": 1.0,
+            "end": 4.0,
+            "korean": "평생 충성 맹세! 단, 유효기간은 24시간입니다.",
+            "english": "Lifetime loyalty pledge! But valid for 24 hours only.",
+            "speaker": "버터"
+          },
+          {
+            "start": 5.0,
+            "end": 8.0,
+            "korean": "함미 사랑해여!!",
+            "english": "Love you Grandma!!",
+            "speaker": "땅콩"
+          }
+        ]
+      },
+      {
+        "video": 4,
+        "title": "생신 축하 인사",
+        "duration": "7 seconds (24-31s)",
+        "duration_seconds": 7,
+        "has_audio": true,
+        "speaker": "땅콩, 버터",
+        "dialogue": {
+          "script": "할머니! 생신축하드려요! 아프지.. 말고.. 건강.. 하세여..",
+          "script_english": "Grandma! Happy Birthday! Don't.. be sick.. stay.. healthy.."
+        },
+        "timed_subtitles": [
+          {
+            "start": 0.0,
+            "end": 2.0,
+            "korean": "할머니! 생신축하드려요!",
+            "english": "Grandma! Happy Birthday!",
+            "speaker": "땅콩"
+          },
+          {
+            "start": 3.0,
+            "end": 6.0,
+            "korean": "아프지.. 말고.. 건강.. 하세여..",
+            "english": "Don't.. be sick.. stay.. healthy..",
+            "speaker": "버터"
+          }
+        ]
+      },
+      {
+        "video": 5,
+        "title": "생신 축하 인사 2",
+        "duration": "7 seconds (31-38s)",
+        "duration_seconds": 7,
+        "has_audio": true,
+        "speaker": "땅콩, 버터",
+        "dialogue": {
+          "script": "할머니! 생신축하드려요! 아프지.. 말고.. 건강.. 하세여..",
+          "script_english": "Grandma! Happy Birthday! Don't.. be sick.. stay.. healthy.."
+        },
+        "timed_subtitles": [
+          {
+            "start": 0.0,
+            "end": 2.0,
+            "korean": "할머니! 생신축하드려요!",
+            "english": "Grandma! Happy Birthday!",
+            "speaker": "땅콩"
+          },
+          {
+            "start": 3.0,
+            "end": 6.0,
+            "korean": "아프지.. 말고.. 건강.. 하세여..",
+            "english": "Don't.. be sick.. stay.. healthy..",
+            "speaker": "버터"
+          }
+        ]
+      },
+      {
+        "video": 6,
+        "title": "축하쇼 예고",
+        "duration": "4 seconds (38-42s)",
+        "duration_seconds": 4,
+        "has_audio": true,
+        "speaker": "땅콩",
+        "dialogue": {
+          "script": "건강을.. 기원하며.. 축하쇼를.. 준비했어요!",
+          "script_english": "Wishing.. for your health.. we prepared.. a celebration show!"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0.0,
+            "end": 4.0,
+            "korean": "건강을.. 기원하며.. 축하쇼를.. 준비했어요!",
+            "english": "Wishing for your health, we prepared a celebration show!",
+            "speaker": "땅콩"
+          }
+        ]
+      },
+      {
+        "video": 7,
+        "title": "축하쇼 퍼포먼스",
+        "duration": "8 seconds (42-50s)",
+        "duration_seconds": 8,
+        "has_audio": false,
+        "dialogue": {
+          "script": "손! 돌아! 점프! 하이파이브! 귀여운 강아지 재롱잔치",
+          "script_english": "Paw! Spin! Jump! High-five! Cute dog trick show"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0.0,
+            "end": 2.0,
+            "korean": "손!",
+            "english": "Paw!"
+          },
+          {
+            "start": 2.0,
+            "end": 4.0,
+            "korean": "돌아!",
+            "english": "Spin!"
+          },
+          {
+            "start": 4.0,
+            "end": 6.0,
+            "korean": "점프!",
+            "english": "Jump!"
+          },
+          {
+            "start": 6.0,
+            "end": 8.0,
+            "korean": "하이파이브!",
+            "english": "High-five!"
+          }
+        ]
+      },
+      {
+        "video": 8,
+        "title": "다이나믹 퍼포먼스",
+        "duration": "8 seconds (50-58s)",
+        "duration_seconds": 8,
+        "has_audio": false,
+        "dialogue": {
+          "script": "엎드려! 데굴데굴! 쫓기 놀이! 빵! 쓰러져! 다이나믹 재롱잔치",
+          "script_english": "Play bow! Roll over! Chase! Bang! Play dead! Dynamic trick show"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0.0,
+            "end": 2.0,
+            "korean": "엎드려!",
+            "english": "Play bow!"
+          },
+          {
+            "start": 2.0,
+            "end": 4.0,
+            "korean": "데굴데굴!",
+            "english": "Roll over!"
+          },
+          {
+            "start": 4.0,
+            "end": 6.0,
+            "korean": "쫓기 놀이!",
+            "english": "Chase!"
+          },
+          {
+            "start": 6.0,
+            "end": 8.0,
+            "korean": "빵! 쓰러져!",
+            "english": "Bang! Play dead!"
+          }
+        ]
+      },
+      {
+        "video": 9,
+        "title": "엔딩 축하",
+        "duration": "6 seconds (58-64s)",
+        "duration_seconds": 6,
+        "has_audio": true,
+        "speaker": "땅콩, 버터",
+        "dialogue": {
+          "script": "헤헤헤헤헤",
+          "script_english": "Hehehehe"
+        },
+        "timed_subtitles": [
+          {
+            "start": 0.0,
+            "end": 2.5,
+            "korean": "(엉덩이 춤)",
+            "english": "(Butt wiggle dance)"
+          },
+          {
+            "start": 2.5,
+            "end": 5.0,
+            "korean": "(빙글빙글~)",
+            "english": "(Spinning around~)"
+          },
+          {
+            "start": 5.0,
+            "end": 6.0,
+            "korean": "헤헤헤헤헤",
+            "english": "Hehehehe",
+            "speaker": "땅콩, 버터"
+          }
+        ]
+      }
+    ],
+    "character_voice_consistency": {
+      "땅콩이": {
+        "profile": "Korean baby INFANT GIRL 2-3 years old LOW-PITCHED soft gentle slow deliberate speech babbling quality slight lisp",
+        "emotional_range": "Excited, loving, cute, expressive"
+      },
+      "버터": {
+        "profile": "Korean baby INFANT BOY 2-3 years old LOW-PITCHED cute sincere slow deliberate speech mumbling quality eager-to-please",
+        "emotional_range": "Sincere, loyal, slightly serious, loving"
+      }
+    }
+  }
+}
